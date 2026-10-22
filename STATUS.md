@@ -1,21 +1,21 @@
 # Stand des Trading-Bots (Demo)
 
-Letzte Aktualisierung: 22.10.2026 23:14 UTC
+Letzte Aktualisierung: 22.10.2026 23:18 UTC
 
 ```
-Kapital: 1000.00 (Start 1000.00, +0.00 %)
-Cash: 1000.00
-Keine offene Position (in Cash).
+Kapital: 998.45 (Start 1000.00, -0.16 %)
+Cash: 498.45
+Offen seit 2026-10-22 23:18: BTC/CHF long 0.007507 @ 66640.70, jetzt 66607.40, Gewinn/Verlust -0.25, Stop 53271.15
 Abgeschlossene Trades: 0
 Aktuelles Signal BTC/CHF: investiert sein
-Letzte Entscheidung des Bots: BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: klage, Wert -0.6)
+Letzte Entscheidung des Bots: BTC/CHF: gekauft 0.007507 @ 66640.70
 ```
 
 ## Nachrichtenlage
 
 - **Stimmung (Fear & Greed):** 68 von 100, Gier
-- **Bewertung News:** -0.60 (−1 sehr negativ bis +1 sehr positiv)
-- **Bestätigte Themen:** klage (gemeldet von bitcoinmagazine, cointelegraph)
+- **Bewertung News:** -0.30 (−1 sehr negativ bis +1 sehr positiv)
+- **Bestätigte Themen:** klage (gemeldet von bitcoinmagazine, cointelegraph – nur Hinweis, blockiert nicht)
 
 **Schlagzeilen dazu:**
 

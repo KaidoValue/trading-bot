@@ -1,15 +1,33 @@
 {
-  "open_trades": {},
+  "open_trades": {
+    "BTC/CHF": {
+      "side": 1,
+      "entry": 66640.70369999998,
+      "qty": 0.0075066734326816546,
+      "stop": 53271.14844177105,
+      "target": 1733638.8447786176,
+      "opened": {
+        "__dt__": "2026-10-22T23:18:20.412971+00:00"
+      },
+      "context": {
+        "fear_greed": 68,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "Nach US-Schluss"
+      }
+    }
+  },
   "closed": [],
   "last_bar": {
     "BTC/CHF": {
       "__dt__": "2026-10-21T00:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: klage, Wert -0.6)",
+  "note": "BTC/CHF: gekauft 0.007507 @ 66640.70",
   "news": {
     "fear_greed": 68,
-    "news_score": -0.6,
+    "news_score": -0.3,
     "themes": {
       "klage": [
         "bitcoinmagazine",
@@ -36,7 +54,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-22T23:14:40.298594+00:00"
+    "__dt__": "2026-10-22T23:18:21.794056+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -44,7 +62,7 @@
       "__dt__": "2026-10-22"
     },
     "day_start_equity": 1000.0,
-    "trades_today": 0,
+    "trades_today": 1,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -52,7 +70,9 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1000,
-    "positions": {}
+    "cash": 498.44935000000004,
+    "positions": {
+      "BTC/CHF": 0.0075066734326816546
+    }
   }
 }
