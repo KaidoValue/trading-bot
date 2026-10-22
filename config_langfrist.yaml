@@ -1,7 +1,7 @@
 # Langfrist-Variante: Tageskerzen, wenige Trades, grosse Positionen.
 # Benutzen mit:  py -3.13 -m tradingbot compare --config config_langfrist.yaml --days 2500
 #
-# Achtung: Hier ist fast das ganze Kapital investiert. Schwankungen von 20-30 % sind möglich,
+# Es wird höchstens die Hälfte des Kapitals investiert (max_position_pct). Schwankungen von 10-20 % sind möglich,
 # deshalb ist der Not-Aus erst bei 35 % Rückgang eingestellt.
 
 mode: paper
@@ -33,7 +33,7 @@ risk:
   risk_per_trade: 0.20        # Stop weit weg, deshalb grosser Risikobetrag pro Trade
   stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
   take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
-  max_position_pct: 0.95
+  max_position_pct: 0.50      # Hälfte investiert, Hälfte bleibt in Cash (ca. halbe Schwankungen)
   max_daily_loss_pct: 0.15
   max_drawdown_pct: 0.35
   halt_days: 30              # nach Not-Aus 30 Tage Pause, dann geht es weiter
