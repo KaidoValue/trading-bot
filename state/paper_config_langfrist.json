@@ -24,7 +24,7 @@
       "__dt__": "2026-10-21T00:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: gekauft 0.007507 @ 66640.70",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt",
   "news": {
     "fear_greed": 68,
     "news_score": -0.3,
@@ -54,7 +54,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-22T23:18:21.794056+00:00"
+    "__dt__": "2026-10-22T23:21:51.700579+00:00"
   },
   "risk": {
     "peak_equity": 1000,
