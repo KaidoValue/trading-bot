@@ -78,6 +78,9 @@ def status(cfg: Config) -> None:
     if not trader.open_trades:
         print("Keine offene Position (in Cash).")
     print(f"Abgeschlossene Trades: {len(trader.closed)}")
+    for t in trader.closed[-10:]:
+        print(f"  {str(t['opened'])[:16]} bis {str(t['closed'])[:16]}: {t['side']} {t['symbol']} "
+              f"{t['entry']:.2f} -> {t['exit']:.2f}, Ergebnis {t['pnl']:+.2f} ({t['reason']})")
     strat = build(cfg.strategy, allow_short=cfg.allow_short, **cfg.strategy_params)
     for s in cfg.symbols:
         sig = int(strat.signals(data.fetch_recent(ex, s, cfg.timeframe)).iloc[-1])

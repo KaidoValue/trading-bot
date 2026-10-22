@@ -35,13 +35,23 @@ jobs:
       - name: Bot einmal laufen lassen (Demo)
         run: python -m tradingbot paper --config config_langfrist.yaml --once
 
-      - name: Stand anzeigen
-        run: python -m tradingbot status --config config_langfrist.yaml
+      - name: Stand anzeigen und in STATUS.md schreiben
+        run: |
+          {
+            echo "# Stand des Trading-Bots (Demo)"
+            echo
+            echo "Letzte Aktualisierung: $(date -u '+%d.%m.%Y %H:%M') UTC"
+            echo
+            echo '```'
+            python -m tradingbot status --config config_langfrist.yaml
+            echo '```'
+          } > STATUS.md
+          cat STATUS.md
 
       - name: Stand speichern
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
-          git add state logs || true
+          git add STATUS.md state logs || true
           git diff --cached --quiet || git commit -m "Bot-Lauf $(date -u +%Y-%m-%d)"
           git push
