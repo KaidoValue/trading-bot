@@ -31,6 +31,7 @@ class Trader:
     context: MarketContext | None = None      # Nachrichtenlage (nur Paper/Live)
     open_trades: dict[str, OpenTrade] = field(default_factory=dict)
     closed: list[dict] = field(default_factory=list)
+    note: str = ""                             # letzte Entscheidung in Worten (für Status-Anzeige)
 
     def equity(self, prices: dict[str, float]) -> float:
         return self.broker.cash() + sum(self.broker.position(s) * p for s, p in prices.items())
@@ -51,17 +52,28 @@ class Trader:
             self.exit(symbol, price, "Signal", when)
             equity = self.equity({symbol: price})
             t = None
-        if t or (signal < 0 and not self.allow_short) or not can_open_new:
+        if t:
+            self.note = f"{symbol}: Position offen, Signal bestätigt"
+            return
+        if signal < 0 and not self.allow_short:
+            self.note = f"{symbol}: Signal 'raus', bleibe in Cash"
+            return
+        if not can_open_new:
+            self.note = f"{symbol}: kein Einstieg (Spread im Orderbuch zu gross)"
             return
         if not self.risk.can_open(equity, when, self.open_risk(equity), len(self.open_trades)):
-            log.info("%s %s: kein Einstieg (%s)", when, symbol, self.risk.last_block)
+            self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
+            log.info("%s %s", when, self.note)
             return
         if self.context and not self.context.allows(signal):
-            log.info("%s %s: Signal %+d blockiert durch Nachrichtenlage %s", when, symbol, signal, self.context.summary())
+            s = self.context.summary()
+            self.note = f"{symbol}: Einstieg pausiert wegen Nachrichtenlage ({s['event'] if s['event'] != '-' else 'News ' + str(s['news_score'])})"
+            log.info("%s %s", when, self.note)
             return
         factor = size_factor * (self.context.size_factor() if self.context else 1.0)
         plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor)
         if not plan:
+            self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             return
         fill = (self.broker.buy(symbol, plan.qty, price) if signal > 0
                 else self.broker.sell(symbol, plan.qty, price, short=True))
@@ -70,6 +82,7 @@ class Trader:
             info["session"] = session(when)
             self.open_trades[symbol] = OpenTrade(signal, fill.price, fill.qty, plan.stop, plan.target, when, info)
             self.risk.record_open()
+            self.note = f"{symbol}: {'gekauft' if signal > 0 else 'short eröffnet'} {fill.qty:.6f} @ {fill.price:.2f}"
             log.info("%s %s %s %.6f @ %.2f (Stop %.2f, Ziel %.2f)", when, "LONG" if signal > 0 else "SHORT",
                      symbol, fill.qty, fill.price, plan.stop, plan.target)
 

@@ -73,7 +73,7 @@ def status(cfg: Config) -> None:
     print(f"Cash: {trader.broker.cash():.2f}")
     for s, t in trader.open_trades.items():
         pnl = t.side * (prices[s] - t.entry) * t.qty
-        print(f"Offen: {s} {'long' if t.side > 0 else 'short'} {t.qty:.6f} @ {t.entry:.2f}, "
+        print(f"Offen seit {str(t.opened)[:16]}: {s} {'long' if t.side > 0 else 'short'} {t.qty:.6f} @ {t.entry:.2f}, "
               f"jetzt {prices[s]:.2f}, Gewinn/Verlust {pnl:+.2f}, Stop {t.stop:.2f}")
     if not trader.open_trades:
         print("Keine offene Position (in Cash).")
@@ -85,6 +85,8 @@ def status(cfg: Config) -> None:
     for s in cfg.symbols:
         sig = int(strat.signals(data.fetch_recent(ex, s, cfg.timeframe)).iloc[-1])
         print(f"Aktuelles Signal {s}: {({1: 'investiert sein', -1: 'raus / Cash', 0: 'neutral'})[sig]}")
+    if trader.note:
+        print(f"Letzte Entscheidung des Bots: {trader.note}")
     if trader.risk.halted:
         print(f"NOT-AUS aktiv: {trader.risk.halt_reason}")
 

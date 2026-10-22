@@ -20,6 +20,7 @@ strategy_params:
   period: 200
 allow_short: false
 poll_seconds: 300
+reevaluate: true      # stündlich nachprüfen: wurde ein Einstieg z.B. wegen News verschoben, holt er ihn nach
 
 use_news: true
 news_refresh_minutes: 15

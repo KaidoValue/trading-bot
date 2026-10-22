@@ -70,11 +70,12 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             frames = {}
             for s in ([] if trader.risk.halted else cfg.symbols):
                 df = frames[s] = data.fetch_recent(exchange, s, cfg.timeframe)
-                if last_bar.get(s) == df.index[-1]:
+                if last_bar.get(s) == df.index[-1] and not cfg.reevaluate:
                     continue  # keine neue abgeschlossene Kerze
                 last_bar[s] = df.index[-1]
                 sig = int(strategy.signals(df).iloc[-1])
                 if sig == 0:
+                    trader.note = f"{s}: kein Signal"
                     continue
                 spread = _spread(exchange, s)
                 liquid = spread is None or spread <= cfg.risk.max_spread_pct

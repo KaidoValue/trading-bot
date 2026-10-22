@@ -41,6 +41,8 @@ def save(path: Path, trader: Trader, last_bar: dict) -> None:
         "open_trades": {s: vars(t) for s, t in trader.open_trades.items()},
         "closed": trader.closed,
         "last_bar": last_bar,
+        "note": trader.note,
+        "updated": datetime.now().astimezone(),
         "risk": {"peak_equity": r.peak_equity, "day": r.day, "day_start_equity": r.day_start_equity,
                  "trades_today": r.trades_today, "loss_streak": r.loss_streak, "paused_until": r.paused_until,
                  "halted": r.halted, "halted_on": r.halted_on, "halt_reason": r.halt_reason},
@@ -60,6 +62,7 @@ def load(path: Path, trader: Trader) -> dict:
     state = _walk(json.loads(path.read_text()), _dec)
     trader.open_trades = {s: OpenTrade(**t) for s, t in state["open_trades"].items()}
     trader.closed = state["closed"]
+    trader.note = state.get("note", "")
     for k, v in state["risk"].items():
         setattr(trader.risk, k, v)
     if "paper" in state and isinstance(trader.broker, PaperBroker):
