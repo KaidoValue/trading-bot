@@ -57,6 +57,7 @@ class Headline:
     source: str
     title: str
     published: datetime
+    link: str = ""
 
 
 @dataclass
@@ -67,6 +68,7 @@ class MarketContext:
     confirmed: dict[str, list[str]] = field(default_factory=dict)   # Thema -> Quellen
     fetched_at: float = 0.0
     alerts: list = field(default_factory=list)    # aktuelle Ereignis-Alarme (siehe events.py)
+    evidence: list = field(default_factory=list)  # Schlagzeilen hinter den bestätigten Themen
     blackout: str | None = None                   # wichtiger Wirtschaftstermin steht an
 
     def allows(self, side: int, block_level: float = 0.5) -> bool:
@@ -87,6 +89,12 @@ class MarketContext:
         if self.fear_greed is not None and (self.fear_greed <= 15 or self.fear_greed >= 85):
             return 0.5
         return 1.0
+
+    def to_dict(self) -> dict:
+        return {"fear_greed": self.fear_greed, "news_score": self.news_score, "themes": self.confirmed,
+                "blackout": self.blackout, "evidence": self.evidence,
+                "alerts": [{"who": a.who, "title": a.title, "source": a.source,
+                            "published": a.published.isoformat()} for a in self.alerts]}
 
     def summary(self) -> dict:
         return {"fear_greed": self.fear_greed, "news_score": round(self.news_score, 2),
@@ -119,7 +127,7 @@ def parse_feed(source: str, xml_bytes: bytes) -> list[Headline]:
         if published.tzinfo is None:
             published = published.replace(tzinfo=timezone.utc)
         if title:
-            out.append(Headline(source, title, published))
+            out.append(Headline(source, title, published, (item.findtext("link") or "").strip()))
     return out
 
 
@@ -158,6 +166,56 @@ def score_headlines(headlines: list[Headline], asset: str, min_sources: int = 2,
     return max(-1.0, min(1.0, score)), confirmed
 
 
+def evidence(headlines: list[Headline], asset: str, themes, max_age_hours: float = 24,
+             now: datetime | None = None, limit: int = 8) -> list[dict]:
+    """Die Schlagzeilen, auf denen die bestätigten Themen beruhen (neueste zuerst)."""
+    now = now or datetime.now(timezone.utc)
+    relevant_words = ASSET_WORDS.get(asset.upper(), [asset.lower()]) + GENERAL_WORDS
+    out = []
+    for h in sorted(headlines, key=lambda h: h.published, reverse=True):
+        if now - h.published > timedelta(hours=max_age_hours):
+            continue
+        text = f" {h.title.lower()} "
+        if not any(w in text for w in relevant_words):
+            continue
+        hit = next((t for t in themes if any(w in text for w in THEMES[t][1])), None)
+        if hit:
+            out.append({"theme": hit, "source": h.source, "title": h.title, "link": h.link,
+                        "published": h.published.isoformat()})
+    return out[:limit]
+
+
+def briefing(ctx: dict) -> str:
+    """Kurzinfo zur Nachrichtenlage als Markdown (für STATUS.md)."""
+    lines = ["## Nachrichtenlage", ""]
+    fg = ctx.get("fear_greed")
+    if fg is not None:
+        mood = ("extreme Angst" if fg <= 25 else "Angst" if fg <= 45 else "neutral" if fg <= 55
+                else "Gier" if fg <= 75 else "extreme Gier")
+        lines.append(f"- **Stimmung (Fear & Greed):** {fg} von 100, {mood}")
+    else:
+        lines.append("- **Stimmung (Fear & Greed):** nicht abrufbar")
+    score = ctx.get("news_score", 0)
+    themes = ctx.get("themes") or {}
+    lines.append(f"- **Bewertung News:** {score:+.2f} (−1 sehr negativ bis +1 sehr positiv)")
+    if themes:
+        lines.append("- **Bestätigte Themen:** " + "; ".join(f"{t} (gemeldet von {', '.join(s)})" for t, s in themes.items()))
+    else:
+        lines.append("- **Bestätigte Themen:** keine")
+    if ctx.get("blackout"):
+        lines.append(f"- **Wirtschaftstermin:** {ctx['blackout']}, keine neuen Trades")
+    for a in ctx.get("alerts") or []:
+        lines.append(f"- **Ereignis:** {a['who']}: {a['title']} ({a['source']}, {a['published'][11:16]} UTC)")
+    ev = ctx.get("evidence") or []
+    if ev:
+        lines += ["", "**Schlagzeilen dazu:**", ""]
+        for e in ev:
+            when = e["published"][:16].replace("T", " ")
+            title = f"[{e['title']}]({e['link']})" if e.get("link") else e["title"]
+            lines.append(f"- {when} UTC · **{e['source']}** · {title} _(Thema: {e['theme']})_")
+    return "\n".join(lines)
+
+
 class NewsMonitor:
     """Holt die Nachrichtenlage alle `refresh_minutes` neu (schont die Quellen) und prüft
     Ereignisse (Schlüsselpersonen, Behörden, Wirtschaftstermine) alle `event_seconds`."""
@@ -182,6 +240,7 @@ class NewsMonitor:
             self.headlines = fetch_headlines(get=self.get)
             score, confirmed = score_headlines(self.headlines, self.asset, self.min_sources)
             self.context = MarketContext(fetch_fear_greed(self.get), score, confirmed, now)
+            self.context.evidence = evidence(self.headlines, self.asset, confirmed)
             log.info("Marktlage: Fear&Greed=%s, News=%.2f, bestätigte Themen=%s",
                      self.context.fear_greed, score, confirmed or "-")
             self.events_checked = 0.0

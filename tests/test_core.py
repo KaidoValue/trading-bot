@@ -323,3 +323,14 @@ def test_state_survives_restart(df, monkeypatch, tmp_path):
     t2 = bot.make_trader(cfg, ex)
     state.load(cfg.state_path, t2)
     assert len(t2.closed) >= n_closed
+
+
+def test_news_briefing_lists_sources_and_links():
+    hs = [Headline("coindesk", "SEC sues crypto exchange over listings", NOW - timedelta(hours=2), "https://x/1"),
+          Headline("decrypt", "Crypto exchange faces SEC lawsuit", NOW - timedelta(hours=1), "https://x/2")]
+    score, confirmed = news.score_headlines(hs, "BTC", now=NOW)
+    ctx = MarketContext(fear_greed=30, news_score=score, confirmed=confirmed,
+                        evidence=news.evidence(hs, "BTC", confirmed, now=NOW))
+    md = news.briefing(ctx.to_dict())
+    assert "klage" in md and "[Crypto exchange faces SEC lawsuit](https://x/2)" in md and "decrypt" in md
+    assert md.index("decrypt") < md.index("coindesk**")

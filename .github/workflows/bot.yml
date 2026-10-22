@@ -45,6 +45,8 @@ jobs:
             echo '```'
             python -m tradingbot status --config config_langfrist.yaml
             echo '```'
+            echo
+            python -m tradingbot news --config config_langfrist.yaml
           } > STATUS.md
           cat STATUS.md
 

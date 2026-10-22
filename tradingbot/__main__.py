@@ -93,7 +93,7 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news"])
     p.add_argument("--config", default="config.yaml")
     p.add_argument("--days", type=int, default=365)
     p.add_argument("--synthetic", action="store_true", help="simulierte statt echter Kursdaten")
@@ -141,6 +141,12 @@ def main() -> None:
         report(pd.read_csv("logs/trades.csv"))
     elif args.command == "status":
         status(cfg)
+    elif args.command == "news":
+        import json
+        from .news import briefing
+        cfg.mode = "paper"
+        st = json.loads(cfg.state_path.read_text()) if cfg.state_path.exists() else {}
+        print(briefing(st["news"]) if st.get("news") else "## Nachrichtenlage\n\nNoch keine Daten.")
     elif args.command == "paper":
         cfg.mode = "paper"
         bot.run(cfg, max_iterations=1 if args.once else None)

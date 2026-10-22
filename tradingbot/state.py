@@ -42,6 +42,7 @@ def save(path: Path, trader: Trader, last_bar: dict) -> None:
         "closed": trader.closed,
         "last_bar": last_bar,
         "note": trader.note,
+        "news": trader.context.to_dict() if trader.context else None,
         "updated": datetime.now().astimezone(),
         "risk": {"peak_equity": r.peak_equity, "day": r.day, "day_start_equity": r.day_start_equity,
                  "trades_today": r.trades_today, "loss_streak": r.loss_streak, "paused_until": r.paused_until,
