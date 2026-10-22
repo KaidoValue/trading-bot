@@ -67,7 +67,7 @@ class Trader:
             return
         if self.context and not self.context.allows(signal):
             s = self.context.summary()
-            self.note = f"{symbol}: Einstieg pausiert wegen Nachrichtenlage ({s['event'] if s['event'] != '-' else 'News ' + str(s['news_score'])})"
+            self.note = f"{symbol}: Einstieg pausiert wegen Nachrichtenlage ({s['event'] if s['event'] != '-' else 'bestätigte Themen: ' + s['news_themes'] + ', Wert ' + str(s['news_score'])})"
             log.info("%s %s", when, self.note)
             return
         factor = size_factor * (self.context.size_factor() if self.context else 1.0)
