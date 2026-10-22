@@ -334,3 +334,11 @@ def test_news_briefing_lists_sources_and_links():
     md = news.briefing(ctx.to_dict())
     assert "klage" in md and "[Crypto exchange faces SEC lawsuit](https://x/2)" in md and "decrypt" in md
     assert md.index("decrypt") < md.index("coindesk**")
+
+
+def test_lawsuit_alone_does_not_block():
+    hs = [_h("a", "Shareholder sues Trump over crypto deals"), _h("b", "Crypto lawsuit filed against Trump")]
+    score, confirmed = news.score_headlines(hs, "BTC", now=NOW)
+    assert "klage" in confirmed and MarketContext(news_score=score, confirmed=confirmed).allows(1)
+    alerts = events.detect_alerts(hs, set(), NOW, window_minutes=120)
+    assert MarketContext(alerts=alerts).allows(1)

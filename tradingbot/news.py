@@ -35,7 +35,7 @@ FEEDS = {
 THEMES = {
     "hack": (-1.0, ["hack", "exploit", "stolen", "drained", "breach"]),
     "verbot": (-0.8, ["ban ", "bans ", "banned", "crackdown", "prohibit"]),
-    "klage": (-0.6, ["lawsuit", "sues ", "charged", "indictment", "sec sues"]),
+    "klage": (-0.3, ["lawsuit", "sues ", "charged", "indictment", "sec sues"]),   # nur Hinweis, blockiert allein nicht
     "insolvenz": (-1.0, ["bankrupt", "insolvency", "collapse", "halts withdrawals", "suspends withdrawals"]),
     "crash": (-0.7, ["crash", "plunge", "liquidations", "sell-off", "selloff"]),
     "etf_zulassung": (0.8, ["etf approv", "approves etf", "etf inflow", "record inflows"]),
@@ -78,7 +78,7 @@ class MarketContext:
             return False
         if self.alerts:
             impact = sum(a.impact for a in self.alerts) / len(self.alerts)
-            if abs(impact) < 0.3 or impact * side < 0:
+            if abs(impact) < 0.3 or (impact * side < 0 and abs(impact) >= block_level):
                 return False
         if side > 0:
             return self.news_score > -block_level
@@ -199,7 +199,10 @@ def briefing(ctx: dict) -> str:
     themes = ctx.get("themes") or {}
     lines.append(f"- **Bewertung News:** {score:+.2f} (−1 sehr negativ bis +1 sehr positiv)")
     if themes:
-        lines.append("- **Bestätigte Themen:** " + "; ".join(f"{t} (gemeldet von {', '.join(s)})" for t, s in themes.items()))
+        def label(t):
+            imp = THEMES.get(t, (0,))[0]
+            return " – nur Hinweis, blockiert nicht" if abs(imp) < 0.5 else " – blockiert Käufe" if imp < 0 else " – blockiert Shorts"
+        lines.append("- **Bestätigte Themen:** " + "; ".join(f"{t} (gemeldet von {', '.join(s)}{label(t)})" for t, s in themes.items()))
     else:
         lines.append("- **Bestätigte Themen:** keine")
     if ctx.get("blackout"):
