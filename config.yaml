@@ -1,0 +1,55 @@
+# Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
+mode: paper
+
+# Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
+exchange: kraken      # oder bitstamp (Vergleich im README)
+symbols: ["BTC/CHF"]
+timeframe: 1h
+
+# Kursdaten für Backtests (Kraken liefert nur ca. 30 Tage, Bitstamp mehrere Jahre)
+history_exchange: bitstamp
+history_symbol: BTC/USD
+
+# Startkapital für Backtest und Paper-Trading (in Quote-Währung, hier CHF)
+starting_capital: 1000
+fee_rate: 0.0026     # Börsengebühr pro Order
+slippage: 0.0005
+
+# trend | mean_reversion | breakout | pullback | momentum | price_action | smc | reversal | range
+# | ensemble | adaptive (lernend, gewichtet alle 9 nach ihrem aktuellen Erfolg)
+strategy: adaptive
+
+# Auch auf fallende Kurse setzen (Short). Nur Backtest und Paper-Modus.
+allow_short: false
+strategy_params: {}
+
+poll_seconds: 60
+
+# Infos aus dem Netz (nur Paper/Live): Fear & Greed Index + News von mehreren Portalen
+use_news: true
+news_refresh_minutes: 15
+news_min_sources: 2   # ein Thema zählt erst, wenn so viele Portale darüber berichten
+
+# Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender (Zinsentscheide, Inflation)
+use_events: true
+event_pause_minutes: 30
+# Eigene Quellen als RSS-Feed, z.B. von einem RSS-Dienst für Truth-Social- oder X-Konten:
+event_feeds: {}
+#  trump_truthsocial: "https://<dein-rss-dienst>/truthsocial/realDonaldTrump.xml"
+#  elon_x: "https://<dein-rss-dienst>/x/elonmusk.xml"
+
+risk:
+  risk_per_trade: 0.01
+  stop_loss_atr: 2.0
+  take_profit_atr: 4.0
+  max_position_pct: 0.25
+  max_daily_loss_pct: 0.03
+  max_drawdown_pct: 0.15
+  min_order_value: 10
+  max_total_risk_pct: 0.03   # Gesamtrisiko aller offenen Positionen
+  max_open_positions: 3
+  max_trades_per_day: 6      # gegen Overtrading
+  loss_streak_pause: 3       # nach 3 Verlusten in Folge ...
+  pause_hours: 12            # ... 12 Stunden Pause
+  max_spread_pct: 0.003      # kein Einstieg bei Spread > 0,3 %
+  correlation_limit: 0.8     # korrelierte Positionen halbe Grösse

@@ -1,0 +1,46 @@
+# Langfrist-Variante: Tageskerzen, wenige Trades, grosse Positionen.
+# Benutzen mit:  py -3.13 -m tradingbot compare --config config_langfrist.yaml --days 2500
+#
+# Achtung: Hier ist fast das ganze Kapital investiert. Schwankungen von 20-30 % sind möglich,
+# deshalb ist der Not-Aus erst bei 35 % Rückgang eingestellt.
+
+mode: paper
+exchange: kraken
+symbols: ["BTC/CHF"]
+timeframe: 1d
+history_exchange: bitstamp
+history_symbol: BTC/USD
+starting_capital: 1000
+fee_rate: 0.0026
+slippage: 0.0005
+
+# regime = 200-Tage-Linie: investiert über der Linie, sonst Cash
+strategy: regime
+strategy_params:
+  period: 200
+allow_short: false
+poll_seconds: 300
+
+use_news: true
+news_refresh_minutes: 15
+news_min_sources: 2
+use_events: true
+event_pause_minutes: 30
+event_feeds: {}
+
+risk:
+  risk_per_trade: 0.20        # Stop weit weg, deshalb grosser Risikobetrag pro Trade
+  stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
+  take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
+  max_position_pct: 0.95
+  max_daily_loss_pct: 0.15
+  max_drawdown_pct: 0.35
+  halt_days: 30              # nach Not-Aus 30 Tage Pause, dann geht es weiter
+  min_order_value: 10
+  max_total_risk_pct: 0.30
+  max_open_positions: 1
+  max_trades_per_day: 2
+  loss_streak_pause: 99
+  pause_hours: 0
+  max_spread_pct: 0.003
+  correlation_limit: 0.8
