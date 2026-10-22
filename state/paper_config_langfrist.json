@@ -1,0 +1,26 @@
+{
+  "open_trades": {},
+  "closed": [],
+  "last_bar": {
+    "BTC/CHF": {
+      "__dt__": "2026-10-21T00:00:00+00:00"
+    }
+  },
+  "risk": {
+    "peak_equity": 1000,
+    "day": {
+      "__dt__": "2026-10-22"
+    },
+    "day_start_equity": 1000.0,
+    "trades_today": 0,
+    "loss_streak": 0,
+    "paused_until": null,
+    "halted": false,
+    "halted_on": null,
+    "halt_reason": ""
+  },
+  "paper": {
+    "cash": 1000,
+    "positions": {}
+  }
+}
