@@ -35,6 +35,10 @@ jobs:
       - name: Bot einmal laufen lassen (Demo)
         run: python -m tradingbot paper --config config_langfrist.yaml --once
 
+      - name: Vergleichs-Bot Daytrading (Demo)
+        run: python -m tradingbot paper --config config_daytrading.yaml --once
+        continue-on-error: true
+
       - name: Stand anzeigen und in STATUS.md schreiben
         run: |
           {
@@ -42,8 +46,16 @@ jobs:
             echo
             echo "Letzte Aktualisierung: $(date -u '+%d.%m.%Y %H:%M') UTC"
             echo
+            echo "## Langfrist-Bot (200-Tage-Regel, Hauptbot)"
+            echo
             echo '```'
             python -m tradingbot status --config config_langfrist.yaml
+            echo '```'
+            echo
+            echo "## Vergleichs-Bot Daytrading (1-Stunden-Kerzen)"
+            echo
+            echo '```'
+            python -m tradingbot status --config config_daytrading.yaml || echo "noch keine Daten"
             echo '```'
             echo
             python -m tradingbot news --config config_langfrist.yaml
