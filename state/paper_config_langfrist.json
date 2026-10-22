@@ -7,8 +7,36 @@
     }
   },
   "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: klage, Wert -0.6)",
+  "news": {
+    "fear_greed": 68,
+    "news_score": -0.6,
+    "themes": {
+      "klage": [
+        "bitcoinmagazine",
+        "cointelegraph"
+      ]
+    },
+    "blackout": null,
+    "evidence": [
+      {
+        "theme": "klage",
+        "source": "cointelegraph",
+        "title": "Circle shareholder sues Trump, World Liberty and Steve Witkoff over crypto deals",
+        "link": "https://cointelegraph.com/news/circle-shareholder-lawsuit-donald-trump-world-liberty-financial-steve-witkoff-crypto-corruption?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-22T21:39:18+00:00"
+      },
+      {
+        "theme": "klage",
+        "source": "bitcoinmagazine",
+        "title": "Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals",
+        "link": "https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption",
+        "published": "2026-10-22T21:23:58+00:00"
+      }
+    ],
+    "alerts": []
+  },
   "updated": {
-    "__dt__": "2026-10-22T23:04:28.089915+00:00"
+    "__dt__": "2026-10-22T23:14:40.298594+00:00"
   },
   "risk": {
     "peak_equity": 1000,
