@@ -6,6 +6,10 @@
       "__dt__": "2026-10-21T00:00:00+00:00"
     }
   },
+  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (News -0.6)",
+  "updated": {
+    "__dt__": "2026-10-22T23:03:02.262115+00:00"
+  },
   "risk": {
     "peak_equity": 1000,
     "day": {
