@@ -1,1 +1,76 @@
-[]
+[
+ {
+  "entry": [
+   "below_sma200",
+   "bb_below",
+   "bear_candle"
+  ],
+  "exit": [
+   "bias_down",
+   "bull_div"
+  ],
+  "train_return": 0.5873019304884388,
+  "test_return": 0.2104760873818085,
+  "test_trades": 12,
+  "buy_hold_test": 0.14571991388892802,
+  "accepted": true,
+  "name": "labor_3",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn Marktstruktur abwärts UND bullishe RSI-Divergenz."
+ },
+ {
+  "entry": [
+   "below_sma200",
+   "bb_below",
+   "bear_candle"
+  ],
+  "exit": [
+   "bull_div"
+  ],
+  "train_return": 0.5317032015525587,
+  "test_return": 0.17928480296508464,
+  "test_trades": 16,
+  "buy_hold_test": 0.14571991388892802,
+  "accepted": true,
+  "name": "labor_4",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn bullishe RSI-Divergenz."
+ },
+ {
+  "entry": [
+   "bb_below",
+   "bear_candle"
+  ],
+  "exit": [
+   "premium",
+   "bull_div"
+  ],
+  "train_return": 0.6150861811822034,
+  "test_return": 0.14753048648216077,
+  "test_trades": 16,
+  "buy_hold_test": 0.14571991388892802,
+  "accepted": true,
+  "name": "labor_2",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn Kurs im oberen Teil der Range (Premium) UND bullishe RSI-Divergenz."
+ },
+ {
+  "entry": [
+   "below_sma200",
+   "bear_candle",
+   "bb_below"
+  ],
+  "exit": [
+   "premium",
+   "bull_div"
+  ],
+  "train_return": 0.6887245254429087,
+  "test_return": 0.10424340467862031,
+  "test_trades": 11,
+  "buy_hold_test": 0.14571991388892802,
+  "accepted": true,
+  "name": "labor_1",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND bearishes Kerzenmuster UND Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn Kurs im oberen Teil der Range (Premium) UND bullishe RSI-Divergenz."
+ }
+]
