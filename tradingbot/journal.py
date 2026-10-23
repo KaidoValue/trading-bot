@@ -28,6 +28,8 @@ LESSON = {
     "Stop-Loss (Gap)": "Der Kurs ist über den Stop hinweg gesprungen (Gap). Stops schützen gut, aber nicht "
                        "immer exakt auf den Rappen.",
     "Take-Profit": "Das Gewinnziel wurde erreicht: Der Plan mit festem Chance-Risiko-Verhältnis ist aufgegangen.",
+    "Liquidation": "Mit Hebel war die Sicherheit aufgebraucht: Die Börse hat alle Positionen zwangsweise "
+                   "geschlossen. Hebel vervielfacht Verluste genauso wie Gewinne.",
     "Not-Aus": "Das Verlustlimit des ganzen Kontos wurde erreicht. Der Not-Aus verhindert, dass aus einem "
                "schlechten Lauf ein Totalverlust wird.",
 }
@@ -62,7 +64,9 @@ def opened(cfg, symbol: str, t, when) -> str:
             f"- **Warum:** {why}\n"
             f"- **Stop-Loss:** {_chf(t.stop)} CHF ({(t.stop / t.entry - 1) * 100:+.1f} %), "
             f"möglicher Verlust ca. {_chf(abs(t.entry - t.stop) * t.qty)} CHF\n"
-            f"- **Marktlage:** {_market(t.context)}\n")
+            f"- **Marktlage:** {_market(t.context)}\n"
+            + (f"- **Hebel:** {cfg.risk.leverage:g}×: jede Kursbewegung wirkt {cfg.risk.leverage:g}-fach auf das "
+               f"Konto, dazu kommen Zinsen auf das geliehene Geld.\n" if cfg.risk.leverage > 1 else ""))
 
 
 def closed(cfg, trade: dict) -> str:

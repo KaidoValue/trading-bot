@@ -57,6 +57,7 @@ def run(df: pd.DataFrame, strategy: Strategy, cfg: Config, symbol: str = "SYM") 
     signals = strategy.signals(df)
     atr = ind.atr(df)
     broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
+    broker.leverage = cfg.risk.leverage
     trader = Trader(broker, RiskManager(cfg.risk, cfg.starting_capital), allow_short=cfg.allow_short)
     curve = []
     in_market = 0

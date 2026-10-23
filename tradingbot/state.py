@@ -49,7 +49,8 @@ def save(path: Path, trader: Trader, last_bar: dict) -> None:
                  "halted": r.halted, "halted_on": r.halted_on, "halt_reason": r.halt_reason},
     }
     if isinstance(trader.broker, PaperBroker):
-        state["paper"] = {"cash": trader.broker._cash, "positions": trader.broker.positions}
+        state["paper"] = {"cash": trader.broker._cash, "positions": trader.broker.positions,
+                          "interest_paid": trader.broker.interest_paid, "interest_at": trader.broker.interest_at}
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(_walk(state, _enc), indent=2, default=str))
@@ -69,4 +70,6 @@ def load(path: Path, trader: Trader) -> dict:
     if "paper" in state and isinstance(trader.broker, PaperBroker):
         trader.broker._cash = state["paper"]["cash"]
         trader.broker.positions = state["paper"]["positions"]
+        trader.broker.interest_paid = state["paper"].get("interest_paid", 0.0)
+        trader.broker.interest_at = state["paper"].get("interest_at")
     return {s: pd.Timestamp(v) for s, v in state["last_bar"].items()}

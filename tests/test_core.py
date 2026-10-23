@@ -430,3 +430,25 @@ def test_breakout_hold_has_no_lookahead_and_stays_in_market(df):
     full = s.signals(df)
     pd.testing.assert_series_equal(full.iloc[:1000], s.signals(df.iloc[:1000]), check_names=False)
     assert (full.iloc[100:] != 0).all()
+
+
+def test_leverage_sizing_interest_and_liquidation():
+    from tradingbot.broker import PaperBroker
+    from tradingbot.engine import Trader
+    rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, liquidation_margin=0.5)
+    plan = RiskManager(rc, 1000).plan(1000, 1000, 100, 1)
+    assert plan.qty == pytest.approx(29.7)                 # 3 x 1000 CHF Kaufkraft (minus Reserve)
+    b = PaperBroker(1000, 0.0, 0.0)
+    b.leverage = 3.0
+    t = Trader(b, RiskManager(rc, 1000))
+    b.buy("BTC/CHF", 30, 100)                               # 3000 CHF Position, 2000 geliehen
+    assert b.cash() == pytest.approx(-2000)
+    assert b.charge_interest({"BTC/CHF": 100}, 24, 0.001) == pytest.approx(2.0)
+    assert not bot.liquidation(t, {"BTC/CHF": 95}, rc)     # -5 % Kurs = -15 % Konto
+    assert bot.liquidation(t, {"BTC/CHF": 79}, rc)         # -21 % Kurs: Kapital < 50 % der Sicherheit -> zu
+
+
+def test_leverage_refused_in_live_mode():
+    cfg = Config(mode="live", risk=RiskConfig(leverage=2.0))
+    with pytest.raises(SystemExit):
+        bot.make_trader(cfg, None)

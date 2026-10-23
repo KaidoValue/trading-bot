@@ -91,6 +91,8 @@ def overview(bots: list[Bot]) -> list[str]:
         ("Offene Positionen", lambda b: str(len(b.trader.open_trades))),
         ("Abgeschlossene Trades", lambda b: str(len(b.trader.closed))),
         ("Strategie", lambda b: f"{b.cfg.strategy}, {b.cfg.timeframe}-Kerzen"),
+        ("Hebel", lambda b: (f"{b.cfg.risk.leverage:g}× (Zinsen bisher {chf(b.trader.broker.interest_paid)} CHF)"
+                             if b.cfg.risk.leverage > 1 else "ohne")),
     ]
     out = [head, "|---" * (len(bots) + 1) + "|"]
     out += [f"| {label} | " + " | ".join(fn(b) for b in bots) + " |" for label, fn in rows]

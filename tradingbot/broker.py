@@ -32,6 +32,9 @@ class PaperBroker(Broker):
         self.slippage = slippage
         self.positions: dict[str, float] = {}
         self.extra_fee: dict[str, float] = {}     # Zusatzkosten je Coin, z.B. Umtausch CHF -> USD
+        self.leverage = 1.0                       # > 1: Cash darf negativ werden (geliehenes Geld, nur Demo)
+        self.interest_paid = 0.0
+        self.interest_at = None                   # Zeitpunkt der letzten Zinsabrechnung
 
     def cash(self):
         return self._cash
@@ -45,7 +48,7 @@ class PaperBroker(Broker):
     def buy(self, symbol, qty, price):
         px = price * (1 + self.slippage)
         fee = qty * px * self.fee(symbol)
-        if self.position(symbol) >= 0 and qty * px + fee > self._cash:
+        if self.leverage <= 1 and self.position(symbol) >= 0 and qty * px + fee > self._cash:
             qty = self._cash / (px * (1 + self.fee(symbol)))
             fee = qty * px * self.fee(symbol)
         if qty <= 0:
@@ -53,6 +56,16 @@ class PaperBroker(Broker):
         self._cash -= qty * px + fee
         self.positions[symbol] = self.position(symbol) + qty
         return Fill(symbol, "buy", qty, px, fee)
+
+    def borrowed(self, prices: dict[str, float]) -> float:
+        """Geliehener Betrag: negatives Cash (Kauf mit Hebel) plus Wert der leerverkauften Coins (Short)."""
+        return max(0.0, -self._cash) + sum(-q * prices[s] for s, q in self.positions.items() if q < 0 and s in prices)
+
+    def charge_interest(self, prices: dict[str, float], hours: float, rate_per_day: float) -> float:
+        fee = self.borrowed(prices) * rate_per_day * max(hours, 0.0) / 24
+        self._cash -= fee
+        self.interest_paid += fee
+        return fee
 
     def sell(self, symbol, qty, price, short=False):
         """Verkauft Bestand. Mit short=True wird leerverkauft (Position wird negativ)."""

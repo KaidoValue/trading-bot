@@ -21,6 +21,8 @@ log = logging.getLogger(__name__)
 
 def make_trader(cfg: Config, exchange) -> Trader:
     if cfg.mode == "live":
+        if cfg.risk.leverage > 1:
+            raise SystemExit("Hebel ist nur im Demo-Modus verfügbar.")
         if cfg.allow_short:
             raise SystemExit("Short-Handel ist nur im Backtest und Paper-Modus verfügbar.")
         if not cfg.api_key:
@@ -29,6 +31,7 @@ def make_trader(cfg: Config, exchange) -> Trader:
         start = broker.cash()
     else:
         broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
+        broker.leverage = cfg.risk.leverage
         start = cfg.starting_capital
     return Trader(broker, RiskManager(cfg.risk, start), allow_short=cfg.allow_short)
 
@@ -67,7 +70,17 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             for s in cfg.symbols:
                 p = prices[s]
                 trader.check_stops(s, p, p, p, now)
+            if isinstance(trader.broker, PaperBroker):
+                b = trader.broker
+                if b.interest_at is not None:
+                    b.charge_interest(prices, (now - b.interest_at).total_seconds() / 3600,
+                                      cfg.risk.margin_interest_per_day)
+                b.interest_at = now
             eq = trader.equity(prices)
+            if liquidation(trader, prices, cfg.risk):
+                log.error("LIQUIDATION: Sicherheit aufgebraucht, alle Positionen zwangsweise geschlossen")
+                trader.close_all(prices, "Liquidation", now)
+                eq = trader.equity(prices)
             trader.risk.update(eq, now.date())
             if trader.risk.halted:
                 trader.close_all(prices, "Not-Aus", now)
@@ -105,6 +118,15 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             log.exception("Fehler im Durchlauf: %s", e)
         if max_iterations is None or n < max_iterations:
             time.sleep(cfg.poll_seconds)
+
+
+def liquidation(trader: Trader, prices: dict[str, float], risk) -> bool:
+    """Wie an der Börse: mit Hebel muss das Kapital mindestens `liquidation_margin` der Sicherheit decken,
+    die für die offenen Positionen hinterlegt ist (Positionswert / Hebel). Sonst wird alles geschlossen."""
+    if risk.leverage <= 1:
+        return False
+    notional = sum(abs(trader.broker.position(s)) * p for s, p in prices.items())
+    return notional > 0 and trader.equity(prices) < notional / risk.leverage * risk.liquidation_margin
 
 
 def available_symbols(exchange, symbols: list[str]) -> list[str]:

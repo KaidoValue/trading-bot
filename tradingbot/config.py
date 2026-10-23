@@ -26,6 +26,9 @@ class RiskConfig:
     pause_hours: float = 12             # ... so lange keine neuen Trades (gegen "Revenge Trading")
     max_spread_pct: float = 0.003       # kein Einstieg, wenn Spread grösser (Liquiditätsfilter, nur Paper/Live)
     correlation_limit: float = 0.8      # stark korrelierte Positionen in gleicher Richtung nur halb so gross
+    leverage: float = 1.0               # Hebel, NUR Demo: Positionen bis zum x-fachen des Kapitals
+    margin_interest_per_day: float = 0.0012   # Zinsen auf Geliehenes (Kraken ca. 0,02 % pro 4 Std.), auch für Shorts
+    liquidation_margin: float = 0.5     # Zwangsschliessung, wenn Kapital < 50 % der hinterlegten Sicherheit
 
 
 @dataclass

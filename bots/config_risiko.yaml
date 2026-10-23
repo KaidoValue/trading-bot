@@ -2,8 +2,8 @@
 # Dient als Vergleich: Zeigt, was passiert, wenn man aggressiv handelt. Für echtes Geld nicht geeignet.
 
 mode: paper
-title: "3️⃣ Risiko-Bot (aggressiv)"
-description: "Sehr risikofreudig: viele Trades alle 30 Minuten, setzt auch auf fallende Kurse (Short), 5 % Risiko pro Trade, ignoriert Nachrichten."
+title: "3️⃣ Risiko-Bot (aggressiv, Hebel 3×)"
+description: "Sehr risikofreudig: viele Trades alle 30 Minuten, setzt auch auf fallende Kurse (Short), 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
 timeframe: 30m           # passt zum Takt auf GitHub (alle 30 Minuten)
@@ -43,3 +43,6 @@ risk:
   pause_hours: 0
   max_spread_pct: 0.01
   correlation_limit: 1.01     # keine Verkleinerung bei ähnlichen Coins
+  leverage: 3.0               # Hebel 3x, NUR Demo (live gesperrt): Positionen bis zum 3-fachen des Kapitals
+  margin_interest_per_day: 0.0012   # Zinsen auf geliehenes Geld bzw. geliehene Coins (Kraken ca. 0,02 % pro 4 Std.)
+  liquidation_margin: 0.5     # Zwangsschliessung, wenn das Kapital unter 50 % der Sicherheit fällt

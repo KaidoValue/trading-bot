@@ -76,10 +76,11 @@ class RiskManager:
             return None
         stop_dist = self.cfg.stop_loss_atr * atr
         qty = (equity * self.cfg.risk_per_trade * size_factor) / stop_dist
-        qty = min(qty, equity * self.cfg.max_position_pct / price)
+        lev = self.cfg.leverage                     # mit Hebel darf die Position grösser als das Kapital sein
+        qty = min(qty, equity * self.cfg.max_position_pct * lev / price)
         if side > 0:
-            qty = min(qty, cash * 0.99 / price)
-            room = equity * self.cfg.max_invested_pct - (equity - cash)    # noch freier Platz bis zur Obergrenze
+            qty = min(qty, (cash + equity * (lev - 1)) * 0.99 / price)
+            room = equity * self.cfg.max_invested_pct * lev - (equity - cash)    # freier Platz bis zur Obergrenze
             qty = min(qty, max(room, 0.0) / price)
         if qty * price < self.cfg.min_order_value:
             self.last_block = "Order kleiner als Mindestgrösse"
