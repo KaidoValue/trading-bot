@@ -1,0 +1,18 @@
+{
+ "start": 1000.0,
+ "equity": 1000.0,
+ "peak": 1000.0,
+ "weights": {
+  "config_langfrist": 0.5,
+  "config_daytrading": 0.25,
+  "config_risiko": 0.1
+ },
+ "last": {
+  "config_langfrist": 996.9226821577467,
+  "config_daytrading": 995.8609603144838,
+  "config_risiko": 975.90095396039
+ },
+ "history": [],
+ "fees": 0.0,
+ "reason": "Startverteilung"
+}
