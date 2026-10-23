@@ -11,7 +11,7 @@ python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.ya
   > /dev/null 2> logs/uebersicht_fehler.txt || echo "Übersicht konnte nicht erstellt werden"
 { echo; python -m tradingbot news --config config_langfrist.yaml; } >> STATUS.md
 
-git add STATUS.md charts state logs || true
+git add STATUS.md charts state logs lernjournal || true
 git diff --cached --quiet || git commit -q -m "Bot-Lauf $(date -u '+%Y-%m-%d %H:%M')"
 # Falls inzwischen Code-Änderungen hochgeladen wurden: zuerst übernehmen, dann speichern
 for i in 1 2 3; do
