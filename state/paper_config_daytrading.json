@@ -1,41 +1,72 @@
 {
-  "open_trades": {},
+  "open_trades": {
+    "BNB/CHF": {
+      "side": 1,
+      "entry": 617.5179626789999,
+      "qty": 0.40504894613085246,
+      "stop": 611.1426878286028,
+      "target": 629.3426983427942,
+      "opened": {
+        "__dt__": "2026-10-23T16:10:29.028886+00:00"
+      },
+      "context": {
+        "fear_greed": 50,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "New York"
+      }
+    },
+    "ZEC/CHF": {
+      "side": 1,
+      "entry": 1020.506302152,
+      "qty": 0.24509892733885827,
+      "stop": 982.2737603707004,
+      "target": 1095.4413912585992,
+      "opened": {
+        "__dt__": "2026-10-23T16:10:29.028886+00:00"
+      },
+      "context": {
+        "fear_greed": 50,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "New York"
+      }
+    }
+  },
   "closed": [],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-23T11:00:00+00:00"
+      "__dt__": "2026-10-23T15:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: kein Signal | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Signal 'raus', bleibe in Cash | HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: gekauft 0.405049 @ 617.52 | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: gekauft 0.245099 @ 1020.51 | HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 50,
-    "news_score": -1.0,
+    "news_score": -0.3,
     "themes": {
-      "hack": [
-        "bitcoinmagazine",
-        "coindesk"
-      ],
       "klage": [
         "bitcoinmagazine",
         "cointelegraph"
@@ -43,13 +74,6 @@
     },
     "blackout": null,
     "evidence": [
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "India's largest exchange denies hack after sleuths pointed to $16 million in suspicious outflows",
-        "link": "https://www.coindesk.com/markets/2026/10/23/india-s-largest-exchange-denies-hack-after-blockchain-sleuths-pointed-to-usd16-million-in-suspicious-outflows",
-        "published": "2026-10-23T08:02:35+00:00"
-      },
       {
         "theme": "klage",
         "source": "cointelegraph",
@@ -63,19 +87,12 @@
         "title": "Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals",
         "link": "https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption",
         "published": "2026-10-22T21:23:58+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "SpaceX-Tesla Merger: Passive Flows \u2018Hack\u2019, Could Bring More BTC Exposure to S&P 500",
-        "link": "https://bitcoinmagazine.com/videos/spacex-tesla-merger-passive-flows-hack-could-bring-more-btc-exposure-to-sp-500",
-        "published": "2026-10-22T13:33:24+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T12:54:20.586041+00:00"
+    "__dt__": "2026-10-23T16:10:48.833034+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -83,7 +100,7 @@
       "__dt__": "2026-10-23"
     },
     "day_start_equity": 1000.0,
-    "trades_today": 0,
+    "trades_today": 2,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -91,7 +108,10 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1000,
-    "positions": {}
+    "cash": 497.1487000000001,
+    "positions": {
+      "BNB/CHF": 0.40504894613085246,
+      "ZEC/CHF": 0.24509892733885827
+    }
   }
 }

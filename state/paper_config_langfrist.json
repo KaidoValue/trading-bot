@@ -1,5 +1,40 @@
 {
-  "open_trades": {},
+  "open_trades": {
+    "BTC/CHF": {
+      "side": 1,
+      "entry": 67388.77755,
+      "qty": 0.0014846685700117732,
+      "stop": 53251.83784150415,
+      "target": 1830262.8698119817,
+      "opened": {
+        "__dt__": "2026-10-23T16:09:59.037257+00:00"
+      },
+      "context": {
+        "fear_greed": 50,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "New York"
+      }
+    },
+    "ETH/CHF": {
+      "side": 1,
+      "entry": 1986.1925999999999,
+      "qty": 0.04071033640932816,
+      "stop": 1371.1053448089015,
+      "target": 78747.0318988873,
+      "opened": {
+        "__dt__": "2026-10-23T16:09:59.037257+00:00"
+      },
+      "context": {
+        "fear_greed": 50,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "New York"
+      }
+    }
+  },
   "closed": [],
   "last_bar": {
     "BTC/CHF": {
@@ -27,15 +62,11 @@
       "__dt__": "2026-10-22T00:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | TRX/CHF: kein Signal | ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0)",
+  "note": "BTC/CHF: gekauft 0.001485 @ 67388.78 | ETH/CHF: gekauft 0.040710 @ 1986.19 | BNB/CHF: kein Einstieg (max. Trades pro Tag) | XRP/CHF: kein Einstieg (max. Trades pro Tag) | SOL/CHF: kein Einstieg (max. Trades pro Tag) | TRX/CHF: kein Signal | ZEC/CHF: kein Einstieg (max. Trades pro Tag) | HYPE/CHF: kein Einstieg (max. Trades pro Tag)",
   "news": {
     "fear_greed": 50,
-    "news_score": -1.0,
+    "news_score": -0.3,
     "themes": {
-      "hack": [
-        "bitcoinmagazine",
-        "coindesk"
-      ],
       "klage": [
         "bitcoinmagazine",
         "cointelegraph"
@@ -43,13 +74,6 @@
     },
     "blackout": null,
     "evidence": [
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "India's largest exchange denies hack after sleuths pointed to $16 million in suspicious outflows",
-        "link": "https://www.coindesk.com/markets/2026/10/23/india-s-largest-exchange-denies-hack-after-blockchain-sleuths-pointed-to-usd16-million-in-suspicious-outflows",
-        "published": "2026-10-23T08:02:35+00:00"
-      },
       {
         "theme": "klage",
         "source": "cointelegraph",
@@ -63,19 +87,12 @@
         "title": "Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals",
         "link": "https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption",
         "published": "2026-10-22T21:23:58+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "SpaceX-Tesla Merger: Passive Flows \u2018Hack\u2019, Could Bring More BTC Exposure to S&P 500",
-        "link": "https://bitcoinmagazine.com/videos/spacex-tesla-merger-passive-flows-hack-could-bring-more-btc-exposure-to-sp-500",
-        "published": "2026-10-22T13:33:24+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T12:53:50.509482+00:00"
+    "__dt__": "2026-10-23T16:10:17.234526+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -83,7 +100,7 @@
       "__dt__": "2026-10-23"
     },
     "day_start_equity": 1000.0,
-    "trades_today": 0,
+    "trades_today": 2,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -91,7 +108,10 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1000,
-    "positions": {}
+    "cash": 818.6210688010906,
+    "positions": {
+      "BTC/CHF": 0.0014846685700117732,
+      "ETH/CHF": 0.04071033640932816
+    }
   }
 }
