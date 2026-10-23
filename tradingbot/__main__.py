@@ -135,7 +135,10 @@ def main() -> None:
         df = _load_df(cfg, args)
         # Mit --strategy wird nur diese eine Strategie getestet, sonst wählt der Bot je Abschnitt die beste
         names = [args.strategy] if args.strategy else [n for n in STRATEGIES if n != "ensemble"]
-        factories = {n: (lambda n=n: build(n, allow_short=cfg.allow_short, **(cfg.strategy_params if n == cfg.strategy else {})))
+        # Gespeichertes Gedächtnis und Labor-Bibliothek nicht verwenden: sie kennen die Testkurse schon
+        # (wäre ein Blick in die Zukunft). Im Test lernt das Gedächtnis Kerze für Kerze von vorne.
+        params = {k: v for k, v in cfg.strategy_params.items() if k not in ("memory_file", "library_file")}
+        factories = {n: (lambda n=n: build(n, allow_short=cfg.allow_short, **(params if n == cfg.strategy else {})))
                      for n in names}
         test_bars = max(len(df) // 10, 100)
         wf = walk_forward(df, cfg, factories, train_bars=3 * test_bars, test_bars=test_bars)
