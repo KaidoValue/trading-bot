@@ -54,6 +54,7 @@ class Config:
     risk: RiskConfig = field(default_factory=RiskConfig)
     name: str = "config"                # Name der Konfigurationsdatei, für die Stand-Datei
     title: str = ""                     # Anzeigename in der Übersicht (STATUS.md)
+    description: str = ""               # ein Satz: was dieser Bot macht (für die Übersicht)
     api_key: str | None = None
     api_secret: str | None = None
 

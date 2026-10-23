@@ -5,7 +5,8 @@
 # deshalb ist der Not-Aus erst bei 35 % Rückgang eingestellt.
 
 mode: paper
-title: "Langfrist-Bot (200-Tage-Regel, Hauptbot)"
+title: "1️⃣ Langfrist-Bot (Hauptbot)"
+description: "Hält Coins über Wochen bis Monate, solange der Kurs über der 200-Tage-Linie liegt. Wenige Trades, max. 50 % investiert."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
 timeframe: 1d

@@ -2,7 +2,8 @@
 # Dient als Vergleich: Zeigt, was passiert, wenn man aggressiv handelt. Für echtes Geld nicht geeignet.
 
 mode: paper
-title: "Risiko-Bot (30-Minuten-Kerzen, aggressiv, long + short)"
+title: "3️⃣ Risiko-Bot (aggressiv)"
+description: "Sehr risikofreudig: viele Trades alle 30 Minuten, setzt auch auf fallende Kurse (Short), 5 % Risiko pro Trade, ignoriert Nachrichten."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
 timeframe: 30m           # passt zum Takt auf GitHub (alle 30 Minuten)

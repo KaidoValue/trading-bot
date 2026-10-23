@@ -112,6 +112,8 @@ def prices_table(tickers: dict[str, dict], ex=None) -> list[str]:
 
 def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
     out = [f"## {b.cfg.title or b.cfg.name}", ""]
+    if b.cfg.description:
+        out += [f"_{b.cfg.description}_", ""]
     if b.trader.open_trades:
         out += ["**Offene Positionen**", "",
                 "| Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |",
@@ -204,7 +206,8 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
     lines = ["# 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)", "",
              f"Stand: **{local(now)}** Schweizer Zeit · wird jede Stunde automatisch aktualisiert", "",
              "## Auf einen Blick", ""]
-    lines += overview(bots) if bots else ["Noch kein Bot gelaufen."]
+    lines += [f"- **{b.cfg.title or b.cfg.name}:** {b.cfg.description}" for b in bots if b.cfg.description]
+    lines += [""] + (overview(bots) if bots else ["Noch kein Bot gelaufen."])
     lines += ["", "## Kurse", ""] + prices_table(tickers, ex) + [""]
     for b in bots:
         lines += bot_section(b, prices, frames)

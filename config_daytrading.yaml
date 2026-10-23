@@ -3,7 +3,8 @@
 
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
-title: "Daytrading-Bot (1-Stunden-Kerzen, Vergleich)"
+title: "2️⃣ KI-Bot (lernend, Daytrading)"
+description: "Lernende KI: gewichtet 9 Strategien nach ihrem Erfolg der letzten Wochen. Handelt auf 1-Stunden-Kerzen, Positionen meist Stunden bis 1–2 Tage."
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
