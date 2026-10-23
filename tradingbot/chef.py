@@ -8,6 +8,8 @@ gewichtet nach seiner Verteilung. Bei jedem Lauf entscheidet er neu:
 - Was weiss sein Gedächtnis: Welcher Stil hat in der aktuellen Marktphase bisher am meisten gebracht?
 - Feste Grenzen: höchstens 20 % im Risiko-Stil (Hebel), mindestens 10 % Cash; ist er mehr als 10 % im Minus,
   halbiert er den Risiko-Anteil. Laufen alle Stile schlecht, bleibt mehr in Cash.
+- Notbremse: Verliert ein Stil in den letzten 3 Stunden mehr als 3 %, zieht er sofort fast alles aus diesem
+  Stil ab, ohne auf den 7-Tage-Schnitt zu warten. Erst wenn sich der Stil wieder fängt, darf er zurück.
 - Umschichten kostet Gebühren, deshalb nur, wenn sich ein Anteil um mehr als 5 Prozentpunkte ändert.
 """
 from __future__ import annotations
@@ -23,6 +25,7 @@ from .memory import Memory
 STYLES = {"config_langfrist": "Langfrist", "config_daytrading": "KI", "config_risiko": "Risiko"}
 DEFAULT = {"config_langfrist": 0.5, "config_daytrading": 0.25, "config_risiko": 0.1}
 MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.20, 0.10, 0.05, 0.0026
+BRAKE_HOURS, BRAKE_LOSS = 3, -0.03
 
 
 class Chef:
@@ -46,7 +49,7 @@ class Chef:
                                          "fees": self.fees, "reason": self.reason}, indent=1))
         self.memory.save()
 
-    def _recent(self, style: str, now: datetime, days: int = 7) -> float:
+    def _recent(self, style: str, now: datetime, days: float = 7) -> float:
         """Rendite eines Stils in den letzten Tagen (aus der eigenen Aufzeichnung)."""
         since = now - timedelta(days=days)
         rows = [h for h in self.history if datetime.fromisoformat(h["t"]) >= since and style in h["r"]]
@@ -66,6 +69,11 @@ class Chef:
             scores[s] = (1 - trust) * recent + trust * remembered
             why.append(f"{STYLES[s]} {scores[s] * 100:+.1f} %")
         w = {s: DEFAULT[s] * min(max(1 + scores[s] * 10, 0.1), 2.5) for s in DEFAULT}
+        for s in DEFAULT:
+            short = self._recent(s, now, BRAKE_HOURS / 24)
+            if short < BRAKE_LOSS:
+                w[s] = min(w[s], DEFAULT[s] * 0.1)
+                why.append(f"🚨 Notbremse {STYLES[s]} ({short * 100:+.1f} % in {BRAKE_HOURS} Std.)")
         w["config_risiko"] = min(w["config_risiko"], MAX_RISK)
         if self.equity < self.peak * 0.9:
             w["config_risiko"] *= 0.5
@@ -89,7 +97,9 @@ class Chef:
         self.last = {s: equities[s] for s in DEFAULT if s in equities}
         new, reason = self.target(phase, now)
         change = None
-        if max(abs(new[s] - self.weights.get(s, 0)) for s in new) > MIN_CHANGE:
+        floor = {s: DEFAULT[s] * 0.1 + 1e-9 for s in DEFAULT}       # Anteil eines Stils nach der Notbremse
+        brake = any(new[s] <= floor[s] < self.weights.get(s, 0) - 0.005 for s in new)
+        if brake or max(abs(new[s] - self.weights.get(s, 0)) for s in new) > MIN_CHANGE:
             turnover = sum(abs(new[s] - self.weights.get(s, 0)) for s in new)
             fee = self.equity * turnover * FEE
             self.equity -= fee

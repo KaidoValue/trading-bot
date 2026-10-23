@@ -522,3 +522,17 @@ def test_dashboard_shows_chef(df, monkeypatch, tmp_path):
     text = dashboard.render(["bot.yaml"], exchange=ex, chef_path="daten/state/chef.json")
     assert "4️⃣ Chef-Bot" in text and "Aktuelle Verteilung" in text
     assert (tmp_path / "daten" / "state" / "chef.json").exists()
+
+
+def test_chef_emergency_brake(tmp_path):
+    from datetime import datetime, timedelta, timezone
+    from tradingbot.chef import Chef
+    path = tmp_path / "chef.json"
+    t = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    eq = {"config_langfrist": 1000.0, "config_daytrading": 1000.0, "config_risiko": 1000.0}
+    Chef(path).update(eq, "Aufwärtstrend, wild", t)
+    for i in (1, 2):                                        # Risiko-Stil verliert 2 × 2.5 % in einer Stunde
+        eq["config_risiko"] *= 0.975
+        change = Chef(path).update(eq, "Aufwärtstrend, wild", t + timedelta(minutes=30 * i))
+    chef = Chef(path)
+    assert chef.weights["config_risiko"] <= 0.011 and "Notbremse" in change["reason"]
