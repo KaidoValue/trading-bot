@@ -22,9 +22,12 @@
   "last_bar": {
     "BTC/CHF": {
       "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "ETH/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: kein Einstieg (Gesamtrisiko)",
   "news": {
     "fear_greed": 50,
     "news_score": -0.3,
@@ -54,10 +57,10 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T01:18:30.819949+00:00"
+    "__dt__": "2026-10-23T06:29:02.334506+00:00"
   },
   "risk": {
-    "peak_equity": 1000,
+    "peak_equity": 1003.272387680498,
     "day": {
       "__dt__": "2026-10-23"
     },

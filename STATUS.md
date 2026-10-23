@@ -1,27 +1,31 @@
 # Stand des Trading-Bots (Demo)
 
-Letzte Aktualisierung: 23.10.2026 01:18 UTC
+Letzte Aktualisierung: 23.10.2026 06:29 UTC
 
 ## Langfrist-Bot (200-Tage-Regel, Hauptbot)
 
 ```
-Kapital: 999.25 (Start 1000.00, -0.07 %)
+Beobachtete Coins: BTC/CHF, ETH/CHF
+Kapital: 1003.27 (Start 1000.00, +0.33 %)
 Cash: 498.45
-Offen seit 2026-10-22 23:18: BTC/CHF long 0.007507 @ 66640.70, jetzt 66714.60, Gewinn/Verlust +0.55, Stop 53271.15
+Offen seit 2026-10-22 23:18: BTC/CHF long 0.007507 @ 66640.70, jetzt 67249.90, Gewinn/Verlust +4.57, Stop 53271.15
 Abgeschlossene Trades: 0
 Aktuelles Signal BTC/CHF: investiert sein
-Letzte Entscheidung des Bots: BTC/CHF: Position offen, Signal bestätigt
+Aktuelles Signal ETH/CHF: investiert sein
+Letzte Entscheidung des Bots: BTC/CHF: Position offen, Signal bestätigt | ETH/CHF: kein Einstieg (Gesamtrisiko)
 ```
 
 ## Vergleichs-Bot Daytrading (1-Stunden-Kerzen)
 
 ```
+Beobachtete Coins: BTC/CHF, ETH/CHF
 Kapital: 1000.00 (Start 1000.00, +0.00 %)
 Cash: 1000.00
 Keine offene Position (in Cash).
 Abgeschlossene Trades: 0
 Aktuelles Signal BTC/CHF: raus / Cash
-Letzte Entscheidung des Bots: BTC/CHF: Signal 'raus', bleibe in Cash
+Aktuelles Signal ETH/CHF: raus / Cash
+Letzte Entscheidung des Bots: BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash
 ```
 
 ## Nachrichtenlage
