@@ -1,0 +1,52 @@
+{
+  "open_trades": {},
+  "closed": [],
+  "last_bar": {
+    "BTC/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "ETH/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "BNB/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "XRP/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "SOL/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "TRX/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "ZEC/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    },
+    "HYPE/CHF": {
+      "__dt__": "2026-10-23T12:00:00+00:00"
+    }
+  },
+  "note": "BTC/CHF: kein Signal | ETH/CHF: kein Signal | BNB/CHF: kein Signal | XRP/CHF: kein Signal | SOL/CHF: kein Signal | TRX/CHF: kein Signal | ZEC/CHF: kein Signal | HYPE/CHF: kein Signal",
+  "news": null,
+  "updated": {
+    "__dt__": "2026-10-23T12:54:42.266972+00:00"
+  },
+  "risk": {
+    "peak_equity": 1000,
+    "day": {
+      "__dt__": "2026-10-23"
+    },
+    "day_start_equity": 1000.0,
+    "trades_today": 0,
+    "loss_streak": 0,
+    "paused_until": null,
+    "halted": false,
+    "halted_on": null,
+    "halt_reason": ""
+  },
+  "paper": {
+    "cash": 1000,
+    "positions": {}
+  }
+}

@@ -3,31 +3,31 @@
   "closed": [],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-23T10:00:00+00:00"
+      "__dt__": "2026-10-23T11:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Signal 'raus', bleibe in Cash | HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: kein Signal | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Signal 'raus', bleibe in Cash | HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 50,
     "news_score": -1.0,
@@ -75,7 +75,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T11:54:53.255866+00:00"
+    "__dt__": "2026-10-23T12:54:20.586041+00:00"
   },
   "risk": {
     "peak_equity": 1000,

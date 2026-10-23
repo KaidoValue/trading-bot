@@ -1,32 +1,32 @@
 # 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)
 
-Stand: **23.10.2026 13:55** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
+Stand: **23.10.2026 14:55** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
 
 ## Auf einen Blick
 
-| | **Langfrist-Bot (200-Tage-Regel, Hauptbot)** | **Daytrading-Bot (1-Stunden-Kerzen, Vergleich)** |
-|---|---|---|
-| Startkapital | 1'000.00 CHF | 1'000.00 CHF |
-| **Kapital jetzt** | **1'000.00 CHF** | **1'000.00 CHF** |
-| Gewinn / Verlust | ⚪ +0.00 CHF (+0.00 %) | ⚪ +0.00 CHF (+0.00 %) |
-| Im Einsatz (investiert) | 0.00 CHF (0 %) | 0.00 CHF (0 %) |
-| Cash (nicht investiert) | 1'000.00 CHF | 1'000.00 CHF |
-| Offene Positionen | 0 | 0 |
-| Abgeschlossene Trades | 0 | 0 |
-| Strategie | regime, 1d-Kerzen | adaptive, 1h-Kerzen |
+| | **Langfrist-Bot (200-Tage-Regel, Hauptbot)** | **Daytrading-Bot (1-Stunden-Kerzen, Vergleich)** | **Risiko-Bot (30-Minuten-Kerzen, aggressiv, long + short)** |
+|---|---|---|---|
+| Startkapital | 1'000.00 CHF | 1'000.00 CHF | 1'000.00 CHF |
+| **Kapital jetzt** | **1'000.00 CHF** | **1'000.00 CHF** | **1'000.00 CHF** |
+| Gewinn / Verlust | ⚪ +0.00 CHF (+0.00 %) | ⚪ +0.00 CHF (+0.00 %) | ⚪ +0.00 CHF (+0.00 %) |
+| Im Einsatz (investiert) | 0.00 CHF (0 %) | 0.00 CHF (0 %) | 0.00 CHF (0 %) |
+| Cash (nicht investiert) | 1'000.00 CHF | 1'000.00 CHF | 1'000.00 CHF |
+| Offene Positionen | 0 | 0 | 0 |
+| Abgeschlossene Trades | 0 | 0 | 0 |
+| Strategie | regime, 1d-Kerzen | adaptive, 1h-Kerzen | breakout, 30m-Kerzen |
 
 ## Kurse
 
 | Coin | Kurs jetzt | 24 Std. | Live-Chart |
 |---|---|---|---|
-| **BTC** | 67'189.60 CHF | 🟢 +0.83 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
-| **ETH** | 1'979.55 CHF | 🟢 +1.40 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
-| **BNB** | 614.93 CHF | 🟢 +2.12 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
-| **XRP** | 1.09 CHF | 🟢 +1.02 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
-| **SOL** | 86.17 CHF | 🟢 +0.95 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
-| **TRX** | 0.27 CHF | 🟢 +0.51 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
-| **ZEC** | 1'015.10 CHF | 🟢 +1.00 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
-| **HYPE** | 64.37 CHF | 🟢 +0.94 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
+| **BTC** | 67'193.30 CHF | 🟢 +0.83 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
+| **ETH** | 1'973.65 CHF | 🟢 +1.10 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
+| **BNB** | 612.55 CHF | 🟢 +1.96 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
+| **XRP** | 1.08 CHF | 🟢 +0.57 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
+| **SOL** | 85.75 CHF | 🟢 +0.69 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
+| **TRX** | 0.27 CHF | 🟢 +0.48 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
+| **ZEC** | 1'011.39 CHF | 🟢 +0.86 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
+| **HYPE** | 63.90 CHF | 🟢 +0.44 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
 
 ## Langfrist-Bot (200-Tage-Regel, Hauptbot)
 
@@ -57,14 +57,33 @@ Keine offene Position, alles in Cash.
 |---|---|
 | BTC | 🔴 raus / Cash |
 | ETH | 🔴 raus / Cash |
-| BNB | 🟢 investiert sein |
+| BNB | ⚪ neutral |
 | XRP | 🔴 raus / Cash |
 | SOL | 🔴 raus / Cash |
 | TRX | 🔴 raus / Cash |
 | ZEC | 🔴 raus / Cash |
 | HYPE | 🔴 raus / Cash |
 
-**Letzte Entscheidung:** BTC/CHF: Signal 'raus', bleibe in Cash · ETH/CHF: Signal 'raus', bleibe in Cash · BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · XRP/CHF: Signal 'raus', bleibe in Cash · SOL/CHF: Signal 'raus', bleibe in Cash · TRX/CHF: Signal 'raus', bleibe in Cash · ZEC/CHF: Signal 'raus', bleibe in Cash · HYPE/CHF: Signal 'raus', bleibe in Cash
+**Letzte Entscheidung:** BTC/CHF: Signal 'raus', bleibe in Cash · ETH/CHF: Signal 'raus', bleibe in Cash · BNB/CHF: kein Signal · XRP/CHF: Signal 'raus', bleibe in Cash · SOL/CHF: Signal 'raus', bleibe in Cash · TRX/CHF: Signal 'raus', bleibe in Cash · ZEC/CHF: Signal 'raus', bleibe in Cash · HYPE/CHF: Signal 'raus', bleibe in Cash
+
+## Risiko-Bot (30-Minuten-Kerzen, aggressiv, long + short)
+
+Keine offene Position, alles in Cash.
+
+**Signale jetzt**
+
+| Coin | Signal |
+|---|---|
+| BTC | ⚪ neutral |
+| ETH | ⚪ neutral |
+| BNB | ⚪ neutral |
+| XRP | ⚪ neutral |
+| SOL | ⚪ neutral |
+| TRX | ⚪ neutral |
+| ZEC | ⚪ neutral |
+| HYPE | ⚪ neutral |
+
+**Letzte Entscheidung:** BTC/CHF: kein Signal · ETH/CHF: kein Signal · BNB/CHF: kein Signal · XRP/CHF: kein Signal · SOL/CHF: kein Signal · TRX/CHF: kein Signal · ZEC/CHF: kein Signal · HYPE/CHF: kein Signal
 
 ## Charts
 
