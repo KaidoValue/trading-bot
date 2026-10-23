@@ -6,7 +6,7 @@ mode: paper
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
-symbols: ["BTC/CHF"]
+symbols: ["BTC/CHF", "ETH/CHF", "SOL/CHF", "XRP/CHF"]   # Coins, die Kraken nicht in CHF anbietet, werden übersprungen
 timeframe: 1h
 
 # Kursdaten für Backtests (Kraken liefert nur ca. 30 Tage, Bitstamp mehrere Jahre)

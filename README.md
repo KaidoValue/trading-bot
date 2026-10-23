@@ -106,7 +106,7 @@ So fliesst das in die Entscheidung ein:
 
 Die Stichwörter stehen in `THEMES` in `tradingbot/news.py` und lassen sich erweitern. Ist eine Quelle nicht erreichbar, läuft der Bot ohne sie weiter. Abschalten mit `use_news: false`.
 
-Jeder Trade wird zusammen mit der Nachrichtenlage beim Einstieg in `logs/trades.csv` gespeichert. `python -m tradingbot report` zeigt dann, in welcher Lage der Bot gewinnt oder verliert. Nach einigen Wochen Paper-Betrieb ist das die Grundlage, um die Regeln anzupassen oder später ein Machine-Learning-Modell darauf zu trainieren.
+Jeder Trade wird zusammen mit der Nachrichtenlage beim Einstieg in `logs/trades.csv` gespeichert (bei den anderen Configs `logs/trades_<name>.csv`, z.B. `logs/trades_config_langfrist.csv`). `python -m tradingbot report` zeigt dann, in welcher Lage der Bot gewinnt oder verliert. Nach einigen Wochen Paper-Betrieb ist das die Grundlage, um die Regeln anzupassen oder später ein Machine-Learning-Modell darauf zu trainieren.
 
 Im Backtest gibt es keine historischen Nachrichten, dort entscheidet der Bot nur nach Kursen.
 

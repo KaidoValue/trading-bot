@@ -37,6 +37,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     exchange = data.make_exchange(cfg.exchange, cfg.api_key, cfg.api_secret)
     strategy = build(cfg.strategy, allow_short=cfg.allow_short, **cfg.strategy_params)
     trader = make_trader(cfg, exchange)
+    cfg.symbols = available_symbols(exchange, cfg.symbols)
     news = NewsMonitor(cfg.symbols[0].split("/")[0], cfg.news_refresh_minutes, cfg.news_min_sources,
                        events=cfg.use_events, extra_feeds=cfg.event_feeds,
                        pause_minutes=cfg.event_pause_minutes) if cfg.use_news else None
@@ -44,7 +45,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     if last_bar:
         log.info("Gespeicherter Stand geladen (%s): %d offene Position(en), %d abgeschlossene Trades",
                  cfg.state_path, len(trader.open_trades), len(trader.closed))
-    log_path = Path("logs/trades.csv")
+    log_path = cfg.trades_path
     log_path.parent.mkdir(exist_ok=True)
     log.info("Bot gestartet: Modus=%s, Börse=%s, Symbole=%s, Strategie=%s",
              cfg.mode, cfg.exchange, cfg.symbols, cfg.strategy)
@@ -67,7 +68,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     log.error("NOT-AUS: %s. Bot stoppt.", trader.risk.halt_reason)
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
-            frames = {}
+            frames, notes = {}, []
             for s in ([] if trader.risk.halted else cfg.symbols):
                 df = frames[s] = data.fetch_recent(exchange, s, cfg.timeframe)
                 if last_bar.get(s) == df.index[-1] and not cfg.reevaluate:
@@ -75,7 +76,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                 last_bar[s] = df.index[-1]
                 sig = int(strategy.signals(df).iloc[-1])
                 if sig == 0:
-                    trader.note = f"{s}: kein Signal"
+                    notes.append(f"{s}: kein Signal")
                     continue
                 spread = _spread(exchange, s)
                 liquid = spread is None or spread <= cfg.risk.max_spread_pct
@@ -84,6 +85,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                 factor = _correlation_factor(s, sig, frames, trader, cfg.risk.correlation_limit)
                 trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
                                  size_factor=factor, can_open_new=liquid)
+                notes.append(trader.note)
+            if notes:
+                trader.note = " | ".join(notes)
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
             _write_trades(log_path, trader.closed)
             state.save(cfg.state_path, trader, last_bar)
@@ -93,6 +97,19 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             log.exception("Fehler im Durchlauf: %s", e)
         if max_iterations is None or n < max_iterations:
             time.sleep(cfg.poll_seconds)
+
+
+def available_symbols(exchange, symbols: list[str]) -> list[str]:
+    """Lässt Coins weg, die die Börse nicht anbietet, damit ein Tippfehler nicht den ganzen Bot stoppt."""
+    try:
+        markets = exchange.load_markets()
+    except Exception as e:
+        log.warning("Märkte nicht abrufbar, nutze alle Symbole: %s", e)
+        return symbols
+    missing = [s for s in symbols if s not in markets]
+    if missing:
+        log.warning("Von %s nicht angeboten, wird übersprungen: %s", exchange.id, ", ".join(missing))
+    return [s for s in symbols if s in markets]
 
 
 def _spread(exchange, symbol: str) -> float | None:

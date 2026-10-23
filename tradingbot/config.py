@@ -67,3 +67,9 @@ class Config:
     @property
     def state_path(self) -> Path:
         return Path("state") / f"{self.mode}_{self.name}.json"
+
+    @property
+    def trades_path(self) -> Path:
+        """Trade-Protokoll, pro Bot getrennt (config.yaml schreibt weiterhin nach logs/trades.csv)."""
+        suffix = ("" if self.name == "config" else f"_{self.name}") + ("_live" if self.mode == "live" else "")
+        return Path("logs") / f"trades{suffix}.csv"

@@ -5,7 +5,7 @@
   python -m tradingbot compare                  # alle Strategien vergleichen
   python -m tradingbot paper                    # Live-Kurse, simulierte Orders
   python -m tradingbot live                     # ECHTES Geld (Sicherheitsabfrage)
-  python -m tradingbot report                   # Lernbericht aus logs/trades.csv
+  python -m tradingbot report                   # Lernbericht aus logs/trades*.csv
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
@@ -67,6 +67,9 @@ def status(cfg: Config) -> None:
         print(f"Noch kein gespeicherter Stand ({cfg.state_path}). Zuerst 'paper' laufen lassen.")
         return
     ex = data.make_exchange(cfg.exchange)
+    from .bot import available_symbols
+    cfg.symbols = available_symbols(ex, cfg.symbols)
+    print(f"Beobachtete Coins: {', '.join(cfg.symbols)}")
     prices = {s: float(ex.fetch_ticker(s)["last"]) for s in cfg.symbols}
     eq = trader.equity(prices)
     print(f"Kapital: {eq:.2f} (Start {cfg.starting_capital:.2f}, {(eq / cfg.starting_capital - 1) * 100:+.2f} %)")
@@ -138,7 +141,7 @@ def main() -> None:
         total = (1 + wf["Rendite Test %"] / 100).prod() - 1
         print(f"\nGesamt ausserhalb der Trainingsdaten: {total * 100:.2f} %")
     elif args.command == "report":
-        report(pd.read_csv("logs/trades.csv"))
+        report(pd.read_csv(cfg.trades_path))
     elif args.command == "status":
         status(cfg)
     elif args.command == "news":

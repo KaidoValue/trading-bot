@@ -342,3 +342,35 @@ def test_lawsuit_alone_does_not_block():
     assert "klage" in confirmed and MarketContext(news_score=score, confirmed=confirmed).allows(1)
     alerts = events.detect_alerts(hs, set(), NOW, window_minutes=120)
     assert MarketContext(alerts=alerts).allows(1)
+
+
+class MultiExchange(FakeExchange):
+    """Börse mit mehreren Coins (gleiche Kurse, je anders skaliert); DOGE/CHF gibt es nicht."""
+    markets = {"BTC/CHF": {}, "ETH/CHF": {}, "SOL/CHF": {}}
+
+    def load_markets(self):
+        return self.markets
+
+    def fetch_ticker(self, symbol):
+        if symbol == "BTC/CHF":
+            self.i += 1
+        return {"last": self.df["close"].iloc[self.i] * self.scale(symbol)}
+
+    def fetch_ohlcv(self, symbol, timeframe, limit=300, since=None):
+        return [[t, *(v * self.scale(symbol) for v in row[:4]), row[4]]
+                for t, *row in super().fetch_ohlcv(symbol, timeframe, limit, since)]
+
+    @staticmethod
+    def scale(symbol):
+        return {"BTC/CHF": 1.0, "ETH/CHF": 0.05, "SOL/CHF": 0.002}[symbol]
+
+
+def test_several_coins_and_unknown_coin_skipped(df, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    cfg = Config(strategy="trend", poll_seconds=0, symbols=["BTC/CHF", "ETH/CHF", "SOL/CHF", "DOGE/CHF"],
+                 use_news=False, name="multi")
+    bot.run(cfg, max_iterations=300)
+    assert cfg.symbols == ["BTC/CHF", "ETH/CHF", "SOL/CHF"]
+    trades = pd.read_csv(tmp_path / "logs" / "trades_multi.csv")
+    assert {"BTC/CHF", "ETH/CHF"} <= set(trades["symbol"])
