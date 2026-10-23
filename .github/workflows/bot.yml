@@ -39,9 +39,13 @@ jobs:
         run: python -m tradingbot paper --config config_daytrading.yaml --once
         continue-on-error: true
 
+      - name: Risiko-Bot (Demo)
+        run: python -m tradingbot paper --config config_risiko.yaml --once
+        continue-on-error: true
+
       - name: Übersicht mit Tabellen und Charts in STATUS.md schreiben
         run: |
-          python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml > /dev/null
+          python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml config_risiko.yaml > /dev/null
           { echo; python -m tradingbot news --config config_langfrist.yaml; } >> STATUS.md
           cat STATUS.md
 

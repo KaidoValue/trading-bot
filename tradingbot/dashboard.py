@@ -60,8 +60,9 @@ def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
                     RiskManager(cfg.risk, cfg.starting_capital))
     if not state.load(cfg.state_path, trader):
         return None
-    invested = sum(trader.broker.position(s) * prices[s] for s in prices)
-    return Bot(cfg, trader, trader.broker.cash() + invested, invested)
+    value = sum(trader.broker.position(s) * prices[s] for s in prices)          # Shorts zählen negativ
+    invested = sum(abs(trader.broker.position(s)) * prices[s] for s in prices)
+    return Bot(cfg, trader, trader.broker.cash() + value, invested)
 
 
 def overview(bots: list[Bot]) -> list[str]:
@@ -142,7 +143,7 @@ def chart(symbol: str, daily: pd.DataFrame, hourly: pd.DataFrame, bots: list[Bot
             ax.plot(df.index, ma, color="#ff7f0e", lw=1.2, ls="--", label="200-Tage-Linie")
         start = df.index[0]
         for b in bots:
-            if b.cfg.timeframe != tf:
+            if (b.cfg.timeframe == "1d") != (tf == "1d"):     # Tages-Bots oben, alle kürzeren unten
                 continue
             for t in b.trader.closed:
                 if t["symbol"] == symbol and utc(t["closed"]) >= start:
