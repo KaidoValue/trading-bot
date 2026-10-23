@@ -1,0 +1,70 @@
+# Vergleicht alle Strategien (inkl. der lernenden KI "adaptive") mit echten Kursdaten.
+# Start von Hand: Actions -> "Strategie-Vergleich" -> Run workflow. Ergebnis steht danach in VERGLEICH.md.
+name: Strategie-Vergleich
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trading-bot
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Bausteine installieren
+        run: pip install -r requirements.txt
+
+      - name: Vergleich rechnen
+        run: |
+          run() { echo '```'; python -m tradingbot "$@" 2>&1 | grep -v "^Lade"; echo '```'; echo; }
+          {
+            echo "# Strategie-Vergleich mit echten Kursdaten"
+            echo
+            echo "Erstellt: $(date -u '+%d.%m.%Y %H:%M') UTC. Startkapital je 1000, Gebühren und Slippage eingerechnet."
+            echo "\`adaptive\` ist die lernende KI, \`regime\` die 200-Tage-Regel des Hauptbots."
+            echo
+            echo "## Daytrading: 1-Stunden-Kerzen, letzte 365 Tage"
+            echo
+            run compare --config config_daytrading.yaml --days 365
+            echo "### Walk-Forward nur KI (Test auf ungesehenen Daten)"
+            echo
+            run walkforward --config config_daytrading.yaml --days 365 --strategy adaptive
+            echo "## Swing: 4-Stunden-Kerzen, letzte 730 Tage"
+            echo
+            run compare --config config_daytrading.yaml --timeframe 4h --days 730
+            echo "## Langfrist: Tageskerzen, letzte 2500 Tage"
+            echo
+            run compare --config config_langfrist.yaml --days 2500
+            echo "### Walk-Forward KI gegen 200-Tage-Regel"
+            echo
+            echo "KI (adaptive):"
+            run walkforward --config config_langfrist.yaml --days 2500 --strategy adaptive
+            echo "200-Tage-Regel (regime):"
+            run walkforward --config config_langfrist.yaml --days 2500 --strategy regime
+          } > VERGLEICH.md
+          cat VERGLEICH.md
+
+      - name: Ergebnis speichern
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add VERGLEICH.md
+          git diff --cached --quiet || git commit -m "Strategie-Vergleich $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1
