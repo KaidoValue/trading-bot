@@ -1,5 +1,20 @@
 {
- "stats": {},
+ "stats": {
+  "Aufw\u00e4rtstrend, wild": {
+   "config_langfrist": [
+    -0.0013293220304935183,
+    1
+   ],
+   "config_daytrading": [
+    -0.005245796009465065,
+    1
+   ],
+   "config_risiko": [
+    -0.021365876860162336,
+    1
+   ]
+  }
+ },
  "seen": {},
  "pretrained": false
 }
