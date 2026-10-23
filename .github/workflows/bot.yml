@@ -7,7 +7,7 @@ on:
     # Jede Stunde: prüft Stop-Loss, Nachrichten und Ereignisse. Das Kauf-/Verkaufssignal der Tageskerze
     # wird trotzdem nur einmal pro Tag ausgewertet (nach Schluss der Kerze um 00:00 UTC).
     # Verbrauch ca. 1-1,5 Minuten pro Lauf, also unter den 2000 Gratis-Minuten pro Monat für private Repos.
-    - cron: "23 * * * *"     # nicht zur vollen Stunde: dann ist GitHub überlastet und lässt Läufe ausfallen
+    - cron: "23,53 * * * *"  # alle 30 Min., nicht zur vollen Stunde (dann lässt GitHub oft Läufe ausfallen)
   workflow_dispatch: {}        # zusätzlich von Hand startbar (Actions -> Run workflow)
 
 permissions:
