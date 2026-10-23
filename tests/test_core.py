@@ -483,3 +483,42 @@ def test_labor_invents_rules_without_lookahead(df, tmp_path):
     assert lib[0]["name"] == "labor_1" and "Kaufen, wenn" in lib[0]["text"]
     ki = build("adaptive_memory", library_file=str(path))
     assert "labor_1" in [m.name for m in ki.members]
+
+
+def test_chef_follows_winner_with_limits(tmp_path):
+    from datetime import datetime, timedelta, timezone
+    from tradingbot.chef import Chef, MAX_RISK, MIN_CASH
+    path = tmp_path / "chef.json"
+    t = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    eq = {"config_langfrist": 1000.0, "config_daytrading": 1000.0, "config_risiko": 1000.0}
+    for i in range(60):                     # Risiko-Stil läuft stark, Langfrist verliert
+        eq = {"config_langfrist": eq["config_langfrist"] * 0.998, "config_daytrading": eq["config_daytrading"],
+              "config_risiko": eq["config_risiko"] * 1.01}
+        Chef(path).update(eq, "Aufwärtstrend, wild", t + timedelta(minutes=30 * i))
+    chef = Chef(path)
+    assert chef.weights["config_risiko"] <= MAX_RISK + 1e-9
+    assert sum(chef.weights.values()) <= 1 - MIN_CASH + 1e-9
+    assert chef.weights["config_langfrist"] < 0.5           # vom Verlierer weg umgeschichtet
+    assert chef.equity > 1000 and chef.fees > 0
+    assert chef.memory.best("Aufwärtstrend, wild")[0][0] == "config_risiko"
+
+
+def test_chef_cuts_risk_after_losses(tmp_path):
+    from datetime import datetime, timezone
+    from tradingbot.chef import Chef
+    chef = Chef(tmp_path / "chef.json")
+    chef.equity, chef.peak = 850.0, 1000.0
+    w, reason = chef.target("Seitwärts, ruhig", datetime(2026, 1, 1, tzinfo=timezone.utc))
+    assert w["config_risiko"] <= 0.05 + 1e-9 and "halbiert" in reason
+
+
+def test_dashboard_shows_chef(df, monkeypatch, tmp_path):
+    from tradingbot import dashboard
+    monkeypatch.chdir(tmp_path)
+    ex = MultiExchange(df)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    Path("bot.yaml").write_text('strategy: trend\nsymbols: ["BTC/CHF"]\nuse_news: false\npoll_seconds: 0\ntimeframe: 1h\n')
+    bot.run(Config.load("bot.yaml"), max_iterations=200)
+    text = dashboard.render(["bot.yaml"], exchange=ex, chef_path="daten/state/chef.json")
+    assert "4️⃣ Chef-Bot" in text and "Aktuelle Verteilung" in text
+    assert (tmp_path / "daten" / "state" / "chef.json").exists()

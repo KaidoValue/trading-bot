@@ -99,3 +99,18 @@ def write(cfg, before_open: set[tuple], before_closed: int, trader, when) -> Non
     head = "" if path.exists() else f"# Lern-Tagebuch {_local(when):%d.%m.%Y}\n\nAlle Zeiten in Schweizer Zeit.\n\n"
     with path.open("a") as f:
         f.write(head + "\n".join(entries) + "\n")
+
+
+def write_chef(chef, change: dict, when) -> None:
+    """Hält eine Umschichtung des Chef-Bots im Tagebuch fest."""
+    FOLDER.mkdir(parents=True, exist_ok=True)
+    path = FOLDER / f"{_local(when):%Y-%m-%d}.md"
+    head = "" if path.exists() else f"# Lern-Tagebuch {_local(when):%d.%m.%Y}\n\nAlle Zeiten in Schweizer Zeit.\n\n"
+    with path.open("a") as f:
+        f.write(head + f"### {_local(when):%H:%M} · 4️⃣ Chef-Bot · 🔄 **Umschichtung**\n\n"
+                f"- **Vorher:** {chef.allocation_text(change['old'])}\n"
+                f"- **Nachher:** {chef.allocation_text(change['new'])}\n"
+                f"- **Warum:** {change['reason']}\n"
+                f"- **Kosten:** {_chf(change['fee'])} CHF Gebühren\n"
+                f"- **Was man daraus lernt:** Kein Stil gewinnt immer. Wer das Geld dorthin verschiebt, wo es "
+                f"gerade läuft, muss die Umschicht-Kosten und das Risiko von Fehlsignalen mitbezahlen.\n\n")

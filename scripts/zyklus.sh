@@ -8,7 +8,7 @@ python -m tradingbot paper --config bots/config_risiko.yaml --once || echo "Risi
 mkdir -p daten/logs
 # Fehlermeldungen landen in daten/logs/uebersicht_fehler.txt (die Job-Logs sind von aussen nicht lesbar)
 python -m tradingbot dashboard --bots bots/config_langfrist.yaml bots/config_daytrading.yaml bots/config_risiko.yaml \
-  > /dev/null 2> daten/logs/uebersicht_fehler.txt || echo "Übersicht konnte nicht erstellt werden"
+  --chef daten/state/chef.json > /dev/null 2> daten/logs/uebersicht_fehler.txt || echo "Übersicht konnte nicht erstellt werden"
 { echo; python -m tradingbot news --config bots/config_langfrist.yaml; } >> STATUS.md
 
 git add -A STATUS.md daten lernen || true

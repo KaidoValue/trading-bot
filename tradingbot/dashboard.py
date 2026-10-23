@@ -201,7 +201,30 @@ def chart(symbol: str, daily: pd.DataFrame, hourly: pd.DataFrame, bots: list[Bot
     plt.close(fig)
 
 
-def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> str:
+def chef_section(chef, phase: str) -> list[str]:
+    from .chef import STYLES
+    gain = chef.equity - chef.start
+    out = ["## 4️⃣ Chef-Bot (verteilt auf die drei Stile)", "",
+           "Er handelt nicht selbst, sondern legt sein eigenes Kapital anteilig in die Stile der drei anderen Bots an "
+           "und schichtet um, wenn ein Stil in der aktuellen Marktphase besser läuft. Feste Grenzen: höchstens 20 % "
+           "im Risiko-Stil (Hebel), mindestens 10 % Cash, nach mehr als 10 % Verlust Risiko-Anteil halbiert.", "",
+           "| | |", "|---|---|",
+           f"| Startkapital | {chf(chef.start)} CHF |",
+           f"| **Kapital jetzt** | **{chf(chef.equity)} CHF** |",
+           f"| Gewinn / Verlust | {pnl_text(gain, (chef.equity / chef.start - 1) * 100)} |",
+           f"| **Aktuelle Verteilung** | {chef.allocation_text()} |",
+           f"| Marktphase (BTC, Tageskerzen) | {phase} |",
+           f"| Letzte Begründung | {chef.reason} |",
+           f"| Umschicht-Gebühren bisher | {chf(chef.fees)} CHF |",
+           f"| Erfahrung im Gedächtnis | {len(chef.history)} Läufe |", ""]
+    best = chef.memory.best(phase)
+    if best:
+        out += ["**Was das Gedächtnis in dieser Phase weiss:** "
+                + ", ".join(f"{STYLES.get(s, s)} {v:+.3f} %/Lauf" for s, v in best), ""]
+    return out
+
+
+def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_path: str | None = None) -> str:
     first = Config.load(config_paths[0])
     ex = exchange or data.make_exchange(first.exchange, convert_to=first.symbols[0].split("/")[1])
     from .bot import available_symbols
@@ -224,7 +247,21 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
              f"Stand: **{local(now)}** Schweizer Zeit · wird jede Stunde automatisch aktualisiert", "",
              "## Auf einen Blick", ""]
     lines += [f"- **{b.cfg.title or b.cfg.name}:** {b.cfg.description}" for b in bots if b.cfg.description]
+    chef_lines = []
+    if chef_path and bots and (symbols[0], "1d") in frames:
+        from . import journal
+        from .chef import Chef
+        from .memory import phases
+        chef = Chef(chef_path)
+        phase = phases(frames[symbols[0], "1d"]).iloc[-1]
+        change = chef.update({b.cfg.name: b.equity for b in bots}, phase, now)
+        if change:
+            journal.write_chef(chef, change, now)
+        lines.append("- **4️⃣ Chef-Bot:** verteilt eigene 1'000 CHF selbstständig auf die drei Stile oben, "
+                     "je nachdem, was in der aktuellen Marktphase am besten läuft.")
+        chef_lines = chef_section(chef, phase)
     lines += [""] + (overview(bots) if bots else ["Noch kein Bot gelaufen."])
+    lines += [""] + chef_lines
     lines += ["", "## Kurse", ""] + prices_table(tickers, ex) + [""]
     for b in bots:
         lines += bot_section(b, prices, frames)

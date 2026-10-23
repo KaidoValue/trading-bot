@@ -102,6 +102,7 @@ def main() -> None:
     p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor"])
     p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
+    p.add_argument("--chef", help="dashboard: Stand-Datei des Chef-Bots")
     p.add_argument("--days", type=int, default=365)
     p.add_argument("--synthetic", action="store_true", help="simulierte statt echter Kursdaten")
     p.add_argument("--seed", type=int, default=42)
@@ -160,7 +161,7 @@ def main() -> None:
         print(text)
     elif args.command == "dashboard":
         from .dashboard import render
-        print(render(args.bots or [args.config]))
+        print(render(args.bots or [args.config], chef_path=args.chef))
     elif args.command == "status":
         status(cfg)
     elif args.command == "news":
