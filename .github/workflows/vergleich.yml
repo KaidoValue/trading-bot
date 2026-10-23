@@ -1,5 +1,5 @@
 # Vergleicht alle Strategien (inkl. der lernenden KI "adaptive") mit echten Kursdaten.
-# Start von Hand: Actions -> "Strategie-Vergleich" -> Run workflow. Ergebnis steht danach in VERGLEICH.md.
+# Start von Hand: Actions -> "Strategie-Vergleich" -> Run workflow. Ergebnis steht danach in lernen/VERGLEICH.md.
 name: Strategie-Vergleich
 
 on:
@@ -38,30 +38,30 @@ jobs:
             echo
             echo "## Daytrading: 1-Stunden-Kerzen, letzte 365 Tage"
             echo
-            run compare --config config_daytrading.yaml --days 365
+            run compare --config bots/config_daytrading.yaml --days 365
             echo "### Walk-Forward nur KI (Test auf ungesehenen Daten)"
             echo
-            run walkforward --config config_daytrading.yaml --days 365 --strategy adaptive
+            run walkforward --config bots/config_daytrading.yaml --days 365 --strategy adaptive
             echo "## Swing: 4-Stunden-Kerzen, letzte 730 Tage"
             echo
-            run compare --config config_daytrading.yaml --timeframe 4h --days 730
+            run compare --config bots/config_daytrading.yaml --timeframe 4h --days 730
             echo "## Langfrist: Tageskerzen, letzte 2500 Tage"
             echo
-            run compare --config config_langfrist.yaml --days 2500
+            run compare --config bots/config_langfrist.yaml --days 2500
             echo "### Walk-Forward KI gegen 200-Tage-Regel"
             echo
             echo "KI (adaptive):"
-            run walkforward --config config_langfrist.yaml --days 2500 --strategy adaptive
+            run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy adaptive
             echo "200-Tage-Regel (regime):"
-            run walkforward --config config_langfrist.yaml --days 2500 --strategy regime
-          } > VERGLEICH.md
-          cat VERGLEICH.md
+            run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy regime
+          } > lernen/VERGLEICH.md
+          cat lernen/VERGLEICH.md
 
       - name: Ergebnis speichern
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
-          git add VERGLEICH.md
+          git add lernen/VERGLEICH.md
           git diff --cached --quiet || git commit -m "Strategie-Vergleich $(date -u +%Y-%m-%d)"
           for i in 1 2 3; do
             git pull --rebase -X theirs origin main && git push && exit 0

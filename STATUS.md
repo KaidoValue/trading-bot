@@ -101,35 +101,35 @@ Keine offene Position, alles in Cash.
 
 ### BTC/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF)
 
-![BTC/CHF](charts/BTC-CHF.png)
+![BTC/CHF](daten/charts/BTC-CHF.png)
 
 ### ETH/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF)
 
-![ETH/CHF](charts/ETH-CHF.png)
+![ETH/CHF](daten/charts/ETH-CHF.png)
 
 ### BNB/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD)
 
-![BNB/CHF](charts/BNB-CHF.png)
+![BNB/CHF](daten/charts/BNB-CHF.png)
 
 ### XRP/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD)
 
-![XRP/CHF](charts/XRP-CHF.png)
+![XRP/CHF](daten/charts/XRP-CHF.png)
 
 ### SOL/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD)
 
-![SOL/CHF](charts/SOL-CHF.png)
+![SOL/CHF](daten/charts/SOL-CHF.png)
 
 ### TRX/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD)
 
-![TRX/CHF](charts/TRX-CHF.png)
+![TRX/CHF](daten/charts/TRX-CHF.png)
 
 ### ZEC/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD)
 
-![ZEC/CHF](charts/ZEC-CHF.png)
+![ZEC/CHF](daten/charts/ZEC-CHF.png)
 
 ### HYPE/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD)
 
-![HYPE/CHF](charts/HYPE-CHF.png)
+![HYPE/CHF](daten/charts/HYPE-CHF.png)
 
 ## Nachrichtenlage
 

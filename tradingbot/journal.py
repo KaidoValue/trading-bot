@@ -1,4 +1,4 @@
-"""Lern-Tagebuch: schreibt jeden Kauf und Verkauf in Worten nach lernjournal/JJJJ-MM-TT.md.
+"""Lern-Tagebuch: schreibt jeden Kauf und Verkauf in Worten nach lernen/tagebuch/JJJJ-MM-TT.md.
 
 Pro Trade steht dort: welcher Bot, welcher Coin, zu welchem Kurs, warum (Strategie und Marktlage),
 wo der Stop-Loss liegt, und beim Verkauf das Ergebnis mit einer kurzen Lehre daraus.
@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 TZ = "Europe/Zurich"
-FOLDER = Path("lernjournal")
+FOLDER = Path("lernen/tagebuch")
 
 WHY = {
     "regime": ("Der Kurs liegt über der 200-Tage-Linie: langfristiger Aufwärtstrend.",
@@ -90,7 +90,7 @@ def write(cfg, before_open: set[tuple], before_closed: int, trader, when) -> Non
     entries += [opened(cfg, s, t, t.opened) for s, t in trader.open_trades.items() if (s, str(t.opened)) not in before_open]
     if not entries:
         return
-    FOLDER.mkdir(exist_ok=True)
+    FOLDER.mkdir(parents=True, exist_ok=True)
     path = FOLDER / f"{_local(when):%Y-%m-%d}.md"
     head = "" if path.exists() else f"# Lern-Tagebuch {_local(when):%d.%m.%Y}\n\nAlle Zeiten in Schweizer Zeit.\n\n"
     with path.open("a") as f:

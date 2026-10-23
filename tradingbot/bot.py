@@ -51,7 +51,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
         log.info("Gespeicherter Stand geladen (%s): %d offene Position(en), %d abgeschlossene Trades",
                  cfg.state_path, len(trader.open_trades), len(trader.closed))
     log_path = cfg.trades_path
-    log_path.parent.mkdir(exist_ok=True)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
     log.info("Bot gestartet: Modus=%s, Börse=%s, Symbole=%s, Strategie=%s",
              cfg.mode, cfg.exchange, cfg.symbols, cfg.strategy)
     n = 0

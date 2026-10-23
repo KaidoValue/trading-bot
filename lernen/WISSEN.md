@@ -29,7 +29,7 @@
 | Trendlinien | 🟡 | Als Verbindung der Swing-Punkte (Dreiecke, Keile); keine frei gezeichneten Linien |
 | Range-Trading | ✅ | Strategie `range` |
 | Multi-Timeframe-Analyse | ✅ | `structure.htf_trend`: Pullback-Strategie handelt nur in Richtung des 4h-Trends |
-| Zeiteinheiten 1m bis 1W | ✅ | `timeframe` in `config.yaml` frei wählbar |
+| Zeiteinheiten 1m bis 1W | ✅ | `timeframe` in `bots/config.yaml` frei wählbar |
 
 ## Chartmuster
 
@@ -121,7 +121,7 @@ Ein Bot hat keine Gefühle, aber die typischen Fehler lassen sich als Regeln ver
 | Forward Testing, Demokonto | ✅ | `paper` |
 | Walk-Forward-Analyse, Vermeidung von Overfitting | ✅ | `walkforward`: Strategie wird nur auf alten Daten gewählt und auf neuen getestet |
 | Trefferquote, Expectancy, Profit Factor, CRV, Drawdown | ✅ | In jeder Backtest-Auswertung |
-| Trading-Journal, Dokumentation | ✅ | `logs/trades.csv` mit Nachrichtenlage und Sitzung |
+| Trading-Journal, Dokumentation | ✅ | `daten/logs/trades*.csv` mit Nachrichtenlage und Sitzung |
 | Kontinuierliche Verbesserung | ✅ | Lernende Gewichtung + `report` |
 | Handelsstrategie entwickeln | ✅ | Neue Strategien als Klasse in `strategies.py`, Tests prüfen automatisch auf Blick in die Zukunft |
 
@@ -145,4 +145,4 @@ Ein Bot hat keine Gefühle, aber die typischen Fehler lassen sich als Regeln ver
 
 ## Steuern in der Schweiz
 
-➖ Kein Code, aber wichtig: Für Privatpersonen sind Kapitalgewinne auf Kryptowährungen in der Schweiz grundsätzlich steuerfrei, das Vermögen muss aber in der Steuererklärung angegeben werden. Wer sehr häufig handelt, mit Fremdkapital arbeitet oder hohe Umsätze im Verhältnis zum Vermögen hat, kann als **gewerbsmässiger Händler** eingestuft werden; dann sind Gewinne als Einkommen steuerpflichtig. Ein automatischer Bot kann dieses Risiko erhöhen. Kläre das vor dem Live-Betrieb mit einer Steuerberatung. `logs/trades.csv` dient als Nachweis aller Trades.
+➖ Kein Code, aber wichtig: Für Privatpersonen sind Kapitalgewinne auf Kryptowährungen in der Schweiz grundsätzlich steuerfrei, das Vermögen muss aber in der Steuererklärung angegeben werden. Wer sehr häufig handelt, mit Fremdkapital arbeitet oder hohe Umsätze im Verhältnis zum Vermögen hat, kann als **gewerbsmässiger Händler** eingestuft werden; dann sind Gewinne als Einkommen steuerpflichtig. Ein automatischer Bot kann dieses Risiko erhöhen. Kläre das vor dem Live-Betrieb mit einer Steuerberatung. `daten/logs/trades*.csv` dient als Nachweis aller Trades.

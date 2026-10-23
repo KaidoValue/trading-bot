@@ -1,12 +1,12 @@
 """Kommandozeile.
 
-  python -m tradingbot backtest                 # Backtest mit echten Börsendaten (config.yaml)
+  python -m tradingbot backtest                 # Backtest mit echten Börsendaten (bots/config.yaml)
   python -m tradingbot backtest --synthetic     # Backtest mit simulierten Daten (offline)
   python -m tradingbot compare                  # alle Strategien vergleichen
   python -m tradingbot paper                    # Live-Kurse, simulierte Orders
   python -m tradingbot live                     # ECHTES Geld (Sicherheitsabfrage)
   python -m tradingbot dashboard --bots a.yaml b.yaml  # STATUS.md mit Tabellen und Charts
-  python -m tradingbot report                   # Lernbericht aus logs/trades*.csv
+  python -m tradingbot report                   # Lernbericht aus daten/logs/trades*.csv
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
@@ -98,7 +98,7 @@ def status(cfg: Config) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
     p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard"])
-    p.add_argument("--config", default="config.yaml")
+    p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--days", type=int, default=365)
     p.add_argument("--synthetic", action="store_true", help="simulierte statt echter Kursdaten")

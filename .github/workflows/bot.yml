@@ -41,7 +41,8 @@ jobs:
             start=$(date +%s)
             echo "=== Durchlauf $i um $(date -u '+%H:%M') UTC ==="
             git pull -q --rebase -X theirs origin main || true
-            bash scripts/zyklus.sh
+            # Kopie ausführen: das Skript kann sich während des Laufs durch git pull ändern
+            cp scripts/zyklus.sh "$RUNNER_TEMP/zyklus.sh" && bash "$RUNNER_TEMP/zyklus.sh"
             if [ "$i" -lt 10 ]; then
               rest=$(( 1800 - ($(date +%s) - start) ))
               sleep $(( rest > 60 ? rest : 60 ))

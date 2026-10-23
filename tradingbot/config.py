@@ -59,7 +59,7 @@ class Config:
     api_secret: str | None = None
 
     @classmethod
-    def load(cls, path: str | Path = "config.yaml") -> "Config":
+    def load(cls, path: str | Path = "bots/config.yaml") -> "Config":
         raw = yaml.safe_load(Path(path).read_text()) if Path(path).exists() else {}
         risk = RiskConfig(**(raw.pop("risk", None) or {}))
         cfg = cls(**raw, risk=risk, name=Path(path).stem)
@@ -69,10 +69,10 @@ class Config:
 
     @property
     def state_path(self) -> Path:
-        return Path("state") / f"{self.mode}_{self.name}.json"
+        return Path("daten/state") / f"{self.mode}_{self.name}.json"
 
     @property
     def trades_path(self) -> Path:
-        """Trade-Protokoll, pro Bot getrennt (config.yaml schreibt weiterhin nach logs/trades.csv)."""
+        """Trade-Protokoll, pro Bot getrennt (bots/config.yaml schreibt nach daten/logs/trades.csv)."""
         suffix = ("" if self.name == "config" else f"_{self.name}") + ("_live" if self.mode == "live" else "")
-        return Path("logs") / f"trades{suffix}.csv"
+        return Path("daten/logs") / f"trades{suffix}.csv"

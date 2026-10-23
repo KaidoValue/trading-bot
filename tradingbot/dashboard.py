@@ -1,7 +1,7 @@
 """Übersicht aller Demo-Bots als STATUS.md mit Tabellen und Kurs-Charts (für GitHub).
 
-Aufruf: python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml
-Schreibt STATUS.md und die Charts nach charts/. Die Nachrichtenlage hängt der Workflow separat an.
+Aufruf: python -m tradingbot dashboard --bots bots/config_langfrist.yaml bots/config_daytrading.yaml
+Schreibt STATUS.md und die Charts nach daten/charts/. Die Nachrichtenlage hängt der Workflow separat an.
 """
 from __future__ import annotations
 
@@ -218,8 +218,8 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
         name = s.replace("/", "-")
         if (s, "1d") not in frames or (s, "1h") not in frames:
             continue
-        chart(s, frames[s, "1d"], frames[s, "1h"], bots, Path("charts") / f"{name}.png")
-        lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}](charts/{name}.png)", ""]
+        chart(s, frames[s, "1d"], frames[s, "1h"], bots, Path("daten/charts") / f"{name}.png")
+        lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}](daten/charts/{name}.png)", ""]
     text = "\n".join(lines)
     Path(out).write_text(text)
     return text

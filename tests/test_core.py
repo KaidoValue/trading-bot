@@ -373,7 +373,7 @@ def test_several_coins_and_unknown_coin_skipped(df, monkeypatch, tmp_path):
                  use_news=False, name="multi")
     bot.run(cfg, max_iterations=300)
     assert cfg.symbols == ["BTC/CHF", "ETH/CHF", "SOL/CHF"]
-    trades = pd.read_csv(tmp_path / "logs" / "trades_multi.csv")
+    trades = pd.read_csv(tmp_path / "daten" / "logs" / "trades_multi.csv")
     assert {"BTC/CHF", "ETH/CHF"} <= set(trades["symbol"])
 
 
@@ -387,7 +387,7 @@ def test_dashboard_tables_and_charts(df, monkeypatch, tmp_path):
     bot.run(Config.load("bot.yaml"), max_iterations=300)
     text = dashboard.render(["bot.yaml"], exchange=ex)
     assert "Test-Bot" in text and "Kapital jetzt" in text and "Im Einsatz" in text
-    assert (tmp_path / "charts" / "BTC-CHF.png").exists()
+    assert (tmp_path / "daten" / "charts" / "BTC-CHF.png").exists()
 
 
 def test_converted_chf_pairs():
@@ -421,5 +421,5 @@ def test_learning_journal(df, monkeypatch, tmp_path):
     monkeypatch.setattr(data, "make_exchange", lambda *a, **k: FakeExchange(df))
     cfg = Config(strategy="trend", poll_seconds=0, symbols=["BTC/CHF"], use_news=False, title="Test-Bot")
     bot.run(cfg, max_iterations=300)
-    text = "".join(p.read_text() for p in (tmp_path / "lernjournal").glob("*.md"))
+    text = "".join(p.read_text() for p in (tmp_path / "lernen" / "tagebuch").glob("*.md"))
     assert "Kauf" in text and "Verkauf" in text and "Was man daraus lernt" in text and "Test-Bot" in text

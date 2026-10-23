@@ -4,7 +4,20 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 
 > **Wichtig:** Kein Bot kann Gewinne garantieren. Teste jede Strategie zuerst im Backtest und danach mehrere Wochen im Paper-Modus (Demo), bevor du echtes Geld einsetzt. Setze nur Geld ein, dessen Verlust du verkraften kannst.
 
-Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[WISSEN.md](WISSEN.md)**.
+## Wegweiser: Was liegt wo?
+
+| Ordner / Datei | Inhalt |
+|---|---|
+| **[STATUS.md](STATUS.md)** | 📈 Aktueller Stand aller 3 Demo-Bots: Kapital, Positionen, Kurse, Charts (alle 30 Min. neu) |
+| **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich |
+| **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Hauptbot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-Bot), `config.yaml` (Vorlage) |
+| **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
+| `tradingbot/` | 🧠 Der Programmcode |
+| `tests/` | ✅ Automatische Tests |
+| `scripts/` | ▶️ Startskripte (GitHub und Windows) |
+| `.github/workflows/` | ☁️ Automatischer Betrieb auf GitHub |
+
+Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lernen/WISSEN.md](lernen/WISSEN.md)**.
 
 ## Aufbau
 
@@ -46,7 +59,7 @@ python -m tradingbot backtest --strategy adaptive --days 730
 
 # 3. Demo-Betrieb: echte Live-Kurse, aber simulierte Orders (kein Konto nötig)
 python -m tradingbot paper
-#    Abgeschlossene Trades landen in logs/trades.csv
+#    Abgeschlossene Trades landen in daten/logs/trades.csv
 
 # 4. Echtes Geld (erst nach erfolgreichem Demo-Betrieb!)
 export EXCHANGE_API_KEY=...
@@ -57,7 +70,7 @@ CONFIRM_LIVE=JA python -m tradingbot live
 python -m tradingbot report
 ```
 
-Alle Einstellungen (Börse, Handelspaar, Strategie, Risikoregeln) stehen in `config.yaml`.
+Alle Einstellungen (Börse, Handelspaar, Strategie, Risikoregeln) stehen in `bots/config.yaml`.
 
 ## Börse wählen
 
@@ -71,15 +84,15 @@ Swissquote bietet für das eTrading-Konto (auch Krypto) nach meinem Kenntnisstan
 | Binance | ja | 0,10 % | keine FINMA-Lizenz, Probleme mit Behörden; nicht empfohlen | `binance` |
 | Swissquote | nein | 0,5–1 % + Depotgebühr | FINMA | – |
 
-Empfehlung: Bitstamp für den Start mit kleinem Betrag, Kraken wegen der CHF-Paare. `fee_rate` in `config.yaml` an die gewählte Börse anpassen.
+Empfehlung: Bitstamp für den Start mit kleinem Betrag, Kraken wegen der CHF-Paare. `fee_rate` in `bots/config.yaml` an die gewählte Börse anpassen.
 
-Den Börsennamen in `config.yaml` unter `exchange` ändern. Beim API-Schlüssel **nur Handelsrechte, niemals Auszahlungsrechte** freigeben.
+Den Börsennamen in `bots/config.yaml` unter `exchange` ändern. Beim API-Schlüssel **nur Handelsrechte, niemals Auszahlungsrechte** freigeben.
 
 ## Lernende Strategie (`adaptive`)
 
 Die Standardstrategie lernt laufend aus den Ergebnissen: Für jede Teilstrategie (Trendfolge, Mean Reversion, Breakout) berechnet sie bei jeder neuen Kerze, wie viel Gewinn oder Verlust deren Signale in den letzten 200 Kerzen gebracht hätten, inklusive Gebühren. Strategien mit Verlust bekommen kein Stimmrecht, die übrigen werden nach ihrem Erfolg gewichtet. Im Trend setzt der Bot so automatisch mehr auf Trendfolge, im Seitwärtsmarkt mehr auf Mean Reversion.
 
-Einstellbar über `strategy_params` in `config.yaml`:
+Einstellbar über `strategy_params` in `bots/config.yaml`:
 
 ```yaml
 strategy_params:
@@ -106,7 +119,7 @@ So fliesst das in die Entscheidung ein:
 
 Die Stichwörter stehen in `THEMES` in `tradingbot/news.py` und lassen sich erweitern. Ist eine Quelle nicht erreichbar, läuft der Bot ohne sie weiter. Abschalten mit `use_news: false`.
 
-Jeder Trade wird zusammen mit der Nachrichtenlage beim Einstieg in `logs/trades.csv` gespeichert (bei den anderen Configs `logs/trades_<name>.csv`, z.B. `logs/trades_config_langfrist.csv`). `python -m tradingbot report` zeigt dann, in welcher Lage der Bot gewinnt oder verliert. Nach einigen Wochen Paper-Betrieb ist das die Grundlage, um die Regeln anzupassen oder später ein Machine-Learning-Modell darauf zu trainieren.
+Jeder Trade wird zusammen mit der Nachrichtenlage beim Einstieg in `daten/logs/trades.csv` gespeichert (bei den anderen Configs `daten/logs/trades_<name>.csv`, z.B. `daten/logs/trades_config_langfrist.csv`). `python -m tradingbot report` zeigt dann, in welcher Lage der Bot gewinnt oder verliert. Nach einigen Wochen Paper-Betrieb ist das die Grundlage, um die Regeln anzupassen oder später ein Machine-Learning-Modell darauf zu trainieren.
 
 Im Backtest gibt es keine historischen Nachrichten, dort entscheidet der Bot nur nach Kursen.
 
@@ -131,7 +144,7 @@ Ehrlich gesagt: Auf einen Tweet reagieren Profi-Firmen in Millisekunden. Ein pri
 
 ## Fallende Kurse (Short)
 
-Mit `allow_short: true` in `config.yaml` (oder `--short` beim Backtest) setzt der Bot bei Verkaufssignalen auch auf fallende Kurse. Ein Short hat einen Stop-Loss **über** dem Einstieg und ein Kursziel darunter, das Risiko pro Trade bleibt bei 1 %.
+Mit `allow_short: true` in `bots/config.yaml` (oder `--short` beim Backtest) setzt der Bot bei Verkaufssignalen auch auf fallende Kurse. Ein Short hat einen Stop-Loss **über** dem Einstieg und ein Kursziel darunter, das Risiko pro Trade bleibt bei 1 %.
 
 ```bash
 python -m tradingbot compare --short --days 365
@@ -156,13 +169,13 @@ Der Paper-Modus braucht gar kein Geld. Für echten Handel gilt: Börsen haben Mi
 - Kein Einstieg, wenn der Spread im Orderbuch grösser als 0,3 % ist.
 - Stark korrelierte Positionen (z.B. BTC und ETH in gleicher Richtung) nur halb so gross.
 
-## Langfrist-Variante (`config_langfrist.yaml`)
+## Langfrist-Variante (`bots/config_langfrist.yaml`)
 
 Die ersten echten Tests (Oktober 2026, BTC/USD) haben gezeigt: Kurzfristige Strategien auf 1h und 4h verloren nach Gebühren Geld (Walk-Forward −13 % bzw. −12 %), während Bitcoin selbst teils stark stieg. Die Langfrist-Variante handelt auf Tageskerzen mit dem 200-Tage-Trendfilter (`regime`): investiert, solange der Kurs über der Linie liegt, sonst Cash. Das ergibt wenige Trades und soll vor allem grosse Abstürze vermeiden.
 
 ```bash
-python -m tradingbot compare --config config_langfrist.yaml --days 2500
-python -m tradingbot walkforward --config config_langfrist.yaml --days 2500
+python -m tradingbot compare --config bots/config_langfrist.yaml --days 2500
+python -m tradingbot walkforward --config bots/config_langfrist.yaml --days 2500
 ```
 
 Hier ist fast das ganze Kapital investiert, Rückgänge von 20–30 % sind möglich.
@@ -171,17 +184,17 @@ Hier ist fast das ganze Kapital investiert, Rückgänge von 20–30 % sind mögl
 
 ### Täglicher Demo-Betrieb
 
-Der Bot speichert seinen Stand in `state/`. Er muss deshalb nicht ununterbrochen laufen, ein Durchlauf pro Tag genügt:
+Der Bot speichert seinen Stand in `daten/state/`. Er muss deshalb nicht ununterbrochen laufen, ein Durchlauf pro Tag genügt:
 
 ```bash
-py -3.13 -m tradingbot paper --config config_langfrist.yaml --once     # einmal laufen lassen
-py -3.13 -m tradingbot status --config config_langfrist.yaml           # Stand anzeigen
+py -3.13 -m tradingbot paper --config bots/config_langfrist.yaml --once     # einmal laufen lassen
+py -3.13 -m tradingbot status --config bots/config_langfrist.yaml           # Stand anzeigen
 ```
 
 Automatisch jeden Tag um 02:30 (nach Schluss der Tageskerze um 00:00 UTC) mit der Windows-Aufgabenplanung, einmalig in PowerShell eingeben:
 
 ```
-schtasks /create /tn "TradingBot" /tr "C:\trading-bot\bot_taeglich.bat" /sc daily /st 02:30
+schtasks /create /tn "TradingBot" /tr "C:\trading-bot\scripts\bot_taeglich.bat" /sc daily /st 02:30
 ```
 
 Der PC muss um diese Zeit eingeschaltet sein (sonst läuft der Bot beim nächsten Durchlauf). Protokoll: `logs\bot.log`. Entfernen: `schtasks /delete /tn "TradingBot"`.
