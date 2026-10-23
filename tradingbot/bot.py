@@ -14,7 +14,7 @@ from .engine import Trader
 from .news import NewsMonitor
 from .risk import RiskManager
 from .strategies import build
-from . import state
+from . import journal, state
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +57,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     n = 0
     while max_iterations is None or n < max_iterations:
         n += 1
+        before_open = {(s, str(t.opened)) for s, t in trader.open_trades.items()}
+        before_closed = len(trader.closed)
         try:
             prices = {s: float(exchange.fetch_ticker(s)["last"]) for s in cfg.symbols}
             if news:
@@ -96,6 +98,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
             _write_trades(log_path, trader.closed)
             state.save(cfg.state_path, trader, last_bar)
+            journal.write(cfg, before_open, before_closed, trader, now)
         except KeyboardInterrupt:
             raise
         except Exception as e:  # Netzwerkfehler etc.: protokollieren und weiterlaufen

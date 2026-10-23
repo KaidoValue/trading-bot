@@ -414,3 +414,12 @@ def test_total_invested_cap():
     assert rm.plan(1000, 1000, 100, 1).qty == pytest.approx(5.0)       # 500 CHF frei bis zur Grenze
     assert rm.plan(1000, 600, 100, 1).qty == pytest.approx(1.0)        # 400 schon investiert: noch 100
     assert rm.plan(1000, 500, 100, 1) is None                          # Grenze erreicht
+
+
+def test_learning_journal(df, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: FakeExchange(df))
+    cfg = Config(strategy="trend", poll_seconds=0, symbols=["BTC/CHF"], use_news=False, title="Test-Bot")
+    bot.run(cfg, max_iterations=300)
+    text = "".join(p.read_text() for p in (tmp_path / "lernjournal").glob("*.md"))
+    assert "Kauf" in text and "Verkauf" in text and "Was man daraus lernt" in text and "Test-Bot" in text
