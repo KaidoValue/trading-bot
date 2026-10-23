@@ -1,0 +1,42 @@
+# Zeigt, welche Coins eine Börse in welcher Währung anbietet. Start: Actions -> "Märkte prüfen" -> Run workflow.
+name: Märkte prüfen
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  markets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install ccxt
+      - name: Märkte auflisten
+        run: |
+          python - > MAERKTE.md <<'PY'
+          import ccxt
+          coins = ["BTC", "ETH", "USDT", "BNB", "XRP", "USDC", "SOL", "TRX", "ZEC", "HYPE"]
+          quotes = ["CHF", "USD", "USDT", "EUR"]
+          print("| Börse | Coin | " + " | ".join(quotes) + " |")
+          print("|---|---|" + "---|" * len(quotes))
+          for name in ["kraken", "bitstamp"]:
+              m = getattr(ccxt, name)().load_markets()
+              for c in coins:
+                  print(f"| {name} | {c} | " + " | ".join("ja" if f"{c}/{q}" in m and m[f"{c}/{q}"].get("spot", True) else "–" for q in quotes) + " |")
+          k = ccxt.kraken().load_markets()
+          print()
+          print("Kraken CHF-Paare: " + ", ".join(sorted(s for s in k if s.endswith("/CHF"))))
+          PY
+          cat MAERKTE.md
+      - run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add MAERKTE.md
+          git diff --cached --quiet || git commit -m "Märkte geprüft"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
