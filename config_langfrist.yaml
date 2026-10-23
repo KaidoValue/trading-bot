@@ -42,7 +42,7 @@ risk:
   min_order_value: 10
   max_total_risk_pct: 0.30
   max_open_positions: 5
-  max_trades_per_day: 2
+  max_trades_per_day: 10       # 8 Coins: mehrere Käufe am selben Tag möglich
   loss_streak_pause: 99
   pause_hours: 0
   max_spread_pct: 0.003
