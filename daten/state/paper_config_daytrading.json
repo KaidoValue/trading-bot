@@ -33,36 +33,53 @@
         "event": "-",
         "session": "New York"
       }
+    },
+    "TRX/CHF": {
+      "side": 1,
+      "entry": 0.27228983303807996,
+      "qty": 918.327343444289,
+      "stop": 0.2710638177335258,
+      "target": 0.27433363301294833,
+      "opened": {
+        "__dt__": "2026-10-23T18:16:35.158990+00:00"
+      },
+      "context": {
+        "fear_greed": 50,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "New York"
+      }
     }
   },
   "closed": [],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-23T16:00:00+00:00"
+      "__dt__": "2026-10-23T17:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: gekauft 918.327343 @ 0.27 | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 50,
     "news_score": -0.3,
@@ -92,7 +109,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T17:46:35.718083+00:00"
+    "__dt__": "2026-10-23T18:16:54.523296+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -100,7 +117,7 @@
       "__dt__": "2026-10-23"
     },
     "day_start_equity": 1000.0,
-    "trades_today": 2,
+    "trades_today": 3,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -108,14 +125,15 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 497.1487000000001,
+    "cash": 245.7972347443432,
     "positions": {
       "BNB/CHF": 0.40504894613085246,
-      "ZEC/CHF": 0.24509892733885827
+      "ZEC/CHF": 0.24509892733885827,
+      "TRX/CHF": 918.327343444289
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-23T17:46:25.956191+00:00"
+      "__dt__": "2026-10-23T18:16:35.158990+00:00"
     }
   }
 }
