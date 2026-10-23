@@ -50,7 +50,8 @@ class MeanReversion(Strategy):
 
 
 class Breakout(Strategy):
-    """Donchian-Breakout: kaufen beim Ausbruch über das N-Perioden-Hoch, verkaufen beim Bruch des M-Perioden-Tiefs."""
+    """Donchian-Breakout: kaufen beim Ausbruch über das N-Perioden-Hoch, verkaufen beim Bruch des M-Perioden-Tiefs.
+    Mit hold=True bleibt das Signal bis zum Gegensignal bestehen (nach einem Stop-Loss sofort wieder einsteigen)."""
     name = "breakout"
 
     def signals(self, df):
@@ -59,6 +60,8 @@ class Breakout(Strategy):
         sig = pd.Series(0, index=df.index)
         sig[df["close"] > hi] = 1
         sig[df["close"] < lo] = -1
+        if self.params.get("hold"):      # Richtung halten bis zum Gegensignal: immer im Markt, viele Trades
+            sig = sig.replace(0, float("nan")).ffill().fillna(0).astype(int)
         return sig
 
 

@@ -13,11 +13,13 @@ starting_capital: 1000
 fee_rate: 0.0026
 slippage: 0.0005
 
-# Kurzer Donchian-Ausbruch: kauft beim 10-Kerzen-Hoch, verkauft/shortet beim 5-Kerzen-Tief -> viele Signale
+# Kurzer Donchian-Ausbruch: long nach einem 10-Kerzen-Hoch, short nach einem 5-Kerzen-Tief.
+# hold: die Richtung bleibt bis zum Gegensignal bestehen -> der Bot ist praktisch immer im Markt
 strategy: breakout
 strategy_params:
   entry: 10
   exit: 5
+  hold: true
 allow_short: true        # auch auf fallende Kurse (nur Demo; live gesperrt)
 poll_seconds: 60
 

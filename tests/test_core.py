@@ -423,3 +423,10 @@ def test_learning_journal(df, monkeypatch, tmp_path):
     bot.run(cfg, max_iterations=300)
     text = "".join(p.read_text() for p in (tmp_path / "lernen" / "tagebuch").glob("*.md"))
     assert "Kauf" in text and "Verkauf" in text and "Was man daraus lernt" in text and "Test-Bot" in text
+
+
+def test_breakout_hold_has_no_lookahead_and_stays_in_market(df):
+    s = build("breakout", entry=10, exit=5, hold=True)
+    full = s.signals(df)
+    pd.testing.assert_series_equal(full.iloc[:1000], s.signals(df.iloc[:1000]), check_names=False)
+    assert (full.iloc[100:] != 0).all()
