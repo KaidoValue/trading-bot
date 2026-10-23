@@ -1,0 +1,95 @@
+[
+ {
+  "entry": [
+   "bb_above",
+   "macd_neg"
+  ],
+  "exit": [
+   "rsi_oversold",
+   "bull_candle"
+  ],
+  "train_return": 0.514315438829398,
+  "test_return": 0.3078058271601446,
+  "test_trades": 4,
+  "buy_hold_test": 0.1456229685807151,
+  "accepted": true,
+  "name": "labor_1",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn Kurs über dem oberen Bollinger-Band UND MACD-Histogramm negativ. Verkaufen, wenn RSI unter 30 (überverkauft) UND bullishes Kerzenmuster."
+ },
+ {
+  "entry": [
+   "ema_trend_up",
+   "macd_neg",
+   "bb_above"
+  ],
+  "exit": [
+   "rsi_oversold",
+   "bull_candle"
+  ],
+  "train_return": 0.514315438829398,
+  "test_return": 0.3078058271601446,
+  "test_trades": 4,
+  "buy_hold_test": 0.1456229685807151,
+  "accepted": true,
+  "name": "labor_2",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn schneller EMA (20) über langsamem EMA (50) UND MACD-Histogramm negativ UND Kurs über dem oberen Bollinger-Band. Verkaufen, wenn RSI unter 30 (überverkauft) UND bullishes Kerzenmuster."
+ },
+ {
+  "entry": [
+   "bb_above",
+   "macd_neg",
+   "bias_up"
+  ],
+  "exit": [
+   "rsi_oversold",
+   "bull_candle"
+  ],
+  "train_return": 0.514315438829398,
+  "test_return": 0.3078058271601446,
+  "test_trades": 4,
+  "buy_hold_test": 0.1456229685807151,
+  "accepted": true,
+  "name": "labor_3",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn Kurs über dem oberen Bollinger-Band UND MACD-Histogramm negativ UND Marktstruktur aufwärts (höhere Hochs/Tiefs). Verkaufen, wenn RSI unter 30 (überverkauft) UND bullishes Kerzenmuster."
+ },
+ {
+  "entry": [
+   "macd_neg",
+   "ema_trend_up"
+  ],
+  "exit": [
+   "rsi_oversold",
+   "bull_candle"
+  ],
+  "train_return": 0.4104283098335118,
+  "test_return": 0.21027725052922042,
+  "test_trades": 12,
+  "buy_hold_test": 0.1456229685807151,
+  "accepted": true,
+  "name": "labor_4",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn MACD-Histogramm negativ UND schneller EMA (20) über langsamem EMA (50). Verkaufen, wenn RSI unter 30 (überverkauft) UND bullishes Kerzenmuster."
+ },
+ {
+  "entry": [
+   "ema_trend_up",
+   "macd_rising",
+   "macd_neg"
+  ],
+  "exit": [
+   "rsi_oversold",
+   "bull_candle"
+  ],
+  "train_return": 0.3499169866858093,
+  "test_return": 0.18649949048598113,
+  "test_trades": 12,
+  "buy_hold_test": 0.1456229685807151,
+  "accepted": true,
+  "name": "labor_5",
+  "found": "2026-10-23",
+  "text": "Kaufen, wenn schneller EMA (20) über langsamem EMA (50) UND MACD-Histogramm steigt UND MACD-Histogramm negativ. Verkaufen, wenn RSI unter 30 (überverkauft) UND bullishes Kerzenmuster."
+ }
+]
