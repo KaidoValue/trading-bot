@@ -30,7 +30,7 @@ risk:
   risk_per_trade: 0.05        # 5 % Risiko pro Trade (normal: 1 %)
   stop_loss_atr: 1.5          # enger Stop
   take_profit_atr: 3.0
-  max_position_pct: 0.50      # bis zur Hälfte des Kapitals in einem Coin
+  max_position_pct: 0.17      # pro Coin; mit Hebel 3 ca. halbes Kapital als Position, 6 Coins = volle 3x
   max_invested_pct: 1.0       # alles darf investiert sein
   max_daily_loss_pct: 0.50
   max_drawdown_pct: 0.90      # Not-Aus erst bei 90 % Verlust

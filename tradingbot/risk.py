@@ -69,7 +69,7 @@ class RiskManager:
             self.loss_streak = 0
 
     def plan(self, equity: float, cash: float, price: float, atr: float, side: int = 1,
-             size_factor: float = 1.0) -> TradePlan | None:
+             size_factor: float = 1.0, exposure: float | None = None) -> TradePlan | None:
         """side = +1 long (auf steigende Kurse), -1 short (auf fallende Kurse).
         Chance-Risiko-Verhältnis (CRV) = take_profit_atr / stop_loss_atr, standardmässig 2:1."""
         if atr <= 0 or price <= 0:
@@ -80,8 +80,11 @@ class RiskManager:
         qty = min(qty, equity * self.cfg.max_position_pct * lev / price)
         if side > 0:
             qty = min(qty, (cash + equity * (lev - 1)) * 0.99 / price)
-            room = equity * self.cfg.max_invested_pct * lev - (equity - cash)    # freier Platz bis zur Obergrenze
-            qty = min(qty, max(room, 0.0) / price)
+        # Obergrenze für alle offenen Positionen zusammen (long und short), mit Hebel entsprechend höher
+        if exposure is None:
+            exposure = max(equity - cash, 0.0)
+        room = equity * self.cfg.max_invested_pct * lev - exposure
+        qty = min(qty, max(room, 0.0) / price)
         if qty * price < self.cfg.min_order_value:
             self.last_block = "Order kleiner als Mindestgrösse"
             return None

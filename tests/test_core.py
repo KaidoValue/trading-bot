@@ -452,3 +452,9 @@ def test_leverage_refused_in_live_mode():
     cfg = Config(mode="live", risk=RiskConfig(leverage=2.0))
     with pytest.raises(SystemExit):
         bot.make_trader(cfg, None)
+
+
+def test_leverage_caps_total_exposure_including_shorts():
+    rm = RiskManager(RiskConfig(leverage=3.0, max_position_pct=0.5, risk_per_trade=1.0), 1000)
+    assert rm.plan(1000, 1000, 100, 1, side=-1, exposure=2900).qty == pytest.approx(1.0)   # nur noch 100 CHF Platz
+    assert rm.plan(1000, 1000, 100, 1, side=-1, exposure=3000) is None

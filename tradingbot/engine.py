@@ -71,7 +71,9 @@ class Trader:
             log.info("%s %s", when, self.note)
             return
         factor = size_factor * (self.context.size_factor() if self.context else 1.0)
-        plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor)
+        exposure = sum(abs(t.qty) * t.entry for t in self.open_trades.values())
+        plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor,
+                              exposure=exposure)
         if not plan:
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             return
