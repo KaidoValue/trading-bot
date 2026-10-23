@@ -123,7 +123,7 @@ def _cross(a: dict, b: dict, rng: random.Random) -> dict:
 
 
 def evolve(df: pd.DataFrame, fee: float = 0.0026, population: int = 100, generations: int = 25,
-           test_share: float = 0.3, min_trades: int = 8, seed: int | None = None, log=print) -> list[dict]:
+           test_share: float = 0.3, min_trades: int = 20, min_test_trades: int = 10, seed: int | None = None, log=print) -> list[dict]:
     """Sucht neue Strategien. Gibt die Kandidaten zurück, die auch auf den unbekannten Kursen bestehen."""
     rng = random.Random(seed)
     split = int(len(df) * (1 - test_share))
@@ -161,8 +161,13 @@ def evolve(df: pd.DataFrame, fee: float = 0.0026, population: int = 100, generat
         test_ret, test_trades = score(rule, {k: (d, s.iloc[250:]) for k, (d, s) in b_test.items()},
                                       ret_test.iloc[250:])
         bh = float(test["close"].iloc[-1] / test["close"].iloc[250] - 1)
+        result = (round(fit(rule), 4), round(test_ret, 4), test_trades)
+        if result in seen:            # verhält sich genau gleich wie ein besserer Kandidat: nur einmal behalten
+            continue
+        seen.add(result)
+        # Bestanden nur mit Gewinn nach Gebühren UND genug Trades, sonst könnte es reines Glück sein
         winners.append({**rule, "train_return": fit(rule), "test_return": test_ret, "test_trades": test_trades,
-                        "buy_hold_test": bh, "accepted": test_ret > 0 and test_trades >= min_trades // 2})
+                        "buy_hold_test": bh, "accepted": test_ret > 0 and test_trades >= min_test_trades})
         if len(winners) >= 5:
             break
     return winners
@@ -200,7 +205,8 @@ def report(found: list[dict], lib: list[dict], df: pd.DataFrame, symbol: str, ti
              f"{df.index[0]:%d.%m.%Y} bis {df.index[-1]:%d.%m.%Y}", "",
              "Die KI erfindet aus den vorhandenen Bausteinen (Indikatoren, Kerzenmuster, Marktstruktur) neue "
              "Strategien. Sie werden auf den älteren 70 % der Kurse entwickelt und auf den neuesten 30 % geprüft, "
-             "die das Labor nie gesehen hat. Nur wer dort nach Gebühren Gewinn macht, kommt in die Bibliothek.", "",
+             "die das Labor nie gesehen hat. Nur wer dort nach Gebühren Gewinn macht und mindestens 10 Trades hat (sonst wäre es eher Glück), "
+             "kommt in die Bibliothek.", "",
              "## Kandidaten dieses Laufs", "",
              "| Regel | Training | Prüfung | Trades (Prüfung) | Bitcoin halten (Prüfung) | Ergebnis |",
              "|---|---|---|---|---|---|"]
