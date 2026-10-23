@@ -33,6 +33,16 @@ class Converted:
         self.bridge = f"{via}/{quote}"
         self.virtual: dict[str, str] = {}      # z.B. "SOL/CHF" -> "SOL/USD"
         self.markets: dict | None = None
+        self._cache: dict = {}
+
+    def _cached(self, key, fn, seconds=60):
+        """Den USD/CHF-Kurs nur einmal pro Minute abfragen statt für jeden Coin (schont das Abfrage-Limit)."""
+        hit = self._cache.get(key)
+        if hit and time.time() - hit[0] < seconds:
+            return hit[1]
+        value = fn()
+        self._cache[key] = (time.time(), value)
+        return value
 
     def __getattr__(self, name):
         return getattr(self.ex, name)
@@ -58,16 +68,20 @@ class Converted:
         if not src:
             return self.ex.fetch_ticker(symbol)
         t = self.ex.fetch_ticker(src)
-        return {**t, "last": float(t["last"]) * float(self.ex.fetch_ticker(self.bridge)["last"])}
+        return {**t, "last": float(t["last"]) * self._fx_last()}
+
+    def _fx_last(self) -> float:
+        return float(self._cached("ticker", lambda: self.ex.fetch_ticker(self.bridge))["last"])
 
     def fetch_ohlcv(self, symbol, timeframe="1h", since=None, limit=None):
         src = self.source(symbol)
         if not src:
             return self.ex.fetch_ohlcv(symbol, timeframe, since=since, limit=limit)
         rows = self.ex.fetch_ohlcv(src, timeframe, since=since, limit=limit)
-        fx_rows = self.ex.fetch_ohlcv(self.bridge, timeframe, since=since, limit=limit)
+        fx_rows = self._cached(("ohlcv", timeframe, since, limit),
+                               lambda: self.ex.fetch_ohlcv(self.bridge, timeframe, since=since, limit=limit))
         fx = pd.Series({r[0]: r[4] for r in fx_rows}, dtype=float).sort_index()
-        last = float(self.ex.fetch_ticker(self.bridge)["last"])
+        last = self._fx_last()
         rate = fx.reindex(sorted(set(fx.index) | {r[0] for r in rows})).ffill().bfill().fillna(last)
         return [[r[0], *(v * rate[r[0]] for v in r[1:5]), r[5]] for r in rows]
 

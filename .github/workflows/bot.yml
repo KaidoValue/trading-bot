@@ -45,7 +45,10 @@ jobs:
 
       - name: Übersicht mit Tabellen und Charts in STATUS.md schreiben
         run: |
-          python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml config_risiko.yaml > /dev/null
+          mkdir -p logs
+          # Fehlermeldungen landen in logs/uebersicht_fehler.txt (die Job-Logs sind von aussen nicht lesbar)
+          python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml config_risiko.yaml \
+            > /dev/null 2> logs/uebersicht_fehler.txt || echo "Übersicht konnte nicht erstellt werden, siehe logs/uebersicht_fehler.txt"
           { echo; python -m tradingbot news --config config_langfrist.yaml; } >> STATUS.md
           cat STATUS.md
 

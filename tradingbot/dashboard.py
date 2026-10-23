@@ -5,6 +5,8 @@ Schreibt STATUS.md und die Charts nach charts/. Die Nachrichtenlage hängt der W
 """
 from __future__ import annotations
 
+import logging
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,7 +20,19 @@ from .engine import Trader
 from .risk import RiskManager
 from .strategies import build
 
+log = logging.getLogger(__name__)
 TZ = "Europe/Zurich"
+
+
+def _retry(fn, tries: int = 3, wait: float = 3.0):
+    """Börsen-Abfrage bei kurzzeitigen Fehlern (z.B. zu viele Anfragen) nochmals versuchen."""
+    for i in range(tries):
+        try:
+            return fn()
+        except Exception:
+            if i == tries - 1:
+                raise
+            time.sleep(wait * (i + 1))
 SIGNALS = {1: "🟢 investiert sein", -1: "🔴 raus / Cash", 0: "⚪ neutral"}
 
 
@@ -174,17 +188,17 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
     from .bot import available_symbols
     cfgs = [Config.load(p) for p in config_paths]
     symbols = available_symbols(ex, list(dict.fromkeys(s for c in cfgs for s in c.symbols)))
-    tickers = {s: ex.fetch_ticker(s) for s in symbols}
+    tickers = {s: _retry(lambda: ex.fetch_ticker(s)) for s in symbols}
     prices = {s: float(t["last"]) for s, t in tickers.items()}
     bots = [b for p in config_paths if (b := load_bot(p, prices))]
     frames = {}
-    for s in symbols:
-        for tf, bars in (("1d", 400), ("1h", 300)):
-            frames[s, tf] = data.fetch_recent(ex, s, tf, bars)
-    for c in cfgs:
-        for s in symbols:
-            if (s, c.timeframe) not in frames:
-                frames[s, c.timeframe] = data.fetch_recent(ex, s, c.timeframe)
+    wanted = [(s, tf, bars) for s in symbols for tf, bars in (("1d", 400), ("1h", 300))]
+    wanted += [(s, c.timeframe, 300) for c in cfgs for s in symbols if c.timeframe not in ("1d", "1h")]
+    for s, tf, bars in dict.fromkeys(wanted):
+        try:
+            frames[s, tf] = _retry(lambda: data.fetch_recent(ex, s, tf, bars))
+        except Exception as e:      # ein Coin ohne Daten soll nicht die ganze Übersicht verhindern
+            log.warning("Kerzen %s %s nicht abrufbar: %s", s, tf, e)
 
     now = datetime.now(timezone.utc)
     lines = ["# 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)", "",
@@ -199,6 +213,8 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
               "Die Bilder zeigen den Stand der letzten Aktualisierung; für den Live-Kurs auf «Live-Chart» klicken.", ""]
     for s in symbols:
         name = s.replace("/", "-")
+        if (s, "1d") not in frames or (s, "1h") not in frames:
+            continue
         chart(s, frames[s, "1d"], frames[s, "1h"], bots, Path("charts") / f"{name}.png")
         lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}](charts/{name}.png)", ""]
     text = "\n".join(lines)
