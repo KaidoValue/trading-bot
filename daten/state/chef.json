@@ -1,16 +1,16 @@
 {
  "start": 1000.0,
- "equity": 986.5216534120336,
+ "equity": 985.7066146340618,
  "peak": 1000.0,
  "weights": {
-  "config_langfrist": 0.4513,
-  "config_daytrading": 0.127,
-  "config_risiko": 0.0981
+  "config_langfrist": 0.4676,
+  "config_daytrading": 0.1178,
+  "config_risiko": 0.0343
  },
  "last": {
-  "config_langfrist": 991.9179924573536,
-  "config_daytrading": 970.0310830742609,
-  "config_risiko": 958.506171406897
+  "config_langfrist": 993.760231260923,
+  "config_daytrading": 970.2010162431868,
+  "config_risiko": 944.2941241237118
  },
  "history": [
   {
@@ -102,8 +102,17 @@
     "config_risiko": -0.016495908120973124
    },
    "equity": 986.5216534120336
+  },
+  {
+   "t": "2026-10-23T23:50:29.324940+00:00",
+   "r": {
+    "config_langfrist": 0.001857249104843195,
+    "config_daytrading": 0.0001751832203018555,
+    "config_risiko": -0.01482728823991275
+   },
+   "equity": 985.9355291452188
   }
  ],
- "fees": 0.9719017649848815,
- "reason": "Marktphase \u00abAufw\u00e4rtstrend, wild\u00bb, Einsch\u00e4tzung: Langfrist -1.0 %, KI -4.9 %, Risiko -0.2 %"
+ "fees": 1.2008162761418184,
+ "reason": "Marktphase \u00abAufw\u00e4rtstrend, wild\u00bb, Einsch\u00e4tzung: Langfrist -0.6 %, KI -5.3 %, Risiko -6.6 %"
 }
