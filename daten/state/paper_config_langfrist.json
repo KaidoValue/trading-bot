@@ -116,34 +116,14 @@
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Signal | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 50,
-    "news_score": -0.3,
-    "themes": {
-      "klage": [
-        "bitcoinmagazine",
-        "cointelegraph"
-      ]
-    },
+    "news_score": 0.0,
+    "themes": {},
     "blackout": null,
-    "evidence": [
-      {
-        "theme": "klage",
-        "source": "cointelegraph",
-        "title": "Circle shareholder sues Trump, World Liberty and Steve Witkoff over crypto deals",
-        "link": "https://cointelegraph.com/news/circle-shareholder-lawsuit-donald-trump-world-liberty-financial-steve-witkoff-crypto-corruption?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-22T21:39:18+00:00"
-      },
-      {
-        "theme": "klage",
-        "source": "bitcoinmagazine",
-        "title": "Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals",
-        "link": "https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption",
-        "published": "2026-10-22T21:23:58+00:00"
-      }
-    ],
+    "evidence": [],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T21:18:54.259023+00:00"
+    "__dt__": "2026-10-23T21:48:53.832486+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -169,7 +149,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-23T21:18:36.093553+00:00"
+      "__dt__": "2026-10-23T21:48:35.683372+00:00"
     }
   }
 }
