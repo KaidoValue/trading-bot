@@ -44,7 +44,7 @@
       "__dt__": "2026-10-22T00:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: gekauft 0.040844 @ 1976.67",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt",
   "news": {
     "fear_greed": 50,
     "news_score": -0.3,
@@ -74,10 +74,10 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T06:33:52.721174+00:00"
+    "__dt__": "2026-10-23T07:06:44.843766+00:00"
   },
   "risk": {
-    "peak_equity": 1003.272387680498,
+    "peak_equity": 1003.8719157106484,
     "day": {
       "__dt__": "2026-10-23"
     },
