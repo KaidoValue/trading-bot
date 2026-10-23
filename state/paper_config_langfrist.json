@@ -16,6 +16,23 @@
         "event": "-",
         "session": "Nach US-Schluss"
       }
+    },
+    "ETH/CHF": {
+      "side": 1,
+      "entry": 1976.6678399999998,
+      "qty": 0.04084355641266298,
+      "stop": 1361.5853448089015,
+      "target": 78737.5118988873,
+      "opened": {
+        "__dt__": "2026-10-23T06:33:48.864294+00:00"
+      },
+      "context": {
+        "fear_greed": 50,
+        "news_score": -0.3,
+        "news_themes": "klage",
+        "event": "-",
+        "session": "Asien"
+      }
     }
   },
   "closed": [],
@@ -27,7 +44,7 @@
       "__dt__": "2026-10-22T00:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: kein Einstieg (Gesamtrisiko)",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: gekauft 0.040844 @ 1976.67",
   "news": {
     "fear_greed": 50,
     "news_score": -0.3,
@@ -57,7 +74,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T06:29:02.334506+00:00"
+    "__dt__": "2026-10-23T06:33:52.721174+00:00"
   },
   "risk": {
     "peak_equity": 1003.272387680498,
@@ -65,7 +82,7 @@
       "__dt__": "2026-10-23"
     },
     "day_start_equity": 999.2540653919837,
-    "trades_today": 0,
+    "trades_today": 1,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -73,9 +90,10 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 498.44935000000004,
+    "cash": 417.5052967923398,
     "positions": {
-      "BTC/CHF": 0.0075066734326816546
+      "BTC/CHF": 0.0075066734326816546,
+      "ETH/CHF": 0.04084355641266298
     }
   }
 }
