@@ -42,6 +42,9 @@ jobs:
             echo "### Walk-Forward nur KI (Test auf ungesehenen Daten)"
             echo
             run walkforward --config bots/config_daytrading.yaml --days 365 --strategy adaptive
+            echo "### Walk-Forward KI mit Gedächtnis"
+            echo
+            run walkforward --config bots/config_daytrading.yaml --days 365 --strategy adaptive_memory
             echo "## Swing: 4-Stunden-Kerzen, letzte 730 Tage"
             echo
             run compare --config bots/config_daytrading.yaml --timeframe 4h --days 730

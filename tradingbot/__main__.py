@@ -6,6 +6,7 @@
   python -m tradingbot paper                    # Live-Kurse, simulierte Orders
   python -m tradingbot live                     # ECHTES Geld (Sicherheitsabfrage)
   python -m tradingbot dashboard --bots a.yaml b.yaml  # STATUS.md mit Tabellen und Charts
+  python -m tradingbot labor                    # Strategie-Labor: neue Strategien erfinden und prüfen
   python -m tradingbot report                   # Lernbericht aus daten/logs/trades*.csv
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
@@ -14,6 +15,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 import logging
 import os
 
@@ -97,7 +99,7 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor"])
     p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--days", type=int, default=365)
@@ -144,6 +146,15 @@ def main() -> None:
         print(f"\nGesamt ausserhalb der Trainingsdaten: {total * 100:.2f} %")
     elif args.command == "report":
         report(pd.read_csv(cfg.trades_path))
+    elif args.command == "labor":
+        from . import labor
+        df = _load_df(cfg, args)
+        found = labor.evolve(df, fee=cfg.fee_rate, seed=args.seed if args.synthetic else None)
+        lib = labor.update_library(found, df)
+        text = labor.report(found, lib, df, cfg.history_symbol or cfg.symbols[0], cfg.timeframe)
+        Path("lernen").mkdir(exist_ok=True)
+        Path("lernen/LABOR.md").write_text(text)
+        print(text)
     elif args.command == "dashboard":
         from .dashboard import render
         print(render(args.bots or [args.config]))

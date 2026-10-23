@@ -458,3 +458,28 @@ def test_leverage_caps_total_exposure_including_shorts():
     rm = RiskManager(RiskConfig(leverage=3.0, max_position_pct=0.5, risk_per_trade=1.0), 1000)
     assert rm.plan(1000, 1000, 100, 1, side=-1, exposure=2900).qty == pytest.approx(1.0)   # nur noch 100 CHF Platz
     assert rm.plan(1000, 1000, 100, 1, side=-1, exposure=3000) is None
+
+
+def test_memory_grows_and_is_remembered(df, tmp_path):
+    path = tmp_path / "ki.json"
+    s = build("adaptive_memory", memory_file=str(path))
+    assert s.pretrain([df.iloc[:800]]) > 0
+    first = s.memory.experience()
+    assert s.learn("BTC/CHF", df.iloc[700:1000]) > 0
+    assert s.learn("BTC/CHF", df.iloc[700:1000]) == 0            # dieselben Kerzen nicht doppelt lernen
+    again = build("adaptive_memory", memory_file=str(path))      # neu laden: nichts vergessen
+    assert again.memory.experience() > first and again.memory.pretrained
+    assert set(again.signals(df.iloc[-300:]).unique()) <= {-1, 0, 1}
+
+
+def test_labor_invents_rules_without_lookahead(df, tmp_path):
+    from tradingbot import labor
+    s = labor.Evolved(["rsi_oversold", "above_sma200"], ["macd_neg"])
+    pd.testing.assert_series_equal(s.signals(df).iloc[:1000], s.signals(df.iloc[:1000]), check_names=False)
+    found = labor.evolve(df, population=12, generations=2, seed=1, log=lambda *_: None)
+    assert found and all({"entry", "exit", "test_return", "accepted"} <= set(f) for f in found)
+    path = tmp_path / "lib.json"
+    lib = labor.update_library([{**found[0], "accepted": True}], df, path)
+    assert lib[0]["name"] == "labor_1" and "Kaufen, wenn" in lib[0]["text"]
+    ki = build("adaptive_memory", library_file=str(path))
+    assert "labor_1" in [m.name for m in ki.members]

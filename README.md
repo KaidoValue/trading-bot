@@ -9,7 +9,7 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 | Ordner / Datei | Inhalt |
 |---|---|
 | **[STATUS.md](STATUS.md)** | 📈 Aktueller Stand aller 3 Demo-Bots: Kapital, Positionen, Kurse, Charts (alle 30 Min. neu) |
-| **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich |
+| **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI |
 | **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Hauptbot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-Bot), `config.yaml` (Vorlage) |
 | **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
 | `tradingbot/` | 🧠 Der Programmcode |
@@ -200,6 +200,18 @@ schtasks /create /tn "TradingBot" /tr "C:\trading-bot\scripts\bot_taeglich.bat" 
 Der PC muss um diese Zeit eingeschaltet sein (sonst läuft der Bot beim nächsten Durchlauf). Protokoll: `logs\bot.log`. Entfernen: `schtasks /delete /tn "TradingBot"`.
 
 Hinweis: Bei einem Durchlauf pro Tag wird der Notfall-Stop nur einmal täglich geprüft.
+
+## KI-Gedächtnis und Strategie-Labor
+
+Der KI-Bot (`bots/config_daytrading.yaml`, Strategie `adaptive_memory`) hat ein dauerhaftes Gedächtnis
+(`daten/state/ki_gedaechtnis.json`): Für jede Marktphase (Trend auf/ab/seitwärts, ruhig/wild) merkt er sich, wie viel
+jede Strategie dort gebracht hätte. Es startet mit einem Jahr Kursgeschichte und wächst bei jedem Lauf. Je mehr
+Erfahrung, desto stärker verlässt er sich darauf statt nur auf die letzten Wochen.
+
+Das Strategie-Labor (`python -m tradingbot labor`, auf GitHub jeden Sonntag) erfindet aus den vorhandenen Bausteinen
+neue Regeln, entwickelt sie auf älteren Kursen weiter und prüft sie auf den neuesten, unbekannten Kursen. Nur bestandene
+kommen in die Bibliothek (`daten/state/strategie_bibliothek.json`) und werden vom KI-Bot mitbenutzt. Bericht:
+[lernen/LABOR.md](lernen/LABOR.md). Die KI kombiniert dabei nur geprüfte Bausteine und schreibt keinen freien Code.
 
 ## Eigene Strategie hinzufügen
 

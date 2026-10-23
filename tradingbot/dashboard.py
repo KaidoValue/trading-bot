@@ -135,6 +135,21 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
         if (s, b.cfg.timeframe) in frames:
             sig = int(strat.signals(frames[s, b.cfg.timeframe]).iloc[-1])
             out.append(f"| {s.split('/')[0]} | {SIGNALS[sig]} |")
+    memory = getattr(strat, "memory", None)
+    if memory is not None and memory.stats:
+        from .memory import phases
+        out += ["", f"**🧠 KI-Gedächtnis:** {memory.experience():,} Kerzen Erfahrung".replace(",", "'")
+                + " (wächst bei jedem Lauf)", "", "| Coin | Marktphase jetzt | Hier vertraut die KI am meisten |",
+                "|---|---|---|"]
+        for s in b.cfg.symbols:
+            if (s, b.cfg.timeframe) in frames:
+                ph = phases(frames[s, b.cfg.timeframe]).iloc[-1]
+                best = ", ".join(f"{n} ({v:+.3f} %/Kerze)" for n, v in memory.best(ph)) or "noch keine Erfahrung"
+                out.append(f"| {s.split('/')[0]} | {ph} | {best} |")
+        invented = [m.name for m in strat.members if m.name.startswith("labor_")]
+        out += ["", f"**🧪 Selbst erfundene Strategien im Einsatz:** {len(invented)} "
+                    f"({', '.join(invented) or 'noch keine hat die Prüfung bestanden'}), "
+                    "Details in [lernen/LABOR.md](lernen/LABOR.md)"]
     if b.trader.note:
         out += ["", "**Letzte Entscheidung:** " + b.trader.note.replace(" | ", " · ")]
     if b.trader.closed:

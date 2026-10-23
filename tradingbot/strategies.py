@@ -6,6 +6,8 @@ Neue Strategien: Klasse von Strategy ableiten, `signals()` implementieren und in
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 
 from . import indicators as ind
@@ -214,17 +216,25 @@ class Adaptive(Strategy):
                                             "price_action", "smc", "reversal", "range"]
         self.members = [STRATEGIES[n](allow_short=params.get("allow_short", False)) for n in names]
 
-    def weights(self, df) -> pd.DataFrame:
-        lookback = self.params.get("lookback", 200)
+    def member_pnl(self, df) -> pd.DataFrame:
+        """Rendite pro Kerze, die jede Teilstrategie gebracht hätte (abzüglich Gebühren bei jedem Wechsel)."""
         fee = self.params.get("fee", 0.0026)
         allow_short = self.params.get("allow_short", False)
         ret = df["close"].pct_change().fillna(0)
-        scores = {}
+        cols = {}
         for m in self.members:
             pos = _holding(m.signals(df), allow_short)
-            pnl = pos.shift().fillna(0) * ret - pos.diff().abs().fillna(0) * fee
-            scores[m.name] = pnl.rolling(lookback, min_periods=lookback // 2).sum()
-        w = pd.DataFrame(scores).clip(lower=0).fillna(0)
+            cols[m.name] = pos.shift().fillna(0) * ret - pos.diff().abs().fillna(0) * fee
+        return pd.DataFrame(cols)
+
+    def weights(self, df) -> pd.DataFrame:
+        lookback = self.params.get("lookback", 200)
+        pnl = self.member_pnl(df)
+        raw = pnl.rolling(lookback, min_periods=lookback // 2).sum()
+        if self.params.get("memory"):
+            mem, trust = self._memory_scores(df, pnl, lookback)
+            raw = raw.fillna(0).mul(1 - trust, axis=0) + mem.mul(trust, axis=0)
+        w = raw.clip(lower=0).fillna(0)
         total = w.sum(axis=1).replace(0, float("nan"))
         return w.div(total, axis=0).fillna(0)
 
@@ -239,6 +249,62 @@ class Adaptive(Strategy):
         return sig
 
 
+class AdaptiveMemory(Adaptive):
+    """Lernende Gewichtung mit dauerhaftem Gedächtnis (siehe memory.py): merkt sich für jede Marktphase, welche
+    Strategie dort funktioniert hat, und vertraut diesem Wissen umso mehr, je mehr Erfahrung es hat.
+    Mit `memory_file` wird das Gedächtnis gespeichert und wächst bei jedem Lauf (Paper/Live);
+    im Backtest lernt es Kerze für Kerze nur aus der Vergangenheit."""
+    name = "adaptive_memory"
+
+    def __init__(self, **params):
+        params.setdefault("memory", True)
+        super().__init__(**params)
+        if params.get("library_file"):
+            # Vom Strategie-Labor erfundene und geprüfte Strategien als zusätzliche Mitglieder
+            from .labor import library_strategies
+            self.members += library_strategies(Path(params["library_file"]))
+        from .memory import Memory
+        self.memory = Memory(params["memory_file"]) if params.get("memory_file") else None
+
+    def _memory_scores(self, df, pnl: pd.DataFrame, lookback: int):
+        from .memory import phases
+        ph = phases(df)
+        mem = pd.DataFrame(0.0, index=df.index, columns=pnl.columns)
+        n = pd.Series(0.0, index=df.index)
+        for p in ph.unique():
+            mask = ph == p
+            if self.memory is None:
+                # Backtest: Gedächtnis wächst Kerze für Kerze (nur vergangene Kerzen derselben Phase zählen)
+                cnt = mask.astype(float).cumsum().shift(fill_value=0.0)
+                sums = pnl.where(mask, 0.0).cumsum().shift(fill_value=0.0)
+            else:
+                # Laufender Bot: gespeichertes Gedächtnis (enthält alle bisher gesehenen Kerzen)
+                cnt = pd.Series(float(self.memory.prior(p, pnl.columns[0])[1]), index=df.index)
+                sums = pd.DataFrame({s: self.memory.prior(p, s)[0] for s in pnl.columns}, index=df.index)
+            avg = sums.div(cnt.replace(0, float("nan")), axis=0)
+            mem[mask] = (avg * lookback)[mask].fillna(0)
+            n[mask] = cnt[mask]
+        trust = n / (n + self.params.get("memory_trust", 2000))
+        return mem, trust
+
+    def learn(self, key: str, df) -> int:
+        """Nach jedem Lauf: neue Kerzen ins Gedächtnis aufnehmen und speichern."""
+        if self.memory is None:
+            return 0
+        from .memory import phases
+        added = self.memory.learn(self.member_pnl(df).iloc[1:], phases(df).iloc[1:], key=key)
+        self.memory.save()
+        return added
+
+    def pretrain(self, frames: list) -> int:
+        """Vorwissen aus mehreren Jahren Kursgeschichte, bevor der Bot zum ersten Mal handelt."""
+        from .memory import phases
+        added = sum(self.memory.learn(self.member_pnl(df).iloc[1:], phases(df).iloc[1:]) for df in frames)
+        self.memory.pretrained = True
+        self.memory.save()
+        return added
+
+
 def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
     """Wandelt Kauf-/Verkaufssignale in die gehaltene Position um (+1 long, 0 flat, -1 short)."""
     pos = sig.replace(0, float("nan")).ffill().fillna(0)
@@ -246,7 +312,8 @@ def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
 
 
 STRATEGIES = {cls.name: cls for cls in (TrendFollowing, MeanReversion, Breakout, Regime, Pullback, Momentum, PriceAction,
-                                        SmartMoney, Reversal, RangeTrading, Ensemble, Adaptive)}
+                                        SmartMoney, Reversal, RangeTrading, Ensemble, Adaptive,
+                                        AdaptiveMemory)}
 
 
 def build(name: str, **params) -> Strategy:

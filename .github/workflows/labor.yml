@@ -1,0 +1,41 @@
+# Strategie-Labor: Die KI erfindet einmal pro Woche neue Strategien aus den vorhandenen Bausteinen,
+# prüft sie auf Kursen, die sie nie gesehen hat, und nimmt nur bestandene in die Bibliothek des KI-Bots auf.
+# Ergebnis: lernen/LABOR.md. Von Hand starten: Actions -> "Strategie-Labor" -> Run workflow.
+name: Strategie-Labor
+
+on:
+  schedule:
+    - cron: "17 3 * * 0"     # jeden Sonntag 03:17 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: labor
+  cancel-in-progress: false
+
+jobs:
+  labor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Neue Strategien erfinden und prüfen
+        run: python -m tradingbot labor --config bots/config_daytrading.yaml --days 730
+      - name: Ergebnis speichern
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add lernen/LABOR.md daten/state/strategie_bibliothek.json
+          git diff --cached --quiet || git commit -m "Strategie-Labor $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1

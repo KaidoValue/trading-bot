@@ -21,6 +21,7 @@ Die Bots schreiben das automatisch, alle 30 Minuten.
 | [STATUS.md](../STATUS.md) | Aktueller Stand aller Bots, Kurse und Charts |
 | [WISSEN.md](WISSEN.md) | Alle Trading-Begriffe aus deiner Liste und wie der Bot sie umsetzt |
 | [VERGLEICH.md](VERGLEICH.md) | Test mit echten Kursen: welche Strategie wie viel gebracht hätte |
+| [LABOR.md](LABOR.md) | Strategie-Labor: welche Strategien die KI selbst erfunden hat und ob sie die Prüfung bestanden haben |
 | [MAERKTE.md](MAERKTE.md) | Welche Coins Kraken in welcher Währung anbietet |
 | [README.md](../README.md) | Anleitung, Börsenvergleich, Steuern in der Schweiz |
 | [daten/logs/](../daten/logs) | Alle abgeschlossenen Trades als Tabelle (CSV, öffnet in Excel), je Bot eine Datei |

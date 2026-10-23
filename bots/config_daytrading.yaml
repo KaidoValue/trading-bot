@@ -4,7 +4,7 @@
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
 title: "2️⃣ KI-Bot (lernend, Daytrading)"
-description: "Lernende KI: gewichtet 9 Strategien nach ihrem Erfolg der letzten Wochen. Handelt auf 1-Stunden-Kerzen, Positionen meist Stunden bis 1–2 Tage."
+description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, und vergisst nichts. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. 1-Stunden-Kerzen, Positionen meist Stunden bis 1–2 Tage."
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
@@ -22,11 +22,13 @@ slippage: 0.0005
 
 # trend | mean_reversion | breakout | pullback | momentum | price_action | smc | reversal | range
 # | ensemble | adaptive (lernend, gewichtet alle 9 nach ihrem aktuellen Erfolg)
-strategy: adaptive
+strategy: adaptive_memory
 
 # Auch auf fallende Kurse setzen (Short). Nur Backtest und Paper-Modus.
 allow_short: false
-strategy_params: {}
+strategy_params:
+  memory_file: daten/state/ki_gedaechtnis.json          # Gedächtnis, wächst bei jedem Lauf
+  library_file: daten/state/strategie_bibliothek.json   # selbst erfundene Strategien aus dem Labor
 
 poll_seconds: 60
 

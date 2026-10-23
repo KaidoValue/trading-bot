@@ -41,6 +41,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     exchange = data.make_exchange(cfg.exchange, cfg.api_key, cfg.api_secret,
                                   convert_to=None if cfg.mode == "live" else quote)
     strategy = build(cfg.strategy, allow_short=cfg.allow_short, **cfg.strategy_params)
+    _pretrain(strategy, cfg)
     trader = make_trader(cfg, exchange)
     cfg.symbols = available_symbols(exchange, cfg.symbols)
     if isinstance(trader.broker, PaperBroker):
@@ -95,6 +96,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     continue  # keine neue abgeschlossene Kerze
                 last_bar[s] = df.index[-1]
                 sig = int(strategy.signals(df).iloc[-1])
+                if hasattr(strategy, "learn"):
+                    strategy.learn(s, df)        # KI-Gedächtnis: neue Kerzen merken
                 if sig == 0:
                     notes.append(f"{s}: kein Signal")
                     continue
@@ -118,6 +121,20 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             log.exception("Fehler im Durchlauf: %s", e)
         if max_iterations is None or n < max_iterations:
             time.sleep(cfg.poll_seconds)
+
+
+def _pretrain(strategy, cfg: Config, days: int = 365) -> None:
+    """Füllt ein leeres KI-Gedächtnis einmalig mit einem Jahr Kursgeschichte (BTC und ETH)."""
+    memory = getattr(strategy, "memory", None)
+    if memory is None or memory.pretrained:
+        return
+    try:
+        ex = data.make_exchange(cfg.history_exchange)
+        frames = [data.fetch_history(ex, s, cfg.timeframe, days) for s in dict.fromkeys([cfg.history_symbol, "ETH/USD"])]
+        n = strategy.pretrain(frames)
+        log.info("KI-Gedächtnis mit %d Kerzen Kursgeschichte vorgefüllt", n)
+    except Exception as e:
+        log.warning("Vorwissen für das KI-Gedächtnis nicht abrufbar: %s", e)
 
 
 def liquidation(trader: Trader, prices: dict[str, float], risk) -> bool:
