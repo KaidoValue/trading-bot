@@ -14,6 +14,7 @@ class RiskConfig:
     stop_loss_atr: float = 2.0          # Stop-Loss = Einstieg - 2 x ATR
     take_profit_atr: float = 4.0        # Take-Profit = Einstieg + 4 x ATR
     max_position_pct: float = 0.25      # max. 25 % des Kapitals in einer Position
+    max_invested_pct: float = 1.0       # höchstens so viel vom Kapital insgesamt investiert (alle Coins zusammen)
     max_daily_loss_pct: float = 0.03    # Tagesverlust > 3 % -> heute nicht mehr handeln
     max_drawdown_pct: float = 0.15      # Rückgang > 15 % vom Höchststand -> Not-Aus
     halt_days: float = 0                # 0 = Not-Aus bis zum manuellen Neustart, sonst Pause in Tagen

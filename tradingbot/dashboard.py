@@ -40,7 +40,8 @@ def local(ts) -> str:
     return utc(ts).tz_convert(TZ).strftime("%d.%m.%Y %H:%M")
 
 
-def live_chart(symbol: str) -> str:
+def live_chart(symbol: str, exchange=None) -> str:
+    symbol = getattr(exchange, "virtual", {}).get(symbol, symbol)
     return f"https://www.tradingview.com/chart/?symbol=KRAKEN:{symbol.replace('/', '')}"
 
 
@@ -85,12 +86,12 @@ def overview(bots: list[Bot]) -> list[str]:
     return out
 
 
-def prices_table(tickers: dict[str, dict]) -> list[str]:
+def prices_table(tickers: dict[str, dict], ex=None) -> list[str]:
     out = ["| Coin | Kurs jetzt | 24 Std. | Live-Chart |", "|---|---|---|---|"]
     for s, t in tickers.items():
         ch = t.get("percentage")
         ch = f"{'🟢' if ch >= 0 else '🔴'} {ch:+.2f} %" if ch is not None else "–"
-        out.append(f"| **{s.split('/')[0]}** | {chf(t['last'])} CHF | {ch} | [öffnen]({live_chart(s)}) |")
+        out.append(f"| **{s.split('/')[0]}** | {chf(t['last'])} CHF | {ch} | [öffnen]({live_chart(s, ex)}) |")
     return out
 
 
@@ -168,7 +169,7 @@ def chart(symbol: str, daily: pd.DataFrame, hourly: pd.DataFrame, bots: list[Bot
 
 def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> str:
     first = Config.load(config_paths[0])
-    ex = exchange or data.make_exchange(first.exchange)
+    ex = exchange or data.make_exchange(first.exchange, convert_to=first.symbols[0].split("/")[1])
     from .bot import available_symbols
     cfgs = [Config.load(p) for p in config_paths]
     symbols = available_symbols(ex, list(dict.fromkeys(s for c in cfgs for s in c.symbols)))
@@ -189,7 +190,7 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
              f"Stand: **{local(now)}** Schweizer Zeit · wird jede Stunde automatisch aktualisiert", "",
              "## Auf einen Blick", ""]
     lines += overview(bots) if bots else ["Noch kein Bot gelaufen."]
-    lines += ["", "## Kurse", ""] + prices_table(tickers) + [""]
+    lines += ["", "## Kurse", ""] + prices_table(tickers, ex) + [""]
     for b in bots:
         lines += bot_section(b, prices, frames)
     lines += ["## Charts", "",
@@ -198,7 +199,7 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None) -> st
     for s in symbols:
         name = s.replace("/", "-")
         chart(s, frames[s, "1d"], frames[s, "1h"], bots, Path("charts") / f"{name}.png")
-        lines += [f"### {s} · [Live-Chart]({live_chart(s)})", "", f"![{s}](charts/{name}.png)", ""]
+        lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}](charts/{name}.png)", ""]
     text = "\n".join(lines)
     Path(out).write_text(text)
     return text

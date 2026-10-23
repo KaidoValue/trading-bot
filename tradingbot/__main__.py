@@ -67,7 +67,7 @@ def status(cfg: Config) -> None:
     if not state.load(cfg.state_path, trader):
         print(f"Noch kein gespeicherter Stand ({cfg.state_path}). Zuerst 'paper' laufen lassen.")
         return
-    ex = data.make_exchange(cfg.exchange)
+    ex = data.make_exchange(cfg.exchange, convert_to=cfg.symbols[0].split("/")[1])
     from .bot import available_symbols
     cfg.symbols = available_symbols(ex, cfg.symbols)
     print(f"Beobachtete Coins: {', '.join(cfg.symbols)}")

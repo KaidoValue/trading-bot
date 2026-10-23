@@ -388,3 +388,29 @@ def test_dashboard_tables_and_charts(df, monkeypatch, tmp_path):
     text = dashboard.render(["bot.yaml"], exchange=ex)
     assert "Test-Bot" in text and "Kapital jetzt" in text and "Im Einsatz" in text
     assert (tmp_path / "charts" / "BTC-CHF.png").exists()
+
+
+def test_converted_chf_pairs():
+    class Ex:
+        id = "fake"
+        def load_markets(self):
+            return {"BTC/CHF": {}, "SOL/USD": {"spot": True}, "USD/CHF": {"spot": True}, "BTC/USD": {"spot": True}}
+        def fetch_ticker(self, s):
+            return {"last": {"SOL/USD": 100.0, "USD/CHF": 0.8, "BTC/CHF": 50_000.0}[s]}
+        def fetch_ohlcv(self, s, tf, since=None, limit=None):
+            if s == "USD/CHF":
+                return [[1, 0.9, 0.9, 0.9, 0.9, 1], [3, 0.8, 0.8, 0.8, 0.8, 1]]
+            return [[t, 100, 110, 90, 100, 5] for t in (1, 2, 3)]
+    ex = data.Converted(Ex(), "CHF")
+    assert "SOL/CHF" in ex.load_markets() and "BTC/CHF" not in ex.virtual
+    assert ex.fetch_ticker("SOL/CHF")["last"] == pytest.approx(80.0)
+    rows = ex.fetch_ohlcv("SOL/CHF", "1h")
+    assert [r[4] for r in rows] == pytest.approx([90.0, 90.0, 80.0])       # Lücke mit letztem Kurs gefüllt
+    assert ex.fetch_ticker("BTC/CHF")["last"] == 50_000.0
+
+
+def test_total_invested_cap():
+    rm = RiskManager(RiskConfig(max_position_pct=0.5, max_invested_pct=0.5, risk_per_trade=1.0), 1000)
+    assert rm.plan(1000, 1000, 100, 1).qty == pytest.approx(5.0)       # 500 CHF frei bis zur Grenze
+    assert rm.plan(1000, 600, 100, 1).qty == pytest.approx(1.0)        # 400 schon investiert: noch 100
+    assert rm.plan(1000, 500, 100, 1) is None                          # Grenze erreicht

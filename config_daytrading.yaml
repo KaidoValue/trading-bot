@@ -7,7 +7,7 @@ title: "Daytrading-Bot (1-Stunden-Kerzen, Vergleich)"
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
-symbols: ["BTC/CHF", "ETH/CHF"]   # Kraken bietet in CHF nur Bitcoin und Ethereum an
+symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
 timeframe: 1h
 
 # Kursdaten für Backtests (Kraken liefert nur ca. 30 Tage, Bitstamp mehrere Jahre)

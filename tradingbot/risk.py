@@ -79,6 +79,8 @@ class RiskManager:
         qty = min(qty, equity * self.cfg.max_position_pct / price)
         if side > 0:
             qty = min(qty, cash * 0.99 / price)
+            room = equity * self.cfg.max_invested_pct - (equity - cash)    # noch freier Platz bis zur Obergrenze
+            qty = min(qty, max(room, 0.0) / price)
         if qty * price < self.cfg.min_order_value:
             self.last_block = "Order kleiner als Mindestgrösse"
             return None

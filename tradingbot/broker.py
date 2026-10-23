@@ -31,19 +31,23 @@ class PaperBroker(Broker):
         self.fee_rate = fee_rate
         self.slippage = slippage
         self.positions: dict[str, float] = {}
+        self.extra_fee: dict[str, float] = {}     # Zusatzkosten je Coin, z.B. Umtausch CHF -> USD
 
     def cash(self):
         return self._cash
+
+    def fee(self, symbol):
+        return self.fee_rate + self.extra_fee.get(symbol, 0.0)
 
     def position(self, symbol):
         return self.positions.get(symbol, 0.0)
 
     def buy(self, symbol, qty, price):
         px = price * (1 + self.slippage)
-        fee = qty * px * self.fee_rate
+        fee = qty * px * self.fee(symbol)
         if self.position(symbol) >= 0 and qty * px + fee > self._cash:
-            qty = self._cash / (px * (1 + self.fee_rate))
-            fee = qty * px * self.fee_rate
+            qty = self._cash / (px * (1 + self.fee(symbol)))
+            fee = qty * px * self.fee(symbol)
         if qty <= 0:
             return None
         self._cash -= qty * px + fee
@@ -57,7 +61,7 @@ class PaperBroker(Broker):
         if qty <= 0:
             return None
         px = price * (1 - self.slippage)
-        fee = qty * px * self.fee_rate
+        fee = qty * px * self.fee(symbol)
         self._cash += qty * px - fee
         self.positions[symbol] = self.position(symbol) - qty
         return Fill(symbol, "sell", qty, px, fee)

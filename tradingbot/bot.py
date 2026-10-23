@@ -34,10 +34,15 @@ def make_trader(cfg: Config, exchange) -> Trader:
 
 
 def run(cfg: Config, max_iterations: int | None = None) -> None:
-    exchange = data.make_exchange(cfg.exchange, cfg.api_key, cfg.api_secret)
+    quote = cfg.symbols[0].split("/")[1]
+    exchange = data.make_exchange(cfg.exchange, cfg.api_key, cfg.api_secret,
+                                  convert_to=None if cfg.mode == "live" else quote)
     strategy = build(cfg.strategy, allow_short=cfg.allow_short, **cfg.strategy_params)
     trader = make_trader(cfg, exchange)
     cfg.symbols = available_symbols(exchange, cfg.symbols)
+    if isinstance(trader.broker, PaperBroker):
+        # Umgerechnete Coins: real müssten CHF erst in USD getauscht werden (hin und zurück je eine Order)
+        trader.broker.extra_fee = {s: cfg.fee_rate for s in cfg.symbols if getattr(exchange, "virtual", {}).get(s)}
     news = NewsMonitor(cfg.symbols[0].split("/")[0], cfg.news_refresh_minutes, cfg.news_min_sources,
                        events=cfg.use_events, extra_feeds=cfg.event_feeds,
                        pause_minutes=cfg.event_pause_minutes) if cfg.use_news else None

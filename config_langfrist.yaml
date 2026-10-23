@@ -1,13 +1,13 @@
 # Langfrist-Variante: Tageskerzen, wenige Trades, grosse Positionen.
 # Benutzen mit:  py -3.13 -m tradingbot compare --config config_langfrist.yaml --days 2500
 #
-# Höchstens 3 Coins gleichzeitig, je ca. ein Sechstel des Kapitals: zusammen etwa die Hälfte investiert. Schwankungen von 10-20 % sind möglich,
+# Ein gemeinsames Konto für alle Coins. Höchstens 5 Coins gleichzeitig, je max. 10 %: zusammen höchstens die Hälfte investiert. Schwankungen von 10-20 % sind möglich,
 # deshalb ist der Not-Aus erst bei 35 % Rückgang eingestellt.
 
 mode: paper
 title: "Langfrist-Bot (200-Tage-Regel, Hauptbot)"
 exchange: kraken
-symbols: ["BTC/CHF", "ETH/CHF"]   # Kraken bietet in CHF nur Bitcoin und Ethereum an
+symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
 timeframe: 1d
 history_exchange: bitstamp
 history_symbol: BTC/USD
@@ -34,13 +34,14 @@ risk:
   risk_per_trade: 0.05        # Stop weit weg; die Grösse begrenzt ohnehin max_position_pct (ca. 4 % Risiko)
   stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
   take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
-  max_position_pct: 0.17      # pro Coin; 3 Coins zusammen ca. die Hälfte, der Rest bleibt in Cash
+  max_position_pct: 0.10      # pro Coin
+  max_invested_pct: 0.50      # alle Coins zusammen höchstens die Hälfte, der Rest bleibt in Cash
   max_daily_loss_pct: 0.15
   max_drawdown_pct: 0.35
   halt_days: 30              # nach Not-Aus 30 Tage Pause, dann geht es weiter
   min_order_value: 10
   max_total_risk_pct: 0.30
-  max_open_positions: 3
+  max_open_positions: 5
   max_trades_per_day: 2
   loss_streak_pause: 99
   pause_hours: 0

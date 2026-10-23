@@ -10,13 +10,69 @@ import pandas as pd
 COLUMNS = ["timestamp", "open", "high", "low", "close", "volume"]
 
 
-def make_exchange(name: str, api_key: str | None = None, api_secret: str | None = None):
+def make_exchange(name: str, api_key: str | None = None, api_secret: str | None = None,
+                  convert_to: str | None = None):
+    """Mit convert_to="CHF" werden fehlende X/CHF-Paare aus X/USD umgerechnet (nur Demo, siehe Converted)."""
     import ccxt
     cls = getattr(ccxt, name)
     params = {"enableRateLimit": True}
     if api_key:
         params.update(apiKey=api_key, secret=api_secret)
-    return cls(params)
+    ex = cls(params)
+    return Converted(ex, convert_to) if convert_to else ex
+
+
+class Converted:
+    """Bietet Coins, die die Börse nicht direkt in CHF handelt (z.B. SOL), als SOL/CHF an: Kurse kommen von
+    SOL/USD und werden mit dem USD/CHF-Kurs der Börse umgerechnet. So läuft das ganze Demo-Konto in Franken.
+    Echt müsste man dafür CHF in USD tauschen; diese Kosten rechnet der Bot im Demo als Zusatzgebühr ein."""
+
+    def __init__(self, exchange, quote: str = "CHF", via: str = "USD"):
+        self.ex, self.quote, self.via = exchange, quote, via
+        self.id = exchange.id
+        self.bridge = f"{via}/{quote}"
+        self.virtual: dict[str, str] = {}      # z.B. "SOL/CHF" -> "SOL/USD"
+        self.markets: dict | None = None
+
+    def __getattr__(self, name):
+        return getattr(self.ex, name)
+
+    def load_markets(self):
+        if self.markets is None:
+            m = dict(self.ex.load_markets())
+            if self.bridge in m:
+                for s, info in list(m.items()):
+                    base, _, q = s.partition("/")
+                    if q == self.via and info.get("spot", True) and f"{base}/{self.quote}" not in m:
+                        self.virtual[f"{base}/{self.quote}"] = s
+                        m[f"{base}/{self.quote}"] = {"spot": True, "virtual": s}
+            self.markets = m
+        return self.markets
+
+    def source(self, symbol: str) -> str | None:
+        self.load_markets()
+        return self.virtual.get(symbol)
+
+    def fetch_ticker(self, symbol):
+        src = self.source(symbol)
+        if not src:
+            return self.ex.fetch_ticker(symbol)
+        t = self.ex.fetch_ticker(src)
+        return {**t, "last": float(t["last"]) * float(self.ex.fetch_ticker(self.bridge)["last"])}
+
+    def fetch_ohlcv(self, symbol, timeframe="1h", since=None, limit=None):
+        src = self.source(symbol)
+        if not src:
+            return self.ex.fetch_ohlcv(symbol, timeframe, since=since, limit=limit)
+        rows = self.ex.fetch_ohlcv(src, timeframe, since=since, limit=limit)
+        fx_rows = self.ex.fetch_ohlcv(self.bridge, timeframe, since=since, limit=limit)
+        fx = pd.Series({r[0]: r[4] for r in fx_rows}, dtype=float).sort_index()
+        last = float(self.ex.fetch_ticker(self.bridge)["last"])
+        rate = fx.reindex(sorted(set(fx.index) | {r[0] for r in rows})).ffill().bfill().fillna(last)
+        return [[r[0], *(v * rate[r[0]] for v in r[1:5]), r[5]] for r in rows]
+
+    def fetch_order_book(self, symbol, limit=None):
+        return self.ex.fetch_order_book(self.source(symbol) or symbol, limit)
 
 
 def to_frame(rows) -> pd.DataFrame:
