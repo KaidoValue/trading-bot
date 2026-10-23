@@ -1,17 +1,17 @@
 # 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)
 
-Stand: **23.10.2026 09:07** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
+Stand: **23.10.2026 13:55** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
 
 ## Auf einen Blick
 
 | | **Langfrist-Bot (200-Tage-Regel, Hauptbot)** | **Daytrading-Bot (1-Stunden-Kerzen, Vergleich)** |
 |---|---|---|
 | Startkapital | 1'000.00 CHF | 1'000.00 CHF |
-| **Kapital jetzt** | **1'003.87 CHF** | **1'000.00 CHF** |
-| Gewinn / Verlust | 🟢 +3.87 CHF (+0.39 %) | ⚪ +0.00 CHF (+0.00 %) |
-| Im Einsatz (investiert) | 586.37 CHF (58 %) | 0.00 CHF (0 %) |
-| Cash (nicht investiert) | 417.51 CHF | 1'000.00 CHF |
-| Offene Positionen | 2 | 0 |
+| **Kapital jetzt** | **1'000.00 CHF** | **1'000.00 CHF** |
+| Gewinn / Verlust | ⚪ +0.00 CHF (+0.00 %) | ⚪ +0.00 CHF (+0.00 %) |
+| Im Einsatz (investiert) | 0.00 CHF (0 %) | 0.00 CHF (0 %) |
+| Cash (nicht investiert) | 1'000.00 CHF | 1'000.00 CHF |
+| Offene Positionen | 0 | 0 |
 | Abgeschlossene Trades | 0 | 0 |
 | Strategie | regime, 1d-Kerzen | adaptive, 1h-Kerzen |
 
@@ -19,17 +19,18 @@ Stand: **23.10.2026 09:07** Schweizer Zeit · wird jede Stunde automatisch aktua
 
 | Coin | Kurs jetzt | 24 Std. | Live-Chart |
 |---|---|---|---|
-| **BTC** | 67'346.40 CHF | 🟢 +1.06 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
-| **ETH** | 1'978.75 CHF | 🟢 +1.36 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
+| **BTC** | 67'189.60 CHF | 🟢 +0.83 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
+| **ETH** | 1'979.55 CHF | 🟢 +1.40 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
+| **BNB** | 614.93 CHF | 🟢 +2.12 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
+| **XRP** | 1.09 CHF | 🟢 +1.02 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
+| **SOL** | 86.17 CHF | 🟢 +0.95 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
+| **TRX** | 0.27 CHF | 🟢 +0.51 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
+| **ZEC** | 1'015.10 CHF | 🟢 +1.00 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
+| **HYPE** | 64.37 CHF | 🟢 +0.94 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
 
 ## Langfrist-Bot (200-Tage-Regel, Hauptbot)
 
-**Offene Positionen**
-
-| Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
-|---|---|---|---|---|---|---|---|---|
-| **BTC** long | 23.10.2026 01:18 | 66'640.70 | 67'346.40 | 0.007507 | 500.25 CHF | 505.55 CHF | 🟢 +5.30 CHF (+1.06 %) | 53'271.15 (-21 %) |
-| **ETH** long | 23.10.2026 08:33 | 1'976.67 | 1'978.75 | 0.040844 | 80.73 CHF | 80.82 CHF | 🟢 +0.09 CHF (+0.11 %) | 1'361.59 (-31 %) |
+Keine offene Position, alles in Cash.
 
 **Signale jetzt**
 
@@ -37,8 +38,14 @@ Stand: **23.10.2026 09:07** Schweizer Zeit · wird jede Stunde automatisch aktua
 |---|---|
 | BTC | 🟢 investiert sein |
 | ETH | 🟢 investiert sein |
+| BNB | 🟢 investiert sein |
+| XRP | 🟢 investiert sein |
+| SOL | 🟢 investiert sein |
+| TRX | ⚪ neutral |
+| ZEC | 🟢 investiert sein |
+| HYPE | 🟢 investiert sein |
 
-**Letzte Entscheidung:** BTC/CHF: Position offen, Signal bestätigt · ETH/CHF: Position offen, Signal bestätigt
+**Letzte Entscheidung:** BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · TRX/CHF: kein Signal · ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0)
 
 ## Daytrading-Bot (1-Stunden-Kerzen, Vergleich)
 
@@ -50,8 +57,14 @@ Keine offene Position, alles in Cash.
 |---|---|
 | BTC | 🔴 raus / Cash |
 | ETH | 🔴 raus / Cash |
+| BNB | 🟢 investiert sein |
+| XRP | 🔴 raus / Cash |
+| SOL | 🔴 raus / Cash |
+| TRX | 🔴 raus / Cash |
+| ZEC | 🔴 raus / Cash |
+| HYPE | 🔴 raus / Cash |
 
-**Letzte Entscheidung:** BTC/CHF: Signal 'raus', bleibe in Cash · ETH/CHF: Signal 'raus', bleibe in Cash
+**Letzte Entscheidung:** BTC/CHF: Signal 'raus', bleibe in Cash · ETH/CHF: Signal 'raus', bleibe in Cash · BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (bestätigte Themen: hack,klage, Wert -1.0) · XRP/CHF: Signal 'raus', bleibe in Cash · SOL/CHF: Signal 'raus', bleibe in Cash · TRX/CHF: Signal 'raus', bleibe in Cash · ZEC/CHF: Signal 'raus', bleibe in Cash · HYPE/CHF: Signal 'raus', bleibe in Cash
 
 ## Charts
 
@@ -65,13 +78,39 @@ Keine offene Position, alles in Cash.
 
 ![ETH/CHF](charts/ETH-CHF.png)
 
+### BNB/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD)
+
+![BNB/CHF](charts/BNB-CHF.png)
+
+### XRP/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD)
+
+![XRP/CHF](charts/XRP-CHF.png)
+
+### SOL/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD)
+
+![SOL/CHF](charts/SOL-CHF.png)
+
+### TRX/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD)
+
+![TRX/CHF](charts/TRX-CHF.png)
+
+### ZEC/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD)
+
+![ZEC/CHF](charts/ZEC-CHF.png)
+
+### HYPE/CHF · [Live-Chart](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD)
+
+![HYPE/CHF](charts/HYPE-CHF.png)
+
 ## Nachrichtenlage
 
 - **Stimmung (Fear & Greed):** 50 von 100, neutral
-- **Bewertung News:** -0.30 (−1 sehr negativ bis +1 sehr positiv)
-- **Bestätigte Themen:** klage (gemeldet von bitcoinmagazine, cointelegraph – nur Hinweis, blockiert nicht)
+- **Bewertung News:** -1.00 (−1 sehr negativ bis +1 sehr positiv)
+- **Bestätigte Themen:** hack (gemeldet von bitcoinmagazine, coindesk – blockiert Käufe); klage (gemeldet von bitcoinmagazine, cointelegraph – nur Hinweis, blockiert nicht)
 
 **Schlagzeilen dazu:**
 
+- 2026-10-23 08:02 UTC · **coindesk** · [India's largest exchange denies hack after sleuths pointed to $16 million in suspicious outflows](https://www.coindesk.com/markets/2026/10/23/india-s-largest-exchange-denies-hack-after-blockchain-sleuths-pointed-to-usd16-million-in-suspicious-outflows) _(Thema: hack)_
 - 2026-10-22 21:39 UTC · **cointelegraph** · [Circle shareholder sues Trump, World Liberty and Steve Witkoff over crypto deals](https://cointelegraph.com/news/circle-shareholder-lawsuit-donald-trump-world-liberty-financial-steve-witkoff-crypto-corruption?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound) _(Thema: klage)_
 - 2026-10-22 21:23 UTC · **bitcoinmagazine** · [Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals](https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption) _(Thema: klage)_
+- 2026-10-22 13:33 UTC · **bitcoinmagazine** · [SpaceX-Tesla Merger: Passive Flows ‘Hack’, Could Bring More BTC Exposure to S&P 500](https://bitcoinmagazine.com/videos/spacex-tesla-merger-passive-flows-hack-could-bring-more-btc-exposure-to-sp-500) _(Thema: hack)_

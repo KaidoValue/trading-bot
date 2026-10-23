@@ -3,17 +3,39 @@
   "closed": [],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-23T06:00:00+00:00"
+      "__dt__": "2026-10-23T10:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-23T06:00:00+00:00"
+      "__dt__": "2026-10-23T10:00:00+00:00"
+    },
+    "BNB/CHF": {
+      "__dt__": "2026-10-23T10:00:00+00:00"
+    },
+    "XRP/CHF": {
+      "__dt__": "2026-10-23T10:00:00+00:00"
+    },
+    "SOL/CHF": {
+      "__dt__": "2026-10-23T10:00:00+00:00"
+    },
+    "TRX/CHF": {
+      "__dt__": "2026-10-23T10:00:00+00:00"
+    },
+    "ZEC/CHF": {
+      "__dt__": "2026-10-23T10:00:00+00:00"
+    },
+    "HYPE/CHF": {
+      "__dt__": "2026-10-23T10:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash",
+  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Signal 'raus', bleibe in Cash | HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 50,
-    "news_score": -0.3,
+    "news_score": -1.0,
     "themes": {
+      "hack": [
+        "bitcoinmagazine",
+        "coindesk"
+      ],
       "klage": [
         "bitcoinmagazine",
         "cointelegraph"
@@ -21,6 +43,13 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "India's largest exchange denies hack after sleuths pointed to $16 million in suspicious outflows",
+        "link": "https://www.coindesk.com/markets/2026/10/23/india-s-largest-exchange-denies-hack-after-blockchain-sleuths-pointed-to-usd16-million-in-suspicious-outflows",
+        "published": "2026-10-23T08:02:35+00:00"
+      },
       {
         "theme": "klage",
         "source": "cointelegraph",
@@ -34,12 +63,19 @@
         "title": "Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals",
         "link": "https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption",
         "published": "2026-10-22T21:23:58+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "SpaceX-Tesla Merger: Passive Flows \u2018Hack\u2019, Could Bring More BTC Exposure to S&P 500",
+        "link": "https://bitcoinmagazine.com/videos/spacex-tesla-merger-passive-flows-hack-could-bring-more-btc-exposure-to-sp-500",
+        "published": "2026-10-22T13:33:24+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T07:06:53.589578+00:00"
+    "__dt__": "2026-10-23T11:54:53.255866+00:00"
   },
   "risk": {
     "peak_equity": 1000,

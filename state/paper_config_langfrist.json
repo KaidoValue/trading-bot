@@ -1,0 +1,97 @@
+{
+  "open_trades": {},
+  "closed": [],
+  "last_bar": {
+    "BTC/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "ETH/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "BNB/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "XRP/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "SOL/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "TRX/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "ZEC/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    },
+    "HYPE/CHF": {
+      "__dt__": "2026-10-22T00:00:00+00:00"
+    }
+  },
+  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | TRX/CHF: kein Signal | ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0) | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,klage, Wert -1.0)",
+  "news": {
+    "fear_greed": 50,
+    "news_score": -1.0,
+    "themes": {
+      "hack": [
+        "bitcoinmagazine",
+        "coindesk"
+      ],
+      "klage": [
+        "bitcoinmagazine",
+        "cointelegraph"
+      ]
+    },
+    "blackout": null,
+    "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "India's largest exchange denies hack after sleuths pointed to $16 million in suspicious outflows",
+        "link": "https://www.coindesk.com/markets/2026/10/23/india-s-largest-exchange-denies-hack-after-blockchain-sleuths-pointed-to-usd16-million-in-suspicious-outflows",
+        "published": "2026-10-23T08:02:35+00:00"
+      },
+      {
+        "theme": "klage",
+        "source": "cointelegraph",
+        "title": "Circle shareholder sues Trump, World Liberty and Steve Witkoff over crypto deals",
+        "link": "https://cointelegraph.com/news/circle-shareholder-lawsuit-donald-trump-world-liberty-financial-steve-witkoff-crypto-corruption?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-22T21:39:18+00:00"
+      },
+      {
+        "theme": "klage",
+        "source": "bitcoinmagazine",
+        "title": "Circle Shareholder Sues Trump, Alleging Unconstitutional Profits From $2B UAE Crypto Deals",
+        "link": "https://bitcoinmagazine.com/news/trump-sued-for-alleged-crypto-corruption",
+        "published": "2026-10-22T21:23:58+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "SpaceX-Tesla Merger: Passive Flows \u2018Hack\u2019, Could Bring More BTC Exposure to S&P 500",
+        "link": "https://bitcoinmagazine.com/videos/spacex-tesla-merger-passive-flows-hack-could-bring-more-btc-exposure-to-sp-500",
+        "published": "2026-10-22T13:33:24+00:00"
+      }
+    ],
+    "alerts": []
+  },
+  "updated": {
+    "__dt__": "2026-10-23T11:54:05.045885+00:00"
+  },
+  "risk": {
+    "peak_equity": 1000,
+    "day": {
+      "__dt__": "2026-10-23"
+    },
+    "day_start_equity": 1000.0,
+    "trades_today": 0,
+    "loss_streak": 0,
+    "paused_until": null,
+    "halted": false,
+    "halted_on": null,
+    "halt_reason": ""
+  },
+  "paper": {
+    "cash": 1000,
+    "positions": {}
+  }
+}
