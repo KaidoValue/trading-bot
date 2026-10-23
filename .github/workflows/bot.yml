@@ -1,17 +1,18 @@
-# Lässt den Bot jede Stunde automatisch auf den Servern von GitHub laufen (kein eigener PC nötig).
-# Der Stand (state/) und das Trade-Protokoll (logs/) werden danach ins Repository zurückgespeichert.
+# Lässt die Demo-Bots rund um die Uhr auf den Servern von GitHub laufen (kein eigener PC nötig).
+# Ein Lauf dauert ca. 5 Stunden und handelt alle 30 Minuten. Am Ende startet er selbst den nächsten Lauf.
+# STOPPEN: auf GitHub unter Actions -> "Trading-Bot stündlich" -> "..." -> "Disable workflow".
+# Der Zeitplan unten ist nur die Absicherung, falls die Kette einmal abreisst (GitHub lässt geplante
+# Läufe oft ausfallen). Der Stand wird nach jedem Durchlauf ins Repository gespeichert.
 name: Trading-Bot stündlich
 
 on:
   schedule:
-    # Jede Stunde: prüft Stop-Loss, Nachrichten und Ereignisse. Das Kauf-/Verkaufssignal der Tageskerze
-    # wird trotzdem nur einmal pro Tag ausgewertet (nach Schluss der Kerze um 00:00 UTC).
-    # Verbrauch ca. 1-1,5 Minuten pro Lauf, also unter den 2000 Gratis-Minuten pro Monat für private Repos.
-    - cron: "23,53 * * * *"  # alle 30 Min., nicht zur vollen Stunde (dann lässt GitHub oft Läufe ausfallen)
+    - cron: "23 */2 * * *"   # Absicherung alle 2 Std.; läuft schon ein Block, wartet dieser Start dahinter
   workflow_dispatch: {}        # zusätzlich von Hand startbar (Actions -> Run workflow)
 
 permissions:
   contents: write
+  actions: write       # damit ein Lauf den nächsten starten kann
 
 concurrency:
   group: trading-bot
@@ -20,7 +21,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
 
@@ -32,35 +33,23 @@ jobs:
       - name: Bausteine installieren
         run: pip install -r requirements.txt
 
-      - name: Bot einmal laufen lassen (Demo)
-        run: python -m tradingbot paper --config config_langfrist.yaml --once
-
-      - name: Vergleichs-Bot Daytrading (Demo)
-        run: python -m tradingbot paper --config config_daytrading.yaml --once
-        continue-on-error: true
-
-      - name: Risiko-Bot (Demo)
-        run: python -m tradingbot paper --config config_risiko.yaml --once
-        continue-on-error: true
-
-      - name: Übersicht mit Tabellen und Charts in STATUS.md schreiben
-        run: |
-          mkdir -p logs
-          # Fehlermeldungen landen in logs/uebersicht_fehler.txt (die Job-Logs sind von aussen nicht lesbar)
-          python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml config_risiko.yaml \
-            > /dev/null 2> logs/uebersicht_fehler.txt || echo "Übersicht konnte nicht erstellt werden, siehe logs/uebersicht_fehler.txt"
-          { echo; python -m tradingbot news --config config_langfrist.yaml; } >> STATUS.md
-          cat STATUS.md
-
-      - name: Stand speichern
+      - name: Bots alle 30 Minuten laufen lassen (ca. 5 Stunden lang)
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
-          git add STATUS.md charts state logs || true
-          git diff --cached --quiet || git commit -m "Bot-Lauf $(date -u +%Y-%m-%d)"
-          # Falls inzwischen Code-Änderungen hochgeladen wurden: zuerst übernehmen, dann speichern
-          for i in 1 2 3; do
-            git pull --rebase -X theirs origin main && git push && exit 0
-            sleep 5
+          for i in $(seq 1 10); do
+            start=$(date +%s)
+            echo "=== Durchlauf $i um $(date -u '+%H:%M') UTC ==="
+            git pull -q --rebase -X theirs origin main || true
+            bash scripts/zyklus.sh
+            if [ "$i" -lt 10 ]; then
+              rest=$(( 1800 - ($(date +%s) - start) ))
+              sleep $(( rest > 60 ? rest : 60 ))
+            fi
           done
-          exit 1
+
+      - name: Nächsten Block starten (Kette)
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run bot.yml --ref main
