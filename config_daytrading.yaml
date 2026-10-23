@@ -3,10 +3,11 @@
 
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
+title: "Daytrading-Bot (1-Stunden-Kerzen, Vergleich)"
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
-symbols: ["BTC/CHF", "ETH/CHF", "SOL/CHF", "XRP/CHF"]   # Coins, die Kraken nicht in CHF anbietet, werden übersprungen
+symbols: ["BTC/CHF", "ETH/CHF"]   # Kraken bietet in CHF nur Bitcoin und Ethereum an
 timeframe: 1h
 
 # Kursdaten für Backtests (Kraken liefert nur ca. 30 Tage, Bitstamp mehrere Jahre)

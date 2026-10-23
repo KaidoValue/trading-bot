@@ -52,6 +52,7 @@ class Config:
     event_feeds: dict = field(default_factory=dict)   # zusätzliche RSS-Feeds, z.B. Trump/Musk-Konten
     risk: RiskConfig = field(default_factory=RiskConfig)
     name: str = "config"                # Name der Konfigurationsdatei, für die Stand-Datei
+    title: str = ""                     # Anzeigename in der Übersicht (STATUS.md)
     api_key: str | None = None
     api_secret: str | None = None
 

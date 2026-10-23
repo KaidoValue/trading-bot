@@ -5,6 +5,7 @@
   python -m tradingbot compare                  # alle Strategien vergleichen
   python -m tradingbot paper                    # Live-Kurse, simulierte Orders
   python -m tradingbot live                     # ECHTES Geld (Sicherheitsabfrage)
+  python -m tradingbot dashboard --bots a.yaml b.yaml  # STATUS.md mit Tabellen und Charts
   python -m tradingbot report                   # Lernbericht aus logs/trades*.csv
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
@@ -96,8 +97,9 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard"])
     p.add_argument("--config", default="config.yaml")
+    p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--days", type=int, default=365)
     p.add_argument("--synthetic", action="store_true", help="simulierte statt echter Kursdaten")
     p.add_argument("--seed", type=int, default=42)
@@ -142,6 +144,9 @@ def main() -> None:
         print(f"\nGesamt ausserhalb der Trainingsdaten: {total * 100:.2f} %")
     elif args.command == "report":
         report(pd.read_csv(cfg.trades_path))
+    elif args.command == "dashboard":
+        from .dashboard import render
+        print(render(args.bots or [args.config]))
     elif args.command == "status":
         status(cfg)
     elif args.command == "news":

@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import pytest
 
@@ -374,3 +375,16 @@ def test_several_coins_and_unknown_coin_skipped(df, monkeypatch, tmp_path):
     assert cfg.symbols == ["BTC/CHF", "ETH/CHF", "SOL/CHF"]
     trades = pd.read_csv(tmp_path / "logs" / "trades_multi.csv")
     assert {"BTC/CHF", "ETH/CHF"} <= set(trades["symbol"])
+
+
+def test_dashboard_tables_and_charts(df, monkeypatch, tmp_path):
+    from tradingbot import dashboard
+    monkeypatch.chdir(tmp_path)
+    ex = MultiExchange(df)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    Path("bot.yaml").write_text('strategy: trend\ntitle: "Test-Bot"\nsymbols: ["BTC/CHF", "ETH/CHF"]\n'
+                                'use_news: false\npoll_seconds: 0\ntimeframe: 1h\n')
+    bot.run(Config.load("bot.yaml"), max_iterations=300)
+    text = dashboard.render(["bot.yaml"], exchange=ex)
+    assert "Test-Bot" in text and "Kapital jetzt" in text and "Im Einsatz" in text
+    assert (tmp_path / "charts" / "BTC-CHF.png").exists()

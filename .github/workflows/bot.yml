@@ -39,34 +39,17 @@ jobs:
         run: python -m tradingbot paper --config config_daytrading.yaml --once
         continue-on-error: true
 
-      - name: Stand anzeigen und in STATUS.md schreiben
+      - name: Übersicht mit Tabellen und Charts in STATUS.md schreiben
         run: |
-          {
-            echo "# Stand des Trading-Bots (Demo)"
-            echo
-            echo "Letzte Aktualisierung: $(date -u '+%d.%m.%Y %H:%M') UTC"
-            echo
-            echo "## Langfrist-Bot (200-Tage-Regel, Hauptbot)"
-            echo
-            echo '```'
-            python -m tradingbot status --config config_langfrist.yaml
-            echo '```'
-            echo
-            echo "## Vergleichs-Bot Daytrading (1-Stunden-Kerzen)"
-            echo
-            echo '```'
-            python -m tradingbot status --config config_daytrading.yaml || echo "noch keine Daten"
-            echo '```'
-            echo
-            python -m tradingbot news --config config_langfrist.yaml
-          } > STATUS.md
+          python -m tradingbot dashboard --bots config_langfrist.yaml config_daytrading.yaml > /dev/null
+          { echo; python -m tradingbot news --config config_langfrist.yaml; } >> STATUS.md
           cat STATUS.md
 
       - name: Stand speichern
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
-          git add STATUS.md state logs || true
+          git add STATUS.md charts state logs || true
           git diff --cached --quiet || git commit -m "Bot-Lauf $(date -u +%Y-%m-%d)"
           # Falls inzwischen Code-Änderungen hochgeladen wurden: zuerst übernehmen, dann speichern
           for i in 1 2 3; do

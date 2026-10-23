@@ -5,8 +5,9 @@
 # deshalb ist der Not-Aus erst bei 35 % Rückgang eingestellt.
 
 mode: paper
+title: "Langfrist-Bot (200-Tage-Regel, Hauptbot)"
 exchange: kraken
-symbols: ["BTC/CHF", "ETH/CHF", "SOL/CHF", "XRP/CHF"]   # Coins, die Kraken nicht in CHF anbietet, werden übersprungen
+symbols: ["BTC/CHF", "ETH/CHF"]   # Kraken bietet in CHF nur Bitcoin und Ethereum an
 timeframe: 1d
 history_exchange: bitstamp
 history_symbol: BTC/USD
@@ -30,7 +31,7 @@ event_pause_minutes: 30
 event_feeds: {}
 
 risk:
-  risk_per_trade: 0.20        # Stop weit weg, deshalb grosser Risikobetrag pro Trade
+  risk_per_trade: 0.05        # Stop weit weg; die Grösse begrenzt ohnehin max_position_pct (ca. 4 % Risiko)
   stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
   take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
   max_position_pct: 0.17      # pro Coin; 3 Coins zusammen ca. die Hälfte, der Rest bleibt in Cash
