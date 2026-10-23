@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: trading-bot
+  group: vergleich
   cancel-in-progress: false
 
 jobs:
