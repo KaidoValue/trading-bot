@@ -1,22 +1,5 @@
 {
   "open_trades": {
-    "ZEC/CHF": {
-      "side": 1,
-      "entry": 1020.506302152,
-      "qty": 0.24509892733885827,
-      "stop": 982.2737603707004,
-      "target": 1095.4413912585992,
-      "opened": {
-        "__dt__": "2026-10-23T16:10:29.028886+00:00"
-      },
-      "context": {
-        "fear_greed": 50,
-        "news_score": -0.3,
-        "news_themes": "klage",
-        "event": "-",
-        "session": "New York"
-      }
-    },
     "TRX/CHF": {
       "side": 1,
       "entry": 0.27228983303807996,
@@ -72,6 +55,26 @@
       "news_themes": "klage",
       "event": "-",
       "session": "New York"
+    },
+    {
+      "symbol": "ZEC/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-23T16:10:29.028886+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-23T22:49:05.721029+00:00"
+      },
+      "entry": 1020.506302152,
+      "exit": 960.7911337152001,
+      "qty": 0.24509892733885827,
+      "pnl": -15.860665886324362,
+      "reason": "Stop-Loss (Gap)",
+      "fear_greed": 50,
+      "news_score": -0.3,
+      "news_themes": "klage",
+      "event": "-",
+      "session": "New York"
     }
   ],
   "last_bar": {
@@ -110,7 +113,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-23T22:19:23.882634+00:00"
+    "__dt__": "2026-10-23T22:49:15.474983+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -119,23 +122,23 @@
     },
     "day_start_equity": 1000.0,
     "trades_today": 4,
-    "loss_streak": 1,
+    "loss_streak": 2,
     "paused_until": null,
     "halted": false,
     "halted_on": null,
     "halt_reason": ""
   },
   "paper": {
-    "cash": 243.02112659157223,
+    "cash": 477.28546070524783,
     "positions": {
       "BNB/CHF": 0.0,
-      "ZEC/CHF": 0.24509892733885827,
+      "ZEC/CHF": 0.0,
       "TRX/CHF": 918.327343444289,
       "XRP/CHF": 229.54934933078465
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-23T22:19:05.626964+00:00"
+      "__dt__": "2026-10-23T22:49:05.721029+00:00"
     }
   }
 }
