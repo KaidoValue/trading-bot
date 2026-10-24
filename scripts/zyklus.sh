@@ -24,6 +24,7 @@ git diff --cached --quiet || git commit -q -m "Bot-Lauf $(date -u '+%Y-%m-%d %H:
 # Falls inzwischen Code-Änderungen hochgeladen wurden: zuerst übernehmen, dann speichern
 for i in 1 2 3; do
   git pull -q --rebase -X theirs origin main && git push -q && exit 0
+  git rebase --abort 2>/dev/null || true    # Konflikt: nicht in einem halben Rebase stecken bleiben
   sleep 5
 done
 echo "Speichern fehlgeschlagen"
