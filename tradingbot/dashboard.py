@@ -254,6 +254,7 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
     now = datetime.now(timezone.utc)
     lines = ["# 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)", "",
              f"Stand: **{local(now)}** Schweizer Zeit · wird jede Stunde automatisch aktualisiert", "",
+             "> 🖥️ **[Zur Trading-Oberfläche](https://kaidovalue.github.io/trading-bot/)** (übersichtlich, mit Live-Chart)", "",
              "## Auf einen Blick", ""]
     lines += [f"- **{b.cfg.title or b.cfg.name}:** {b.cfg.description}" for b in bots if b.cfg.description]
     chef_lines = []
@@ -283,6 +284,13 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
             continue
         chart(s, frames[s, "1d"], frames[s, "1h"], bots, Path("daten/charts") / f"{name}.png")
         lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}]({chart_url(name)})", ""]
+    if chef_path:
+        from . import web
+        values = {b.cfg.name: b.equity for b in bots} | ({"chef": chef.equity} if chef_lines else {})
+        history = web.record(Path("daten/state/verlauf.csv"), now, values)
+        Path("daten/charts").mkdir(parents=True, exist_ok=True)
+        Path("daten/charts/index.html").write_text(
+            web.page(bots, chef if chef_lines else None, tickers, prices, history, now, ex))
     text = "\n".join(lines)
     Path(out).write_text(text)
     return text

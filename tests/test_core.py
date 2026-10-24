@@ -522,6 +522,10 @@ def test_dashboard_shows_chef(df, monkeypatch, tmp_path):
     text = dashboard.render(["bot.yaml"], exchange=ex, chef_path="daten/state/chef.json")
     assert "4️⃣ Chef-Bot" in text and "Aktuelle Verteilung" in text
     assert (tmp_path / "daten" / "state" / "chef.json").exists()
+    html = (tmp_path / "daten" / "charts" / "index.html").read_text()
+    assert "Trading-Bot Terminal" in html and "Chef-Bot" in html and "KRAKEN:BTCCHF" in html
+    dashboard.render(["bot.yaml"], exchange=ex, chef_path="daten/state/chef.json")
+    assert len(pd.read_csv(tmp_path / "daten" / "state" / "verlauf.csv")) == 2
 
 
 def test_chef_emergency_brake(tmp_path):
