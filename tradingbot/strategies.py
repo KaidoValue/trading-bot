@@ -372,6 +372,73 @@ class YtDivergence(Strategy):
         return sig
 
 
+# --- Regeln aus klassischen Trading-Büchern (lernen/BUECHER.md). Werden nur getestet, nicht automatisch gehandelt. ---
+
+class BookTurtle(Strategy):
+    """Turtle Trading (Richard Dennis, beschrieben von Curtis Faith), System 2: kaufen beim Ausbruch über das
+    55-Kerzen-Hoch, verkaufen beim Bruch des 20-Kerzen-Tiefs. Short spiegelbildlich, falls erlaubt."""
+    name = "buch_turtle"
+
+    def signals(self, df):
+        hi = df["high"].rolling(self.params.get("entry", 55)).max().shift()
+        lo = df["low"].rolling(self.params.get("exit", 20)).min().shift()
+        sig = pd.Series(0, index=df.index)
+        sig[df["close"] > hi] = 1
+        sig[df["close"] < lo] = -1
+        return sig
+
+
+class BookTripleScreen(Strategy):
+    """Triple Screen (Alexander Elder, «Trading for a Living»): 1. Bildschirm: Trend der höheren Zeiteinheit
+    (13er-EMA auf 5-fachem Zeitraster, hier EMA 65, steigt). 2. Bildschirm: Rücksetzer gegen den Trend
+    (Force Index, 2er-EMA, unter null). 3. Bildschirm: Einstieg, wenn der Kurs über das Hoch der Vorkerze steigt.
+    Raus, sobald der übergeordnete Trend dreht."""
+    name = "buch_triple_screen"
+
+    def signals(self, df):
+        c = df["close"]
+        long_ema = ind.ema(c, self.params.get("trend", 65))
+        trend_up = long_ema > long_ema.shift()
+        force = ind.ema(c.diff() * df["volume"], 2)
+        sig = pd.Series(0, index=df.index)
+        sig[trend_up & (force.shift() < 0) & (df["high"] > df["high"].shift())] = 1
+        sig[~trend_up] = -1
+        return sig
+
+
+class BookGoldenCross(Strategy):
+    """John Murphy («Technische Analyse der Finanzmärkte»): Golden Cross. Investiert, solange die 50er-Linie
+    über der 200er-Linie liegt und das MACD-Histogramm den Trend bestätigt; raus beim Death Cross."""
+    name = "buch_golden_cross"
+
+    def signals(self, df):
+        c = df["close"]
+        fast, slow = ind.sma(c, 50), ind.sma(c, 200)
+        _, _, hist = ind.macd(c)
+        sig = pd.Series(0, index=df.index)
+        sig[(fast > slow) & (hist > 0)] = 1
+        sig[fast < slow] = -1
+        return sig
+
+
+class BookLivermore(Strategy):
+    """Jesse Livermore («Reminiscences of a Stock Operator» / «How to Trade in Stocks»): nur mit dem Trend handeln
+    und am «Pivotal Point» kaufen, also beim Ausbruch aus einer engen Seitwärtsphase auf ein neues Hoch. Verlierer
+    schnell schliessen: raus, wenn der Kurs 10 % unter das letzte Hoch fällt."""
+    name = "buch_livermore"
+
+    def signals(self, df):
+        c = df["close"]
+        n = self.params.get("base", 20)
+        hi = df["high"].rolling(n).max().shift()
+        lo = df["low"].rolling(n).min().shift()
+        tight = (hi - lo) / c < self.params.get("tight", 0.12)          # enge Basis vor dem Ausbruch
+        sig = pd.Series(0, index=df.index)
+        sig[(c > hi) & tight & (c > ind.sma(c, 200))] = 1
+        sig[c < df["high"].rolling(n).max() * 0.9] = -1
+        return sig
+
+
 def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
     """Wandelt Kauf-/Verkaufssignale in die gehaltene Position um (+1 long, 0 flat, -1 short)."""
     pos = sig.replace(0, float("nan")).ffill().fillna(0)
@@ -380,7 +447,8 @@ def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
 
 STRATEGIES = {cls.name: cls for cls in (TrendFollowing, MeanReversion, Breakout, Regime, Pullback, Momentum, PriceAction,
                                         SmartMoney, Reversal, RangeTrading, Ensemble, Adaptive,
-                                        AdaptiveMemory, YtFibWave, YtCycle, YtDivergence)}
+                                        AdaptiveMemory, YtFibWave, YtCycle, YtDivergence,
+                                        BookTurtle, BookTripleScreen, BookGoldenCross, BookLivermore)}
 
 
 def build(name: str, **params) -> Strategy:

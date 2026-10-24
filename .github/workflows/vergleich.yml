@@ -57,11 +57,11 @@ jobs:
             run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy adaptive
             echo "200-Tage-Regel (regime):"
             run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy regime
-            echo "## Regeln aus YouTube-Videos (Walk-Forward, nur ungesehene Daten)"
+            echo "## Regeln aus YouTube-Videos und Trading-Büchern (Walk-Forward, nur ungesehene Daten)"
             echo
-            echo "Herleitung der Regeln: lernen/YOUTUBE.md"
+            echo "Herleitung der Regeln: lernen/YOUTUBE.md und lernen/BUECHER.md"
             echo
-            for s in yt_fib_welle yt_zyklus yt_divergenz; do
+            for s in yt_fib_welle yt_zyklus yt_divergenz buch_turtle buch_triple_screen buch_golden_cross buch_livermore; do
               echo "### $s, Tageskerzen 2500 Tage"
               echo
               run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy $s
