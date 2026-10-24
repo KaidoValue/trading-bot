@@ -1,5 +1,6 @@
 @echo off
 chcp 65001 > nul
+set PYTHONUTF8=1
 REM Einmalige Einrichtung auf dem Windows-PC: holt die Abschriften neuer YouTube-Videos fuer den KI-Bot.
 REM Einfach doppelklicken. Danach laeuft es bei jeder Anmeldung am PC und taeglich um 18 Uhr automatisch.
 setlocal

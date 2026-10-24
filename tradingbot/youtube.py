@@ -82,15 +82,15 @@ def retry_missing(index: dict, channel: str, fetch_transcript, days: int = 30) -
             continue
         text = fetch_transcript(vid)
         if text and Path(v["file"]).exists():
-            old = Path(v["file"]).read_text()
+            old = Path(v["file"]).read_text(encoding="utf-8")
             head = old.split("## Abschrift")[0]
-            Path(v["file"]).write_text(head + "## Abschrift\n\n" + text + "\n")
+            Path(v["file"]).write_text(head + "## Abschrift\n\n" + text + "\n", encoding="utf-8")
             v["transcript"] = True
 
 
 def update(channels: list[str] = CHANNELS, get=_get, fetch_transcript=transcript) -> list[str]:
     """Neue Videos holen und speichern. Gibt die neu geschriebenen Dateien zurück."""
-    index = json.loads(INDEX.read_text()) if INDEX.exists() else {"ids": {}, "videos": {}}
+    index = json.loads(INDEX.read_text(encoding="utf-8")) if INDEX.exists() else {"ids": {}, "videos": {}}
     written = []
     for ch in channels:
         try:
@@ -112,10 +112,10 @@ def update(channels: list[str] = CHANNELS, get=_get, fetch_transcript=transcript
             text = fetch_transcript(v["id"])
             path = FOLDER / ch / f"{v['published'][:10]}_{slug(v['title']) or v['id']}.md"
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(note(ch, v, text))
+            path.write_text(note(ch, v, text), encoding="utf-8")
             index["videos"][v["id"]] = {"channel": ch, "title": v["title"], "published": v["published"],
                                         "file": str(path), "transcript": text is not None, "evaluated": False}
             written.append(str(path))
     FOLDER.mkdir(parents=True, exist_ok=True)
-    INDEX.write_text(json.dumps(index, indent=1, ensure_ascii=False))
+    INDEX.write_text(json.dumps(index, indent=1, ensure_ascii=False), encoding="utf-8")
     return written

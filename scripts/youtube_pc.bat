@@ -1,5 +1,6 @@
 @echo off
 chcp 65001 > nul
+set PYTHONUTF8=1
 REM Holt die Abschriften neuer YouTube-Videos und laedt sie ins Projekt hoch (laeuft automatisch).
 cd /d %~dp0..
 if not exist lernen mkdir lernen
