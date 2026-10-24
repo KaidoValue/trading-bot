@@ -80,4 +80,4 @@ Affiliate Links (FAQ): Die HKCM ist Teil von Partnerprogrammen mit Drittanbieter
 
 ## Abschrift
 
-*(Keine Abschrift erhältlich: Das Video hat keine Untertitel oder YouTube hat den Abruf gesperrt.)*
+Man hat die Chinesen immer belächelt. Das ja sehr lange und dann gibt es ja diese Aha-Erlebnis, wo dann Corona war und alles sozusagen ja abgeschlossen, man konnte nicht mehr reisen und so weiter und dann kam die nächste Autoshow in Peking und man hat festgestellt, nee, da kommen jetzt ganz vernünftige Autos. Und aus ganz vernünftigen Autos wurden robuste Autos und aus robusten Autos wurden jetzt ganz gute Autos und jetzt sage ich dir was, was viel schlimmer ist. Ich habe jetzt die ersten Videos auf X gesehen, der hat dann ein Auto präsentiert, was in China irgendwie 33.000 kostet. So ein SUV, der kostet bei uns dann wahrscheinlich das Doppelte mit Zöllen und so weiter, 60, 70.000. Der lässt keine Wünsche mehr offen. Und das heißt also, aus ganz guten Autos, da kommt jetzt wahrscheinlich demnächst die Demütigung.
