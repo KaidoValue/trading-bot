@@ -11,6 +11,14 @@ python -m tradingbot dashboard --bots bots/config_langfrist.yaml bots/config_day
   --chef daten/state/chef.json > /dev/null 2> daten/logs/uebersicht_fehler.txt || echo "Übersicht konnte nicht erstellt werden"
 { echo; python -m tradingbot news --config bots/config_langfrist.yaml; } >> STATUS.md
 
+# Chart-Bilder in den Branch «charts» ohne Verlauf (nur die neueste Version, damit das Repository klein bleibt)
+if [ -d daten/charts ] && ls daten/charts/*.png > /dev/null 2>&1; then
+  export GIT_INDEX_FILE="$(mktemp -u)"
+  git --work-tree=daten/charts add -A . && commit=$(git commit-tree "$(git write-tree)" -m "Charts $(date -u '+%Y-%m-%d %H:%M')") \
+    && git push -q -f origin "$commit:refs/heads/charts" || echo "Charts konnten nicht gespeichert werden"
+  rm -f "$GIT_INDEX_FILE"; unset GIT_INDEX_FILE
+fi
+
 git add -A STATUS.md daten lernen || true
 git diff --cached --quiet || git commit -q -m "Bot-Lauf $(date -u '+%Y-%m-%d %H:%M')"
 # Falls inzwischen Code-Änderungen hochgeladen wurden: zuerst übernehmen, dann speichern

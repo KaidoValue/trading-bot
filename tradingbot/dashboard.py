@@ -5,6 +5,8 @@ Schreibt STATUS.md und die Charts nach daten/charts/. Die Nachrichtenlage hängt
 """
 from __future__ import annotations
 
+import os
+
 import logging
 import time
 from dataclasses import dataclass
@@ -224,6 +226,13 @@ def chef_section(chef, phase: str) -> list[str]:
     return out
 
 
+def chart_url(name: str) -> str:
+    """Auf GitHub liegen die Bilder im Branch «charts», der immer nur die neueste Version enthält
+    (sonst würde jede alte Version gespeichert und das Repository mit der Zeit riesig)."""
+    repo = os.environ.get("GITHUB_REPOSITORY")
+    return f"https://raw.githubusercontent.com/{repo}/charts/{name}.png" if repo else f"daten/charts/{name}.png"
+
+
 def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_path: str | None = None) -> str:
     first = Config.load(config_paths[0])
     ex = exchange or data.make_exchange(first.exchange, convert_to=first.symbols[0].split("/")[1])
@@ -273,7 +282,7 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
         if (s, "1d") not in frames or (s, "1h") not in frames:
             continue
         chart(s, frames[s, "1d"], frames[s, "1h"], bots, Path("daten/charts") / f"{name}.png")
-        lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}](daten/charts/{name}.png)", ""]
+        lines += [f"### {s} · [Live-Chart]({live_chart(s, ex)})", "", f"![{s}]({chart_url(name)})", ""]
     text = "\n".join(lines)
     Path(out).write_text(text)
     return text
