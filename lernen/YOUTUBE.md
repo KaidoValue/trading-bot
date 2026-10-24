@@ -31,10 +31,24 @@ Bausteinen kombinieren. Die drei Bots, die gerade handeln, werden dadurch nicht 
 - **Power-Law-Modell und Kursziele** (200'000 bis 1 Mio. USD): langfristige Prognosen, keine Handelsregel.
 - **Makro und Politik** (Ölpreis, Zölle, Zinsen): fliessen beim Hauptbot schon über die Nachrichtenlage ein.
 
-### Testergebnis
+### Testergebnis (24.10.2026)
 
-Die drei Regeln werden im [Strategie-Vergleich](VERGLEICH.md) mit echten Kursdaten geprüft (Abschnitt «Regeln aus
-YouTube-Videos»). Das Ergebnis wird hier nachgetragen.
+Geprüft mit echten Kursdaten, Gebühren eingerechnet. Entscheidend ist der Walk-Forward-Test: Er zählt nur Zeiträume,
+die die Regel beim Einstellen nicht gesehen hat. Zum Vergleich: Die 200-Tage-Regel des Hauptbots erreicht im
+gleichen Test auf Tageskerzen **+15,4 %**, die lernende KI **+0,3 %**.
+
+| Regel | Walk-Forward Tageskerzen (ca. 7 Jahre) | Walk-Forward 4-Stunden-Kerzen (2 Jahre) | Urteil |
+|---|---|---|---|
+| `yt_fib_welle` (Elliott/Fibonacci) | +4,4 % | −6,0 % | ❌ nicht übernommen |
+| `yt_zyklus` (Zyklen, Einkauf bei Panik) | −3,1 % | −4,7 % | ❌ nicht übernommen |
+| `yt_divergenz` (RSI-Divergenz) | +9,7 % (nur 7 Trades) | −7,0 % | ❌ nicht übernommen |
+
+**Fazit:** Keine dieser Regeln schlägt die 200-Tage-Regel, die der Hauptbot schon verwendet. Auf kurzen Zeiteinheiten
+(4 Stunden, 1 Stunde) verlieren alle Geld, weil Gebühren und Fehlsignale den Vorteil auffressen. Positiv: Sie sind
+deutlich weniger oft im Markt und verlieren in fallenden Märkten weniger als die anderen Strategien. Deshalb wird
+keine Regel direkt übernommen. Die Bausteine daraus stehen aber im Strategie-Labor, wo die KI sie mit anderen
+kombinieren kann. Besteht eine solche Kombination die Prüfung, kommt sie automatisch in den KI-Bot.
+Ausführliche Zahlen: [VERGLEICH.md](VERGLEICH.md).
 
 ## Alle Videos
 

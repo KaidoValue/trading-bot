@@ -26,10 +26,25 @@ Tactical Asset Allocation».
 | **Fooled by Randomness / The Black Swan** (Nassim Taleb) | Seltene Extremereignisse kommen öfter als gedacht; nie so handeln, dass ein einzelnes Ereignis alles vernichtet | Not-Aus bei grossem Kontoverlust, Hebel nur im Demo-Bot, Notbremse beim Chef-Bot |
 | **Market Wizards** (Jack Schwager) | Fast alle erfolgreichen Trader nennen dasselbe: Verluste klein halten, Gewinner laufen lassen | Chance-Risiko-Verhältnis mit Take-Profit beim 2- bis 3-Fachen des Risikos |
 
-## Testergebnis
+## Testergebnis (24.10.2026)
 
-Die vier Strategien werden im [Strategie-Vergleich](VERGLEICH.md) mit echten Kursdaten geprüft (Abschnitt «Regeln
-aus YouTube-Videos und Trading-Büchern»). Das Ergebnis wird hier nachgetragen.
+Geprüft mit echten Kursdaten, Gebühren eingerechnet. Entscheidend ist der Walk-Forward-Test: Er zählt nur Zeiträume,
+die die Regel beim Einstellen nicht gesehen hat. Zum Vergleich: Die 200-Tage-Regel des Hauptbots erreicht im
+gleichen Test auf Tageskerzen **+15,4 %**, die lernende KI **+0,3 %**.
+
+| Regel | Walk-Forward Tageskerzen (ca. 7 Jahre) | Walk-Forward 4-Stunden-Kerzen (2 Jahre) | Urteil |
+|---|---|---|---|
+| `buch_turtle` (Turtle) | +3,9 % | −4,1 % | ❌ nicht übernommen |
+| `buch_triple_screen` (Elder) | +5,2 % | −11,5 % | ❌ nicht übernommen |
+| `buch_golden_cross` (Murphy) | +7,4 % | −15,7 % | ❌ nicht übernommen |
+| `buch_livermore` (Livermore) | +6,0 % | −7,4 % | ❌ nicht übernommen |
+
+**Fazit:** Keine dieser Regeln schlägt die 200-Tage-Regel, die der Hauptbot schon verwendet. Auf kurzen Zeiteinheiten
+(4 Stunden, 1 Stunde) verlieren alle Geld, weil Gebühren und Fehlsignale den Vorteil auffressen. Positiv: Sie sind
+deutlich weniger oft im Markt und verlieren in fallenden Märkten weniger als die anderen Strategien. Deshalb wird
+keine Regel direkt übernommen. Die Bausteine daraus stehen aber im Strategie-Labor, wo die KI sie mit anderen
+kombinieren kann. Besteht eine solche Kombination die Prüfung, kommt sie automatisch in den KI-Bot.
+Ausführliche Zahlen: [VERGLEICH.md](VERGLEICH.md).
 
 ## Eigene Bücher
 
