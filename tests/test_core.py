@@ -558,3 +558,15 @@ def test_youtube_saves_new_videos(monkeypatch, tmp_path):
     assert len(files) == 2 and "Kaufen über der 200-Tage-Linie" in Path(files[-1]).read_text()
     assert "Keine Abschrift" in Path(files[0]).read_text()
     assert youtube.update(["kanal"], get=get, fetch_transcript=lambda v: "x") == []      # nichts doppelt
+
+
+def test_youtube_retries_missing_transcript(monkeypatch, tmp_path):
+    from tradingbot import youtube
+    monkeypatch.chdir(tmp_path)
+    now = pd.Timestamp.now(tz="UTC").isoformat()
+    feed = f"""<feed xmlns="http://www.w3.org/2005/Atom" xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+      <entry><yt:videoId>v1</yt:videoId><title>Test</title><published>{now}</published></entry></feed>"""
+    get = lambda url: '"channelId":"UCabcdefghijklmnopqrstuv"' if "/@" in url else feed
+    [f] = youtube.update(["k"], get=get, fetch_transcript=lambda v: None)
+    youtube.update(["k"], get=get, fetch_transcript=lambda v: "Jetzt mit Text")
+    assert "Jetzt mit Text" in Path(f).read_text() and "Keine Abschrift" not in Path(f).read_text()

@@ -73,6 +73,21 @@ def note(channel: str, v: dict, text: str | None) -> str:
             f"## Beschreibung\n\n{v['description'].strip() or '-'}\n\n## Abschrift\n\n{body}\n")
 
 
+def retry_missing(index: dict, channel: str, fetch_transcript, days: int = 30) -> None:
+    """Videos ohne Abschrift nochmals versuchen (z.B. vom PC aus, wo YouTube nicht sperrt)."""
+    import pandas as pd
+    since = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=days)
+    for vid, v in index["videos"].items():
+        if v["channel"] != channel or v["transcript"] or pd.Timestamp(v["published"]) < since:
+            continue
+        text = fetch_transcript(vid)
+        if text and Path(v["file"]).exists():
+            old = Path(v["file"]).read_text()
+            head = old.split("## Abschrift")[0]
+            Path(v["file"]).write_text(head + "## Abschrift\n\n" + text + "\n")
+            v["transcript"] = True
+
+
 def update(channels: list[str] = CHANNELS, get=_get, fetch_transcript=transcript) -> list[str]:
     """Neue Videos holen und speichern. Gibt die neu geschriebenen Dateien zurück."""
     index = json.loads(INDEX.read_text()) if INDEX.exists() else {"ids": {}, "videos": {}}
@@ -88,6 +103,7 @@ def update(channels: list[str] = CHANNELS, get=_get, fetch_transcript=transcript
         except Exception as e:
             log.warning("Kanal @%s nicht abrufbar: %s", ch, e)
             continue
+        retry_missing(index, ch, fetch_transcript)
         known = [v for v in index["videos"].values() if v["channel"] == ch]
         new = [v for v in videos if v["id"] not in index["videos"]]
         if not known:
