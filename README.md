@@ -1,5 +1,7 @@
 # Krypto-Trading-Bot
 
+## 🖥️ [Zur Trading-Oberfläche: kaidovalue.github.io/trading-bot](https://kaidovalue.github.io/trading-bot/)
+
 Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, wertet sie mit mehreren Strategien aus, eröffnet und schliesst Positionen und überwacht dabei strenge Risikoregeln.
 
 > **Wichtig:** Kein Bot kann Gewinne garantieren. Teste jede Strategie zuerst im Backtest und danach mehrere Wochen im Paper-Modus (Demo), bevor du echtes Geld einsetzt. Setze nur Geld ein, dessen Verlust du verkraften kannst.
