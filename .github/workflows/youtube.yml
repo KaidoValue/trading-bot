@@ -1,0 +1,41 @@
+# YouTube-Wissen: schaut jeden Tag, ob auf den ausgewählten Kanälen neue Videos sind, und speichert deren
+# Abschrift in lernen/youtube/. Die Kanäle stehen in tradingbot/youtube.py. Von Hand: Actions -> "YouTube-Wissen".
+name: YouTube-Wissen
+
+on:
+  schedule:
+    - cron: "41 5 * * *"     # jeden Tag 05:41 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube
+  cancel-in-progress: false
+
+jobs:
+  youtube:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Neue Videos holen
+        run: python -m tradingbot youtube -v 2> lernen/youtube_fehler.txt || true
+      - name: Ergebnis speichern
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add -A lernen/youtube lernen/youtube_fehler.txt
+          git diff --cached --quiet || git commit -m "YouTube-Wissen $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          exit 1

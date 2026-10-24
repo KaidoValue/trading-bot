@@ -6,6 +6,7 @@
   python -m tradingbot paper                    # Live-Kurse, simulierte Orders
   python -m tradingbot live                     # ECHTES Geld (Sicherheitsabfrage)
   python -m tradingbot dashboard --bots a.yaml b.yaml  # STATUS.md mit Tabellen und Charts
+  python -m tradingbot youtube                  # neue Videos der YouTube-Kanäle in lernen/youtube/ speichern
   python -m tradingbot labor                    # Strategie-Labor: neue Strategien erfinden und prüfen
   python -m tradingbot report                   # Lernbericht aus daten/logs/trades*.csv
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
@@ -99,7 +100,7 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube"])
     p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--chef", help="dashboard: Stand-Datei des Chef-Bots")
@@ -159,6 +160,10 @@ def main() -> None:
         Path("lernen").mkdir(exist_ok=True)
         Path("lernen/LABOR.md").write_text(text)
         print(text)
+    elif args.command == "youtube":
+        from .youtube import update
+        for f in update():
+            print(f)
     elif args.command == "dashboard":
         from .dashboard import render
         print(render(args.bots or [args.config], chef_path=args.chef))

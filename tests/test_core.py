@@ -536,3 +536,21 @@ def test_chef_emergency_brake(tmp_path):
         change = Chef(path).update(eq, "Aufwärtstrend, wild", t + timedelta(minutes=30 * i))
     chef = Chef(path)
     assert chef.weights["config_risiko"] <= 0.011 and "Notbremse" in change["reason"]
+
+
+def test_youtube_saves_new_videos(monkeypatch, tmp_path):
+    from tradingbot import youtube
+    monkeypatch.chdir(tmp_path)
+    feed = """<feed xmlns="http://www.w3.org/2005/Atom" xmlns:yt="http://www.youtube.com/xml/schemas/2015"
+      xmlns:media="http://search.yahoo.com/mrss/">
+      <entry><yt:videoId>v2</yt:videoId><title>Bitcoin: Ausbruch über 100k?</title>
+        <published>2026-10-24T08:00:00+00:00</published><media:group><media:description>Analyse</media:description></media:group></entry>
+      <entry><yt:videoId>v1</yt:videoId><title>Elliott-Wellen Update</title>
+        <published>2026-10-23T08:00:00+00:00</published><media:group><media:description></media:description></media:group></entry>
+    </feed>"""
+    page = '<link rel="canonical" href="https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv">'
+    get = lambda url: page if "/@" in url else feed
+    files = youtube.update(["kanal"], get=get, fetch_transcript=lambda v: "Kaufen über der 200-Tage-Linie" if v == "v2" else None)
+    assert len(files) == 2 and "Kaufen über der 200-Tage-Linie" in Path(files[-1]).read_text()
+    assert "Keine Abschrift" in Path(files[0]).read_text()
+    assert youtube.update(["kanal"], get=get, fetch_transcript=lambda v: "x") == []      # nichts doppelt
