@@ -25,7 +25,7 @@ import pandas as pd
 from . import indicators as ind
 from . import patterns as pat
 from . import structure as st
-from .strategies import Strategy, _holding
+from .strategies import Strategy, _holding, fib_retracement
 
 LIBRARY = Path("daten/state/strategie_bibliothek.json")
 
@@ -38,6 +38,8 @@ def blocks(df: pd.DataFrame) -> dict[str, tuple[str, pd.Series]]:
     _, _, hist = ind.macd(c)
     a = st.analyze(df)
     vol_ma = df["volume"].rolling(20).mean()
+    retr, impulse = fib_retracement(df)
+    fib_zone = impulse & (retr >= 0.382) & (retr <= 0.618)
     b = {
         "ema_trend_up": ("schneller EMA (20) über langsamem EMA (50)", ind.ema(c, 20) > ind.ema(c, 50)),
         "ema_trend_down": ("schneller EMA (20) unter langsamem EMA (50)", ind.ema(c, 20) < ind.ema(c, 50)),
@@ -66,6 +68,10 @@ def blocks(df: pd.DataFrame) -> dict[str, tuple[str, pd.Series]]:
         "discount": ("Kurs im unteren Teil der Range (Discount)", a["discount"].astype(bool)),
         "premium": ("Kurs im oberen Teil der Range (Premium)", a["premium"].astype(bool)),
         "bull_div": ("bullishe RSI-Divergenz", a["bullish_divergence"].astype(bool)),
+        # aus YouTube-Videos (lernen/YOUTUBE.md)
+        "fib_zone": ("Rücksetzer in die Fibonacci-Zone 38,2-61,8 % nach einem Aufwärtsimpuls", fib_zone),
+        "deep_drawdown": ("Kurs mehr als 40 % unter dem Hoch der letzten 365 Kerzen",
+                          c < c.rolling(365, min_periods=50).max() * 0.6),
     }
     return {k: (d, s.fillna(False).astype(bool)) for k, (d, s) in b.items()}
 

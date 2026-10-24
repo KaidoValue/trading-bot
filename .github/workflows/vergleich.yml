@@ -57,6 +57,18 @@ jobs:
             run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy adaptive
             echo "200-Tage-Regel (regime):"
             run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy regime
+            echo "## Regeln aus YouTube-Videos (Walk-Forward, nur ungesehene Daten)"
+            echo
+            echo "Herleitung der Regeln: lernen/YOUTUBE.md"
+            echo
+            for s in yt_fib_welle yt_zyklus yt_divergenz; do
+              echo "### $s, Tageskerzen 2500 Tage"
+              echo
+              run walkforward --config bots/config_langfrist.yaml --days 2500 --strategy $s
+              echo "### $s, 4-Stunden-Kerzen 730 Tage"
+              echo
+              run walkforward --config bots/config_daytrading.yaml --timeframe 4h --days 730 --strategy $s
+            done
           } > lernen/VERGLEICH.md
           cat lernen/VERGLEICH.md
 

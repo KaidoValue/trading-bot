@@ -305,6 +305,73 @@ class AdaptiveMemory(Adaptive):
         return added
 
 
+# --- Regeln aus YouTube-Videos (lernen/YOUTUBE.md). Werden nur getestet, nicht automatisch gehandelt. ---
+
+def fib_retracement(df: pd.DataFrame, lookback: int = 120) -> tuple[pd.Series, pd.Series]:
+    """Wie weit der Kurs vom letzten Aufwärtsimpuls (Tief -> Hoch der letzten `lookback` Kerzen) zurückgesetzt hat
+    (0 = am Hoch, 1 = am Tief), und ob das Hoch nach dem Tief kam (also ein Aufwärtsimpuls vorliegt)."""
+    hi = df["high"].rolling(lookback).max()
+    lo = df["low"].rolling(lookback).min()
+    retr = (hi - df["close"]) / (hi - lo).replace(0, float("nan"))
+    hi_pos = df["high"].rolling(lookback).apply(lambda x: x.argmax(), raw=True)
+    lo_pos = df["low"].rolling(lookback).apply(lambda x: x.argmin(), raw=True)
+    return retr, hi_pos > lo_pos
+
+
+class YtFibWave(Strategy):
+    """HKCM (Elliott-Wellen): Nach einem Aufwärtsimpuls die Korrektur (Welle 2/4) in der Fibonacci-Zone
+    38,2-61,8 % kaufen, sobald der Kurs wieder dreht. Ungültig, wenn das 78,6-%-Retracement unterschritten wird;
+    Teilgewinn/Ausstieg in die Stärke (RSI über 75)."""
+    name = "yt_fib_welle"
+
+    def signals(self, df):
+        c = df["close"]
+        retr, impulse = fib_retracement(df, self.params.get("lookback", 120))
+        r = ind.rsi(c)
+        trend = c > ind.sma(c, 200)
+        sig = pd.Series(0, index=df.index)
+        sig[impulse & trend & (retr >= 0.382) & (retr <= 0.618) & (c > c.shift()) & (r < 50)] = 1
+        sig[(retr > 0.786) | (r > 75)] = -1
+        return sig
+
+
+class YtCycle(Strategy):
+    """STA Solutions (Zyklen, «im Einkauf liegt der Gewinn»): kaufen, wenn nach einem tiefen Rückgang (über 40 %
+    unter dem Jahreshoch) der RSI aus dem überverkauften Bereich dreht oder der Kurs die 200er-Linie zurückerobert
+    (Ende des Bärenmarkts). Gewinne in die Euphorie mitnehmen: Kurs mehr als 60 % über der 200er-Linie."""
+    name = "yt_zyklus"
+
+    def signals(self, df):
+        c = df["close"]
+        ma = ind.sma(c, 200)
+        r = ind.rsi(c)
+        dd = 1 - c / c.rolling(self.params.get("year", 365), min_periods=50).max()
+        sig = pd.Series(0, index=df.index)
+        rsi_turn = (r > 30) & (r.shift() <= 30)
+        reclaim = (c > ma) & (c.shift() <= ma.shift())
+        sig[(dd > 0.4) & rsi_turn | (dd > 0.2) & reclaim] = 1
+        sig[(c > ma * 1.6) | (r > 85)] = -1
+        return sig
+
+
+class YtDivergence(Strategy):
+    """HKCM/STA («Trendwendesignale»): bullishe RSI-Divergenz (tieferes Tief im Kurs, höheres Tief im RSI) kaufen,
+    bei bearisher Divergenz (höheres Hoch im Kurs, tieferes Hoch im RSI) verkaufen."""
+    name = "yt_divergenz"
+
+    def signals(self, df):
+        n = self.params.get("window", 20)
+        r = ind.rsi(df["close"])
+        low_now, low_prev = df["low"].rolling(n).min(), df["low"].shift(n).rolling(n).min()
+        rl_now, rl_prev = r.rolling(n).min(), r.shift(n).rolling(n).min()
+        high_now, high_prev = df["high"].rolling(n).max(), df["high"].shift(n).rolling(n).max()
+        rh_now, rh_prev = r.rolling(n).max(), r.shift(n).rolling(n).max()
+        sig = pd.Series(0, index=df.index)
+        sig[(df["low"] == low_now) & (low_now < low_prev) & (rl_now > rl_prev) & (r < 40)] = 1
+        sig[(df["high"] == high_now) & (high_now > high_prev) & (rh_now < rh_prev) & (r > 60)] = -1
+        return sig
+
+
 def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
     """Wandelt Kauf-/Verkaufssignale in die gehaltene Position um (+1 long, 0 flat, -1 short)."""
     pos = sig.replace(0, float("nan")).ffill().fillna(0)
@@ -313,7 +380,7 @@ def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
 
 STRATEGIES = {cls.name: cls for cls in (TrendFollowing, MeanReversion, Breakout, Regime, Pullback, Momentum, PriceAction,
                                         SmartMoney, Reversal, RangeTrading, Ensemble, Adaptive,
-                                        AdaptiveMemory)}
+                                        AdaptiveMemory, YtFibWave, YtCycle, YtDivergence)}
 
 
 def build(name: str, **params) -> Strategy:

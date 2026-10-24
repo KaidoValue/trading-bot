@@ -80,11 +80,12 @@ def retry_missing(index: dict, channel: str, fetch_transcript, days: int = 30) -
     for vid, v in index["videos"].items():
         if v["channel"] != channel or v["transcript"] or pd.Timestamp(v["published"]) < since:
             continue
+        file = Path(v["file"].replace("\\", "/"))       # auf Windows gespeicherte Pfade
         text = fetch_transcript(vid)
-        if text and Path(v["file"]).exists():
-            old = Path(v["file"]).read_text(encoding="utf-8")
+        if text and file.exists():
+            old = file.read_text(encoding="utf-8")
             head = old.split("## Abschrift")[0]
-            Path(v["file"]).write_text(head + "## Abschrift\n\n" + text + "\n", encoding="utf-8")
+            file.write_text(head + "## Abschrift\n\n" + text + "\n", encoding="utf-8")
             v["transcript"] = True
 
 
@@ -114,8 +115,8 @@ def update(channels: list[str] = CHANNELS, get=_get, fetch_transcript=transcript
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(note(ch, v, text), encoding="utf-8")
             index["videos"][v["id"]] = {"channel": ch, "title": v["title"], "published": v["published"],
-                                        "file": str(path), "transcript": text is not None, "evaluated": False}
-            written.append(str(path))
+                                        "file": path.as_posix(), "transcript": text is not None, "evaluated": False}
+            written.append(path.as_posix())
     FOLDER.mkdir(parents=True, exist_ok=True)
     INDEX.write_text(json.dumps(index, indent=1, ensure_ascii=False), encoding="utf-8")
     return written
