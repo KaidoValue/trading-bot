@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="300">
+<title>Trading-Bot Terminal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0e11;--panel:#161a1e;--line:#2b3139;--text:#eaecef;--muted:#848e9c;--up:#0ecb81;--down:#f6465d;--accent:#f0b90b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{margin:0;font-size:18px}header h1 span{color:var(--accent)}
+.badge{background:#3c2f05;color:var(--accent);border:1px solid #6b5300;border-radius:4px;padding:2px 8px;font-size:12px;margin-left:8px}
+.stand{color:var(--muted);font-size:13px}
+main{padding:16px 20px;max-width:1500px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.grid>*,.two>*{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:6px;padding:14px}
+.card-title{font-weight:600;margin-bottom:8px}.big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}.big small{font-size:13px;color:var(--muted)}
+.pnl{margin:2px 0 10px;font-weight:600}.kv{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid #1f242a;font-size:13px}
+.kv span{color:var(--muted)}.kv b{font-weight:500;text-align:right}.small{font-size:12px;margin:6px 0}.muted{color:var(--muted)}
+.up{color:var(--up)}.down{color:var(--down)}.halt{color:var(--down);font-weight:600}
+.alloc{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin-top:12px}
+.panel h2{font-size:14px;margin:0;padding:12px 14px;border-bottom:1px solid var(--line)}
+.two{display:grid;grid-template-columns:minmax(0,3fr) minmax(260px,1fr);gap:12px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+@media(max-width:600px){main,header,footer{padding-left:16px;padding-right:16px}.grid{grid-template-columns:1fr}#tv{height:360px}}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid #1f242a}th{color:var(--muted);font-weight:500;font-size:12px}
+.r{text-align:right}tr.sym{cursor:pointer}tr.sym:hover,tr.sym.active{background:#1e2329}
+.tag{font-size:11px;font-weight:700;padding:2px 6px;border-radius:3px}.tag.long{background:#0e3a2a;color:var(--up)}.tag.short{background:#4a1820;color:var(--down)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+#tv{height:480px}.chartbox{height:300px;padding:10px}
+footer{color:var(--muted);font-size:12px;padding:16px 20px 28px;max-width:1500px;margin:0 auto}footer a{color:var(--muted)}
+</style></head><body>
+<header><h1><span>◆</span> Trading-Bot Terminal <span class="badge">DEMO · Spielgeld</span></h1>
+<div class="stand">Stand 24.10. 20:48 Schweizer Zeit · aktualisiert sich alle 30 Min.</div></header>
+<main>
+<div class="grid"><div class="card" style="--c:#f0b90b">
+  <div class="card-title">1️⃣ Langfrist-Bot (Hauptbot)</div>
+  <div class="big">987.96 <small>CHF</small></div>
+  <div class="pnl"><span class="down">−12.04 CHF (−1.20 %)</span></div>
+  <div class="kv"><span>Investiert</span><b>403 CHF (41 %)</b></div>
+  <div class="kv"><span>Cash</span><b>585 CHF</b></div>
+  <div class="kv"><span>Offen / Abgeschlossen</span><b>5 / 0</b></div>
+  <div class="kv"><span>Trefferquote</span><b>–</b></div>
+  <div class="kv"><span>Strategie</span><b>regime · 1d · ohne Hebel</b></div>
+</div>
+<div class="card" style="--c:#3d8bfd">
+  <div class="card-title">2️⃣ KI-Bot (lernend, Daytrading)</div>
+  <div class="big">969.75 <small>CHF</small></div>
+  <div class="pnl"><span class="down">−30.25 CHF (−3.02 %)</span></div>
+  <div class="kv"><span>Investiert</span><b>250 CHF (26 %)</b></div>
+  <div class="kv"><span>Cash</span><b>720 CHF</b></div>
+  <div class="kv"><span>Offen / Abgeschlossen</span><b>1 / 3</b></div>
+  <div class="kv"><span>Trefferquote</span><b>0 %</b></div>
+  <div class="kv"><span>Strategie</span><b>adaptive_memory · 1h · ohne Hebel</b></div>
+</div>
+<div class="card" style="--c:#f6465d">
+  <div class="card-title">3️⃣ Risiko-Bot (aggressiv, Hebel 3×)</div>
+  <div class="big">842.24 <small>CHF</small></div>
+  <div class="pnl"><span class="down">−157.76 CHF (−15.78 %)</span></div>
+  <div class="kv"><span>Investiert</span><b>2'559 CHF (304 %)</b></div>
+  <div class="kv"><span>Cash</span><b>3'402 CHF</b></div>
+  <div class="kv"><span>Offen / Abgeschlossen</span><b>6 / 31</b></div>
+  <div class="kv"><span>Trefferquote</span><b>42 %</b></div>
+  <div class="kv"><span>Strategie</span><b>breakout · 30m · Hebel 3×</b></div>
+</div>
+<div class="card" style="--c:#0ecb81">
+  <div class="card-title">4️⃣ Chef-Bot (verteilt auf die Stile)</div>
+  <div class="big">981.18 <small>CHF</small></div>
+  <div class="pnl"><span class="down">−18.82 CHF (−1.88 %)</span></div>
+  <div class="alloc"><div class="seg" style="flex:37.7;background:#f0b90b" title="config_langfrist"></div><div class="seg" style="flex:12.7;background:#3d8bfd" title="config_daytrading"></div><div class="seg" style="flex:1.0;background:#f6465d" title="config_risiko"></div><div class="seg" style="flex:48.7;background:#474d57" title="Cash"></div></div>
+  <div class="small">Langfrist 38 % · KI 13 % · Risiko 1 % · Cash 49 %</div>
+  <div class="kv"><span>Umschicht-Gebühren</span><b>1.52 CHF</b></div>
+  <div class="kv"><span>Erfahrung</span><b>52 Läufe</b></div>
+  <div class="small muted">Marktphase «Aufwärtstrend, wild», Einschätzung: Langfrist -2.5 %, KI -4.9 %, Risiko -13.7 %</div>
+</div></div>
+
+<div class="panel"><h2>Kapitalverlauf</h2><div class="chartbox"><canvas id="curve"></canvas></div></div>
+
+<div class="two">
+  <div class="panel"><h2>Live-Chart <span class="muted" id="tvname"></span></h2><div id="tv"></div></div>
+  <div class="panel"><h2>Markt</h2><div class="scroll"><table><thead><tr><th>Coin</th><th class="r">Kurs</th><th class="r">24 Std.</th></tr></thead>
+  <tbody><tr class='sym' data-tv='KRAKEN:BTCCHF'><td><b>BTC</b><span class='muted'>/CHF</span></td><td class='r'>66'293.90</td><td class='r'><span class="down">−1.02 %</span></td></tr><tr class='sym' data-tv='KRAKEN:ETHCHF'><td><b>ETH</b><span class='muted'>/CHF</span></td><td class='r'>1'927.35</td><td class='r'><span class="down">−2.12 %</span></td></tr><tr class='sym' data-tv='KRAKEN:BNBUSD'><td><b>BNB</b><span class='muted'>/CHF</span></td><td class='r'>600.84</td><td class='r'><span class="down">−1.55 %</span></td></tr><tr class='sym' data-tv='KRAKEN:XRPUSD'><td><b>XRP</b><span class='muted'>/CHF</span></td><td class='r'>1.060</td><td class='r'><span class="down">−0.78 %</span></td></tr><tr class='sym' data-tv='KRAKEN:SOLUSD'><td><b>SOL</b><span class='muted'>/CHF</span></td><td class='r'>83.37</td><td class='r'><span class="down">−1.75 %</span></td></tr><tr class='sym' data-tv='KRAKEN:TRXUSD'><td><b>TRX</b><span class='muted'>/CHF</span></td><td class='r'>0.2718</td><td class='r'><span class="down">−0.21 %</span></td></tr><tr class='sym' data-tv='KRAKEN:ZECUSD'><td><b>ZEC</b><span class='muted'>/CHF</span></td><td class='r'>973.43</td><td class='r'><span class="down">−0.25 %</span></td></tr><tr class='sym' data-tv='KRAKEN:HYPEUSD'><td><b>HYPE</b><span class='muted'>/CHF</span></td><td class='r'>62.63</td><td class='r'><span class="down">−1.58 %</span></td></tr></tbody></table></div><div class="small muted" style="padding:0 12px 10px">Coin anklicken für den Live-Chart</div></div>
+</div>
+
+<div class="panel"><h2>Offene Positionen</h2><div class="scroll"><table><thead><tr><th>Bot</th><th>Coin</th><th>Richtung</th>
+<th class="r">Einstieg</th><th class="r">Kurs jetzt</th><th class="r">Einsatz CHF</th><th class="r">G/V CHF</th><th class="r">Stop-Loss</th><th class="r">Ziel</th><th>Eröffnet</th></tr></thead>
+<tbody><tr><td><i class='dot' style='background:#f0b90b'></i>Langfrist</td><td><b>BTC</b></td><td><span class="tag long">LONG</span></td><td class='r'>67'388.78</td><td class='r'>66'293.90</td><td class='r'>100</td><td class='r'><span class="down">−1.63 (−1.62 %)</span></td><td class='r muted'>53'251.84</td><td class='r muted'>–</td><td class='muted'>23.10. 18:09</td></tr><tr><td><i class='dot' style='background:#f0b90b'></i>Langfrist</td><td><b>ETH</b></td><td><span class="tag long">LONG</span></td><td class='r'>1'986.19</td><td class='r'>1'927.35</td><td class='r'>81</td><td class='r'><span class="down">−2.40 (−2.96 %)</span></td><td class='r muted'>1'371.11</td><td class='r muted'>–</td><td class='muted'>23.10. 18:09</td></tr><tr><td><i class='dot' style='background:#f0b90b'></i>Langfrist</td><td><b>BNB</b></td><td><span class="tag long">LONG</span></td><td class='r'>617.14</td><td class='r'>600.84</td><td class='r'>100</td><td class='r'><span class="down">−2.64 (−2.64 %)</span></td><td class='r muted'>483.48</td><td class='r muted'>–</td><td class='muted'>23.10. 19:15</td></tr><tr><td><i class='dot' style='background:#f0b90b'></i>Langfrist</td><td><b>XRP</b></td><td><span class="tag long">LONG</span></td><td class='r'>1.082</td><td class='r'>1.060</td><td class='r'>64</td><td class='r'><span class="down">−1.30 (−2.05 %)</span></td><td class='r muted'>0.6560</td><td class='r muted'>–</td><td class='muted'>23.10. 19:15</td></tr><tr><td><i class='dot' style='background:#f0b90b'></i>Langfrist</td><td><b>SOL</b></td><td><span class="tag long">LONG</span></td><td class='r'>86.38</td><td class='r'>83.37</td><td class='r'>69</td><td class='r'><span class="down">−2.40 (−3.48 %)</span></td><td class='r muted'>55.00</td><td class='r muted'>–</td><td class='muted'>23.10. 19:15</td></tr><tr><td><i class='dot' style='background:#3d8bfd'></i>KI</td><td><b>TRX</b></td><td><span class="tag long">LONG</span></td><td class='r'>0.2723</td><td class='r'>0.2718</td><td class='r'>250</td><td class='r'><span class="down">−0.43 (−0.17 %)</span></td><td class='r muted'>0.2711</td><td class='r muted'>0.2743</td><td class='muted'>23.10. 20:16</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>TRX</b></td><td><span class="tag short">SHORT</span></td><td class='r'>0.2716</td><td class='r'>0.2718</td><td class='r'>343</td><td class='r'><span class="down">−0.24 (−0.07 %)</span></td><td class='r muted'>0.2723</td><td class='r muted'>0.2708</td><td class='muted'>24.10. 18:47</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BTC</b></td><td><span class="tag short">SHORT</span></td><td class='r'>66'151.31</td><td class='r'>66'293.90</td><td class='r'>441</td><td class='r'><span class="down">−0.95 (−0.22 %)</span></td><td class='r muted'>66'553.33</td><td class='r muted'>65'446.53</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class="tag short">SHORT</span></td><td class='r'>1'914.38</td><td class='r'>1'927.35</td><td class='r'>441</td><td class='r'><span class="down">−2.98 (−0.68 %)</span></td><td class='r muted'>1'928.29</td><td class='r muted'>1'889.44</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BNB</b></td><td><span class="tag short">SHORT</span></td><td class='r'>597.23</td><td class='r'>600.84</td><td class='r'>441</td><td class='r'><span class="down">−2.66 (−0.60 %)</span></td><td class='r muted'>601.04</td><td class='r muted'>590.52</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>XRP</b></td><td><span class="tag short">SHORT</span></td><td class='r'>1.052</td><td class='r'>1.060</td><td class='r'>441</td><td class='r'><span class="down">−3.58 (−0.81 %)</span></td><td class='r muted'>1.062</td><td class='r muted'>1.032</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>SOL</b></td><td><span class="tag short">SHORT</span></td><td class='r'>82.87</td><td class='r'>83.37</td><td class='r'>441</td><td class='r'><span class="down">−2.67 (−0.61 %)</span></td><td class='r muted'>83.76</td><td class='r muted'>81.22</td><td class='muted'>24.10. 19:17</td></tr></tbody></table></div></div>
+
+<div class="panel"><h2>Letzte Trades</h2><div class="scroll"><table><thead><tr><th>Bot</th><th>Coin</th><th>Richtung</th>
+<th class="r">Einstieg</th><th class="r">Ausstieg</th><th class="r">Ergebnis</th><th>Grund</th><th>Geschlossen</th></tr></thead>
+<tbody><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BTC</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>65'758.40</td><td class='r'>66'217.49</td><td class='r'><span class="down">−4.48 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1'890.95</td><td class='r'>1'916.30</td><td class='r'><span class="down">−7.44 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BNB</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>592.95</td><td class='r'>597.83</td><td class='r'><span class="down">−6.11 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>XRP</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1.043</td><td class='r'>1.053</td><td class='r'><span class="down">−6.87 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>SOL</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>82.05</td><td class='r'>82.95</td><td class='r'><span class="down">−7.56 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 19:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>TRX</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>0.2712</td><td class='r'>0.2721</td><td class='r'><span class="down">−3.54 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 18:17</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1'907.05</td><td class='r'>1'893.11</td><td class='r'><span class="up">+2.21 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:44</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BNB</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>599.83</td><td class='r'>595.37</td><td class='r'><span class="up">+1.06 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:44</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BTC</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>66'524.92</td><td class='r'>65'831.29</td><td class='r'><span class="up">+3.79 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:14</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1'948.90</td><td class='r'>1'939.05</td><td class='r'><span class="up">+0.42 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:14</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>XRP</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1.062</td><td class='r'>1.049</td><td class='r'><span class="up">+0.07 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:14</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>SOL</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>83.99</td><td class='r'>83.03</td><td class='r'><span class="up">+0.07 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:14</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>TRX</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>0.2719</td><td class='r'>0.2715</td><td class='r'><span class="down">−1.71 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 17:14</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BNB</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>605.36</td><td class='r'>600.64</td><td class='r'><span class="up">+1.11 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 16:44</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>TRX</b></td><td><span class='tag long'>LONG</span></td><td class='r'>0.2726</td><td class='r'>0.2719</td><td class='r'><span class="down">−7.79 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 16:14</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>TRX</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>0.2720</td><td class='r'>0.2726</td><td class='r'><span class="down">−12.93 CHF</span></td><td>Signal</td><td class='muted'>24.10. 13:44</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1'967.27</td><td class='r'>1'951.52</td><td class='r'><span class="up">+0.93 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 11:25</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BNB</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>612.08</td><td class='r'>606.81</td><td class='r'><span class="up">+1.46 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 10:25</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1'955.06</td><td class='r'>1'969.23</td><td class='r'><span class="down">−1.94 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 05:22</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>XRP</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1.081</td><td class='r'>1.063</td><td class='r'><span class="up">+5.64 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 02:49</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>SOL</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>85.65</td><td class='r'>84.41</td><td class='r'><span class="up">+6.94 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 02:49</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BTC</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>66'436.76</td><td class='r'>66'919.24</td><td class='r'><span class="down">−4.90 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 01:49</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>ETH</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>1'955.05</td><td class='r'>1'968.60</td><td class='r'><span class="down">−2.80 CHF</span></td><td>Stop-Loss (Gap)</td><td class='muted'>24.10. 01:49</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>BTC</b></td><td><span class='tag short'>SHORT</span></td><td class='r'>67'307.53</td><td class='r'>66'720.64</td><td class='r'><span class="up">+3.13 CHF</span></td><td>Take-Profit</td><td class='muted'>24.10. 01:19</td></tr><tr><td><i class='dot' style='background:#f6465d'></i>Risiko</td><td><b>TRX</b></td><td><span class='tag long'>LONG</span></td><td class='r'>0.2722</td><td class='r'>0.2720</td><td class='r'><span class="down">−2.64 CHF</span></td><td>Signal</td><td class='muted'>24.10. 01:19</td></tr></tbody></table></div></div>
+</main>
+<footer>Demo-Handel mit Spielgeld, kein echtes Geld im Einsatz. Gewinne in der Vergangenheit sind keine Garantie für die Zukunft.
+· <a href="https://github.com/KaidoValue/trading-bot/blob/main/STATUS.md">Ausführliche Übersicht</a>
+· <a href="https://github.com/KaidoValue/trading-bot/tree/main/lernen/tagebuch">Lern-Tagebuch</a>
+· <a href="https://github.com/KaidoValue/trading-bot/blob/main/lernen/LABOR.md">Strategie-Labor</a></footer>
+<script>
+const curve = {"labels": ["24.10. 15:15", "24.10. 15:45", "24.10. 16:15", "24.10. 16:45", "24.10. 17:15", "24.10. 17:45", "24.10. 18:15", "24.10. 18:18", "24.10. 18:48", "24.10. 19:18", "24.10. 19:48", "24.10. 20:18", "24.10. 20:48"], "series": [{"label": "Langfrist", "color": "#f0b90b", "data": [990.01, 989.68, 988.58, 987.2, 983.65, 981.79, 984.24, 984.27, 984.24, 985.89, 985.99, 986.96, 987.96]}, {"label": "KI", "color": "#3d8bfd", "data": [970.28, 970.17, 969.98, 969.74, 969.38, 969.34, 969.68, 969.92, 969.75, 969.75, 969.72, 969.71, 969.75]}, {"label": "Risiko", "color": "#f6465d", "data": [921.23, 921.73, 914.85, 913.82, 904.36, 905.79, 889.92, 887.02, 885.17, 854.42, 853.93, 848.26, 842.24]}, {"label": "Chef", "color": "#0ecb81", "data": [983.6, 983.44, 982.85, 982.18, 980.21, 979.52, 980.32, 980.33, 980.27, 980.55, 980.58, 980.87, 981.18]}]};
+if (window.Chart && curve.labels.length) {
+  new Chart(document.getElementById('curve'), {type:'line',
+    data:{labels:curve.labels, datasets:curve.series.map(s=>({label:s.label,data:s.data,borderColor:s.color,backgroundColor:s.color,
+      borderWidth:2,pointRadius:curve.labels.length<30?3:0,tension:.2,spanGaps:true}))},
+    options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:'#eaecef',boxWidth:12}}},
+      scales:{x:{ticks:{color:'#848e9c',maxTicksLimit:8},grid:{color:'#1f242a'}},
+              y:{ticks:{color:'#848e9c',callback:v=>v+' CHF'},grid:{color:'#1f242a'}}}}});
+} else { document.getElementById('curve').parentNode.innerHTML='<div class="muted" style="padding:20px">Der Verlauf wird ab jetzt bei jedem Lauf aufgezeichnet.</div>'; }
+function tv(sym) {
+  document.getElementById('tvname').textContent = sym;
+  document.querySelectorAll('tr.sym').forEach(r=>r.classList.toggle('active', r.dataset.tv===sym));
+  document.getElementById('tv').innerHTML = '<iframe style="width:100%;height:100%;border:0" src="https://s.tradingview.com/widgetembed/?symbol='
+    + encodeURIComponent(sym) + '&interval=60&theme=dark&style=1&locale=de_DE&hide_side_toolbar=0&allow_symbol_change=1"></iframe>';
+}
+document.querySelectorAll('tr.sym').forEach(r=>r.addEventListener('click',()=>tv(r.dataset.tv)));
+tv('KRAKEN:BTCCHF');
+</script>
+</body></html>
