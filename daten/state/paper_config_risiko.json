@@ -483,34 +483,34 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-24T15:00:00+00:00"
+      "__dt__": "2026-10-24T15:30:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: short er\u00f6ffnet 0.245404 @ 1890.95 | BNB/CHF: short er\u00f6ffnet 0.765109 @ 592.95 | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-24T15:44:59.840574+00:00"
+    "__dt__": "2026-10-24T16:15:09.106261+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -526,7 +526,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 3633.4283403291497,
+    "cash": 3633.359408992094,
     "positions": {
       "BTC/CHF": -0.007098504368103929,
       "ETH/CHF": -0.245403619490096,
@@ -536,9 +536,9 @@
       "TRX/CHF": -1521.7857323388216,
       "ZEC/CHF": 0.0
     },
-    "interest_paid": 2.656131170305739,
+    "interest_paid": 2.7250625073615433,
     "interest_at": {
-      "__dt__": "2026-10-24T15:44:39.424098+00:00"
+      "__dt__": "2026-10-24T16:14:48.617134+00:00"
     }
   }
 }
