@@ -21,6 +21,11 @@ def _chf(x: float, d: int = 2) -> str:
     return f"{x:,.{d}f}".replace(",", "'")
 
 
+def _price(x: float) -> str:
+    """Kurse mit sinnvollen Nachkommastellen (TRX zu 0.27 CHF braucht mehr als zwei)."""
+    return _chf(x, 2 if x >= 10 else 3 if x >= 1 else 4)
+
+
 def _local(ts) -> str:
     t = pd.Timestamp(ts)
     t = t.tz_localize("UTC") if t.tzinfo is None else t
@@ -100,10 +105,10 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
             pnl = t.side * (p - t.entry) * t.qty
             side = '<span class="tag long">LONG</span>' if t.side > 0 else '<span class="tag short">SHORT</span>'
             rows.append(f"<tr><td><i class='dot' style='background:{COLORS[i % 4]}'></i>{escape(short[b.cfg.name])}</td>"
-                        f"<td><b>{s.split('/')[0]}</b></td><td>{side}</td><td class='r'>{_chf(t.entry)}</td>"
-                        f"<td class='r'>{_chf(p)}</td><td class='r'>{_chf(stake, 0)}</td>"
+                        f"<td><b>{s.split('/')[0]}</b></td><td>{side}</td><td class='r'>{_price(t.entry)}</td>"
+                        f"<td class='r'>{_price(p)}</td><td class='r'>{_chf(stake, 0)}</td>"
                         f"<td class='r'>{_signed(pnl, pnl / stake * 100, '')}</td>"
-                        f"<td class='r muted'>{_chf(t.stop)}</td><td class='r muted'>{_chf(t.target) if t.target else '–'}</td>"
+                        f"<td class='r muted'>{_price(t.stop)}</td><td class='r muted'>{_price(t.target) if t.target and t.entry / 3 < t.target < t.entry * 3 else '–'}</td>"
                         f"<td class='muted'>{_local(t.opened)}</td></tr>")
     positions = "".join(rows) or "<tr><td colspan='10' class='muted'>Keine offenen Positionen</td></tr>"
 
@@ -114,7 +119,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
         f"<tr><td><i class='dot' style='background:{COLORS[i % 4]}'></i>{escape(short[b.cfg.name])}</td>"
         f"<td><b>{t['symbol'].split('/')[0]}</b></td>"
         f"<td><span class='tag {'long' if t['side'] == 'long' else 'short'}'>{t['side'].upper()}</span></td>"
-        f"<td class='r'>{_chf(t['entry'])}</td><td class='r'>{_chf(t['exit'])}</td>"
+        f"<td class='r'>{_price(t['entry'])}</td><td class='r'>{_price(t['exit'])}</td>"
         f"<td class='r'>{_signed(t['pnl'])}</td><td>{escape(str(t['reason']))}</td>"
         f"<td class='muted'>{_local(t['closed'])}</td></tr>" for b, t, i in closed) \
         or "<tr><td colspan='8' class='muted'>Noch keine abgeschlossenen Trades</td></tr>"
@@ -125,7 +130,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
         ch = tk.get("percentage")
         chtxt = _signed(ch, unit=" %") if ch is not None else "–"
         market.append(f"<tr class='sym' data-tv='{tv_symbol(s, exchange)}'><td><b>{s.split('/')[0]}</b>"
-                      f"<span class='muted'>/CHF</span></td><td class='r'>{_chf(tk['last'])}</td><td class='r'>{chtxt}</td></tr>")
+                      f"<span class='muted'>/CHF</span></td><td class='r'>{_price(tk['last'])}</td><td class='r'>{chtxt}</td></tr>")
 
     # --- Kapitalkurven
     series = []
@@ -209,7 +214,7 @@ const curve = {curve};
 if (window.Chart && curve.labels.length) {{
   new Chart(document.getElementById('curve'), {{type:'line',
     data:{{labels:curve.labels, datasets:curve.series.map(s=>({{label:s.label,data:s.data,borderColor:s.color,backgroundColor:s.color,
-      borderWidth:2,pointRadius:0,tension:.2,spanGaps:true}}))}},
+      borderWidth:2,pointRadius:curve.labels.length<30?3:0,tension:.2,spanGaps:true}}))}},
     options:{{maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},
       plugins:{{legend:{{labels:{{color:'#eaecef',boxWidth:12}}}}}},
       scales:{{x:{{ticks:{{color:'#848e9c',maxTicksLimit:8}},grid:{{color:'#1f242a'}}}},
