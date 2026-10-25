@@ -16,40 +16,6 @@
         "event": "-",
         "session": "New York"
       }
-    },
-    "BNB/CHF": {
-      "side": 1,
-      "entry": 616.8211114275,
-      "qty": 0.3922390594571355,
-      "stop": 610.8643452267663,
-      "target": 627.8098745464675,
-      "opened": {
-        "__dt__": "2026-10-25T05:23:11.351673+00:00"
-      },
-      "context": {
-        "fear_greed": 54,
-        "news_score": 0.0,
-        "news_themes": "-",
-        "event": "-",
-        "session": "Asien"
-      }
-    },
-    "ZEC/CHF": {
-      "side": 1,
-      "entry": 1003.7654599139998,
-      "qty": 0.24103372975232334,
-      "stop": 974.8375017044073,
-      "target": 1060.116480591185,
-      "opened": {
-        "__dt__": "2026-10-25T05:23:11.351673+00:00"
-      },
-      "context": {
-        "fear_greed": 54,
-        "news_score": 0.0,
-        "news_themes": "-",
-        "event": "-",
-        "session": "Asien"
-      }
     }
   },
   "closed": [
@@ -172,35 +138,75 @@
       "news_themes": "-",
       "event": "-",
       "session": "Asien"
+    },
+    {
+      "symbol": "BNB/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-25T05:23:11.351673+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-25T06:26:03.436718+00:00"
+      },
+      "entry": 616.8211114275,
+      "exit": 613.8328951174501,
+      "qty": 0.3922390594571355,
+      "pnl": -2.4240951896209815,
+      "reason": "Signal",
+      "fear_greed": 54,
+      "news_score": 0.0,
+      "news_themes": "-",
+      "event": "-",
+      "session": "Asien"
+    },
+    {
+      "symbol": "ZEC/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-25T05:23:11.351673+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-25T06:26:03.436718+00:00"
+      },
+      "entry": 1003.7654599139998,
+      "exit": 993.72447510705,
+      "qty": 0.24103372975232334,
+      "pnl": -3.665725824627886,
+      "reason": "Signal",
+      "fear_greed": 54,
+      "news_score": 0.0,
+      "news_themes": "-",
+      "event": "-",
+      "session": "Asien"
     }
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-25T04:00:00+00:00"
+      "__dt__": "2026-10-25T05:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: gekauft 0.392239 @ 616.82 | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: gekauft 0.241034 @ 1003.77 | HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Signal 'raus', bleibe in Cash | HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 54,
     "news_score": 0.0,
@@ -210,7 +216,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-25T05:56:16.866261+00:00"
+    "__dt__": "2026-10-25T06:26:23.049797+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -219,26 +225,26 @@
     },
     "day_start_equity": 970.9526417228599,
     "trades_today": 4,
-    "loss_streak": 1,
+    "loss_streak": 0,
     "paused_until": {
-      "__dt__": "2026-10-24T11:19:05.446435+00:00"
+      "__dt__": "2026-10-25T18:26:03.436718+00:00"
     },
     "halted": false,
     "halted_on": null,
     "halt_reason": ""
   },
   "paper": {
-    "cash": 231.1174164476316,
+    "cash": 708.9102606326379,
     "positions": {
-      "BNB/CHF": 0.3922390594571355,
-      "ZEC/CHF": 0.24103372975232334,
+      "BNB/CHF": 0.0,
+      "ZEC/CHF": 0.0,
       "TRX/CHF": 918.327343444289,
       "XRP/CHF": 0.0,
       "BTC/CHF": 0.0
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-25T05:56:07.067684+00:00"
+      "__dt__": "2026-10-25T06:26:03.436718+00:00"
     }
   }
 }
