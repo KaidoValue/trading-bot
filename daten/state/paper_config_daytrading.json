@@ -99,33 +99,33 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-24T22:00:00+00:00"
+      "__dt__": "2026-10-24T23:00:00+00:00"
     }
   },
   "note": "BTC/CHF: Signal 'raus', bleibe in Cash | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Signal 'raus', bleibe in Cash | HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
-    "fear_greed": 51,
+    "fear_greed": 54,
     "news_score": 0.0,
     "themes": {},
     "blackout": null,
@@ -133,15 +133,15 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-24T23:50:18.786912+00:00"
+    "__dt__": "2026-10-25T00:20:28.956539+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
     "day": {
-      "__dt__": "2026-10-24"
+      "__dt__": "2026-10-25"
     },
-    "day_start_equity": 970.2472573309077,
-    "trades_today": 1,
+    "day_start_equity": 970.9526417228599,
+    "trades_today": 0,
     "loss_streak": 0,
     "paused_until": {
       "__dt__": "2026-10-24T11:19:05.446435+00:00"
@@ -160,7 +160,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-24T23:50:08.602325+00:00"
+      "__dt__": "2026-10-25T00:20:09.067552+00:00"
     }
   }
 }
