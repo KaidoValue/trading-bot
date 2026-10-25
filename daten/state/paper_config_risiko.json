@@ -64,19 +64,6 @@
       "context": {
         "session": "New York"
       }
-    },
-    "TRX/CHF": {
-      "side": 1,
-      "entry": 0.272007236700525,
-      "qty": 1388.4877733661574,
-      "stop": 0.27151901302431497,
-      "target": 0.2725758771013701,
-      "opened": {
-        "__dt__": "2026-10-25T17:31:57.129831+00:00"
-      },
-      "context": {
-        "session": "New York"
-      }
     }
   },
   "closed": [
@@ -975,6 +962,22 @@
       "pnl": -2.165012274686502,
       "reason": "Signal",
       "session": "New York"
+    },
+    {
+      "symbol": "TRX/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-25T17:31:57.129831+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-25T19:34:42.396603+00:00"
+      },
+      "entry": 0.272007236700525,
+      "exit": 0.2724395891628194,
+      "qty": 1388.4877733661574,
+      "pnl": -1.366734892693545,
+      "reason": "Take-Profit",
+      "session": "New York"
     }
   ],
   "last_bar": {
@@ -1006,7 +1009,7 @@
   "note": "BTC/CHF: kein Einstieg (max. offene Positionen) | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-25T19:32:18.052779+00:00"
+    "__dt__": "2026-10-25T19:34:53.344101+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -1015,26 +1018,26 @@
     },
     "day_start_equity": 819.3645203891906,
     "trades_today": 19,
-    "loss_streak": 4,
+    "loss_streak": 5,
     "paused_until": null,
     "halted": false,
     "halted_on": null,
     "halt_reason": ""
   },
   "paper": {
-    "cash": -779.6504099867803,
+    "cash": -403.3394827347553,
     "positions": {
       "BTC/CHF": 0.0,
       "ETH/CHF": 0.19623708448193222,
       "BNB/CHF": -0.09764561790575178,
       "XRP/CHF": 45.829325336266635,
       "SOL/CHF": 4.537892287843479,
-      "TRX/CHF": 1388.4877733661574,
+      "TRX/CHF": 0.0,
       "ZEC/CHF": 0.3808608099874369
     },
-    "interest_paid": 5.0033742641963785,
+    "interest_paid": 5.004434545271081,
     "interest_at": {
-      "__dt__": "2026-10-25T19:31:57.546101+00:00"
+      "__dt__": "2026-10-25T19:34:42.396603+00:00"
     }
   }
 }
