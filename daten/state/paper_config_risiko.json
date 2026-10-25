@@ -892,34 +892,34 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-25T14:00:00+00:00"
+      "__dt__": "2026-10-25T14:30:00+00:00"
     }
   },
   "note": "BTC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | ETH/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-25T14:59:36.434506+00:00"
+    "__dt__": "2026-10-25T15:02:29.615067+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -935,7 +935,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 2337.641115372766,
+    "cash": 2337.6364017353035,
     "positions": {
       "BTC/CHF": 0.0,
       "ETH/CHF": 0.0,
@@ -945,9 +945,9 @@
       "TRX/CHF": -3387.5846409708947,
       "ZEC/CHF": 0.3808608099874369
     },
-    "interest_paid": 4.730400344129235,
+    "interest_paid": 4.735113981591599,
     "interest_at": {
-      "__dt__": "2026-10-25T14:59:16.024103+00:00"
+      "__dt__": "2026-10-25T15:02:09.206502+00:00"
     }
   }
 }
