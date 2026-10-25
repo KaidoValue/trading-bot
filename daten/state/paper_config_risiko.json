@@ -64,6 +64,19 @@
       "context": {
         "session": "Asien"
       }
+    },
+    "BNB/CHF": {
+      "side": 1,
+      "entry": 615.0985205625,
+      "qty": 0.028120633661812465,
+      "stop": 612.0033463644484,
+      "target": 620.3666822711032,
+      "opened": {
+        "__dt__": "2026-10-25T02:53:32.496196+00:00"
+      },
+      "context": {
+        "session": "Asien"
+      }
     }
   },
   "closed": [
@@ -710,34 +723,34 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-25T01:30:00+00:00"
+      "__dt__": "2026-10-25T02:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | HYPE/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: gekauft 0.028121 @ 615.10 | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-25T02:24:02.086628+00:00"
+    "__dt__": "2026-10-25T02:53:52.902546+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -745,7 +758,7 @@
       "__dt__": "2026-10-25"
     },
     "day_start_equity": 819.3645203891906,
-    "trades_today": 2,
+    "trades_today": 3,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -753,19 +766,19 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": -978.3056625506059,
+    "cash": -995.7254301642224,
     "positions": {
       "BTC/CHF": 0.002926084653479357,
       "ETH/CHF": 0.019103900130693532,
-      "BNB/CHF": 0.0,
+      "BNB/CHF": 0.028120633661812465,
       "XRP/CHF": 1390.100879732793,
       "SOL/CHF": 4.8925550888955485,
       "TRX/CHF": -1263.4533106937229,
       "ZEC/CHF": 0.0
     },
-    "interest_paid": 3.436752313722509,
+    "interest_paid": 3.469615571832205,
     "interest_at": {
-      "__dt__": "2026-10-25T02:23:41.533697+00:00"
+      "__dt__": "2026-10-25T02:53:32.496196+00:00"
     }
   }
 }
