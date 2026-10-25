@@ -16,23 +16,6 @@
         "event": "-",
         "session": "New York"
       }
-    },
-    "BTC/CHF": {
-      "side": 1,
-      "entry": 66419.29305000001,
-      "qty": 0.0036116937806704597,
-      "stop": 65985.48973405146,
-      "target": 67187.3205318971,
-      "opened": {
-        "__dt__": "2026-10-25T23:04:20.535280+00:00"
-      },
-      "context": {
-        "fear_greed": 54,
-        "news_score": 0.0,
-        "news_themes": "-",
-        "event": "-",
-        "session": "Nach US-Schluss"
-      }
     }
   },
   "closed": [
@@ -195,6 +178,26 @@
       "news_themes": "-",
       "event": "-",
       "session": "Asien"
+    },
+    {
+      "symbol": "BTC/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-25T23:04:20.535280+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-25T23:34:19.807891+00:00"
+      },
+      "entry": 66419.29305000001,
+      "exit": 65838.16445000001,
+      "qty": 0.0036116937806704597,
+      "pnl": -2.7171055019842605,
+      "reason": "Stop-Loss (Gap)",
+      "fear_greed": 54,
+      "news_score": 0.0,
+      "news_themes": "-",
+      "event": "-",
+      "session": "Nach US-Schluss"
     }
   ],
   "last_bar": {
@@ -233,7 +236,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-25T23:04:38.710831+00:00"
+    "__dt__": "2026-10-25T23:34:29.777026+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -242,7 +245,7 @@
     },
     "day_start_equity": 970.9526417228599,
     "trades_today": 5,
-    "loss_streak": 0,
+    "loss_streak": 1,
     "paused_until": {
       "__dt__": "2026-10-25T18:26:03.436718+00:00"
     },
@@ -251,17 +254,17 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 468.4004090235986,
+    "cash": 705.5694511468281,
     "positions": {
       "BNB/CHF": 0.0,
       "ZEC/CHF": 0.0,
       "TRX/CHF": 918.327343444289,
       "XRP/CHF": 0.0,
-      "BTC/CHF": 0.0036116937806704597
+      "BTC/CHF": 0.0
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-25T23:04:20.535280+00:00"
+      "__dt__": "2026-10-25T23:34:19.807891+00:00"
     }
   }
 }
