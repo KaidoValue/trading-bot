@@ -262,28 +262,28 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-26T21:00:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     }
   },
   "note": "BTC/CHF: kein Einstieg (Pause nach Verlustserie) | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (Pause nach Verlustserie)",
@@ -316,7 +316,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-26T22:52:29.124323+00:00"
+    "__dt__": "2026-10-26T23:22:36.991016+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -345,7 +345,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-26T22:52:19.334085+00:00"
+      "__dt__": "2026-10-26T23:22:17.637901+00:00"
     }
   }
 }
