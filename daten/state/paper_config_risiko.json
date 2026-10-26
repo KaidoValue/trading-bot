@@ -1795,34 +1795,34 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-26T21:30:00+00:00"
+      "__dt__": "2026-10-26T22:00:00+00:00"
     }
   },
   "note": "BTC/CHF: kein Einstieg (max. offene Positionen) | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-26T22:20:17.816850+00:00"
+    "__dt__": "2026-10-26T22:50:08.103202+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -1838,7 +1838,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1270.9767114453668,
+    "cash": 1270.9504922832946,
     "positions": {
       "BTC/CHF": 0.0,
       "ETH/CHF": -0.14119553992926437,
@@ -1849,9 +1849,9 @@
       "ZEC/CHF": 0.2920139560326926,
       "HYPE/CHF": 0.0
     },
-    "interest_paid": 6.620797292284675,
+    "interest_paid": 6.647016454356973,
     "interest_at": {
-      "__dt__": "2026-10-26T22:19:57.404032+00:00"
+      "__dt__": "2026-10-26T22:49:47.688205+00:00"
     }
   }
 }
