@@ -262,31 +262,31 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-26T17:00:00+00:00"
+      "__dt__": "2026-10-26T18:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: kein Einstieg (Pause nach Verlustserie) | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: kein Einstieg (Pause nach Verlustserie) | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: kein Einstieg (Pause nach Verlustserie) | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (Pause nach Verlustserie)",
+  "note": "BTC/CHF: kein Einstieg (Pause nach Verlustserie) | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (Pause nach Verlustserie)",
   "news": {
     "fear_greed": 50,
     "news_score": 0.0,
@@ -296,7 +296,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-26T18:49:36.013493+00:00"
+    "__dt__": "2026-10-26T19:19:46.069140+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -325,7 +325,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-26T18:49:26.246764+00:00"
+      "__dt__": "2026-10-26T19:19:26.695980+00:00"
     }
   }
 }
