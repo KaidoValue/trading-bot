@@ -15,25 +15,12 @@
     },
     "BTC/CHF": {
       "side": -1,
-      "entry": 65401.6828,
-      "qty": 0.005473192655653725,
-      "stop": 65723.59823417845,
-      "target": 64856.00353164311,
+      "entry": 65901.53275,
+      "qty": 0.005314027356361955,
+      "stop": 66240.0746294924,
+      "target": 65323.35074101518,
       "opened": {
-        "__dt__": "2026-10-26T02:37:46.095779+00:00"
-      },
-      "context": {
-        "session": "Asien"
-      }
-    },
-    "BNB/CHF": {
-      "side": -1,
-      "entry": 605.39167274,
-      "qty": 0.47749562568385123,
-      "stop": 609.3150760667189,
-      "target": 598.4534078665622,
-      "opened": {
-        "__dt__": "2026-10-26T02:37:46.095779+00:00"
+        "__dt__": "2026-10-26T04:37:46.334400+00:00"
       },
       "context": {
         "session": "Asien"
@@ -41,12 +28,25 @@
     },
     "ETH/CHF": {
       "side": -1,
-      "entry": 1893.39283,
-      "qty": 0.10271942533358976,
-      "stop": 1902.1903477720703,
-      "target": 1878.639304455859,
+      "entry": 1906.9660400000002,
+      "qty": 0.18364383031156828,
+      "stop": 1916.6521880666942,
+      "target": 1890.4556238666119,
       "opened": {
-        "__dt__": "2026-10-26T03:07:54.925758+00:00"
+        "__dt__": "2026-10-26T04:37:46.334400+00:00"
+      },
+      "context": {
+        "session": "Asien"
+      }
+    },
+    "BNB/CHF": {
+      "side": -1,
+      "entry": 610.5072548694,
+      "qty": 0.18421796300932222,
+      "stop": 614.8095639902427,
+      "target": 602.8188556195145,
+      "opened": {
+        "__dt__": "2026-10-26T04:37:46.334400+00:00"
       },
       "context": {
         "session": "Asien"
@@ -1189,38 +1189,86 @@
       "pnl": 1.0451862959813643,
       "reason": "Take-Profit",
       "session": "Nach US-Schluss"
+    },
+    {
+      "symbol": "BTC/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-26T02:37:46.095779+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-26T04:37:46.334400+00:00"
+      },
+      "entry": 65401.6828,
+      "exit": 65967.46725,
+      "qty": 0.005473192655653725,
+      "pnl": -4.035384205311499,
+      "reason": "Stop-Loss (Gap)",
+      "session": "Asien"
+    },
+    {
+      "symbol": "ETH/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-26T03:07:54.925758+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-26T04:37:46.334400+00:00"
+      },
+      "entry": 1893.39283,
+      "exit": 1908.87396,
+      "qty": 0.10271942533358976,
+      "pnl": -2.1000167112487653,
+      "reason": "Stop-Loss (Gap)",
+      "session": "Asien"
+    },
+    {
+      "symbol": "BNB/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-26T02:37:46.095779+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-26T04:37:46.334400+00:00"
+      },
+      "entry": 605.39167274,
+      "exit": 611.1180675306,
+      "qty": 0.47749562568385123,
+      "pnl": -4.251720724365894,
+      "reason": "Stop-Loss (Gap)",
+      "session": "Asien"
     }
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-26T03:30:00+00:00"
+      "__dt__": "2026-10-26T04:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | SOL/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | HYPE/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
+  "note": "BTC/CHF: short er\u00f6ffnet 0.005314 @ 65901.53 | ETH/CHF: short er\u00f6ffnet 0.183644 @ 1906.97 | BNB/CHF: short er\u00f6ffnet 0.184218 @ 610.51 | XRP/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | SOL/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | HYPE/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-26T04:08:15.645475+00:00"
+    "__dt__": "2026-10-26T04:38:06.773217+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -1228,28 +1276,28 @@
       "__dt__": "2026-10-26"
     },
     "day_start_equity": 706.2159724861017,
-    "trades_today": 4,
-    "loss_streak": 0,
+    "trades_today": 7,
+    "loss_streak": 3,
     "paused_until": null,
     "halted": false,
     "halted_on": null,
     "halt_reason": ""
   },
   "paper": {
-    "cash": 2787.5101378921263,
+    "cash": 2746.0414675968295,
     "positions": {
-      "BTC/CHF": -0.005473192655653725,
-      "ETH/CHF": -0.10271942533358976,
-      "BNB/CHF": -0.47749562568385123,
+      "BTC/CHF": -0.005314027356361955,
+      "ETH/CHF": -0.18364383031156828,
+      "BNB/CHF": -0.18421796300932222,
       "XRP/CHF": 0.0,
       "SOL/CHF": 0.0,
       "TRX/CHF": -4588.8625240300025,
       "ZEC/CHF": 0.0,
       "HYPE/CHF": 0.0
     },
-    "interest_paid": 5.742789734851817,
+    "interest_paid": 5.7738495036487585,
     "interest_at": {
-      "__dt__": "2026-10-26T04:07:55.229335+00:00"
+      "__dt__": "2026-10-26T04:37:46.334400+00:00"
     }
   }
 }
