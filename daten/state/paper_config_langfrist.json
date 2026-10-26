@@ -120,10 +120,17 @@
     "themes": {},
     "blackout": null,
     "evidence": [],
-    "alerts": []
+    "alerts": [
+      {
+        "who": "powell (fed)",
+        "title": "BTC price risks $80K loss into FOMC, earnings: Three things to know in Bitcoin this week",
+        "source": "cointelegraph",
+        "published": "2026-10-26T10:49:55+00:00"
+      }
+    ]
   },
   "updated": {
-    "__dt__": "2026-10-26T10:43:23.194131+00:00"
+    "__dt__": "2026-10-26T11:13:23.676770+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -149,7 +156,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-26T10:43:03.780979+00:00"
+      "__dt__": "2026-10-26T11:13:04.294141+00:00"
     }
   }
 }
