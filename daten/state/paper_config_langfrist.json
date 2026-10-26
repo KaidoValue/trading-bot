@@ -116,14 +116,34 @@
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 50,
-    "news_score": 0.0,
-    "themes": {},
+    "news_score": -0.8,
+    "themes": {
+      "verbot": [
+        "coindesk",
+        "decrypt"
+      ]
+    },
     "blackout": null,
-    "evidence": [],
+    "evidence": [
+      {
+        "theme": "verbot",
+        "source": "decrypt",
+        "title": "Canada\u2019s Draft Stablecoin Rules Cap Redemption Fees at 1% and Ban Yield",
+        "link": "https://decrypt.co/381889/canada-draft-stablecoin-rules-redemption-fees-ban-yield",
+        "published": "2026-10-26T22:16:03+00:00"
+      },
+      {
+        "theme": "verbot",
+        "source": "coindesk",
+        "title": "Canada opens consultation on draft stablecoin rules, maintains ban on yields",
+        "link": "https://www.coindesk.com/policy/2026/10/26/canada-opens-consultation-on-draft-stablecoin-rules-maintains-ban-on-yields",
+        "published": "2026-10-26T14:23:41+00:00"
+      }
+    ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-26T21:49:15.115095+00:00"
+    "__dt__": "2026-10-26T22:19:15.475908+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -149,7 +169,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-26T21:48:55.738971+00:00"
+      "__dt__": "2026-10-26T22:18:56.125458+00:00"
     }
   }
 }
