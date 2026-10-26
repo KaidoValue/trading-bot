@@ -120,10 +120,17 @@
     "themes": {},
     "blackout": null,
     "evidence": [],
-    "alerts": []
+    "alerts": [
+      {
+        "who": "lagarde (ezb)",
+        "title": "Fed, ECB and BOJ interest-rate decisions, Coinbase earnings: Crypto Week Ahead",
+        "source": "coindesk",
+        "published": "2026-10-26T09:14:47+00:00"
+      }
+    ]
   },
   "updated": {
-    "__dt__": "2026-10-26T09:13:24.486683+00:00"
+    "__dt__": "2026-10-26T09:43:22.744930+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -149,7 +156,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-26T09:13:05.105998+00:00"
+      "__dt__": "2026-10-26T09:43:03.369126+00:00"
     }
   }
 }
