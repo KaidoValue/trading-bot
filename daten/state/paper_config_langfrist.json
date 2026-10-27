@@ -116,15 +116,26 @@
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 48,
-    "news_score": 0.5,
+    "news_score": -1.0,
     "themes": {
       "rally": [
         "coindesk",
         "cointelegraph"
+      ],
+      "hack": [
+        "coindesk",
+        "decrypt"
       ]
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Bitcoin Wallet Maker Keystone Pulls Devices as Stolen Key Opens Door to Fakes",
+        "link": "https://decrypt.co/381983/bitcoin-wallet-keystone-devices-destroyed-stolen-key",
+        "published": "2026-10-27T18:16:02+00:00"
+      },
       {
         "theme": "rally",
         "source": "cointelegraph",
@@ -138,12 +149,19 @@
         "title": "Bitcoin drops below $80,000 as crypto ignores Asian tech rally, Fed meeting begins",
         "link": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
         "published": "2026-10-27T11:32:45+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Crypto wallet maker Keystone to destroy almost 19,000 devices after security breach",
+        "link": "https://www.coindesk.com/business/2026/10/27/crypto-wallet-maker-keystone-to-destroy-almost-19-000-devices-after-security-breach",
+        "published": "2026-10-27T11:13:54+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T18:03:41.700477+00:00"
+    "__dt__": "2026-10-27T18:33:41.925670+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -169,7 +187,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T18:03:22.346357+00:00"
+      "__dt__": "2026-10-27T18:33:22.544896+00:00"
     }
   }
 }
