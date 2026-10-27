@@ -392,17 +392,10 @@
         "published": "2026-10-27T11:13:54+00:00"
       }
     ],
-    "alerts": [
-      {
-        "who": "bessent (us-finanzminister)",
-        "title": "Treasury's Bessent sees crypto as America's next tool for keeping the U.S. dollar on top",
-        "source": "coindesk",
-        "published": "2026-10-27T20:41:33+00:00"
-      }
-    ]
+    "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T21:04:12.447487+00:00"
+    "__dt__": "2026-10-27T21:34:03.180703+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -431,7 +424,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T21:03:53.085691+00:00"
+      "__dt__": "2026-10-27T21:33:53.428638+00:00"
     }
   }
 }
