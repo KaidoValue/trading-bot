@@ -262,33 +262,33 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-26T22:00:00+00:00"
+      "__dt__": "2026-10-26T23:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: kein Einstieg (Pause nach Verlustserie) | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (Pause nach Verlustserie)",
+  "note": "BTC/CHF: kein Einstieg (Pause nach Verlustserie) | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: kein Einstieg (Pause nach Verlustserie) | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (Pause nach Verlustserie)",
   "news": {
-    "fear_greed": 50,
+    "fear_greed": 48,
     "news_score": -0.8,
     "themes": {
       "verbot": [
@@ -316,15 +316,15 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-26T23:52:27.249798+00:00"
+    "__dt__": "2026-10-27T00:22:37.087900+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
     "day": {
-      "__dt__": "2026-10-26"
+      "__dt__": "2026-10-27"
     },
-    "day_start_equity": 955.4415786882867,
-    "trades_today": 3,
+    "day_start_equity": 951.3575141510195,
+    "trades_today": 0,
     "loss_streak": 1,
     "paused_until": {
       "__dt__": "2026-10-27T01:13:35.156266+00:00"
@@ -345,7 +345,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-26T23:52:17.481408+00:00"
+      "__dt__": "2026-10-27T00:22:17.733163+00:00"
     }
   }
 }
