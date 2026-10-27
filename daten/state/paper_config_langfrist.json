@@ -118,6 +118,10 @@
     "fear_greed": 48,
     "news_score": -0.8,
     "themes": {
+      "rally": [
+        "coindesk",
+        "cointelegraph"
+      ],
       "verbot": [
         "coindesk",
         "decrypt"
@@ -125,6 +129,20 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "rally",
+        "source": "cointelegraph",
+        "title": "Bitcoin price analysis sees \u2018strong rally\u2019 as old coins become dormant",
+        "link": "https://cointelegraph.com/markets/bitcoin-price-analysis-sees-strong-rally-as-old-coins-become-dormant?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-27T12:18:24+00:00"
+      },
+      {
+        "theme": "rally",
+        "source": "coindesk",
+        "title": "Bitcoin drops below $80,000 as crypto ignores Asian tech rally, Fed meeting begins",
+        "link": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
+        "published": "2026-10-27T11:32:45+00:00"
+      },
       {
         "theme": "verbot",
         "source": "decrypt",
@@ -143,7 +161,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T11:57:46.655177+00:00"
+    "__dt__": "2026-10-27T12:27:47.340057+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -169,7 +187,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T11:57:27.296748+00:00"
+      "__dt__": "2026-10-27T12:27:27.984601+00:00"
     }
   }
 }
