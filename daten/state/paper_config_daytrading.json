@@ -16,6 +16,40 @@
         "event": "-",
         "session": "London"
       }
+    },
+    "BTC/CHF": {
+      "side": 1,
+      "entry": 66509.8383,
+      "qty": 0.003615970692718853,
+      "stop": 65856.80945044346,
+      "target": 67716.1810991131,
+      "opened": {
+        "__dt__": "2026-10-27T15:00:54.751658+00:00"
+      },
+      "context": {
+        "fear_greed": 48,
+        "news_score": 0.5,
+        "news_themes": "rally",
+        "event": "-",
+        "session": "London+New York"
+      }
+    },
+    "ETH/CHF": {
+      "side": 1,
+      "entry": 1928.153595,
+      "qty": 0.12472949597683369,
+      "stop": 1908.6526929231409,
+      "target": 1964.2646141537186,
+      "opened": {
+        "__dt__": "2026-10-27T15:00:54.751658+00:00"
+      },
+      "context": {
+        "fear_greed": 48,
+        "news_score": 0.5,
+        "news_themes": "rally",
+        "event": "-",
+        "session": "London+New York"
+      }
     }
   },
   "closed": [
@@ -262,31 +296,31 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T13:00:00+00:00"
+      "__dt__": "2026-10-27T14:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8)",
+  "note": "BTC/CHF: gekauft 0.003616 @ 66509.84 | ETH/CHF: gekauft 0.124729 @ 1928.15 | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: kein Einstieg (max. offene Positionen) | SOL/CHF: kein Einstieg (max. offene Positionen) | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 48,
     "news_score": 0.5,
@@ -316,7 +350,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T14:31:04.853710+00:00"
+    "__dt__": "2026-10-27T15:01:14.692113+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -324,7 +358,7 @@
       "__dt__": "2026-10-27"
     },
     "day_start_equity": 951.3575141510195,
-    "trades_today": 0,
+    "trades_today": 2,
     "loss_streak": 1,
     "paused_until": {
       "__dt__": "2026-10-27T01:13:35.156266+00:00"
@@ -334,18 +368,18 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 709.0363051019647,
+    "cash": 226.79046530585944,
     "positions": {
       "BNB/CHF": 0.0,
       "ZEC/CHF": 0.23748030772245907,
       "TRX/CHF": 0.0,
       "XRP/CHF": 0.0,
-      "BTC/CHF": 0.0,
-      "ETH/CHF": 0.0
+      "BTC/CHF": 0.003615970692718853,
+      "ETH/CHF": 0.12472949597683369
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T14:30:54.954542+00:00"
+      "__dt__": "2026-10-27T15:00:54.751658+00:00"
     }
   }
 }
