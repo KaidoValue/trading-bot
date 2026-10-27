@@ -1955,34 +1955,34 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T09:00:00+00:00"
+      "__dt__": "2026-10-27T09:30:00+00:00"
     }
   },
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-27T09:58:39.735205+00:00"
+    "__dt__": "2026-10-27T10:28:48.233258+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -1998,7 +1998,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 470.50426073217153,
+    "cash": 470.48657467497384,
     "positions": {
       "BTC/CHF": -0.0009802656359889138,
       "ETH/CHF": -0.14119553992926437,
@@ -2009,9 +2009,9 @@
       "ZEC/CHF": 0.6884653214973279,
       "HYPE/CHF": 0.0
     },
-    "interest_paid": 7.261879251734292,
+    "interest_paid": 7.279565308931974,
     "interest_at": {
-      "__dt__": "2026-10-27T09:58:19.274752+00:00"
+      "__dt__": "2026-10-27T10:28:27.812626+00:00"
     }
   }
 }
