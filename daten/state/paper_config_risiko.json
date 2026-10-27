@@ -1891,34 +1891,34 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T03:00:00+00:00"
+      "__dt__": "2026-10-27T03:30:00+00:00"
     }
   },
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: kein Einstieg (max. offene Positionen) | XRP/CHF: kein Einstieg (max. offene Positionen) | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Position offen, Signal best\u00e4tigt",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-27T03:55:58.435414+00:00"
+    "__dt__": "2026-10-27T04:26:08.052714+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -1934,7 +1934,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1967.8206991563507,
+    "cash": 1967.783637911374,
     "positions": {
       "BTC/CHF": -0.0010165097758479992,
       "ETH/CHF": -0.14119553992926437,
@@ -1945,9 +1945,9 @@
       "ZEC/CHF": -0.5509227227861307,
       "HYPE/CHF": -3.9390163188127674
     },
-    "interest_paid": 6.883647496267952,
+    "interest_paid": 6.920708741244772,
     "interest_at": {
-      "__dt__": "2026-10-27T03:55:38.037558+00:00"
+      "__dt__": "2026-10-27T04:25:47.646375+00:00"
     }
   }
 }
