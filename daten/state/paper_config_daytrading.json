@@ -296,31 +296,31 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T14:00:00+00:00"
+      "__dt__": "2026-10-27T15:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: gekauft 0.003616 @ 66509.84 | ETH/CHF: gekauft 0.124729 @ 1928.15 | BNB/CHF: Signal 'raus', bleibe in Cash | XRP/CHF: kein Einstieg (max. offene Positionen) | SOL/CHF: kein Einstieg (max. offene Positionen) | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: kein Einstieg (max. offene Positionen) | XRP/CHF: kein Einstieg (max. offene Positionen) | SOL/CHF: kein Einstieg (max. offene Positionen) | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 48,
     "news_score": 0.5,
@@ -350,7 +350,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T15:31:04.131334+00:00"
+    "__dt__": "2026-10-27T16:01:14.502211+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -379,7 +379,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T15:30:54.110049+00:00"
+      "__dt__": "2026-10-27T16:00:54.764474+00:00"
     }
   }
 }

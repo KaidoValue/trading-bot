@@ -1,18 +1,5 @@
 {
   "open_trades": {
-    "BTC/CHF": {
-      "side": 1,
-      "entry": 66132.0495,
-      "qty": 0.0012714179404545913,
-      "stop": 65805.38732279275,
-      "target": 66686.22535441449,
-      "opened": {
-        "__dt__": "2026-10-27T11:58:18.649151+00:00"
-      },
-      "context": {
-        "session": "London"
-      }
-    },
     "HYPE/CHF": {
       "side": 1,
       "entry": 64.9039869756,
@@ -76,6 +63,19 @@
       },
       "context": {
         "session": "London+New York"
+      }
+    },
+    "BTC/CHF": {
+      "side": 1,
+      "entry": 66733.34999999999,
+      "qty": 0.0035490886027544897,
+      "stop": 66388.66146298587,
+      "target": 67322.67707402827,
+      "opened": {
+        "__dt__": "2026-10-27T16:01:25.275348+00:00"
+      },
+      "context": {
+        "session": "New York"
       }
     }
   },
@@ -2159,38 +2159,54 @@
       "pnl": 0.663558184356045,
       "reason": "Take-Profit",
       "session": "London+New York"
+    },
+    {
+      "symbol": "BTC/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-27T11:58:18.649151+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-27T16:01:25.275348+00:00"
+      },
+      "entry": 66132.0495,
+      "exit": 66652.88224173729,
+      "qty": 0.0012714179404545913,
+      "pnl": 0.4418625491315519,
+      "reason": "Take-Profit",
+      "session": "London"
     }
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T15:00:00+00:00"
+      "__dt__": "2026-10-27T15:30:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: gekauft 0.122367 @ 1938.97 | BNB/CHF: gekauft 0.382182 @ 620.82 | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: kein Einstieg (max. offene Positionen) | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: Position offen, Signal best\u00e4tigt",
+  "note": "BTC/CHF: gekauft 0.003549 @ 66733.35 | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: kein Einstieg (max. offene Positionen) | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: Position offen, Signal best\u00e4tigt",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-27T15:31:35.414683+00:00"
+    "__dt__": "2026-10-27T16:01:45.747159+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -2198,7 +2214,7 @@
       "__dt__": "2026-10-27"
     },
     "day_start_equity": 504.12867046923986,
-    "trades_today": 22,
+    "trades_today": 23,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -2206,9 +2222,9 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": -455.250191017984,
+    "cash": -608.1945383526918,
     "positions": {
-      "BTC/CHF": 0.0012714179404545913,
+      "BTC/CHF": 0.0035490886027544897,
       "ETH/CHF": 0.12236719522629334,
       "BNB/CHF": 0.3821816840644547,
       "XRP/CHF": 217.14095619814222,
@@ -2217,9 +2233,9 @@
       "ZEC/CHF": 0.0,
       "HYPE/CHF": 0.9804348045426952
     },
-    "interest_paid": 7.402823358065199,
+    "interest_paid": 7.41214481964694,
     "interest_at": {
-      "__dt__": "2026-10-27T15:31:14.925690+00:00"
+      "__dt__": "2026-10-27T16:01:25.275348+00:00"
     }
   }
 }
