@@ -262,31 +262,31 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T11:00:00+00:00"
+      "__dt__": "2026-10-27T12:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | ETH/CHF: Signal 'raus', bleibe in Cash | BNB/CHF: kein Signal | XRP/CHF: Signal 'raus', bleibe in Cash | SOL/CHF: Signal 'raus', bleibe in Cash | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8)",
+  "note": "BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | BNB/CHF: kein Signal | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: rally,verbot, Wert -0.8)",
   "news": {
     "fear_greed": 48,
     "news_score": -0.8,
@@ -334,7 +334,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T12:31:05.527363+00:00"
+    "__dt__": "2026-10-27T13:01:13.241619+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -363,7 +363,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T12:30:55.142958+00:00"
+      "__dt__": "2026-10-27T13:00:54.741304+00:00"
     }
   }
 }
