@@ -1,18 +1,5 @@
 {
   "open_trades": {
-    "ETH/CHF": {
-      "side": -1,
-      "entry": 1924.047495,
-      "qty": 0.14119553992926437,
-      "stop": 1937.4280828032513,
-      "target": 1900.1738343934971,
-      "opened": {
-        "__dt__": "2026-10-26T15:17:02.794132+00:00"
-      },
-      "context": {
-        "session": "London+New York"
-      }
-    },
     "SOL/CHF": {
       "side": -1,
       "entry": 82.8665122169,
@@ -24,19 +11,6 @@
       },
       "context": {
         "session": "New York"
-      }
-    },
-    "BTC/CHF": {
-      "side": -1,
-      "entry": 66070.44825,
-      "qty": 0.0009802656359889138,
-      "stop": 66336.38318373894,
-      "target": 65637.73363252211,
-      "opened": {
-        "__dt__": "2026-10-27T05:55:38.670458+00:00"
-      },
-      "context": {
-        "session": "Asien"
       }
     },
     "ZEC/CHF": {
@@ -65,14 +39,27 @@
         "session": "London"
       }
     },
-    "BNB/CHF": {
+    "TRX/CHF": {
       "side": -1,
-      "entry": 611.246074075,
-      "qty": 0.3952540503094314,
-      "stop": 614.1160532865002,
-      "target": 606.4234434269995,
+      "entry": 0.27112900384191996,
+      "qty": 887.1886102202329,
+      "stop": 0.27174309135828106,
+      "target": 0.27030772576343776,
       "opened": {
-        "__dt__": "2026-10-27T10:58:19.313575+00:00"
+        "__dt__": "2026-10-27T11:28:28.427999+00:00"
+      },
+      "context": {
+        "session": "London"
+      }
+    },
+    "HYPE/CHF": {
+      "side": -1,
+      "entry": 64.27447068800001,
+      "qty": 3.742427771619414,
+      "stop": 64.87876672180742,
+      "target": 63.16233855638515,
+      "opened": {
+        "__dt__": "2026-10-27T11:28:28.427999+00:00"
       },
       "context": {
         "session": "London"
@@ -1967,38 +1954,86 @@
       "pnl": -2.8604000773630665,
       "reason": "Stop-Loss (Gap)",
       "session": "London"
+    },
+    {
+      "symbol": "BTC/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-27T05:55:38.670458+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-27T11:28:28.427999+00:00"
+      },
+      "entry": 66070.44825,
+      "exit": 66124.74584999999,
+      "qty": 0.0009802656359889138,
+      "pnl": -0.221757593114327,
+      "reason": "Signal",
+      "session": "Asien"
+    },
+    {
+      "symbol": "ETH/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-26T15:17:02.794132+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-27T11:28:28.427999+00:00"
+      },
+      "entry": 1924.047495,
+      "exit": 1913.65635,
+      "qty": 0.14119553992926437,
+      "pnl": 0.7646640006572631,
+      "reason": "Signal",
+      "session": "London+New York"
+    },
+    {
+      "symbol": "BNB/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-27T10:58:19.313575+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-27T11:28:28.427999+00:00"
+      },
+      "entry": 611.246074075,
+      "exit": 611.5125282624,
+      "qty": 0.3952540503094314,
+      "pnl": -1.3621716755672533,
+      "reason": "Signal",
+      "session": "London"
     }
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T10:00:00+00:00"
+      "__dt__": "2026-10-27T10:30:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: short er\u00f6ffnet 0.395254 @ 611.25 | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: kein Einstieg (max. offene Positionen)",
+  "note": "BTC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | ETH/CHF: kein Einstieg (Tagesverlust-Limit) | BNB/CHF: kein Einstieg (Tagesverlust-Limit) | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: short er\u00f6ffnet 887.188610 @ 0.27 | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: short er\u00f6ffnet 3.742428 @ 64.27",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-27T10:58:40.057343+00:00"
+    "__dt__": "2026-10-27T11:28:48.838182+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -2006,7 +2041,7 @@
       "__dt__": "2026-10-27"
     },
     "day_start_equity": 504.12867046923986,
-    "trades_today": 10,
+    "trades_today": 12,
     "loss_streak": 1,
     "paused_until": null,
     "halted": false,
@@ -2014,20 +2049,20 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 461.1172026681951,
+    "cash": 360.83280398550266,
     "positions": {
-      "BTC/CHF": -0.0009802656359889138,
-      "ETH/CHF": -0.14119553992926437,
-      "BNB/CHF": -0.3952540503094314,
+      "BTC/CHF": 0.0,
+      "ETH/CHF": 0.0,
+      "BNB/CHF": 0.0,
       "XRP/CHF": -48.57556717761184,
       "SOL/CHF": -0.875426585815216,
-      "TRX/CHF": 0.0,
+      "TRX/CHF": -887.1886102202329,
       "ZEC/CHF": 0.6884653214973279,
-      "HYPE/CHF": 0.0
+      "HYPE/CHF": -3.742427771619414
     },
-    "interest_paid": 7.291030353174508,
+    "interest_paid": 7.308647925113403,
     "interest_at": {
-      "__dt__": "2026-10-27T10:58:19.313575+00:00"
+      "__dt__": "2026-10-27T11:28:28.427999+00:00"
     }
   }
 }
