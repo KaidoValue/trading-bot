@@ -39,19 +39,6 @@
         "session": "New York"
       }
     },
-    "TRX/CHF": {
-      "side": 1,
-      "entry": 0.273040229398755,
-      "qty": 851.8133236356525,
-      "stop": 0.27227904676904263,
-      "target": 0.27415323899191474,
-      "opened": {
-        "__dt__": "2026-10-27T19:04:23.355084+00:00"
-      },
-      "context": {
-        "session": "New York"
-      }
-    },
     "ZEC/CHF": {
       "side": 1,
       "entry": 1076.4730758541498,
@@ -73,6 +60,19 @@
       "target": 68.76623460014528,
       "opened": {
         "__dt__": "2026-10-27T19:34:14.010566+00:00"
+      },
+      "context": {
+        "session": "New York"
+      }
+    },
+    "ETH/CHF": {
+      "side": -1,
+      "entry": 1941.92855,
+      "qty": 0.11541340258084039,
+      "stop": 1950.9501206579741,
+      "target": 1926.7997586840518,
+      "opened": {
+        "__dt__": "2026-10-27T20:34:13.378302+00:00"
       },
       "context": {
         "session": "New York"
@@ -2271,38 +2271,54 @@
       "pnl": -2.00339735502706,
       "reason": "Signal",
       "session": "London+New York"
+    },
+    {
+      "symbol": "TRX/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-27T19:04:23.355084+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-27T20:34:13.378302+00:00"
+      },
+      "entry": 0.273040229398755,
+      "exit": 0.27401616237241877,
+      "qty": 851.8133236356525,
+      "pnl": -0.38242250365958597,
+      "reason": "Take-Profit",
+      "session": "New York"
     }
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-27T19:30:00+00:00"
+      "__dt__": "2026-10-27T20:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: kein Einstieg (max. offene Positionen) | BNB/CHF: kein Einstieg (max. offene Positionen) | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: Position offen, Signal best\u00e4tigt | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Position offen, Signal best\u00e4tigt",
+  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: short er\u00f6ffnet 0.115413 @ 1941.93 | BNB/CHF: kein Einstieg (max. offene Positionen) | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: Position offen, Signal best\u00e4tigt | HYPE/CHF: Position offen, Signal best\u00e4tigt",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-27T20:04:43.739240+00:00"
+    "__dt__": "2026-10-27T20:34:33.901788+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -2310,28 +2326,28 @@
       "__dt__": "2026-10-27"
     },
     "day_start_equity": 504.12867046923986,
-    "trades_today": 29,
-    "loss_streak": 5,
+    "trades_today": 30,
+    "loss_streak": 6,
     "paused_until": null,
     "halted": false,
     "halted_on": null,
     "halt_reason": ""
   },
   "paper": {
-    "cash": -901.9434479481363,
+    "cash": -446.22135964423086,
     "positions": {
       "BTC/CHF": 0.0035490886027544897,
-      "ETH/CHF": 0.0,
+      "ETH/CHF": -0.11541340258084039,
       "BNB/CHF": 0.0,
       "XRP/CHF": 217.14095619814222,
       "SOL/CHF": 2.8229541532198317,
-      "TRX/CHF": 851.8133236356525,
+      "TRX/CHF": 0.0,
       "ZEC/CHF": 0.17008601060637576,
       "HYPE/CHF": 3.342198137934512
     },
-    "interest_paid": 7.563760325699435,
+    "interest_paid": 7.580412420943232,
     "interest_at": {
-      "__dt__": "2026-10-27T20:04:23.222264+00:00"
+      "__dt__": "2026-10-27T20:34:13.378302+00:00"
     }
   }
 }

@@ -146,6 +146,13 @@
       {
         "theme": "rally",
         "source": "coindesk",
+        "title": "Live updates: Bitcoin edges higher as Nasdaq surges 1.2%",
+        "link": "https://www.coindesk.com/tech/2026/10/27/live-updates-bitcoin-holds-below-usd80-000-as-ai-buildout-draws-more-capital",
+        "published": "2026-10-27T11:40:50+00:00"
+      },
+      {
+        "theme": "rally",
+        "source": "coindesk",
         "title": "Bitcoin drops below $80,000 as crypto ignores Asian tech rally, Fed meeting begins",
         "link": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
         "published": "2026-10-27T11:32:45+00:00"
@@ -161,7 +168,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-27T20:03:41.311340+00:00"
+    "__dt__": "2026-10-27T20:33:40.934578+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -187,7 +194,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-27T20:03:21.947373+00:00"
+      "__dt__": "2026-10-27T20:33:21.574935+00:00"
     }
   }
 }
