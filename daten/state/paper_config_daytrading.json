@@ -1,40 +1,5 @@
 {
-  "open_trades": {
-    "ETH/CHF": {
-      "side": 1,
-      "entry": 1946.7829049999998,
-      "qty": 0.12349368363977908,
-      "stop": 1932.4848435260542,
-      "target": 1972.4603129478912,
-      "opened": {
-        "__dt__": "2026-10-28T12:15:31.513190+00:00"
-      },
-      "context": {
-        "fear_greed": 51,
-        "news_score": 0.5,
-        "news_themes": "rally",
-        "event": "-",
-        "session": "London"
-      }
-    },
-    "BNB/CHF": {
-      "side": 1,
-      "entry": 627.3589391081999,
-      "qty": 0.38321824588512937,
-      "stop": 621.0029595690914,
-      "target": 639.1303300618172,
-      "opened": {
-        "__dt__": "2026-10-28T12:15:31.513190+00:00"
-      },
-      "context": {
-        "fear_greed": 51,
-        "news_score": 0.5,
-        "news_themes": "rally",
-        "event": "-",
-        "session": "London"
-      }
-    }
-  },
+  "open_trades": {},
   "closed": [
     {
       "symbol": "BNB/CHF",
@@ -355,6 +320,46 @@
       "news_themes": "rally",
       "event": "-",
       "session": "London+New York"
+    },
+    {
+      "symbol": "ETH/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-28T12:15:31.513190+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-28T14:45:31.162010+00:00"
+      },
+      "entry": 1946.7829049999998,
+      "exit": 1929.9145600000002,
+      "qty": 0.12349368363977908,
+      "pnl": -2.7027979320801574,
+      "reason": "Stop-Loss (Gap)",
+      "fear_greed": 51,
+      "news_score": 0.5,
+      "news_themes": "rally",
+      "event": "-",
+      "session": "London"
+    },
+    {
+      "symbol": "BNB/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-28T12:15:31.513190+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-28T14:45:31.162010+00:00"
+      },
+      "entry": 627.3589391081999,
+      "exit": 619.6643214457,
+      "qty": 0.38321824588512937,
+      "pnl": -4.1835445897504595,
+      "reason": "Stop-Loss (Gap)",
+      "fear_greed": 51,
+      "news_score": 0.5,
+      "news_themes": "rally",
+      "event": "-",
+      "session": "London"
     }
   ],
   "last_bar": {
@@ -393,7 +398,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T14:15:50.098200+00:00"
+    "__dt__": "2026-10-28T14:45:40.997149+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -402,7 +407,7 @@
     },
     "day_start_equity": 958.8737645953329,
     "trades_today": 2,
-    "loss_streak": 0,
+    "loss_streak": 2,
     "paused_until": {
       "__dt__": "2026-10-27T01:13:35.156266+00:00"
     },
@@ -411,18 +416,18 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 477.4264779987516,
+    "cash": 951.3709198477211,
     "positions": {
-      "BNB/CHF": 0.38321824588512937,
+      "BNB/CHF": 0.0,
       "ZEC/CHF": 0.0,
       "TRX/CHF": 0.0,
       "XRP/CHF": 0.0,
       "BTC/CHF": 0.0,
-      "ETH/CHF": 0.12349368363977908
+      "ETH/CHF": 0.0
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T14:15:31.311472+00:00"
+      "__dt__": "2026-10-28T14:45:31.162010+00:00"
     }
   }
 }
