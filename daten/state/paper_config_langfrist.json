@@ -120,8 +120,7 @@
     "themes": {
       "hack": [
         "bitcoinmagazine",
-        "cointelegraph",
-        "decrypt"
+        "cointelegraph"
       ]
     },
     "blackout": "Federal Funds Rate (18:00 UTC)",
@@ -139,19 +138,19 @@
         "title": "Crypto PAC spending before midterms possibly obscured after reported FEC hack",
         "link": "https://cointelegraph.com/news/crypto-pac-spending-midterms-fec-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-28T17:05:42+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Bitcoin Wallet Maker Keystone Pulls Devices as Stolen Key Opens Door to Fakes",
-        "link": "https://decrypt.co/381983/bitcoin-wallet-keystone-devices-destroyed-stolen-key",
-        "published": "2026-10-27T18:16:02+00:00"
       }
     ],
-    "alerts": []
+    "alerts": [
+      {
+        "who": "powell (fed)",
+        "title": "Federal Reserve issues FOMC statement",
+        "source": "federalreserve",
+        "published": "2026-10-28T18:00:00+00:00"
+      }
+    ]
   },
   "updated": {
-    "__dt__": "2026-10-28T17:48:17.014038+00:00"
+    "__dt__": "2026-10-28T18:18:16.954813+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -177,7 +176,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T17:47:57.638267+00:00"
+      "__dt__": "2026-10-28T18:17:57.468053+00:00"
     }
   }
 }
