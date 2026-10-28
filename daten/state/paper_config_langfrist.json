@@ -119,12 +119,20 @@
     "news_score": -1.0,
     "themes": {
       "hack": [
+        "bitcoinmagazine",
         "cointelegraph",
         "decrypt"
       ]
     },
-    "blackout": null,
+    "blackout": "Federal Funds Rate (18:00 UTC)",
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "Centralized Exchange and DeFi Losses Dominate 2026 Crypto Hacks Despite Hardware Wallet Failures",
+        "link": "https://bitcoinmagazine.com/technical/centralized-exchange-and-defi-losses-dominate-2026-crypto-hacks-despite-hardware-wallet-failures",
+        "published": "2026-10-28T17:43:02+00:00"
+      },
       {
         "theme": "hack",
         "source": "cointelegraph",
@@ -140,17 +148,10 @@
         "published": "2026-10-27T18:16:02+00:00"
       }
     ],
-    "alerts": [
-      {
-        "who": "powell (fed)",
-        "title": "Bitcoin price bounce rejected at 50-day trend line ahead of FOMC, earnings",
-        "source": "cointelegraph",
-        "published": "2026-10-28T16:53:26+00:00"
-      }
-    ]
+    "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T17:18:17.137614+00:00"
+    "__dt__": "2026-10-28T17:48:17.014038+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -176,7 +177,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T17:17:57.762187+00:00"
+      "__dt__": "2026-10-28T17:47:57.638267+00:00"
     }
   }
 }
