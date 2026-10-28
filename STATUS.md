@@ -1,6 +1,6 @@
 # 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)
 
-Stand: **29.10.2026 00:26** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
+Stand: **29.10.2026 00:55** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
 
 > 🖥️ **[Zur Trading-Oberfläche](https://kaidovalue.github.io/trading-bot/)** (übersichtlich, mit Live-Chart)
 
@@ -14,16 +14,16 @@ Stand: **29.10.2026 00:26** Schweizer Zeit · wird jede Stunde automatisch aktua
 | | **1️⃣ Langfrist-Bot (Hauptbot)** | **2️⃣ KI-Bot (lernend, kurz bis lang)** | **3️⃣ Risiko-Bot (aggressiv, Hebel 3×)** |
 |---|---|---|---|
 | Startkapital | 1'000.00 CHF | 1'000.00 CHF | 1'000.00 CHF |
-| **Kapital jetzt** | **996.27 CHF** | **951.10 CHF** | **369.43 CHF** |
-| Gewinn / Verlust | 🔴 -3.73 CHF (-0.37 %) | 🔴 -48.90 CHF (-4.89 %) | 🔴 -630.57 CHF (-63.06 %) |
-| Im Einsatz (investiert) | 412.90 CHF (41 %) | 1'003.04 CHF (105 %) | 932.61 CHF (252 %) |
-| Cash (nicht investiert) | 583.37 CHF | 993.37 CHF | -159.32 CHF |
+| **Kapital jetzt** | **995.57 CHF** | **950.39 CHF** | **368.57 CHF** |
+| Gewinn / Verlust | 🔴 -4.43 CHF (-0.44 %) | 🔴 -49.61 CHF (-4.96 %) | 🔴 -631.43 CHF (-63.14 %) |
+| Im Einsatz (investiert) | 412.20 CHF (41 %) | 1'001.71 CHF (105 %) | 930.53 CHF (252 %) |
+| Cash (nicht investiert) | 583.37 CHF | 993.36 CHF | -159.33 CHF |
 | Offene Positionen | 5 | 5 | 7 |
 | Abgeschlossene Trades | 2 | 19 | 175 |
 | Horizonte (Strategie, Kerzen) | lang: regime 1d · mittel: buch_triple_screen 4h · kurz: adaptive 1h | kurz: adaptive_memory 1h · mittel: adaptive_memory 4h · lang: adaptive_memory 1d | kurz: breakout 30m · mittel: trend 4h · lang: regime 1d |
 | Kapitalanteil je Horizont | lang 50 % · mittel 25 % · kurz 25 % | kurz 20 % · mittel 30 % · lang 50 % | kurz 32 % · mittel 34 % · lang 34 % |
 | Short erlaubt | nein | nein | nein |
-| Hebel | ohne | ohne | 3× (Zinsen bisher 8.54 CHF) |
+| Hebel | ohne | ohne | 3× (Zinsen bisher 8.55 CHF) |
 
 ## 4️⃣ Chef-Bot (verteilt auf die drei Stile)
 
@@ -32,29 +32,29 @@ Er handelt nicht selbst, sondern legt sein eigenes Kapital anteilig in die Stile
 | | |
 |---|---|
 | Startkapital | 1'000.00 CHF |
-| **Kapital jetzt** | **970.87 CHF** |
-| Gewinn / Verlust | 🔴 -29.13 CHF (-2.91 %) |
+| **Kapital jetzt** | **970.44 CHF** |
+| Gewinn / Verlust | 🔴 -29.56 CHF (-2.96 %) |
 | **Aktuelle Verteilung** | Langfrist 32 % · KI 21 % · Risiko 3 % · Cash 44 % |
 | Marktphase (BTC, Tageskerzen) | Aufwärtstrend, ruhig |
 | Letzte Begründung | Marktphase «Aufwärtstrend, ruhig», Einschätzung: Langfrist +0.5 %, KI -2.9 %, Risiko -76.0 %, 🚨 Notbremse Risiko (-3.7 % in 3 Std.) |
 | Umschicht-Gebühren bisher | 3.27 CHF |
-| Erfahrung im Gedächtnis | 273 Läufe |
+| Erfahrung im Gedächtnis | 274 Läufe |
 
-**Was das Gedächtnis in dieser Phase weiss:** Langfrist +0.005 %/Lauf, KI -0.003 %/Lauf, Risiko -0.403 %/Lauf
+**Was das Gedächtnis in dieser Phase weiss:** Langfrist +0.004 %/Lauf, KI -0.003 %/Lauf, Risiko -0.402 %/Lauf
 
 
 ## Kurse
 
 | Coin | Kurs jetzt | 24 Std. | Live-Chart |
 |---|---|---|---|
-| **BTC** | 67'154.30 CHF | 🟢 +0.45 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
-| **ETH** | 1'953.54 CHF | 🟢 +0.64 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
-| **BNB** | 627.17 CHF | 🟢 +1.95 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
-| **XRP** | 1.10 CHF | 🔴 -0.16 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
-| **SOL** | 84.71 CHF | 🟢 +1.17 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
-| **TRX** | 0.27 CHF | 🔴 -0.45 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
-| **ZEC** | 1'088.60 CHF | 🟢 +0.61 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
-| **HYPE** | 66.82 CHF | 🔴 -0.49 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
+| **BTC** | 67'147.50 CHF | 🟢 +0.44 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
+| **ETH** | 1'945.76 CHF | 🟢 +0.24 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
+| **BNB** | 627.03 CHF | 🟢 +2.01 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
+| **XRP** | 1.09 CHF | 🔴 -0.41 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
+| **SOL** | 84.53 CHF | 🟢 +1.03 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
+| **TRX** | 0.27 CHF | 🔴 -0.47 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
+| **ZEC** | 1'082.49 CHF | 🟢 +0.13 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
+| **HYPE** | 66.71 CHF | 🔴 -0.58 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
 
 ## 1️⃣ Langfrist-Bot (Hauptbot)
 
@@ -64,11 +64,11 @@ _Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt auch mitte
 
 | Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
 |---|---|---|---|---|---|---|---|---|
-| **BTC** long (lang) | 23.10.2026 18:09 | 67'388.78 | 67'154.30 | 0.001485 | 100.05 CHF | 99.70 CHF | 🔴 -0.35 CHF (-0.35 %) | 53'251.84 (-21 %) |
-| **ETH** long (lang) | 23.10.2026 18:09 | 1'986.19 | 1'953.54 | 0.040710 | 80.86 CHF | 79.53 CHF | 🔴 -1.33 CHF (-1.64 %) | 1'371.11 (-30 %) |
-| **BNB** long (lang) | 23.10.2026 19:15 | 617.14 | 627.17 | 0.162070 | 100.02 CHF | 101.64 CHF | 🟢 +1.62 CHF (+1.62 %) | 483.48 (-23 %) |
-| **XRP** long (lang) | 23.10.2026 19:15 | 1.08 | 1.10 | 58.690975 | 63.53 CHF | 64.44 CHF | 🟢 +0.92 CHF (+1.44 %) | 0.66 (-40 %) |
-| **SOL** long (lang) | 23.10.2026 19:15 | 86.38 | 84.71 | 0.797780 | 68.91 CHF | 67.58 CHF | 🔴 -1.33 CHF (-1.93 %) | 55.00 (-35 %) |
+| **BTC** long (lang) | 23.10.2026 18:09 | 67'388.78 | 67'147.50 | 0.001485 | 100.05 CHF | 99.69 CHF | 🔴 -0.36 CHF (-0.36 %) | 53'251.84 (-21 %) |
+| **ETH** long (lang) | 23.10.2026 18:09 | 1'986.19 | 1'945.76 | 0.040710 | 80.86 CHF | 79.21 CHF | 🔴 -1.65 CHF (-2.04 %) | 1'371.11 (-30 %) |
+| **BNB** long (lang) | 23.10.2026 19:15 | 617.14 | 627.03 | 0.162070 | 100.02 CHF | 101.62 CHF | 🟢 +1.60 CHF (+1.60 %) | 483.48 (-23 %) |
+| **XRP** long (lang) | 23.10.2026 19:15 | 1.08 | 1.09 | 58.690975 | 63.53 CHF | 64.24 CHF | 🟢 +0.71 CHF (+1.11 %) | 0.66 (-40 %) |
+| **SOL** long (lang) | 23.10.2026 19:15 | 86.38 | 84.53 | 0.797780 | 68.91 CHF | 67.43 CHF | 🔴 -1.48 CHF (-2.14 %) | 55.00 (-35 %) |
 
 **Signale jetzt**
 
@@ -100,11 +100,11 @@ _Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie 
 
 | Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
 |---|---|---|---|---|---|---|---|---|
-| **ETH** long (kurz) | 28.10.2026 16:15 | 1'934.17 | 1'953.54 | 0.123031 | 237.96 CHF | 240.35 CHF | 🟢 +2.38 CHF (+1.00 %) | 1'916.06 (-2 %) |
-| **BNB** long (kurz) | 28.10.2026 16:15 | 621.75 | 627.17 | 0.382729 | 237.96 CHF | 240.03 CHF | 🟢 +2.07 CHF (+0.87 %) | 614.56 (-2 %) |
-| **BTC** short (mittel) | 28.10.2026 20:19 | 67'094.94 | 67'154.30 | 0.003544 | 237.81 CHF | 238.02 CHF | 🔴 -0.21 CHF (-0.09 %) | 68'876.82 (+3 %) |
-| **TRX** short (lang) | 28.10.2026 20:19 | 0.27 | 0.27 | 870.667829 | 237.55 CHF | 237.44 CHF | 🟢 +0.11 CHF (+0.05 %) | 0.29 (+5 %) |
-| **HYPE** short (lang) | 28.10.2026 20:19 | 66.85 | 66.82 | 0.706372 | 47.22 CHF | 47.20 CHF | 🟢 +0.02 CHF (+0.05 %) | 80.08 (+20 %) |
+| **ETH** long (kurz) | 28.10.2026 16:15 | 1'934.17 | 1'945.76 | 0.123031 | 237.96 CHF | 239.39 CHF | 🟢 +1.43 CHF (+0.60 %) | 1'916.06 (-2 %) |
+| **BNB** long (kurz) | 28.10.2026 16:15 | 621.75 | 627.03 | 0.382729 | 237.96 CHF | 239.98 CHF | 🟢 +2.02 CHF (+0.85 %) | 614.56 (-2 %) |
+| **BTC** short (mittel) | 28.10.2026 20:19 | 67'094.94 | 67'147.50 | 0.003544 | 237.81 CHF | 237.99 CHF | 🔴 -0.19 CHF (-0.08 %) | 68'876.82 (+3 %) |
+| **TRX** short (lang) | 28.10.2026 20:19 | 0.27 | 0.27 | 870.667829 | 237.55 CHF | 237.22 CHF | 🟢 +0.33 CHF (+0.14 %) | 0.29 (+5 %) |
+| **HYPE** short (lang) | 28.10.2026 20:19 | 66.85 | 66.71 | 0.706372 | 47.22 CHF | 47.12 CHF | 🟢 +0.10 CHF (+0.21 %) | 80.08 (+20 %) |
 
 **Signale jetzt**
 
@@ -159,13 +159,13 @@ _Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang), Trendfolge (4h) und Ausbrü
 
 | Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
 |---|---|---|---|---|---|---|---|---|
-| **ETH** long (kurz) | 28.10.2026 19:48 | 1'950.58 | 1'953.54 | 0.083780 | 163.42 CHF | 163.67 CHF | 🟢 +0.25 CHF (+0.15 %) | 1'941.70 (-1 %) |
-| **XRP** long (mittel) | 28.10.2026 20:19 | 1.10 | 1.10 | 178.546264 | 196.03 CHF | 196.05 CHF | 🟢 +0.02 CHF (+0.01 %) | 1.07 (-3 %) |
-| **TRX** long (mittel) | 28.10.2026 20:19 | 0.27 | 0.27 | 544.830158 | 148.80 CHF | 148.58 CHF | 🔴 -0.22 CHF (-0.15 %) | 0.27 (-1 %) |
-| **ZEC** short (lang) | 28.10.2026 20:19 | 1'066.19 | 1'088.60 | 0.067046 | 71.48 CHF | 72.99 CHF | 🔴 -1.50 CHF (-2.10 %) | 1'351.76 (+24 %) |
-| **HYPE** short (lang) | 28.10.2026 20:19 | 66.92 | 66.82 | 1.929710 | 129.14 CHF | 128.95 CHF | 🟢 +0.19 CHF (+0.15 %) | 76.85 (+15 %) |
-| **BNB** long (kurz) | 28.10.2026 21:19 | 623.82 | 627.17 | 0.302920 | 188.97 CHF | 189.98 CHF | 🟢 +1.01 CHF (+0.54 %) | 619.78 (-1 %) |
-| **BTC** long (mittel) | 28.10.2026 21:19 | 67'178.57 | 67'154.30 | 0.000483 | 32.42 CHF | 32.40 CHF | 🔴 -0.01 CHF (-0.04 %) | 65'937.69 (-2 %) |
+| **ETH** long (kurz) | 28.10.2026 19:48 | 1'950.58 | 1'945.76 | 0.083780 | 163.42 CHF | 163.02 CHF | 🔴 -0.40 CHF (-0.25 %) | 1'941.70 (-0 %) |
+| **XRP** long (mittel) | 28.10.2026 20:19 | 1.10 | 1.09 | 178.546264 | 196.03 CHF | 195.41 CHF | 🔴 -0.61 CHF (-0.31 %) | 1.07 (-2 %) |
+| **TRX** long (mittel) | 28.10.2026 20:19 | 0.27 | 0.27 | 544.830158 | 148.80 CHF | 148.45 CHF | 🔴 -0.35 CHF (-0.24 %) | 0.27 (-1 %) |
+| **ZEC** short (lang) | 28.10.2026 20:19 | 1'066.19 | 1'082.49 | 0.067046 | 71.48 CHF | 72.58 CHF | 🔴 -1.09 CHF (-1.53 %) | 1'351.76 (+25 %) |
+| **HYPE** short (lang) | 28.10.2026 20:19 | 66.92 | 66.71 | 1.929710 | 129.14 CHF | 128.74 CHF | 🟢 +0.40 CHF (+0.31 %) | 76.85 (+15 %) |
+| **BNB** long (kurz) | 28.10.2026 21:19 | 623.82 | 627.03 | 0.302920 | 188.97 CHF | 189.94 CHF | 🟢 +0.97 CHF (+0.51 %) | 619.78 (-1 %) |
+| **BTC** long (mittel) | 28.10.2026 21:19 | 67'178.57 | 67'147.50 | 0.000483 | 32.42 CHF | 32.40 CHF | 🔴 -0.01 CHF (-0.05 %) | 65'937.69 (-2 %) |
 
 **Signale jetzt**
 
@@ -177,7 +177,7 @@ _Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang), Trendfolge (4h) und Ausbrü
 | XRP | 🟢 investiert sein | 🟢 investiert sein | 🟢 investiert sein |
 | SOL | 🟢 investiert sein | 🔴 raus / Cash | 🟢 investiert sein |
 | TRX | 🔴 raus / Cash | 🟢 investiert sein | 🟢 investiert sein |
-| ZEC | 🔴 raus / Cash | 🟢 investiert sein | 🟢 investiert sein |
+| ZEC | 🟢 investiert sein | 🟢 investiert sein | 🟢 investiert sein |
 | HYPE | 🟢 investiert sein | 🟢 investiert sein | 🟢 investiert sein |
 
 **Letzte Entscheidung:** [kurz] BTC/CHF: Position gehört zum Horizont «mittel» · [kurz] ETH/CHF: Position offen, Signal bestätigt · [kurz] BNB/CHF: Position offen, Signal bestätigt · [kurz] XRP/CHF: Position gehört zum Horizont «mittel» · [kurz] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein für die Gebühren) · [kurz] TRX/CHF: Position gehört zum Horizont «mittel» · [kurz] ZEC/CHF: Position gehört zum Horizont «lang» · [kurz] HYPE/CHF: Position gehört zum Horizont «lang»
