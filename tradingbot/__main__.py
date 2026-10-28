@@ -13,6 +13,7 @@
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
   python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
+  python -m tradingbot historie --bots ... --start 2022-01-01 # wie oben, aber erst ab diesem Tag handeln
 """
 from __future__ import annotations
 
@@ -112,6 +113,7 @@ def main() -> None:
     p.add_argument("--timeframe", help="z.B. 1h, 4h, 1d")
     p.add_argument("--short", action="store_true", help="auch auf fallende Kurse setzen")
     p.add_argument("--once", action="store_true", help="nur ein Durchlauf, dann beenden")
+    p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
 
@@ -165,7 +167,9 @@ def main() -> None:
         from . import historie
         # Reihenfolge wie im laufenden Bot: bei gleichzeitigen Signalen bekommt der erste Coin zuerst Kapital
         coins = list(dict.fromkeys(s.split("/")[0] for p in (args.bots or [args.config]) for s in Config.load(p).symbols))
-        runs, chef, btc = historie.run_all(args.bots or [args.config], coins)
+        start = pd.Timestamp(args.start, tz="UTC") if args.start else None
+        runs, chef, btc = historie.run_all(args.bots or [args.config], coins, start)
+        btc = btc[btc.index >= start] if start is not None else btc
         text = historie.report(runs, chef, btc)
         Path("lernen").mkdir(exist_ok=True)
         Path("lernen/HISTORIE.md").write_text(text, encoding="utf-8")

@@ -4,7 +4,7 @@
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
 title: "2️⃣ KI-Bot (lernend, kurz bis lang)"
-description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, und vergisst nichts. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, nur in Trendrichtung. Simulation 2011-2022: +15 %/Jahr, 2023-2026: +14 %/Jahr."
+description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, und vergisst nichts. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, nur in Trendrichtung. Simulation 2011-2022: +18 %/Jahr, 2023-2026: +14 %/Jahr."
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
@@ -86,7 +86,7 @@ event_feeds: {}
 #  elon_x: "https://<dein-rss-dienst>/x/elonmusk.xml"
 
 risk:
-  risk_per_trade: 0.01
+  risk_per_trade: 0.02       # 2 % pro Trade: in der Simulation mehr Gewinn als 1 %
   stop_loss_atr: 2.0
   take_profit_atr: 4.0
   max_position_pct: 0.25
@@ -94,7 +94,7 @@ risk:
   max_drawdown_pct: 0.15
   halt_days: 14              # nach Not-Aus 14 Tage Pause, dann geht es weiter (sonst für immer gestoppt)
   min_order_value: 10
-  max_total_risk_pct: 0.08   # Gesamtrisiko aller offenen Positionen (alle Horizonte)
+  max_total_risk_pct: 0.20   # Gesamtrisiko aller offenen Positionen (alle Horizonte)
   max_open_positions: 6
   max_trades_per_day: 10     # gegen Overtrading
   loss_streak_pause: 3       # nach 3 Verlusten in Folge ...

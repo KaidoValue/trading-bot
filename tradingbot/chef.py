@@ -7,8 +7,9 @@ gewichtet nach seiner Verteilung. Bei jedem Lauf entscheidet er neu:
 - Wie lief jeder Stil kurzfristig (letzter Tag), mittelfristig (7 Tage) und langfristig (30 Tage)?
   Alle drei Sichten zählen gleich viel (Durchschnitt der drei Renditen).
 - Was weiss sein Gedächtnis: Welcher Stil hat in der aktuellen Marktphase bisher am meisten gebracht?
-- Feste Grenzen: höchstens 20 % im Risiko-Stil (Hebel), mindestens 10 % Cash; ist er mehr als 10 % im Minus,
-  halbiert er den Risiko-Anteil. Laufen alle Stile schlecht, bleibt mehr in Cash.
+- Feste Grenzen: höchstens 50 % im Risiko-Stil (Hebel). Eine feste Cash-Reserve und das Halbieren des
+  Risiko-Anteils im Minus gibt es nicht mehr: In der Geschichts-Simulation 2011-2022 kosteten beide Gewinn
+  (lernen/HISTORIE.md). Laufen alle Stile schlecht, bleibt trotzdem mehr in Cash.
 - Notbremse: Verliert ein Stil in den letzten 3 Stunden mehr als 3 %, zieht er sofort fast alles aus diesem
   Stil ab, ohne auf den 7-Tage-Schnitt zu warten. Erst wenn sich der Stil wieder fängt, darf er zurück.
 - Umschichten kostet Gebühren, deshalb nur, wenn sich ein Anteil um mehr als 5 Prozentpunkte ändert.
@@ -26,7 +27,8 @@ from .memory import Memory
 STYLES = {"config_langfrist": "Langfrist", "config_daytrading": "KI", "config_risiko": "Risiko"}
 DEFAULT = {"config_langfrist": 0.3, "config_daytrading": 0.3, "config_risiko": 0.3}   # gleiche Startbedingungen
 VIEWS = {"kurz": 1, "mittel": 7, "lang": 30}     # Sichten des Chefs in Tagen
-MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.20, 0.10, 0.05, 0.0026
+MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.50, 0.0, 0.05, 0.0026
+RISK_CUT = 0.0           # so weit unter dem Höchststand halbiert er den Risiko-Anteil (0 = nie)
 BRAKE_HOURS, BRAKE_LOSS = 3, -0.03
 
 
@@ -78,9 +80,9 @@ class Chef:
                 w[s] = min(w[s], DEFAULT[s] * 0.1)
                 why.append(f"🚨 Notbremse {STYLES[s]} ({short * 100:+.1f} % in {BRAKE_HOURS} Std.)")
         w["config_risiko"] = min(w["config_risiko"], MAX_RISK)
-        if self.equity < self.peak * 0.9:
+        if RISK_CUT and self.equity < self.peak * (1 - RISK_CUT):
             w["config_risiko"] *= 0.5
-            why.append("Risiko halbiert (mehr als 10 % unter dem Höchststand)")
+            why.append(f"Risiko halbiert (mehr als {RISK_CUT:.0%} unter dem Höchststand)")
         total = sum(w.values())
         if total > 1 - MIN_CASH:
             w = {s: v * (1 - MIN_CASH) / total for s, v in w.items()}

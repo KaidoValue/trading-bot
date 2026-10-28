@@ -503,9 +503,11 @@ def test_chef_follows_winner_with_limits(tmp_path):
     assert chef.memory.best("Aufwärtstrend, wild")[0][0] == "config_risiko"
 
 
-def test_chef_cuts_risk_after_losses(tmp_path):
+def test_chef_cuts_risk_after_losses(tmp_path, monkeypatch):
     from datetime import datetime, timezone
+    from tradingbot import chef as ch
     from tradingbot.chef import Chef, MAX_RISK
+    monkeypatch.setattr(ch, "RISK_CUT", 0.10)            # Funktion bleibt einschaltbar (Standard: aus)
     chef = Chef(tmp_path / "chef.json")
     chef.equity, chef.peak = 850.0, 1000.0
     w, reason = chef.target("Seitwärts, ruhig", datetime(2026, 1, 1, tzinfo=timezone.utc))
@@ -778,3 +780,13 @@ def test_short_can_be_switched_per_horizon():
     t = _tool_trader(allow_short=False)
     t.on_signal("X", -1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
     assert not t.open_trades
+
+
+def test_history_simulation_can_start_later(df):
+    from tradingbot.historie import simulate
+    btc = df.set_axis(pd.date_range("2020-01-01", periods=len(df), freq="1h", tz="UTC"))
+    cfg = Config(strategy="trend", symbols=["BTC/USD"], name="spaet")
+    start = btc.index[800]
+    run = simulate(cfg, {"BTC/USD": btc}, start=start)
+    assert run.equity.index[0] >= start.normalize() and run.equity.iloc[0] == pytest.approx(cfg.starting_capital, rel=0.02)
+    assert len(run.trades) == 0 or (pd.to_datetime(run.trades["opened"], utc=True) >= start).all()

@@ -157,8 +157,10 @@ def _trend_series(df: pd.DataFrame):
     return daily.index + pd.Timedelta(days=1), trend_direction(daily).to_numpy()
 
 
-def simulate(cfg: Config, coins: dict[str, pd.DataFrame]) -> BotRun:
-    """Ein Bot über die ganze Geschichte. `coins`: Kerzen je Coin im kürzesten Zeitraum des Bots."""
+def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | None = None) -> BotRun:
+    """Ein Bot über die ganze Geschichte. `coins`: Kerzen je Coin im kürzesten Zeitraum des Bots.
+    Mit `start` beginnt der Handel (und das Startkapital) erst dann; Indikatoren, Trendfilter und KI-Gedächtnis
+    nutzen die Kurse davor als Vorlauf, so wie ein Bot, der an diesem Tag eingeschaltet wird."""
     hz = cfg.horizon_list()
     base_tf = min((h.timeframe for h in hz), key=TF_MS.get)
     broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
@@ -204,6 +206,8 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame]) -> BotRun:
     px: dict[str, float] = {}
     curve, halts, liqs, day = [], 0, 0, None
     for i, t in enumerate(idx):
+        if start is not None and t < start:
+            continue
         bar = {s: c[i] for s, c in cols.items() if not np.isnan(c[i][0])}
         px.update({s: b[0] for s, b in bar.items()})
         for name, s, g, a, trend in events.get(t, ()):
@@ -346,7 +350,8 @@ def report(runs: dict[str, BotRun], chef: pd.Series | None, btc: pd.Series) -> s
     return "\n".join(out)
 
 
-def run_all(config_paths: list[str], coins: list[str]) -> tuple[dict[str, BotRun], pd.Series, pd.Series]:
+def run_all(config_paths: list[str], coins: list[str],
+            start: pd.Timestamp | None = None) -> tuple[dict[str, BotRun], pd.Series, pd.Series]:
     """Lädt die Geschichte, simuliert alle Bots und den Chef. Gibt Läufe, Chef-Kurve und BTC-Tageskurs zurück."""
     exchanges: dict = {}
     cfgs = [Config.load(p) for p in config_paths]
@@ -359,7 +364,7 @@ def run_all(config_paths: list[str], coins: list[str]) -> tuple[dict[str, BotRun
                 data[c, base_tf] = load_coin(c, base_tf, exchanges)
         frames = {f"{c}/USD": data[c, base_tf] for c in coins if data[c, base_tf] is not None}
         log.warning("Simuliere %s ...", cfg.name)
-        runs[cfg.name] = simulate(cfg, frames)
+        runs[cfg.name] = simulate(cfg, frames, start)
     btc = data["BTC", "1h"] if ("BTC", "1h") in data else next(v for (c, _), v in data.items() if c == "BTC")
     btc_daily = resample(btc, "1d")
     chef = simulate_chef(runs, btc_daily, CACHE / "chef_sim.json") if len(runs) == 3 else None

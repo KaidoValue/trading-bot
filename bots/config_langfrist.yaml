@@ -1,12 +1,12 @@
 # Langfrist-Variante: Tageskerzen, wenige Trades, grosse Positionen.
 # Benutzen mit:  py -3.13 -m tradingbot compare --config config_langfrist.yaml --days 2500
 #
-# Ein gemeinsames Konto für alle Coins. Höchstens 5 Coins gleichzeitig, je max. 10 %: zusammen höchstens die Hälfte investiert. Schwankungen von 10-20 % sind möglich,
-# deshalb ist der Not-Aus erst bei 35 % Rückgang eingestellt.
+# Ein gemeinsames Konto für alle Coins. Je Coin höchstens 20 %, zusammen bis 100 % investiert (in der Simulation
+# deutlich mehr Gewinn als mit max. 50 %, dafür Rückgänge bis ca. 50 %). Not-Aus bei 35 % Rückgang, dann 30 Tage Pause.
 
 mode: paper
 title: "1️⃣ Langfrist-Bot (Hauptbot)"
-description: "Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt auch mittelfristig (4h) und kurzfristig (1h), nur in Trendrichtung. Max. 50 % investiert. Simulation 2011-2022: +50 %/Jahr, 2023-2026: +22 %/Jahr."
+description: "Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt auch mittelfristig (4h) und kurzfristig (1h), nur in Trendrichtung. Bis 100 % investiert, je Coin bis 20 %. Simulation 2011-2022: +58 %/Jahr, 2023-2026: +40 %/Jahr."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
 timeframe: 1d
@@ -70,13 +70,13 @@ risk:
   risk_per_trade: 0.05        # gilt für «lang»; Stop weit weg; die Grösse begrenzt ohnehin max_position_pct (ca. 4 % Risiko)
   stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
   take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
-  max_position_pct: 0.10      # pro Coin
-  max_invested_pct: 0.50      # alle Coins zusammen höchstens die Hälfte, der Rest bleibt in Cash
+  max_position_pct: 0.20      # pro Coin
+  max_invested_pct: 1.0       # alle Coins zusammen bis zum ganzen Kapital (Simulation: mehr Gewinn als mit 50 %)
   max_daily_loss_pct: 0.15
   max_drawdown_pct: 0.35
   halt_days: 30              # nach Not-Aus 30 Tage Pause, dann geht es weiter
   min_order_value: 10
-  max_total_risk_pct: 0.30
+  max_total_risk_pct: 1.0     # Grösse begrenzen max_position_pct und max_invested_pct
   max_open_positions: 8       # verteilt auf alle Horizonte
   max_trades_per_day: 10       # 8 Coins: mehrere Käufe am selben Tag möglich
   loss_streak_pause: 99

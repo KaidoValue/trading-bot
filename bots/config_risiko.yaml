@@ -3,7 +3,7 @@
 
 mode: paper
 title: "3️⃣ Risiko-Bot (aggressiv, Hebel 3×)"
-description: "Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang), Trendfolge (4h) und Ausbrüche (30 Min.), nur in Trendrichtung, Teilgewinne für eine hohe Trefferquote. Simulation 2011-2022: +49 %/Jahr bei 70 % Treffern, 2023-2026: +26 %/Jahr bei 76 % Treffern, 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
+description: "Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang), Trendfolge (4h) und Ausbrüche (30 Min.), nur in Trendrichtung. Simulation 2011-2022: +66 %/Jahr, 2023-2026: +59 %/Jahr, Rückgänge bis −62 %, 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
 timeframe: 30m           # passt zum Takt auf GitHub (alle 30 Minuten)
@@ -31,7 +31,7 @@ horizons:
     strategy_params: {entry: 10, exit: 5, hold: true}
     share: 0.4
     trend_filter: true
-    partial_atr: 0.75         # Treffer-Modus: Hälfte bei +0,75 ATR verkaufen, Rest mit Stop auf Einstand
+    partial_atr: 0.75         # Hälfte bei +0,75 ATR verkaufen, Rest mit Stop auf Einstand
     min_edge: 5               # nur wenn das erste Ziel mindestens 5x die Gebühren bringt
   mittel:                     # Trendfolge auf 4-Stunden-Kerzen
     timeframe: 4h
@@ -49,8 +49,7 @@ horizons:
     share: 0.3
     stop_loss_atr: 6.0
     take_profit_atr: 1000     # kein festes Ziel: Ausstieg über das Signal
-    trend_filter: true
-    partial_atr: 0.75
+    trend_filter: true          # ohne Teilgewinn: grosse Trends voll mitnehmen (Treffer-Modus: partial_atr: 0.75)
 adaptive_shares: true
 horizon_priority: true
 allow_short: false       # Shorts führten in der Simulation zum Totalverlust; einschalten: true (nur Demo)

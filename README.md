@@ -13,7 +13,7 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 | **[STATUS.md](STATUS.md)** | 📈 Aktueller Stand aller 3 Demo-Bots: Kapital, Positionen, Kurse, Charts (alle 30 Min. neu) |
 | **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI, Auswertung von YouTube-Videos (`YOUTUBE.md`) und Trading-Büchern (`BUECHER.md`) |
 | **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Langfrist-Bot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-/Hebel-Bot), `config.yaml` (Vorlage). Jeder Bot handelt kurz-, mittel- und langfristig, long und short (siehe [Zeithorizonte](#zeithorizonte-gleiche-bedingungen-für-alle-bots)) |
-| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 20 % Hebel-Stil, mindestens 10 % Cash). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
+| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 50 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
 | **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
 | `tradingbot/` | 🧠 Der Programmcode |
 | `tests/` | ✅ Automatische Tests |
@@ -48,9 +48,9 @@ denselben Gebühren. Die Einstellungen stammen aus der [Geschichts-Simulation](#
 
 | Bot | Aufgabe / Charakter | kurz | mittel | lang |
 |---|---|---|---|---|
-| 1️⃣ Langfrist | Schwerpunkt Trend, max. 50 % investiert | `adaptive` 1h | `buch_triple_screen` 4h | `regime` (200-Tage-Linie) 1d, Startanteil 50 % |
+| 1️⃣ Langfrist | Schwerpunkt Trend, bis 100 % investiert, je Coin bis 20 % | `adaptive` 1h | `buch_triple_screen` 4h | `regime` (200-Tage-Linie) 1d, Startanteil 50 % |
 | 2️⃣ KI | lernt mit Gedächtnis, je Horizont ein eigenes Gedächtnis | `adaptive_memory` 1h | `adaptive_memory` 4h | `adaptive_memory` 1d, Startanteil 50 % |
-| 3️⃣ Risiko | Hebel 3×, ignoriert News, Treffer-Modus (Teilgewinne überall) | `breakout` 30m | `trend` 4h | `regime` 1d |
+| 3️⃣ Risiko | Hebel 3×, ignoriert News, grosse Trends voll mitnehmen | `breakout` 30m | `trend` 4h | `regime` 1d |
 | 4️⃣ Chef | verteilt Kapital auf die drei Bots | Rendite letzter Tag | letzte 7 Tage | letzte 30 Tage + Gedächtnis |
 
 So funktioniert es (Einstellung `horizons:` in den Configs):
@@ -92,19 +92,23 @@ sie gibt), Risikoregeln, Not-Aus, Hebel, Zinsen und Zwangsschliessung, dazu den 
 ab August 2011, die meisten anderen Coins von Binance ab 2017. Die Kurse werden beim ersten Lauf geladen (ca. 10 Minuten)
 und in `data/historie/` zwischengespeichert. Ergebnis: [lernen/HISTORIE.md](lernen/HISTORIE.md).
 
-**So wurden die heutigen Einstellungen gefunden (Oktober 2026):** Rund 450 Varianten (Trendfilter, Gebührenfilter,
-Teilgewinn, Nachlauf-Stop, Vorrang, Shorts, Strategien je Horizont, Hebel, Risiko) wurden simuliert. **Gewählt wurde nur
-nach den Jahren 2011-2022**; die Jahre 2023-2026 waren dabei weggesperrt und dienen als unabhängige Prüfung. Regel:
-bestes Verhältnis Gewinn zu Rückgang; erreicht eine Variante mindestens 70 % Treffer bei mindestens 75 % davon,
-wird sie bevorzugt (das traf beim Risiko-Bot zu).
+**So wurden die heutigen Einstellungen gefunden (Oktober 2026):** Rund 500 Varianten (Trendfilter, Gebührenfilter,
+Teilgewinn, Nachlauf-Stop, Vorrang, Shorts, Strategien je Horizont, Investitionsgrad, Risiko pro Trade, Hebel,
+Grenzen des Chefs) wurden simuliert. **Gewählt wurde nur nach den Jahren 2011-2022**; die Jahre 2023-2026 waren dabei
+weggesperrt und dienen als unabhängige Prüfung. Ziel: **möglichst viel Gewinn**. Regel: höchster Gewinn pro Jahr
+2011-2022; eine Einstellung wird nur geändert, wenn sie mindestens 1 Prozentpunkt pro Jahr mehr bringt (kleinere
+Unterschiede sind Zufall); Leitplanke: kein Rückgang über 75 %.
 
-| Bot | vorher 2011-2026 | nachher 2011-2026 | 2011-2022 pro Jahr | 2023-2026 pro Jahr (Prüfung) | Treffer (Prüfung) |
+| Bot | vorher 2011-2026 | nachher 2011-2026 | 2011-2022 pro Jahr | 2023-2026 pro Jahr (Prüfung) | Start erst 2022 |
 |---|---|---|---|---|---|
-| 1️⃣ Langfrist | 1'000 → 4'937, Rückgang bis −80 % | 1'000 → 227'234, Rückgang bis −41 % | +50,5 % | +22,5 % (max. −25 %) | 42 % |
-| 2️⃣ KI | 1'000 → 850 (2011 für immer gestoppt) | 1'000 → 8'195, Rückgang bis −24 % | +15,1 % | +14,0 % (max. −17 %) | 42 % |
-| 3️⃣ Risiko | 1'000 → 18 (2011 fast alles verloren) | 1'000 → 214'560, Rückgang bis −57 % | +48,6 % | +25,5 % (max. −35 %) | **76 %** |
-| 4️⃣ Chef | 1'000 → 1'971 | 1'000 → 18'775, Rückgang bis −29 % | | | |
-| Bitcoin halten | | | +90,4 % (max. −85 %) | +51,3 % (max. −53 %) | |
+| 1️⃣ Langfrist | 1'000 → 4'937, Rückgang bis −80 % | 1'000 → 649'516, Rückgang bis −51 % | +58,0 % | +39,6 % (max. −35 %) | 1'000 → 1'834 |
+| 2️⃣ KI | 1'000 → 850 (2011 für immer gestoppt) | 1'000 → 10'522, Rückgang bis −26 % | +17,6 % | +14,4 % (max. −19 %) | 1'000 → 1'259 |
+| 3️⃣ Risiko | 1'000 → 18 (2011 fast alles verloren) | 1'000 → 1'796'269, Rückgang bis −62 % | +65,5 % | +58,6 % (max. −49 %) | 1'000 → 2'767 |
+| 4️⃣ Chef | 1'000 → 1'971 | 1'000 → 78'182, Rückgang bis −40 % | +35,8 % | +25,9 % (max. −31 %) | 1'000 → 1'471 |
+| Bitcoin halten | | | +90,4 % (max. −85 %) | +51,3 % (max. −53 %) | 1'000 → 1'691 (max. −67 %) |
+
+„Start erst 2022“: frische 1'000 am 1. Januar 2022 (Beginn eines Crashs, Bitcoin −65 % im Jahr 2022), bis Oktober 2026.
+Selbst ausprobieren: `python -m tradingbot historie --bots ... --start 2022-01-01`.
 
 Was die Simulation gezeigt hat:
 
@@ -112,14 +116,18 @@ Was die Simulation gezeigt hat:
 - **Kurzfristiger Handel verliert ohne Gebührenfilter**: Kauf und Verkauf kosten zusammen rund 0,6 %, die meisten
   Stunden-Bewegungen sind kleiner. Mit `min_edge: 5` handeln die Bots seltener, aber nur, wenn es sich lohnen kann.
   Auch mit 0,4 % Gebühr und doppelter Slippage bleiben die Ergebnisse fast gleich.
+- **Mehr investieren bringt mehr:** Der Langfrist-Bot darf jetzt bis 100 % statt 50 % investieren (je Coin bis 20 %),
+  der KI-Bot riskiert 2 % statt 1 % pro Trade, der Chef darf bis 50 % in den Risiko-Bot legen und hält keine feste
+  Cash-Reserve mehr. Der Preis dafür sind grössere Rückgänge.
 - **Shorts verloren in jeder Variante** Geld, auch mit Trendfilter und Probezeit: Leihzinsen (bei Kraken ca. 0,12 %
   pro Tag) und Krypto steigt langfristig. Deshalb ist `allow_short` bei allen Bots aus, die Funktion bleibt aber
   erhalten (mit Short-Probezeit).
-- **Teilgewinne** heben die Trefferquote auf über 70 %, kosten aber bei reinen Trendfolgern rund die Hälfte des
-  Gewinns. Beim Risiko-Bot lohnt es sich (73 % Treffer über 15 Jahre), bei Langfrist und KI wurde die Gewinn-Variante
-  gewählt. Umstellen: `partial_atr: 0.75` auch beim Horizont `lang` eintragen.
-- **Bitcoin einfach halten** brachte mehr Rendite, aber mit Abstürzen bis −85 %. Die Bots verdienen weniger und
-  fallen dafür etwa halb so tief.
+- **Teilgewinne** heben die Trefferquote auf über 70 %, verkaufen aber in grossen Aufschwüngen zu früh und kosten
+  bei Trendfolgern viel Gewinn. Weil Gewinn das Ziel ist, gibt es Teilgewinne nur bei «kurz» und «mittel». Für eine
+  hohe Trefferquote: `partial_atr: 0.75` auch beim Horizont `lang` eintragen.
+- **Bitcoin einfach halten** brachte bis 2022 mehr Rendite, aber mit Abstürzen bis −85 %. In der Prüfung 2023-2026
+  liegt der Risiko-Bot vor Bitcoin halten, mit Start 2022 auch der Langfrist-Bot.
+- **Hebel 4 oder 5** brachte bis 2022 nicht mehr als Hebel 3 (nur Zinsen und Risiko), deshalb bleibt es bei 3.
 
 Grenzen: keine historischen News und Ereignisse, kein Orderbuch-Spread, keine Korrelationsprüfung, Kurse in USD.
 Die Jahre 2011-2013 hatten sehr wenig Handel an den Börsen. Kleine Details (z.B. welcher Coin bei gleichzeitigen
