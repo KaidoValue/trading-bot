@@ -383,41 +383,14 @@
   "note": "BTC/CHF: kein Signal | ETH/CHF: gekauft 0.123494 @ 1946.78 | BNB/CHF: gekauft 0.383218 @ 627.36 | XRP/CHF: kein Signal | SOL/CHF: kein Signal | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 51,
-    "news_score": 0.5,
-    "themes": {
-      "rally": [
-        "coindesk",
-        "cointelegraph"
-      ]
-    },
+    "news_score": 0.0,
+    "themes": {},
     "blackout": null,
-    "evidence": [
-      {
-        "theme": "rally",
-        "source": "coindesk",
-        "title": "Bitcoin rebounds above $81,000 as Asian chip rally spills into crypto, pepe jumps 9%",
-        "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-rebounds-above-usd81-000-as-asian-chip-rally-spills-into-crypto-pepe-jumps-9",
-        "published": "2026-10-28T11:32:31+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "coindesk",
-        "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
-        "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
-        "published": "2026-10-28T09:15:22+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "cointelegraph",
-        "title": "Bitcoin price analysis sees \u2018strong rally\u2019 as old coins become dormant",
-        "link": "https://cointelegraph.com/markets/bitcoin-price-analysis-sees-strong-rally-as-old-coins-become-dormant?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-27T12:18:24+00:00"
-      }
-    ],
+    "evidence": [],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T12:15:47.885369+00:00"
+    "__dt__": "2026-10-28T12:45:41.701862+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -446,7 +419,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T12:15:31.513190+00:00"
+      "__dt__": "2026-10-28T12:45:31.613997+00:00"
     }
   }
 }
