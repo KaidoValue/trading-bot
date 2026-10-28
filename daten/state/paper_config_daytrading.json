@@ -322,28 +322,28 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-28T09:00:00+00:00"
+      "__dt__": "2026-10-28T10:00:00+00:00"
     }
   },
   "note": "BTC/CHF: kein Signal | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | SOL/CHF: kein Signal | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0)",
@@ -408,7 +408,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T10:42:45.037228+00:00"
+    "__dt__": "2026-10-28T11:12:52.759916+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -437,7 +437,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T10:42:34.728527+00:00"
+      "__dt__": "2026-10-28T11:12:35.384697+00:00"
     }
   }
 }
