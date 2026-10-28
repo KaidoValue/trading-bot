@@ -135,13 +135,6 @@
       {
         "theme": "rally",
         "source": "coindesk",
-        "title": "Live updates: Bitcoin climbs above $81,000 as majors rally ahead of Fed decision",
-        "link": "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
-        "published": "2026-10-28T11:23:34+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "coindesk",
         "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
         "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
         "published": "2026-10-28T09:15:22+00:00"
@@ -157,7 +150,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T11:45:19.956906+00:00"
+    "__dt__": "2026-10-28T12:15:20.275111+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -183,7 +176,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T11:45:00.641628+00:00"
+      "__dt__": "2026-10-28T12:15:00.433116+00:00"
     }
   }
 }

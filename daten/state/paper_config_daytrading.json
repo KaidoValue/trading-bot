@@ -16,6 +16,40 @@
         "event": "-",
         "session": "London+New York"
       }
+    },
+    "ETH/CHF": {
+      "side": 1,
+      "entry": 1946.7829049999998,
+      "qty": 0.12349368363977908,
+      "stop": 1932.4848435260542,
+      "target": 1972.4603129478912,
+      "opened": {
+        "__dt__": "2026-10-28T12:15:31.513190+00:00"
+      },
+      "context": {
+        "fear_greed": 51,
+        "news_score": 0.5,
+        "news_themes": "rally",
+        "event": "-",
+        "session": "London"
+      }
+    },
+    "BNB/CHF": {
+      "side": 1,
+      "entry": 627.3589391081999,
+      "qty": 0.38321824588512937,
+      "stop": 621.0029595690914,
+      "target": 639.1303300618172,
+      "opened": {
+        "__dt__": "2026-10-28T12:15:31.513190+00:00"
+      },
+      "context": {
+        "fear_greed": 51,
+        "news_score": 0.5,
+        "news_themes": "rally",
+        "event": "-",
+        "session": "London"
+      }
     }
   },
   "closed": [
@@ -322,31 +356,31 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-28T10:00:00+00:00"
+      "__dt__": "2026-10-28T11:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: kein Signal | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | SOL/CHF: kein Signal | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0)",
+  "note": "BTC/CHF: kein Signal | ETH/CHF: gekauft 0.123494 @ 1946.78 | BNB/CHF: gekauft 0.383218 @ 627.36 | XRP/CHF: kein Signal | SOL/CHF: kein Signal | TRX/CHF: Signal 'raus', bleibe in Cash | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 51,
     "news_score": 0.5,
@@ -368,13 +402,6 @@
       {
         "theme": "rally",
         "source": "coindesk",
-        "title": "Live updates: Bitcoin climbs above $81,000 as majors rally ahead of Fed decision",
-        "link": "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
-        "published": "2026-10-28T11:23:34+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "coindesk",
         "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
         "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
         "published": "2026-10-28T09:15:22+00:00"
@@ -390,7 +417,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T11:45:41.601997+00:00"
+    "__dt__": "2026-10-28T12:15:47.885369+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -398,7 +425,7 @@
       "__dt__": "2026-10-28"
     },
     "day_start_equity": 958.8737645953329,
-    "trades_today": 0,
+    "trades_today": 2,
     "loss_streak": 0,
     "paused_until": {
       "__dt__": "2026-10-27T01:13:35.156266+00:00"
@@ -408,18 +435,18 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 718.910941840311,
+    "cash": 236.20491741046476,
     "positions": {
-      "BNB/CHF": 0.0,
+      "BNB/CHF": 0.38321824588512937,
       "ZEC/CHF": 0.0,
       "TRX/CHF": 0.0,
       "XRP/CHF": 0.0,
       "BTC/CHF": 0.003615970692718853,
-      "ETH/CHF": 0.0
+      "ETH/CHF": 0.12349368363977908
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T11:45:31.449185+00:00"
+      "__dt__": "2026-10-28T12:15:31.513190+00:00"
     }
   }
 }
