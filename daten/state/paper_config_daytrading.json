@@ -16,23 +16,6 @@
         "event": "-",
         "session": "London+New York"
       }
-    },
-    "ETH/CHF": {
-      "side": 1,
-      "entry": 1928.153595,
-      "qty": 0.12472949597683369,
-      "stop": 1908.6526929231409,
-      "target": 1964.2646141537186,
-      "opened": {
-        "__dt__": "2026-10-27T15:00:54.751658+00:00"
-      },
-      "context": {
-        "fear_greed": 48,
-        "news_score": 0.5,
-        "news_themes": "rally",
-        "event": "-",
-        "session": "London+New York"
-      }
     }
   },
   "closed": [
@@ -315,6 +298,26 @@
       "news_themes": "rally",
       "event": "-",
       "session": "New York"
+    },
+    {
+      "symbol": "ETH/CHF",
+      "side": "long",
+      "opened": {
+        "__dt__": "2026-10-27T15:00:54.751658+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-28T08:42:35.428365+00:00"
+      },
+      "entry": 1928.153595,
+      "exit": 1963.282481846642,
+      "qty": 0.12472949597683369,
+      "pnl": 3.7449223411145933,
+      "reason": "Take-Profit",
+      "fear_greed": 48,
+      "news_score": 0.5,
+      "news_themes": "rally",
+      "event": "-",
+      "session": "London+New York"
     }
   ],
   "last_bar": {
@@ -398,7 +401,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T08:12:52.697618+00:00"
+    "__dt__": "2026-10-28T08:42:45.644102+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -407,7 +410,7 @@
     },
     "day_start_equity": 958.8737645953329,
     "trades_today": 0,
-    "loss_streak": 1,
+    "loss_streak": 0,
     "paused_until": {
       "__dt__": "2026-10-27T01:13:35.156266+00:00"
     },
@@ -416,18 +419,18 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 474.6683934289265,
+    "cash": 718.910941840311,
     "positions": {
       "BNB/CHF": 0.0,
       "ZEC/CHF": 0.0,
       "TRX/CHF": 0.0,
       "XRP/CHF": 0.0,
       "BTC/CHF": 0.003615970692718853,
-      "ETH/CHF": 0.12472949597683369
+      "ETH/CHF": 0.0
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T08:12:35.147586+00:00"
+      "__dt__": "2026-10-28T08:42:35.428365+00:00"
     }
   }
 }
