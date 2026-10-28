@@ -322,28 +322,28 @@
   ],
   "last_bar": {
     "BTC/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "ETH/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "BNB/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "XRP/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "SOL/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "TRX/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "ZEC/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     },
     "HYPE/CHF": {
-      "__dt__": "2026-10-28T08:00:00+00:00"
+      "__dt__": "2026-10-28T09:00:00+00:00"
     }
   },
   "note": "BTC/CHF: kein Signal | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | SOL/CHF: kein Signal | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0)",
@@ -362,6 +362,13 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "rally",
+        "source": "coindesk",
+        "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
+        "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
+        "published": "2026-10-28T09:15:22+00:00"
+      },
       {
         "theme": "hack",
         "source": "decrypt",
@@ -401,7 +408,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T09:42:45.805413+00:00"
+    "__dt__": "2026-10-28T10:12:52.545522+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -430,7 +437,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T09:42:35.530302+00:00"
+      "__dt__": "2026-10-28T10:12:35.300730+00:00"
     }
   }
 }

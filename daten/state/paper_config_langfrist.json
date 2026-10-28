@@ -130,6 +130,13 @@
     "blackout": null,
     "evidence": [
       {
+        "theme": "rally",
+        "source": "coindesk",
+        "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
+        "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
+        "published": "2026-10-28T09:15:22+00:00"
+      },
+      {
         "theme": "hack",
         "source": "decrypt",
         "title": "Bitcoin Wallet Maker Keystone Pulls Devices as Stolen Key Opens Door to Fakes",
@@ -168,7 +175,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T09:42:24.117740+00:00"
+    "__dt__": "2026-10-28T10:12:23.676547+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -194,7 +201,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T09:42:04.473621+00:00"
+      "__dt__": "2026-10-28T10:12:03.960421+00:00"
     }
   }
 }
