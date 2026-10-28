@@ -445,6 +445,13 @@ def _holding(sig: pd.Series, allow_short: bool) -> pd.Series:
     return pos if allow_short else pos.clip(lower=0)
 
 
+def trend_direction(daily: pd.DataFrame, period: int = 200) -> pd.Series:
+    """Langfristige Richtung eines Coins je Tageskerze für den Trendfilter: +1 über der 200-Tage-Linie, -1 darunter
+    (mit Puffer wie bei Regime, damit es an der Linie nicht ständig hin und her springt), 0 solange es noch keine
+    200 Tage gibt."""
+    return _holding(Regime(period=period).signals(daily), allow_short=True).astype(int)
+
+
 STRATEGIES = {cls.name: cls for cls in (TrendFollowing, MeanReversion, Breakout, Regime, Pullback, Momentum, PriceAction,
                                         SmartMoney, Reversal, RangeTrading, Ensemble, Adaptive,
                                         AdaptiveMemory, YtFibWave, YtCycle, YtDivergence,

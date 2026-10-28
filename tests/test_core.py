@@ -617,12 +617,15 @@ def test_budget_share_limits_one_horizon():
     assert rm.plan(1000, 1000, 100, 1, budget_share=0.5, exposure=250) is None
 
 
-def test_bot_configs_trade_all_horizons_and_short():
+def test_bot_configs_trade_all_horizons_with_simulation_settings():
     for name in ("langfrist", "daytrading", "risiko"):
         cfg = Config.load(f"bots/config_{name}.yaml")
-        assert {h.name for h in cfg.horizon_list()} == {"kurz", "mittel", "lang"} and cfg.allow_short
+        assert {h.name for h in cfg.horizon_list()} == {"kurz", "mittel", "lang"}
+        assert all(h.trend_filter for h in cfg.horizon_list()) and cfg.horizon_priority
+        assert cfg.short_probation                         # Shorts jederzeit einschaltbar, dann mit Probezeit
         assert cfg.strategy == cfg.horizon_list()[0].strategy
     assert Config.load("bots/config_langfrist.yaml").horizon_list()[0].name == "lang"
+    assert Config.load("bots/config_daytrading.yaml").risk.halt_days > 0     # KI stoppt nicht für immer
 
 
 def test_paper_loop_with_horizons(df, monkeypatch, tmp_path):
@@ -638,3 +641,140 @@ def test_paper_loop_with_horizons(df, monkeypatch, tmp_path):
     bot.run(cfg, max_iterations=300)
     trades = pd.read_csv(tmp_path / "daten" / "logs" / "trades_hz.csv")
     assert set(trades["horizon"]) == {"kurz", "lang"} and "short" in set(trades["side"])
+
+
+def test_history_simulation_runs_whole_bots(df):
+    from tradingbot.historie import simulate, simulate_chef, report, resample
+    idx = pd.date_range("2020-01-01", periods=len(df), freq="1h", tz="UTC")
+    btc = df.set_axis(idx)
+    coins = {"BTC/USD": btc, "ETH/USD": btc.iloc[500:] * 0.05}          # ETH kommt später dazu
+    runs = {}
+    for name in ("config_langfrist", "config_daytrading", "config_risiko"):
+        cfg = Config.load(f"bots/{name}.yaml")
+        cfg.risk.max_drawdown_pct = 0.99
+        for h in cfg.horizons.values():          # 62 Tage Testkurse: zu kurz für die 200-Tage-Linie
+            h.update(trend_filter=False, min_edge=0)
+        runs[name] = simulate(cfg, coins)
+        assert len(runs[name].equity) > 50 and runs[name].equity.iloc[0] == pytest.approx(cfg.starting_capital, rel=0.05)
+    assert {"kurz", "mittel"} <= set(runs["config_risiko"].trades["horizon"])
+    chef = simulate_chef(runs, resample(btc, "1d"), Path(pytest.importorskip("tempfile").mkdtemp()) / "chef.json")
+    assert len(chef) > 50
+    text = report(runs, chef, resample(btc, "1d")["close"])
+    assert "Jahr für Jahr" in text and "Nach Zeithorizont" in text and "Chef-Bot" in text
+
+
+# --- Teilgewinn, Nachlauf-Stop, Trendfilter, Gebührenfilter
+
+def _tool_trader(**h):
+    from tradingbot.config import Horizon
+    t = Trader(PaperBroker(10_000, 0.001, 0), RiskManager(RiskConfig(max_total_risk_pct=1, max_position_pct=1), 10_000),
+               allow_short=True)
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=2.0, take_profit_atr=10.0, **h)}
+    return t
+
+
+def test_trade_result_includes_buy_fee():
+    t = _tool_trader()
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    t.exit("X", 100, "Signal", 1)
+    assert t.closed[-1]["pnl"] < 0 and t.equity({}) == pytest.approx(10_000 + t.closed[-1]["pnl"])
+
+
+def test_partial_profit_moves_stop_to_breakeven_and_counts_as_win():
+    t = _tool_trader(partial_atr=1.0, partial_pct=0.5)
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    qty = t.open_trades["X"].qty
+    t.check_stops("X", 100, 101.5, 99.5, 1)                    # Zwischenziel 101 erreicht
+    tr = t.open_trades["X"]
+    assert tr.qty == pytest.approx(qty / 2) and tr.stop > 100     # Rest mit Stop über dem Einstand
+    t.check_stops("X", 100.5, 100.6, 99, 2)                     # Kurs fällt zurück: Rest ohne Verlust raus
+    c = t.closed[-1]
+    assert c["reason"] == "Stop auf Einstand" and c["pnl"] > 0 and c["qty"] == pytest.approx(qty) and c["partial"]
+    assert t.equity({}) == pytest.approx(10_000 + c["pnl"])
+
+
+def test_trailing_stop_follows_best_price_next_bar_only():
+    t = _tool_trader(trail_atr=2.0)
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    t.check_stops("X", 100, 106, 99, 1)                        # bestes Hoch 106 -> Stop 104 ab nächster Kerze
+    assert t.open_trades["X"].stop == pytest.approx(104)
+    t.check_stops("X", 105, 105.5, 103, 2)
+    assert t.closed[-1]["reason"] == "Nachlauf-Stop" and t.closed[-1]["exit"] == pytest.approx(104)
+    s = _tool_trader(trail_atr=2.0)                              # Short spiegelbildlich
+    s.on_signal("X", -1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    s.check_stops("X", 100, 101, 95, 1)
+    assert s.open_trades["X"].stop == pytest.approx(97)
+
+
+def test_trend_filter_blocks_entries_against_trend_but_allows_exits():
+    t = _tool_trader()
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=0, horizon="kurz", trend=1)
+    assert not t.open_trades and "Trend" in t.note                # kein Short im Aufwärtstrend
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=1, horizon="kurz", trend=1)
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=2, horizon="kurz", trend=1)
+    assert not t.open_trades and t.closed[-1]["reason"] == "Signal"   # Long geschlossen, aber kein neuer Short
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=3, horizon="kurz", trend=0)
+    assert not t.open_trades                                      # unbekannter Trend: kein Einstieg
+
+
+def test_trend_direction_needs_200_days():
+    from tradingbot.strategies import trend_direction
+    idx = pd.date_range("2020-01-01", periods=400, freq="1D", tz="UTC")
+    up = pd.DataFrame({"open": range(1, 401), "high": range(2, 402), "low": range(0, 400), "close": range(1, 401),
+                       "volume": 1.0}, index=idx, dtype=float)
+    d = trend_direction(up)
+    assert d.iloc[150] == 0 and d.iloc[-1] == 1
+
+
+def test_min_edge_skips_moves_too_small_for_fees():
+    t = _tool_trader(partial_atr=1.0, min_edge=3.0)               # Kosten 0,2 %: erstes Ziel braucht 0,6 %
+    t.on_signal("X", 1, 100, atr=0.5, equity=10_000, when=0, horizon="kurz")
+    assert not t.open_trades and "Gebühren" in t.note
+    t.on_signal("X", 1, 100, atr=1.0, equity=10_000, when=1, horizon="kurz")
+    assert "X" in t.open_trades
+
+
+def test_interest_is_part_of_the_trade_result():
+    t = _tool_trader()
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    t.charge_interest({"X": 100}, 24 * 10, 0.0012)               # 10 Tage Leihzinsen für den Short
+    t.exit("X", 100, "Signal", 1)
+    c = t.closed[-1]
+    assert c["pnl"] < -t.broker.interest_paid + 1e-9 and t.equity({}) == pytest.approx(10_000 + c["pnl"])
+
+
+def test_longer_horizon_takes_over_or_turns_position():
+    from tradingbot.config import Horizon
+    t = _tool_trader()
+    t.horizons["lang"] = Horizon("lang", "1d", "regime", stop_loss_atr=8.0, take_profit_atr=1000)
+    t.priority = True
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    t.on_signal("X", 1, 100, atr=2, equity=10_000, when=1, horizon="lang")     # gleiche Richtung: übernehmen
+    assert t.open_trades["X"].horizon == "lang" and t.open_trades["X"].stop == pytest.approx(84) and not t.closed
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=2, horizon="kurz")    # kürzerer Horizont: kein Zugriff
+    assert t.open_trades["X"].horizon == "lang"
+    t.horizons["kurz"].stop_loss_atr = 2.0
+    t.exit("X", 100, "Signal", 3)
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=4, horizon="kurz")
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=5, horizon="lang")     # Gegenrichtung: drehen
+    assert t.closed[-1]["reason"] == "Vorrang lang" and t.open_trades["X"].side == 1
+
+
+def test_short_probation_keeps_shorts_small_until_proven():
+    t = _tool_trader()
+    t.short_probation = True
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    full = t.open_trades["X"].qty
+    t.exit("X", 100, "Signal", 1)
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=2, horizon="kurz")
+    assert t.open_trades["X"].qty == pytest.approx(full * 0.25, rel=0.01)     # Probezeit: Viertel
+    t.exit("X", 100, "Signal", 3)
+    t.closed += [{"side": "short", "pnl": 5.0}] * 10                           # Shorts haben sich bewährt
+    t.on_signal("X", -1, 100, atr=1, equity=t.equity({}), when=4, horizon="kurz")
+    assert t.open_trades["X"].qty == pytest.approx(full, rel=0.02)
+
+
+def test_short_can_be_switched_per_horizon():
+    t = _tool_trader(allow_short=False)
+    t.on_signal("X", -1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    assert not t.open_trades

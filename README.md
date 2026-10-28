@@ -38,18 +38,19 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/news.py` | Infos aus dem Netz: Fear & Greed Index und News-Schlagzeilen, nur von mehreren Portalen bestätigte Themen zählen |
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
 | `tradingbot/bot.py` | Laufender Bot: holt jede Minute neue Kurse, prüft Orderbuch und Nachrichtenlage und entscheidet |
+| `tradingbot/historie.py` | Geschichts-Simulation der kompletten Bots über 2011-2026 inkl. Chef, Kursgeschichte mit Cache |
 
 ## Zeithorizonte: gleiche Bedingungen für alle Bots
 
 Jeder Bot hat seine eigene Aufgabe, aber alle haben die gleichen Möglichkeiten: Sie dürfen **kurzfristig
-(Daytrading), mittelfristig und langfristig** handeln, und zwar **long und short** (Short nur Demo, live gesperrt).
-Alle drei starten mit 1'000 CHF, denselben 8 Coins und denselben Gebühren.
+(Daytrading), mittelfristig und langfristig** handeln. Alle drei starten mit 1'000 CHF, denselben 8 Coins und
+denselben Gebühren. Die Einstellungen stammen aus der [Geschichts-Simulation](#geschichts-simulation-2011-2026).
 
 | Bot | Aufgabe / Charakter | kurz | mittel | lang |
 |---|---|---|---|---|
-| 1️⃣ Langfrist | Schwerpunkt Trend, wenig Risiko, max. 50 % investiert | `adaptive` 1h | `trend` 4h | `regime` (200-Tage-Linie) 1d, Startanteil 50 % |
-| 2️⃣ KI | lernt mit Gedächtnis, je Horizont ein eigenes Gedächtnis | `adaptive_memory` 1h | `adaptive_memory` 4h | `adaptive_memory` 1d |
-| 3️⃣ Risiko | Hebel 3×, aggressiv, ignoriert News | `breakout` 30m | `breakout` 4h | `breakout` 1d |
+| 1️⃣ Langfrist | Schwerpunkt Trend, max. 50 % investiert | `adaptive` 1h | `buch_triple_screen` 4h | `regime` (200-Tage-Linie) 1d, Startanteil 50 % |
+| 2️⃣ KI | lernt mit Gedächtnis, je Horizont ein eigenes Gedächtnis | `adaptive_memory` 1h | `adaptive_memory` 4h | `adaptive_memory` 1d, Startanteil 50 % |
+| 3️⃣ Risiko | Hebel 3×, ignoriert News, Treffer-Modus (Teilgewinne überall) | `breakout` 30m | `trend` 4h | `regime` 1d |
 | 4️⃣ Chef | verteilt Kapital auf die drei Bots | Rendite letzter Tag | letzte 7 Tage | letzte 30 Tage + Gedächtnis |
 
 So funktioniert es (Einstellung `horizons:` in den Configs):
@@ -57,13 +58,73 @@ So funktioniert es (Einstellung `horizons:` in den Configs):
 - Alle Horizonte eines Bots teilen sich **ein Konto** und die gemeinsamen Risikoregeln (Not-Aus, Tageslimit, max. Positionen).
 - Jeder Horizont hat eigene Kerzen, eigene Strategie und eigene Stops (`stop_loss_atr`, `take_profit_atr`, `risk_per_trade`).
 - Pro Coin gibt es eine Position. Sie gehört dem Horizont, der sie eröffnet hat; nur er schliesst sie per Signal
-  (Stops gelten immer). So kann ein kurzfristiges Signal keine Langfrist-Position abwürgen.
+  (Stops gelten immer). Mit `horizon_priority: true` darf ein **längerer** Horizont eine Position eines kürzeren
+  übernehmen (gleiche Richtung) oder drehen (Gegenrichtung), damit der gewinnstärkste Stil nicht ausgesperrt wird.
 - **Hauptsache Gewinn:** Mit `adaptive_shares: true` bekommt der Horizont mehr Kapital, dessen letzte 20 Trades mehr
   verdient haben (je Horizont zwischen 10 und 70 %). Die Anteile stehen in der Übersicht.
 - `backtest`, `compare` und `status` nutzen den Haupthorizont (der erste in `horizons:` oder `main_horizon`).
 - Das KI-Gedächtnis für 4h und 1d (`ki_gedaechtnis_mittel.json`, `ki_gedaechtnis_lang.json`) wird beim ersten Lauf
   automatisch mit Kursgeschichte vorgefüllt.
 - Positionen aus der Zeit vor den Horizonten gehören automatisch dem Haupthorizont des Bots.
+
+Werkzeuge je Horizont (alle optional):
+
+| Einstellung | Wirkung |
+|---|---|
+| `trend_filter: true` | Neue Positionen nur in Richtung der 200-Tage-Linie des Coins (darüber nur long, darunter nur short). Ausstiege sind immer erlaubt. |
+| `min_edge: 5` | **Gebührenfilter:** kein Einstieg, wenn das erste Ziel weniger als 5× die Kosten (Gebühren + Slippage für Kauf und Verkauf) bringt. |
+| `partial_atr: 0.75`, `partial_pct: 0.5` | **Teilgewinn:** die Hälfte bei +0,75 × ATR verkaufen, danach Stop auf den Einstand (plus Kosten). Hebt die Trefferquote stark. |
+| `trail_atr: 3` | Nachlauf-Stop im Abstand 3 × ATR zum besten Kurs (in der Simulation ohne Vorteil, daher aus). |
+| `allow_short: false` | Shorts nur in diesem Horizont aus- oder einschalten (leer = Einstellung des Bots). |
+
+Für den ganzen Bot: `short_probation: true` (Short-Probezeit) lässt Shorts nur mit einem Viertel der Grösse zu, bis
+die letzten 20 eigenen Shorts zusammen Gewinn gebracht haben (mindestens 10 Shorts). Trade-Ergebnisse enthalten
+**alle Kosten**: Kauf- und Verkaufsgebühr, Slippage und Zinsen für Shorts oder Hebel.
+
+## Geschichts-Simulation (2011-2026)
+
+```bash
+python -m tradingbot historie --bots bots/config_langfrist.yaml bots/config_daytrading.yaml bots/config_risiko.yaml
+```
+
+Spielt die **kompletten Bots** über die ganze verfügbare Kursgeschichte durch: alle Horizonte, alle Coins (sobald es
+sie gibt), Risikoregeln, Not-Aus, Hebel, Zinsen und Zwangsschliessung, dazu den Chef-Bot. Bitcoin kommt von Bitstamp
+ab August 2011, die meisten anderen Coins von Binance ab 2017. Die Kurse werden beim ersten Lauf geladen (ca. 10 Minuten)
+und in `data/historie/` zwischengespeichert. Ergebnis: [lernen/HISTORIE.md](lernen/HISTORIE.md).
+
+**So wurden die heutigen Einstellungen gefunden (Oktober 2026):** Rund 450 Varianten (Trendfilter, Gebührenfilter,
+Teilgewinn, Nachlauf-Stop, Vorrang, Shorts, Strategien je Horizont, Hebel, Risiko) wurden simuliert. **Gewählt wurde nur
+nach den Jahren 2011-2022**; die Jahre 2023-2026 waren dabei weggesperrt und dienen als unabhängige Prüfung. Regel:
+bestes Verhältnis Gewinn zu Rückgang; erreicht eine Variante mindestens 70 % Treffer bei mindestens 75 % davon,
+wird sie bevorzugt (das traf beim Risiko-Bot zu).
+
+| Bot | vorher 2011-2026 | nachher 2011-2026 | 2011-2022 pro Jahr | 2023-2026 pro Jahr (Prüfung) | Treffer (Prüfung) |
+|---|---|---|---|---|---|
+| 1️⃣ Langfrist | 1'000 → 4'937, Rückgang bis −80 % | 1'000 → 227'234, Rückgang bis −41 % | +50,5 % | +22,5 % (max. −25 %) | 42 % |
+| 2️⃣ KI | 1'000 → 850 (2011 für immer gestoppt) | 1'000 → 8'195, Rückgang bis −24 % | +15,1 % | +14,0 % (max. −17 %) | 42 % |
+| 3️⃣ Risiko | 1'000 → 18 (2011 fast alles verloren) | 1'000 → 214'560, Rückgang bis −57 % | +48,6 % | +25,5 % (max. −35 %) | **76 %** |
+| 4️⃣ Chef | 1'000 → 1'971 | 1'000 → 18'775, Rückgang bis −29 % | | | |
+| Bitcoin halten | | | +90,4 % (max. −85 %) | +51,3 % (max. −53 %) | |
+
+Was die Simulation gezeigt hat:
+
+- **Trendfilter** war die wichtigste Verbesserung (+18 % pro Jahr beim Langfrist-Bot im Schnitt aller Varianten).
+- **Kurzfristiger Handel verliert ohne Gebührenfilter**: Kauf und Verkauf kosten zusammen rund 0,6 %, die meisten
+  Stunden-Bewegungen sind kleiner. Mit `min_edge: 5` handeln die Bots seltener, aber nur, wenn es sich lohnen kann.
+  Auch mit 0,4 % Gebühr und doppelter Slippage bleiben die Ergebnisse fast gleich.
+- **Shorts verloren in jeder Variante** Geld, auch mit Trendfilter und Probezeit: Leihzinsen (bei Kraken ca. 0,12 %
+  pro Tag) und Krypto steigt langfristig. Deshalb ist `allow_short` bei allen Bots aus, die Funktion bleibt aber
+  erhalten (mit Short-Probezeit).
+- **Teilgewinne** heben die Trefferquote auf über 70 %, kosten aber bei reinen Trendfolgern rund die Hälfte des
+  Gewinns. Beim Risiko-Bot lohnt es sich (73 % Treffer über 15 Jahre), bei Langfrist und KI wurde die Gewinn-Variante
+  gewählt. Umstellen: `partial_atr: 0.75` auch beim Horizont `lang` eintragen.
+- **Bitcoin einfach halten** brachte mehr Rendite, aber mit Abstürzen bis −85 %. Die Bots verdienen weniger und
+  fallen dafür etwa halb so tief.
+
+Grenzen: keine historischen News und Ereignisse, kein Orderbuch-Spread, keine Korrelationsprüfung, Kurse in USD.
+Die Jahre 2011-2013 hatten sehr wenig Handel an den Börsen. Kleine Details (z.B. welcher Coin bei gleichzeitigen
+Signalen zuerst Kapital bekommt) verschieben das Ergebnis um einige Prozent pro Jahr: Die Zahlen sind
+Grössenordnungen, keine Vorhersage. Vergangene Ergebnisse sind keine Garantie.
 
 ## Installation
 
@@ -179,7 +240,7 @@ Mit `allow_short: true` in `bots/config.yaml` (oder `--short` beim Backtest) set
 python -m tradingbot compare --short --days 365
 ```
 
-Short-Handel läuft vorerst **nur im Backtest und im Paper-Modus**. Live braucht es dafür ein Margin- oder Futures-Konto, und Finanzierungskosten für offene Shorts sind im Backtest noch nicht eingerechnet. Bei Shorts sind die Verluste theoretisch unbegrenzt, wenn der Kurs stark steigt. Der Stop-Loss begrenzt das, aber bei Kurssprüngen kann er überrannt werden.
+Short-Handel läuft vorerst **nur im Backtest und im Paper-Modus**. Live braucht es dafür ein Margin- oder Futures-Konto. Im Paper-Modus und in der Geschichts-Simulation werden Leihzinsen berechnet (`margin_interest_per_day`) und dem Trade zugerechnet; in der Simulation 2011-2026 haben Shorts deshalb in keiner Variante Geld gebracht (siehe oben). Mit `short_probation: true` starten Shorts klein, bis sie sich bewährt haben. Bei Shorts sind die Verluste theoretisch unbegrenzt, wenn der Kurs stark steigt. Der Stop-Loss begrenzt das, aber bei Kurssprüngen kann er überrannt werden.
 
 ## Startkapital
 

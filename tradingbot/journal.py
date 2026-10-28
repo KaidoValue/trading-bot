@@ -34,6 +34,10 @@ LESSON = {
     "Stop-Loss (Gap)": "Der Kurs ist über den Stop hinweg gesprungen (Gap). Stops schützen gut, aber nicht "
                        "immer exakt auf den Rappen.",
     "Take-Profit": "Das Gewinnziel wurde erreicht: Der Plan mit festem Chance-Risiko-Verhältnis ist aufgegangen.",
+    "Stop auf Einstand": "Nach dem Teilgewinn lag der Stop auf dem Einstiegskurs: Der Rest wurde ohne Verlust "
+                         "geschlossen, der Teilgewinn bleibt. So wird aus einem Wackler kein Verlust.",
+    "Nachlauf-Stop": "Der Stop ist dem Kurs nachgelaufen und hat einen Teil der Bewegung gesichert, als der Kurs "
+                     "drehte. Gewinne laufen lassen, aber nicht wieder ganz hergeben.",
     "Liquidation": "Mit Hebel war die Sicherheit aufgebraucht: Die Börse hat alle Positionen zwangsweise "
                    "geschlossen. Hebel vervielfacht Verluste genauso wie Gewinne.",
     "Not-Aus": "Das Verlustlimit des ganzen Kontos wurde erreicht. Der Not-Aus verhindert, dass aus einem "

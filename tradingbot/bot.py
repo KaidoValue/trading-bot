@@ -13,7 +13,7 @@ from .config import Config
 from .engine import Trader
 from .news import NewsMonitor
 from .risk import RiskManager
-from .strategies import build
+from .strategies import build, trend_direction
 from . import journal, state
 
 log = logging.getLogger(__name__)
@@ -47,7 +47,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     trader = make_trader(cfg, exchange)
     if cfg.horizons:
         trader.horizons = {h.name: h for h in horizons}
-        trader.adaptive_shares = cfg.adaptive_shares
+        trader.adaptive_shares, trader.priority = cfg.adaptive_shares, cfg.horizon_priority
+    trader.short_probation = cfg.short_probation
     cfg.symbols = available_symbols(exchange, cfg.symbols)
     if isinstance(trader.broker, PaperBroker):
         # Umgerechnete Coins: real müssten CHF erst in USD getauscht werden (hin und zurück je eine Order)
@@ -81,8 +82,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             if isinstance(trader.broker, PaperBroker):
                 b = trader.broker
                 if b.interest_at is not None:
-                    b.charge_interest(prices, (now - b.interest_at).total_seconds() / 3600,
-                                      cfg.risk.margin_interest_per_day)
+                    trader.charge_interest(prices, (now - b.interest_at).total_seconds() / 3600,
+                                           cfg.risk.margin_interest_per_day)
                 b.interest_at = now
             eq = trader.equity(prices)
             if liquidation(trader, prices, cfg.risk):
@@ -96,7 +97,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     log.error("NOT-AUS: %s. Bot stoppt.", trader.risk.halt_reason)
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
-            notes, spreads = [], {}
+            notes, spreads, trends = [], {}, {}
             for h in ([] if trader.risk.halted else horizons):
                 strategy, frames = strategies[h.name], {}
                 prefix = f"[{h.name}] " if h.name else ""
@@ -119,8 +120,11 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     if not liquid:
                         log.info("%s: Spread %.3f%% zu gross, kein Einstieg", s, spread * 100)
                     factor = _correlation_factor(s, sig, frames, trader, cfg.risk.correlation_limit)
+                    if h.trend_filter and s not in trends:
+                        trends[s] = _trend(exchange, s)
                     trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
-                                     size_factor=factor, can_open_new=liquid, horizon=h.name)
+                                     size_factor=factor, can_open_new=liquid, horizon=h.name,
+                                     trend=trends[s] if h.trend_filter else None)
                     eq = trader.equity(prices)
                     notes.append(prefix + trader.note)
             if notes:
@@ -174,6 +178,15 @@ def available_symbols(exchange, symbols: list[str]) -> list[str]:
     if missing:
         log.warning("Von %s nicht angeboten, wird übersprungen: %s", exchange.id, ", ".join(missing))
     return [s for s in symbols if s in markets]
+
+
+def _trend(exchange, symbol: str) -> int:
+    """Richtung der 200-Tage-Linie des Coins (Trendfilter), 0 wenn nicht abrufbar oder zu wenig Geschichte."""
+    try:
+        return int(trend_direction(data.fetch_recent(exchange, symbol, "1d", 400)).iloc[-1])
+    except Exception as e:
+        log.warning("%s: Tageskerzen für den Trendfilter nicht abrufbar: %s", symbol, e)
+        return 0
 
 
 def _spread(exchange, symbol: str) -> float | None:

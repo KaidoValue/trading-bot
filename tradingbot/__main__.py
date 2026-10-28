@@ -12,6 +12,7 @@
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
+  python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
 """
 from __future__ import annotations
 
@@ -100,7 +101,7 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube", "historie"])
     p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--chef", help="dashboard: Stand-Datei des Chef-Bots")
@@ -159,6 +160,20 @@ def main() -> None:
         text = labor.report(found, lib, df, cfg.history_symbol or cfg.symbols[0], cfg.timeframe)
         Path("lernen").mkdir(exist_ok=True)
         Path("lernen/LABOR.md").write_text(text)
+        print(text)
+    elif args.command == "historie":
+        from . import historie
+        # Reihenfolge wie im laufenden Bot: bei gleichzeitigen Signalen bekommt der erste Coin zuerst Kapital
+        coins = list(dict.fromkeys(s.split("/")[0] for p in (args.bots or [args.config]) for s in Config.load(p).symbols))
+        runs, chef, btc = historie.run_all(args.bots or [args.config], coins)
+        text = historie.report(runs, chef, btc)
+        Path("lernen").mkdir(exist_ok=True)
+        Path("lernen/HISTORIE.md").write_text(text, encoding="utf-8")
+        curves = pd.DataFrame({n: r.equity for n, r in runs.items()} | ({"chef": chef} if chef is not None else {})
+                              | {"btc": btc})
+        curves.to_csv(historie.CACHE / "kurven.csv")
+        for n, r in runs.items():
+            r.trades.to_csv(historie.CACHE / f"trades_{n}.csv", index=False)
         print(text)
     elif args.command == "youtube":
         from .youtube import update

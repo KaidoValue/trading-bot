@@ -6,7 +6,7 @@
 
 mode: paper
 title: "1️⃣ Langfrist-Bot (Hauptbot)"
-description: "Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt aber auch mittelfristig (4h) und kurzfristig (1h), long und short. Max. 50 % investiert."
+description: "Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt auch mittelfristig (4h) und kurzfristig (1h), nur in Trendrichtung. Max. 50 % investiert. Simulation 2011-2022: +50 %/Jahr, 2023-2026: +22 %/Jahr."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
 timeframe: 1d
@@ -16,23 +16,32 @@ starting_capital: 1000
 fee_rate: 0.0026
 slippage: 0.0005
 
-# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln, long und short.
-# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position, die dem Horizont gehört, der sie eröffnet hat.
-# share = Startanteil am investierbaren Kapital; mit adaptive_shares wandert Kapital zum Horizont, der zuletzt
-# mehr verdient hat (je Horizont 10-70 %). Der erste bzw. main_horizon gilt für backtest/compare/status.
+# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln.
+# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position; mit horizon_priority darf ein längerer
+# Horizont die Position eines kürzeren übernehmen. share = Startanteil am investierbaren Kapital; mit adaptive_shares
+# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (10-70 %). Der erste Horizont gilt für backtest/status.
+#
+# Eingestellt nach der Geschichts-Simulation 2011-2026 (lernen/HISTORIE.md): gewählt nur nach 2011-2022, geprüft
+# auf 2023-2026. trend_filter = nur in Richtung der 200-Tage-Linie, min_edge = Gebührenfilter,
+# partial_atr = Teilgewinn mit Stop auf Einstand. Shorts lohnten sich in keiner Variante (Leihzinsen, Krypto steigt
+# langfristig): allow_short ist aus, kann aber jederzeit eingeschaltet werden (dann mit short_probation: true).
 horizons:
-  lang:                       # Hauptstil: 200-Tage-Linie, über der Linie long, darunter short
+  lang:                       # Hauptstil: 200-Tage-Linie, investiert über der Linie
     timeframe: 1d
     strategy: regime
     strategy_params: {period: 200}
     share: 0.5
-  mittel:                     # Trendfolge auf 4-Stunden-Kerzen, Tage bis Wochen
+    trend_filter: true
+  mittel:                     # Triple Screen (Elder) auf 4-Stunden-Kerzen, Tage bis Wochen
     timeframe: 4h
-    strategy: trend
+    strategy: buch_triple_screen
     share: 0.25
     stop_loss_atr: 3.0
     take_profit_atr: 6.0
     risk_per_trade: 0.02
+    trend_filter: true
+    partial_atr: 0.75         # Hälfte bei +0,75 ATR verkaufen, Rest mit Stop auf Einstand
+    min_edge: 5               # nur wenn das erste Ziel mindestens 5x die Gebühren bringt
   kurz:                       # Daytrading: lernende Gewichtung auf 1-Stunden-Kerzen
     timeframe: 1h
     strategy: adaptive
@@ -40,8 +49,13 @@ horizons:
     stop_loss_atr: 2.0
     take_profit_atr: 4.0
     risk_per_trade: 0.01
+    trend_filter: true
+    partial_atr: 0.75
+    min_edge: 5
 adaptive_shares: true
-allow_short: true            # auch auf fallende Kurse (nur Demo; live gesperrt)
+horizon_priority: true
+allow_short: false           # Shorts verloren in der Simulation Geld; einschalten: true (nur Demo; live gesperrt)
+short_probation: true        # falls eingeschaltet: Shorts erst klein, bis sie sich bewährt haben
 poll_seconds: 300
 reevaluate: true      # stündlich nachprüfen: wurde ein Einstieg z.B. wegen News verschoben, holt er ihn nach
 

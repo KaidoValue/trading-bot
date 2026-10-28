@@ -43,6 +43,12 @@ class Horizon:
     stop_loss_atr: float | None = None
     take_profit_atr: float | None = None
     risk_per_trade: float | None = None
+    partial_atr: float | None = None    # Teilgewinn: bei Einstieg ± x × ATR einen Teil verkaufen ...
+    partial_pct: float = 0.5            # ... so viel davon, danach Stop auf Einstand (Rest kann nicht mehr verlieren)
+    trail_atr: float | None = None      # Nachlauf-Stop: folgt dem besten Kurs im Abstand x × ATR
+    trend_filter: bool = False          # nur in Richtung der 200-Tage-Linie des Coins einsteigen
+    min_edge: float = 0.0               # erstes Ziel muss mindestens x-mal die Kosten (Gebühren + Slippage) bringen
+    allow_short: bool | None = None     # Shorts in diesem Horizont (leer = Einstellung des Bots)
 
 
 @dataclass
@@ -59,6 +65,7 @@ class Config:
     slippage: float = 0.0005
     strategy: str = "adaptive"
     allow_short: bool = False           # auch auf fallende Kurse setzen (nur Backtest/Paper)
+    short_probation: bool = False       # Shorts nur klein, bis die eigenen letzten Shorts Gewinn gebracht haben
     strategy_params: dict = field(default_factory=dict)
     poll_seconds: int = 60
     reevaluate: bool = False            # Signal bei jedem Lauf neu prüfen, nicht nur bei neuer Kerze
@@ -72,6 +79,7 @@ class Config:
     horizons: dict = field(default_factory=dict)
     main_horizon: str = ""              # dieser Horizont gilt für backtest/compare/status (Standard: der erste)
     adaptive_shares: bool = False       # Kapital zum Horizont verschieben, der zuletzt mehr verdient hat
+    horizon_priority: bool = False      # längerer Horizont darf Positionen eines kürzeren übernehmen/drehen
     risk: RiskConfig = field(default_factory=RiskConfig)
     name: str = "config"             # Name der Konfigurationsdatei, für die Stand-Datei
     title: str = ""                     # Anzeigename in der Übersicht (STATUS.md)

@@ -43,6 +43,7 @@ class Chef:
         self.fees = raw.get("fees", 0.0)
         self.reason = raw.get("reason", "Startverteilung")
         self.memory = Memory(self.path.with_name("chef_gedaechtnis.json"))
+        self.runs_per_day = 48                                        # GitHub: alle 30 Minuten ein Lauf
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -67,7 +68,7 @@ class Chef:
             recent = sum(self._recent(s, now, d) for d in VIEWS.values()) / len(VIEWS)
             total, n = self.memory.prior(phase, s)
             trust = n / (n + 300)                     # je mehr Erfahrung in dieser Phase, desto mehr zählt sie
-            remembered = (total / n * 48 * 7) if n else 0.0          # auf 7 Tage hochgerechnet (48 Läufe/Tag)
+            remembered = (total / n * self.runs_per_day * 7) if n else 0.0   # auf 7 Tage hochgerechnet
             scores[s] = (1 - trust) * recent + trust * remembered
             why.append(f"{STYLES[s]} {scores[s] * 100:+.1f} %")
         w = {s: DEFAULT[s] * min(max(1 + scores[s] * 10, 0.1), 2.5) for s in DEFAULT}
