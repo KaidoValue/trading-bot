@@ -123,7 +123,7 @@
         "cointelegraph"
       ]
     },
-    "blackout": "Federal Funds Rate (18:00 UTC)",
+    "blackout": "FOMC Press Conference (18:30 UTC)",
     "evidence": [
       {
         "theme": "hack",
@@ -140,17 +140,10 @@
         "published": "2026-10-28T17:05:42+00:00"
       }
     ],
-    "alerts": [
-      {
-        "who": "powell (fed)",
-        "title": "Federal Reserve issues FOMC statement",
-        "source": "federalreserve",
-        "published": "2026-10-28T18:00:00+00:00"
-      }
-    ]
+    "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T18:18:16.954813+00:00"
+    "__dt__": "2026-10-28T18:48:16.804707+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -176,7 +169,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T18:17:57.468053+00:00"
+      "__dt__": "2026-10-28T18:47:57.345454+00:00"
     }
   }
 }
