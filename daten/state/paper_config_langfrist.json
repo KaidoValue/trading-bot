@@ -15,7 +15,8 @@
         "news_themes": "klage",
         "event": "-",
         "session": "New York"
-      }
+      },
+      "horizon": "lang"
     },
     "ETH/CHF": {
       "side": 1,
@@ -32,7 +33,8 @@
         "news_themes": "klage",
         "event": "-",
         "session": "New York"
-      }
+      },
+      "horizon": "lang"
     },
     "BNB/CHF": {
       "side": 1,
@@ -49,7 +51,8 @@
         "news_themes": "klage",
         "event": "-",
         "session": "New York"
-      }
+      },
+      "horizon": "lang"
     },
     "XRP/CHF": {
       "side": 1,
@@ -66,7 +69,8 @@
         "news_themes": "klage",
         "event": "-",
         "session": "New York"
-      }
+      },
+      "horizon": "lang"
     },
     "SOL/CHF": {
       "side": 1,
@@ -83,7 +87,44 @@
         "news_themes": "klage",
         "event": "-",
         "session": "New York"
-      }
+      },
+      "horizon": "lang"
+    },
+    "TRX/CHF": {
+      "side": -1,
+      "entry": 0.27282181029528,
+      "qty": 365.07796725031375,
+      "stop": 0.2741855416637642,
+      "target": 0.27050378499247163,
+      "opened": {
+        "__dt__": "2026-10-28T19:17:58.663230+00:00"
+      },
+      "context": {
+        "fear_greed": 51,
+        "news_score": -1.0,
+        "news_themes": "hack",
+        "event": "-",
+        "session": "New York"
+      },
+      "horizon": "kurz"
+    },
+    "ZEC/CHF": {
+      "side": -1,
+      "entry": 1064.42983884,
+      "qty": 0.023373240942556918,
+      "stop": 1092.7425409760046,
+      "target": 1009.4018780479904,
+      "opened": {
+        "__dt__": "2026-10-28T19:17:58.663230+00:00"
+      },
+      "context": {
+        "fear_greed": 51,
+        "news_score": -1.0,
+        "news_themes": "hack",
+        "event": "-",
+        "session": "New York"
+      },
+      "horizon": "kurz"
     }
   },
   "closed": [],
@@ -111,9 +152,81 @@
     },
     "HYPE/CHF": {
       "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:BTC/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:ETH/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:BNB/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:XRP/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:SOL/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:TRX/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:ZEC/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "lang:HYPE/CHF": {
+      "__dt__": "2026-10-27T00:00:00+00:00"
+    },
+    "mittel:BTC/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:ETH/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:BNB/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:XRP/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:SOL/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:TRX/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:ZEC/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "mittel:HYPE/CHF": {
+      "__dt__": "2026-10-28T12:00:00+00:00"
+    },
+    "kurz:BTC/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:ETH/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:BNB/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:XRP/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:SOL/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:TRX/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:ZEC/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
+    },
+    "kurz:HYPE/CHF": {
+      "__dt__": "2026-10-28T18:00:00+00:00"
     }
   },
-  "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
+  "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: Position offen, Signal best\u00e4tigt | [lang] BNB/CHF: Position offen, Signal best\u00e4tigt | [lang] XRP/CHF: Position offen, Signal best\u00e4tigt | [lang] SOL/CHF: Position offen, Signal best\u00e4tigt | [lang] TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: kein Signal | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] TRX/CHF: short er\u00f6ffnet 365.077967 @ 0.27 | [kurz] ZEC/CHF: short er\u00f6ffnet 0.023373 @ 1064.43 | [kurz] HYPE/CHF: kein Signal",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -123,7 +236,7 @@
         "cointelegraph"
       ]
     },
-    "blackout": "FOMC Press Conference (18:30 UTC)",
+    "blackout": null,
     "evidence": [
       {
         "theme": "hack",
@@ -143,7 +256,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T18:48:16.804707+00:00"
+    "__dt__": "2026-10-28T19:18:39.914949+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -151,7 +264,7 @@
       "__dt__": "2026-10-28"
     },
     "day_start_equity": 994.3174715051009,
-    "trades_today": 0,
+    "trades_today": 2,
     "loss_streak": 0,
     "paused_until": null,
     "halted": false,
@@ -159,17 +272,19 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 584.9554640221984,
+    "cash": 708.7885729195325,
     "positions": {
       "BTC/CHF": 0.0014846685700117732,
       "ETH/CHF": 0.04071033640932816,
       "BNB/CHF": 0.16207008227885852,
       "XRP/CHF": 58.69097546937744,
-      "SOL/CHF": 0.7977798252624748
+      "SOL/CHF": 0.7977798252624748,
+      "TRX/CHF": -365.07796725031375,
+      "ZEC/CHF": -0.023373240942556918
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T18:47:57.345454+00:00"
+      "__dt__": "2026-10-28T19:17:58.663230+00:00"
     }
   }
 }
