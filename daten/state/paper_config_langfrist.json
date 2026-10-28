@@ -128,6 +128,20 @@
       {
         "theme": "rally",
         "source": "coindesk",
+        "title": "Bitcoin rebounds above $81,000 as Asian chip rally spills into crypto, pepe jumps 9%",
+        "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-rebounds-above-usd81-000-as-asian-chip-rally-spills-into-crypto-pepe-jumps-9",
+        "published": "2026-10-28T11:32:31+00:00"
+      },
+      {
+        "theme": "rally",
+        "source": "coindesk",
+        "title": "Live updates: Bitcoin climbs above $81,000 as majors rally ahead of Fed decision",
+        "link": "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
+        "published": "2026-10-28T11:23:34+00:00"
+      },
+      {
+        "theme": "rally",
+        "source": "coindesk",
         "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
         "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
         "published": "2026-10-28T09:15:22+00:00"
@@ -138,26 +152,12 @@
         "title": "Bitcoin price analysis sees \u2018strong rally\u2019 as old coins become dormant",
         "link": "https://cointelegraph.com/markets/bitcoin-price-analysis-sees-strong-rally-as-old-coins-become-dormant?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-27T12:18:24+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "coindesk",
-        "title": "Live updates: Bitcoin edges higher as Nasdaq surges 1.2%",
-        "link": "https://www.coindesk.com/tech/2026/10/27/live-updates-bitcoin-holds-below-usd80-000-as-ai-buildout-draws-more-capital",
-        "published": "2026-10-27T11:40:50+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "coindesk",
-        "title": "Bitcoin drops below $80,000 as crypto ignores Asian tech rally, Fed meeting begins",
-        "link": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
-        "published": "2026-10-27T11:32:45+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T11:15:21.181043+00:00"
+    "__dt__": "2026-10-28T11:45:19.956906+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -183,7 +183,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T11:15:01.769933+00:00"
+      "__dt__": "2026-10-28T11:45:00.641628+00:00"
     }
   }
 }
