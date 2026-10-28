@@ -21,6 +21,10 @@ class OpenTrade:
     target: float
     opened: object
     context: dict = field(default_factory=dict)
+    horizon: str = ""  # Zeithorizont, der die Position eröffnet hat (nur er darf sie per Signal schliessen)
+
+
+MIN_SHARE, MAX_SHARE = 0.10, 0.70      # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
 
 
 @dataclass
@@ -32,6 +36,35 @@ class Trader:
     open_trades: dict[str, OpenTrade] = field(default_factory=dict)
     closed: list[dict] = field(default_factory=list)
     note: str = ""                             # letzte Entscheidung in Worten (für Status-Anzeige)
+    horizons: dict = field(default_factory=dict)   # Name -> config.Horizon (kurz/mittel/lang)
+    adaptive_shares: bool = False
+
+    def shares(self) -> dict[str, float]:
+        """Anteil jedes Horizonts am investierbaren Kapital. Mit adaptive_shares bekommt der Horizont mehr,
+        dessen letzte 20 Trades mehr verdient haben (zwischen MIN_SHARE und MAX_SHARE)."""
+        if not self.horizons:
+            return {}
+        total = sum(h.share for h in self.horizons.values()) or 1.0
+        base = {n: h.share / total for n, h in self.horizons.items()}
+        if not self.adaptive_shares or len(base) < 2:
+            return base
+        capital = max(self.risk.day_start_equity, 1e-9)
+        w = {}
+        for n, b in base.items():
+            pnl = sum(t["pnl"] for t in [t for t in self.closed if t.get("horizon") == n][-20:])
+            w[n] = b * min(max(1 + 10 * pnl / capital, 0.25), 2.0)
+        # Normieren: wer über/unter die Grenze käme, wird dort festgehalten, der Rest wird neu verteilt
+        fixed: dict[str, float] = {}
+        for _ in range(len(w)):
+            free = {n: v for n, v in w.items() if n not in fixed}
+            rest, total = 1 - sum(fixed.values()), sum(free.values())
+            scaled = {n: v / total * rest for n, v in free.items()}
+            out = {n: min(max(v, MIN_SHARE), MAX_SHARE) for n, v in scaled.items() if not MIN_SHARE <= v <= MAX_SHARE}
+            if not out:
+                return fixed | scaled
+            fixed |= out
+        total = sum(fixed.values())
+        return {n: v / total for n, v in fixed.items()}
 
     def equity(self, prices: dict[str, float]) -> float:
         return self.broker.cash() + sum(self.broker.position(s) * p for s, p in prices.items())
@@ -43,11 +76,15 @@ class Trader:
         return sum(abs(t.entry - t.stop) * t.qty for t in self.open_trades.values()) / equity
 
     def on_signal(self, symbol: str, signal: int, price: float, atr: float, equity: float, when,
-                  size_factor: float = 1.0, can_open_new: bool = True) -> None:
-        """+1: long gehen (Short vorher schliessen), -1: Long schliessen und, falls erlaubt, short gehen."""
+                  size_factor: float = 1.0, can_open_new: bool = True, horizon: str = "") -> None:
+        """+1: long gehen (Short vorher schliessen), -1: Long schliessen und, falls erlaubt, short gehen.
+        Pro Coin gibt es eine Position. Hält sie ein anderer Horizont, bleibt sie unberührt."""
         if signal == 0:
             return
         t = self.open_trades.get(symbol)
+        if t and t.horizon != horizon:
+            self.note = f"{symbol}: Position gehört zum Horizont «{t.horizon or '-'}»"
+            return
         if t and t.side != signal:
             self.exit(symbol, price, "Signal", when)
             equity = self.equity({symbol: price})
@@ -61,7 +98,9 @@ class Trader:
         if not can_open_new:
             self.note = f"{symbol}: kein Einstieg (Spread im Orderbuch zu gross)"
             return
-        if not self.risk.can_open(equity, when, self.open_risk(equity), len(self.open_trades)):
+        h = self.horizons.get(horizon)
+        risk_pct = h.risk_per_trade if h else None
+        if not self.risk.can_open(equity, when, self.open_risk(equity), len(self.open_trades), risk_pct=risk_pct):
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             log.info("%s %s", when, self.note)
             return
@@ -71,9 +110,11 @@ class Trader:
             log.info("%s %s", when, self.note)
             return
         factor = size_factor * (self.context.size_factor() if self.context else 1.0)
-        exposure = sum(abs(t.qty) * t.entry for t in self.open_trades.values())
+        exposure = sum(abs(t.qty) * t.entry for t in self.open_trades.values() if not h or t.horizon == horizon)
         plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor,
-                              exposure=exposure)
+                              exposure=exposure, risk_pct=risk_pct,
+                              stop_atr=h.stop_loss_atr if h else None, target_atr=h.take_profit_atr if h else None,
+                              budget_share=self.shares().get(horizon, 1.0))
         if not plan:
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             return
@@ -82,7 +123,8 @@ class Trader:
         if fill:
             info = self.context.summary() if self.context else {}
             info["session"] = session(when)
-            self.open_trades[symbol] = OpenTrade(signal, fill.price, fill.qty, plan.stop, plan.target, when, info)
+            self.open_trades[symbol] = OpenTrade(signal, fill.price, fill.qty, plan.stop, plan.target, when, info,
+                                                 horizon)
             self.risk.record_open()
             self.note = f"{symbol}: {'gekauft' if signal > 0 else 'short eröffnet'} {fill.qty:.6f} @ {fill.price:.2f}"
             log.info("%s %s %s %.6f @ %.2f (Stop %.2f, Ziel %.2f)", when, "LONG" if signal > 0 else "SHORT",
@@ -112,7 +154,7 @@ class Trader:
         pnl = t.side * (fill.price - t.entry) * fill.qty - fill.fee
         self.closed.append(dict(symbol=symbol, side="long" if t.side > 0 else "short", opened=t.opened,
                                 closed=when, entry=t.entry, exit=fill.price, qty=fill.qty, pnl=pnl, reason=reason,
-                                **t.context))
+                                horizon=t.horizon, **t.context))
         self.risk.record_close(pnl, when)
         log.info("%s SCHLIESSEN %s @ %.2f (%s) PnL %.2f", when, symbol, fill.price, reason, pnl)
 

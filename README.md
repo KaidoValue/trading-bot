@@ -12,8 +12,8 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 |---|---|
 | **[STATUS.md](STATUS.md)** | 📈 Aktueller Stand aller 3 Demo-Bots: Kapital, Positionen, Kurse, Charts (alle 30 Min. neu) |
 | **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI, Auswertung von YouTube-Videos (`YOUTUBE.md`) und Trading-Büchern (`BUECHER.md`) |
-| **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Hauptbot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-Bot), `config.yaml` (Vorlage) |
-| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Stile (höchstens 20 % Hebel-Stil, mindestens 10 % Cash). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
+| **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Langfrist-Bot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-/Hebel-Bot), `config.yaml` (Vorlage). Jeder Bot handelt kurz-, mittel- und langfristig, long und short (siehe [Zeithorizonte](#zeithorizonte-gleiche-bedingungen-für-alle-bots)) |
+| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 20 % Hebel-Stil, mindestens 10 % Cash). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
 | **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
 | `tradingbot/` | 🧠 Der Programmcode |
 | `tests/` | ✅ Automatische Tests |
@@ -38,6 +38,32 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/news.py` | Infos aus dem Netz: Fear & Greed Index und News-Schlagzeilen, nur von mehreren Portalen bestätigte Themen zählen |
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
 | `tradingbot/bot.py` | Laufender Bot: holt jede Minute neue Kurse, prüft Orderbuch und Nachrichtenlage und entscheidet |
+
+## Zeithorizonte: gleiche Bedingungen für alle Bots
+
+Jeder Bot hat seine eigene Aufgabe, aber alle haben die gleichen Möglichkeiten: Sie dürfen **kurzfristig
+(Daytrading), mittelfristig und langfristig** handeln, und zwar **long und short** (Short nur Demo, live gesperrt).
+Alle drei starten mit 1'000 CHF, denselben 8 Coins und denselben Gebühren.
+
+| Bot | Aufgabe / Charakter | kurz | mittel | lang |
+|---|---|---|---|---|
+| 1️⃣ Langfrist | Schwerpunkt Trend, wenig Risiko, max. 50 % investiert | `adaptive` 1h | `trend` 4h | `regime` (200-Tage-Linie) 1d, Startanteil 50 % |
+| 2️⃣ KI | lernt mit Gedächtnis, je Horizont ein eigenes Gedächtnis | `adaptive_memory` 1h | `adaptive_memory` 4h | `adaptive_memory` 1d |
+| 3️⃣ Risiko | Hebel 3×, aggressiv, ignoriert News | `breakout` 30m | `breakout` 4h | `breakout` 1d |
+| 4️⃣ Chef | verteilt Kapital auf die drei Bots | Rendite letzter Tag | letzte 7 Tage | letzte 30 Tage + Gedächtnis |
+
+So funktioniert es (Einstellung `horizons:` in den Configs):
+
+- Alle Horizonte eines Bots teilen sich **ein Konto** und die gemeinsamen Risikoregeln (Not-Aus, Tageslimit, max. Positionen).
+- Jeder Horizont hat eigene Kerzen, eigene Strategie und eigene Stops (`stop_loss_atr`, `take_profit_atr`, `risk_per_trade`).
+- Pro Coin gibt es eine Position. Sie gehört dem Horizont, der sie eröffnet hat; nur er schliesst sie per Signal
+  (Stops gelten immer). So kann ein kurzfristiges Signal keine Langfrist-Position abwürgen.
+- **Hauptsache Gewinn:** Mit `adaptive_shares: true` bekommt der Horizont mehr Kapital, dessen letzte 20 Trades mehr
+  verdient haben (je Horizont zwischen 10 und 70 %). Die Anteile stehen in der Übersicht.
+- `backtest`, `compare` und `status` nutzen den Haupthorizont (der erste in `horizons:` oder `main_horizon`).
+- Das KI-Gedächtnis für 4h und 1d (`ki_gedaechtnis_mittel.json`, `ki_gedaechtnis_lang.json`) wird beim ersten Lauf
+  automatisch mit Kursgeschichte vorgefüllt.
+- Positionen aus der Zeit vor den Horizonten gehören automatisch dem Haupthorizont des Bots.
 
 ## Installation
 

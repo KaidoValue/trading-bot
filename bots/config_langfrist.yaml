@@ -6,7 +6,7 @@
 
 mode: paper
 title: "1️⃣ Langfrist-Bot (Hauptbot)"
-description: "Hält Coins über Wochen bis Monate, solange der Kurs über der 200-Tage-Linie liegt. Wenige Trades, max. 50 % investiert."
+description: "Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt aber auch mittelfristig (4h) und kurzfristig (1h), long und short. Max. 50 % investiert."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
 timeframe: 1d
@@ -16,11 +16,32 @@ starting_capital: 1000
 fee_rate: 0.0026
 slippage: 0.0005
 
-# regime = 200-Tage-Linie: investiert über der Linie, sonst Cash
-strategy: regime
-strategy_params:
-  period: 200
-allow_short: false
+# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln, long und short.
+# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position, die dem Horizont gehört, der sie eröffnet hat.
+# share = Startanteil am investierbaren Kapital; mit adaptive_shares wandert Kapital zum Horizont, der zuletzt
+# mehr verdient hat (je Horizont 10-70 %). Der erste bzw. main_horizon gilt für backtest/compare/status.
+horizons:
+  lang:                       # Hauptstil: 200-Tage-Linie, über der Linie long, darunter short
+    timeframe: 1d
+    strategy: regime
+    strategy_params: {period: 200}
+    share: 0.5
+  mittel:                     # Trendfolge auf 4-Stunden-Kerzen, Tage bis Wochen
+    timeframe: 4h
+    strategy: trend
+    share: 0.25
+    stop_loss_atr: 3.0
+    take_profit_atr: 6.0
+    risk_per_trade: 0.02
+  kurz:                       # Daytrading: lernende Gewichtung auf 1-Stunden-Kerzen
+    timeframe: 1h
+    strategy: adaptive
+    share: 0.25
+    stop_loss_atr: 2.0
+    take_profit_atr: 4.0
+    risk_per_trade: 0.01
+adaptive_shares: true
+allow_short: true            # auch auf fallende Kurse (nur Demo; live gesperrt)
 poll_seconds: 300
 reevaluate: true      # stündlich nachprüfen: wurde ein Einstieg z.B. wegen News verschoben, holt er ihn nach
 
@@ -32,7 +53,7 @@ event_pause_minutes: 30
 event_feeds: {}
 
 risk:
-  risk_per_trade: 0.05        # Stop weit weg; die Grösse begrenzt ohnehin max_position_pct (ca. 4 % Risiko)
+  risk_per_trade: 0.05        # gilt für «lang»; Stop weit weg; die Grösse begrenzt ohnehin max_position_pct (ca. 4 % Risiko)
   stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
   take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
   max_position_pct: 0.10      # pro Coin
@@ -42,7 +63,7 @@ risk:
   halt_days: 30              # nach Not-Aus 30 Tage Pause, dann geht es weiter
   min_order_value: 10
   max_total_risk_pct: 0.30
-  max_open_positions: 5
+  max_open_positions: 8       # verteilt auf alle Horizonte
   max_trades_per_day: 10       # 8 Coins: mehrere Käufe am selben Tag möglich
   loss_streak_pause: 99
   pause_hours: 0

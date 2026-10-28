@@ -81,6 +81,14 @@ def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
     return Bot(cfg, trader, trader.broker.cash() + value, invested)
 
 
+def _shares_text(b: Bot) -> str:
+    hz = b.cfg.horizon_list()
+    if len(hz) < 2:
+        return "–"
+    b.trader.horizons, b.trader.adaptive_shares = {h.name: h for h in hz}, b.cfg.adaptive_shares
+    return " · ".join(f"{n} {v * 100:.0f} %" for n, v in b.trader.shares().items())
+
+
 def overview(bots: list[Bot]) -> list[str]:
     head = "| | " + " | ".join(f"**{b.cfg.title or b.cfg.name}**" for b in bots) + " |"
     rows = [
@@ -92,7 +100,9 @@ def overview(bots: list[Bot]) -> list[str]:
         ("Cash (nicht investiert)", lambda b: f"{chf(b.trader.broker.cash())} CHF"),
         ("Offene Positionen", lambda b: str(len(b.trader.open_trades))),
         ("Abgeschlossene Trades", lambda b: str(len(b.trader.closed))),
-        ("Strategie", lambda b: f"{b.cfg.strategy}, {b.cfg.timeframe}-Kerzen"),
+        ("Horizonte (Strategie, Kerzen)", lambda b: b.cfg.horizon_text()),
+        ("Kapitalanteil je Horizont", lambda b: _shares_text(b)),
+        ("Short erlaubt", lambda b: "ja" if b.cfg.allow_short else "nein"),
         ("Hebel", lambda b: (f"{b.cfg.risk.leverage:g}× (Zinsen bisher {chf(b.trader.broker.interest_paid)} CHF)"
                              if b.cfg.risk.leverage > 1 else "ohne")),
     ]
@@ -126,17 +136,22 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
             p = prices[s]
             stake, value = t.entry * t.qty, p * t.qty
             pnl = t.side * (p - t.entry) * t.qty
-            out.append(f"| **{s.split('/')[0]}** {'long' if t.side > 0 else 'short'} | {local(t.opened)} | "
+            hz = f" ({t.horizon})" if t.horizon else ""
+            out.append(f"| **{s.split('/')[0]}** {'long' if t.side > 0 else 'short'}{hz} | {local(t.opened)} | "
                        f"{chf(t.entry)} | {chf(p)} | {t.qty:.6f} | {chf(stake)} CHF | {chf(value)} CHF | "
                        f"{pnl_text(pnl, pnl / stake * 100)} | {chf(t.stop)} ({(t.stop / p - 1) * 100:+.0f} %) |")
     else:
         out.append("Keine offene Position, alles in Cash.")
-    strat = build(b.cfg.strategy, allow_short=b.cfg.allow_short, **b.cfg.strategy_params)
-    out += ["", "**Signale jetzt**", "", "| Coin | Signal |", "|---|---|"]
+    hz = b.cfg.horizon_list()
+    strats = {h.name: build(h.strategy, allow_short=b.cfg.allow_short, **h.strategy_params) for h in hz}
+    strat = strats[hz[0].name]
+    names = [f"{h.name} ({h.timeframe})" if h.name else "Signal" for h in hz]
+    out += ["", "**Signale jetzt**", "", "| Coin | " + " | ".join(names) + " |", "|---" * (len(hz) + 1) + "|"]
     for s in b.cfg.symbols:
-        if (s, b.cfg.timeframe) in frames:
-            sig = int(strat.signals(frames[s, b.cfg.timeframe]).iloc[-1])
-            out.append(f"| {s.split('/')[0]} | {SIGNALS[sig]} |")
+        cells = [SIGNALS[int(strats[h.name].signals(frames[s, h.timeframe]).iloc[-1])]
+                 if (s, h.timeframe) in frames else "–" for h in hz]
+        if any(c != "–" for c in cells):
+            out.append(f"| {s.split('/')[0]} | " + " | ".join(cells) + " |")
     memory = getattr(strat, "memory", None)
     if memory is not None and memory.stats:
         from .memory import phases
@@ -158,7 +173,8 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
         out += ["", "**Letzte abgeschlossene Trades**", "",
                 "| Coin | Gekauft | Verkauft | Einstieg | Ausstieg | Ergebnis | Grund |", "|---|---|---|---|---|---|---|"]
         for t in reversed(b.trader.closed[-10:]):
-            out.append(f"| {t['symbol'].split('/')[0]} {t['side']} | {local(t['opened'])} | {local(t['closed'])} | "
+            hz = f" ({t['horizon']})" if t.get("horizon") else ""
+            out.append(f"| {t['symbol'].split('/')[0]} {t['side']}{hz} | {local(t['opened'])} | {local(t['closed'])} | "
                        f"{chf(t['entry'])} | {chf(t['exit'])} | {pnl_text(t['pnl'])} | {t['reason']} |")
     return out + [""]
 
@@ -178,14 +194,15 @@ def chart(symbol: str, daily: pd.DataFrame, hourly: pd.DataFrame, bots: list[Bot
             ax.plot(df.index, ma, color="#ff7f0e", lw=1.2, ls="--", label="200-Tage-Linie")
         start = df.index[0]
         for b in bots:
-            if (b.cfg.timeframe == "1d") != (tf == "1d"):     # Tages-Bots oben, alle kürzeren unten
-                continue
+            # Trades auf Tageskerzen oben, alle kürzeren Horizonte unten
+            daily = {h.name: h.timeframe == "1d" for h in b.cfg.horizon_list()}
+            here = lambda name, daily=daily, b=b: daily.get(name or "", b.cfg.timeframe == "1d") == (tf == "1d")
             for t in b.trader.closed:
-                if t["symbol"] == symbol and utc(t["closed"]) >= start:
+                if t["symbol"] == symbol and utc(t["closed"]) >= start and here(t.get("horizon")):
                     ax.scatter(utc(t["opened"]), t["entry"], marker="^", color="green", s=70, zorder=5)
                     ax.scatter(utc(t["closed"]), t["exit"], marker="v", color="red", s=70, zorder=5)
             t = b.trader.open_trades.get(symbol)
-            if t:
+            if t and here(t.horizon):
                 ax.scatter(max(utc(t.opened), start), t.entry, marker="^", color="green", s=110,
                            zorder=6, label=f"Kauf {chf(t.entry)}")
                 ax.axhline(t.entry, color="green", lw=0.8, ls=":")
@@ -244,7 +261,8 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
     bots = [b for p in config_paths if (b := load_bot(p, prices))]
     frames = {}
     wanted = [(s, tf, bars) for s in symbols for tf, bars in (("1d", 400), ("1h", 300))]
-    wanted += [(s, c.timeframe, 300) for c in cfgs for s in symbols if c.timeframe not in ("1d", "1h")]
+    wanted += [(s, h.timeframe, 300) for c in cfgs for h in c.horizon_list() for s in symbols
+               if h.timeframe not in ("1d", "1h")]
     for s, tf, bars in dict.fromkeys(wanted):
         try:
             frames[s, tf] = _retry(lambda: data.fetch_recent(ex, s, tf, bars))

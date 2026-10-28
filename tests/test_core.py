@@ -505,11 +505,11 @@ def test_chef_follows_winner_with_limits(tmp_path):
 
 def test_chef_cuts_risk_after_losses(tmp_path):
     from datetime import datetime, timezone
-    from tradingbot.chef import Chef
+    from tradingbot.chef import Chef, MAX_RISK
     chef = Chef(tmp_path / "chef.json")
     chef.equity, chef.peak = 850.0, 1000.0
     w, reason = chef.target("Seitwärts, ruhig", datetime(2026, 1, 1, tzinfo=timezone.utc))
-    assert w["config_risiko"] <= 0.05 + 1e-9 and "halbiert" in reason
+    assert w["config_risiko"] <= MAX_RISK / 2 + 1e-9 and "halbiert" in reason
 
 
 def test_dashboard_shows_chef(df, monkeypatch, tmp_path):
@@ -530,7 +530,7 @@ def test_dashboard_shows_chef(df, monkeypatch, tmp_path):
 
 def test_chef_emergency_brake(tmp_path):
     from datetime import datetime, timedelta, timezone
-    from tradingbot.chef import Chef
+    from tradingbot.chef import Chef, DEFAULT
     path = tmp_path / "chef.json"
     t = datetime(2026, 1, 1, tzinfo=timezone.utc)
     eq = {"config_langfrist": 1000.0, "config_daytrading": 1000.0, "config_risiko": 1000.0}
@@ -539,7 +539,7 @@ def test_chef_emergency_brake(tmp_path):
         eq["config_risiko"] *= 0.975
         change = Chef(path).update(eq, "Aufwärtstrend, wild", t + timedelta(minutes=30 * i))
     chef = Chef(path)
-    assert chef.weights["config_risiko"] <= 0.011 and "Notbremse" in change["reason"]
+    assert chef.weights["config_risiko"] <= DEFAULT["config_risiko"] * 0.1 + 0.001 and "Notbremse" in change["reason"]
 
 
 def test_youtube_saves_new_videos(monkeypatch, tmp_path):
@@ -570,3 +570,71 @@ def test_youtube_retries_missing_transcript(monkeypatch, tmp_path):
     [f] = youtube.update(["k"], get=get, fetch_transcript=lambda v: None)
     youtube.update(["k"], get=get, fetch_transcript=lambda v: "Jetzt mit Text")
     assert "Jetzt mit Text" in Path(f).read_text() and "Keine Abschrift" not in Path(f).read_text()
+
+
+# --- Zeithorizonte: jeder Bot handelt kurz, mittel und lang auf einem Konto
+
+def _horizon_trader():
+    from tradingbot.config import Horizon
+    t = Trader(PaperBroker(1000, 0, 0), RiskManager(RiskConfig(max_total_risk_pct=1, risk_per_trade=0.01), 1000),
+               allow_short=True)
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=1.0, take_profit_atr=2.0),
+                  "lang": Horizon("lang", "1d", "regime", stop_loss_atr=8.0, take_profit_atr=20.0)}
+    return t
+
+
+def test_position_belongs_to_its_horizon():
+    t = _horizon_trader()
+    t.on_signal("X", 1, 100, atr=5, equity=1000, when=0, horizon="lang")
+    assert t.open_trades["X"].horizon == "lang" and t.open_trades["X"].stop == pytest.approx(60)   # 8 × ATR
+    t.on_signal("X", -1, 100, atr=5, equity=1000, when=1, horizon="kurz")     # fremder Horizont: bleibt offen
+    assert "X" in t.open_trades and "lang" in t.note
+    t.on_signal("X", -1, 100, atr=5, equity=1000, when=2, horizon="lang")     # eigener Horizont: schliessen, short
+    assert t.closed[-1]["horizon"] == "lang" and t.open_trades["X"].side == -1
+
+
+def test_each_horizon_can_short_with_own_stops():
+    t = _horizon_trader()
+    t.on_signal("X", -1, 100, atr=5, equity=1000, when=0, horizon="kurz")
+    tr = t.open_trades["X"]
+    assert tr.side == -1 and tr.stop == pytest.approx(105) and tr.target == pytest.approx(90)
+
+
+def test_adaptive_shares_follow_winning_horizon():
+    from tradingbot.engine import MIN_SHARE, MAX_SHARE
+    t = _horizon_trader()
+    assert t.shares() == {"kurz": 0.5, "lang": 0.5}
+    t.adaptive_shares = True
+    t.closed = [{"pnl": 30.0, "horizon": "kurz"}] * 5 + [{"pnl": -20.0, "horizon": "lang"}] * 5
+    w = t.shares()
+    assert w["kurz"] > w["lang"] and sum(w.values()) == pytest.approx(1)
+    assert MIN_SHARE - 1e-9 <= w["lang"] and w["kurz"] <= MAX_SHARE + 1e-9
+
+
+def test_budget_share_limits_one_horizon():
+    rm = RiskManager(RiskConfig(max_invested_pct=0.5, max_position_pct=1, risk_per_trade=1), 1000)
+    assert rm.plan(1000, 1000, 100, 1, budget_share=0.5, exposure=0).qty == pytest.approx(2.5)    # 250 CHF
+    assert rm.plan(1000, 1000, 100, 1, budget_share=0.5, exposure=250) is None
+
+
+def test_bot_configs_trade_all_horizons_and_short():
+    for name in ("langfrist", "daytrading", "risiko"):
+        cfg = Config.load(f"bots/config_{name}.yaml")
+        assert {h.name for h in cfg.horizon_list()} == {"kurz", "mittel", "lang"} and cfg.allow_short
+        assert cfg.strategy == cfg.horizon_list()[0].strategy
+    assert Config.load("bots/config_langfrist.yaml").horizon_list()[0].name == "lang"
+
+
+def test_paper_loop_with_horizons(df, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    cfg = Config(poll_seconds=0, symbols=["BTC/CHF", "ETH/CHF", "SOL/CHF"], use_news=False, name="hz",
+                 allow_short=True, adaptive_shares=True,
+                 horizons={"kurz": {"timeframe": "1h", "strategy": "breakout",
+                                    "strategy_params": {"entry": 10, "exit": 5}},
+                           "lang": {"timeframe": "1d", "strategy": "trend", "stop_loss_atr": 4.0}},
+                 risk=RiskConfig(loss_streak_pause=99, max_total_risk_pct=1, max_open_positions=6,
+                                 max_daily_loss_pct=1, max_trades_per_day=999))
+    bot.run(cfg, max_iterations=300)
+    trades = pd.read_csv(tmp_path / "daten" / "logs" / "trades_hz.csv")
+    assert set(trades["horizon"]) == {"kurz", "lang"} and "short" in set(trades["side"])

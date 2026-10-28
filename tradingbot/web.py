@@ -55,6 +55,11 @@ def record(path: Path, now, values: dict[str, float]) -> pd.DataFrame:
     return df
 
 
+def _hz(name) -> str:
+    """Kleiner Zusatz «kurz/mittel/lang» hinter dem Coin."""
+    return f" <small class='muted'>{escape(name)}</small>" if name else ""
+
+
 def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, exchange=None) -> str:
     names = [b.cfg.name for b in bots] + (["chef"] if chef else [])
     titles = {b.cfg.name: b.cfg.title or b.cfg.name for b in bots}
@@ -78,7 +83,8 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
   <div class="kv"><span>Cash</span><b>{_chf(b.trader.broker.cash(), 0)} CHF</b></div>
   <div class="kv"><span>Offen / Abgeschlossen</span><b>{len(b.trader.open_trades)} / {len(closed)}</b></div>
   <div class="kv"><span>Trefferquote</span><b>{rate}</b></div>
-  <div class="kv"><span>Strategie</span><b>{escape(b.cfg.strategy)} · {escape(b.cfg.timeframe)} · {lev}</b></div>
+  <div class="kv"><span>Horizonte</span><b>{escape(b.cfg.horizon_text())}</b></div>
+  <div class="kv"><span>Short / Hebel</span><b>{'Short erlaubt' if b.cfg.allow_short else 'nur long'} · {lev}</b></div>
 </div>""")
     if chef:
         alloc = "".join(f'<div class="seg" style="flex:{w * 100:.1f};background:{COLORS[j]}" title="{s}"></div>'
@@ -105,7 +111,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
             pnl = t.side * (p - t.entry) * t.qty
             side = '<span class="tag long">LONG</span>' if t.side > 0 else '<span class="tag short">SHORT</span>'
             rows.append(f"<tr><td><i class='dot' style='background:{COLORS[i % 4]}'></i>{escape(short[b.cfg.name])}</td>"
-                        f"<td><b>{s.split('/')[0]}</b></td><td>{side}</td><td class='r'>{_price(t.entry)}</td>"
+                        f"<td><b>{s.split('/')[0]}</b>{_hz(t.horizon)}</td><td>{side}</td><td class='r'>{_price(t.entry)}</td>"
                         f"<td class='r'>{_price(p)}</td><td class='r'>{_chf(stake, 0)}</td>"
                         f"<td class='r'>{_signed(pnl, pnl / stake * 100, '')}</td>"
                         f"<td class='r muted'>{_price(t.stop)}</td><td class='r muted'>{_price(t.target) if t.target and t.entry / 3 < t.target < t.entry * 3 else '–'}</td>"
@@ -117,7 +123,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
                     key=lambda x: pd.Timestamp(x[1]["closed"]), reverse=True)[:25]
     trades = "".join(
         f"<tr><td><i class='dot' style='background:{COLORS[i % 4]}'></i>{escape(short[b.cfg.name])}</td>"
-        f"<td><b>{t['symbol'].split('/')[0]}</b></td>"
+        f"<td><b>{t['symbol'].split('/')[0]}</b>{_hz(t.get('horizon'))}</td>"
         f"<td><span class='tag {'long' if t['side'] == 'long' else 'short'}'>{t['side'].upper()}</span></td>"
         f"<td class='r'>{_price(t['entry'])}</td><td class='r'>{_price(t['exit'])}</td>"
         f"<td class='r'>{_signed(t['pnl'])}</td><td>{escape(str(t['reason']))}</td>"

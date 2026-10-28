@@ -4,7 +4,8 @@ Er handelt nicht selbst, sondern legt sein Geld anteilig in die Stile Langfrist,
 (Hebel) an, so als hätte er Anteile an diesen drei Bots. Sein Kapital entwickelt sich also mit deren Ergebnis,
 gewichtet nach seiner Verteilung. Bei jedem Lauf entscheidet er neu:
 
-- Wie lief jeder Stil in den letzten 7 Tagen?
+- Wie lief jeder Stil kurzfristig (letzter Tag), mittelfristig (7 Tage) und langfristig (30 Tage)?
+  Alle drei Sichten zählen gleich viel (Durchschnitt der drei Renditen).
 - Was weiss sein Gedächtnis: Welcher Stil hat in der aktuellen Marktphase bisher am meisten gebracht?
 - Feste Grenzen: höchstens 20 % im Risiko-Stil (Hebel), mindestens 10 % Cash; ist er mehr als 10 % im Minus,
   halbiert er den Risiko-Anteil. Laufen alle Stile schlecht, bleibt mehr in Cash.
@@ -23,7 +24,8 @@ import pandas as pd
 from .memory import Memory
 
 STYLES = {"config_langfrist": "Langfrist", "config_daytrading": "KI", "config_risiko": "Risiko"}
-DEFAULT = {"config_langfrist": 0.5, "config_daytrading": 0.25, "config_risiko": 0.1}
+DEFAULT = {"config_langfrist": 0.3, "config_daytrading": 0.3, "config_risiko": 0.3}   # gleiche Startbedingungen
+VIEWS = {"kurz": 1, "mittel": 7, "lang": 30}     # Sichten des Chefs in Tagen
 MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.20, 0.10, 0.05, 0.0026
 BRAKE_HOURS, BRAKE_LOSS = 3, -0.03
 
@@ -62,7 +64,7 @@ class Chef:
         """Neue Wunsch-Verteilung und die Begründung in Worten."""
         scores, why = {}, []
         for s in DEFAULT:
-            recent = self._recent(s, now)
+            recent = sum(self._recent(s, now, d) for d in VIEWS.values()) / len(VIEWS)
             total, n = self.memory.prior(phase, s)
             trust = n / (n + 300)                     # je mehr Erfahrung in dieser Phase, desto mehr zählt sie
             remembered = (total / n * 48 * 7) if n else 0.0          # auf 7 Tage hochgerechnet (48 Läufe/Tag)

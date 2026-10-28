@@ -3,8 +3,8 @@
 
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
-title: "2️⃣ KI-Bot (lernend, Daytrading)"
-description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, und vergisst nichts. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. 1-Stunden-Kerzen, Positionen meist Stunden bis 1–2 Tage."
+title: "2️⃣ KI-Bot (lernend, kurz bis lang)"
+description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, und vergisst nichts. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, long und short."
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
@@ -22,13 +22,39 @@ slippage: 0.0005
 
 # trend | mean_reversion | breakout | pullback | momentum | price_action | smc | reversal | range
 # | ensemble | adaptive (lernend, gewichtet alle 9 nach ihrem aktuellen Erfolg)
-strategy: adaptive_memory
+# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln, long und short.
+# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position, die dem Horizont gehört, der sie eröffnet hat.
+# share = Startanteil am investierbaren Kapital; mit adaptive_shares wandert Kapital zum Horizont, der zuletzt
+# mehr verdient hat (je Horizont 10-70 %). Der erste bzw. main_horizon gilt für backtest/compare/status.
+horizons:
+  kurz:                       # Daytrading auf 1-Stunden-Kerzen (Hauptstil)
+    timeframe: 1h
+    strategy: adaptive_memory
+    strategy_params:
+      memory_file: daten/state/ki_gedaechtnis.json          # Gedächtnis, wächst bei jedem Lauf
+      library_file: daten/state/strategie_bibliothek.json   # selbst erfundene Strategien aus dem Labor
+    share: 0.4
+  mittel:                     # 4-Stunden-Kerzen, Tage bis Wochen, eigenes Gedächtnis
+    timeframe: 4h
+    strategy: adaptive_memory
+    strategy_params:
+      memory_file: daten/state/ki_gedaechtnis_mittel.json
+    share: 0.3
+    stop_loss_atr: 3.0
+    take_profit_atr: 6.0
+  lang:                       # Tageskerzen, Wochen bis Monate, eigenes Gedächtnis
+    timeframe: 1d
+    strategy: adaptive_memory
+    strategy_params:
+      memory_file: daten/state/ki_gedaechtnis_lang.json
+    share: 0.3
+    stop_loss_atr: 4.0
+    take_profit_atr: 10.0
+    risk_per_trade: 0.02
+adaptive_shares: true
 
 # Auch auf fallende Kurse setzen (Short). Nur Backtest und Paper-Modus.
-allow_short: false
-strategy_params:
-  memory_file: daten/state/ki_gedaechtnis.json          # Gedächtnis, wächst bei jedem Lauf
-  library_file: daten/state/strategie_bibliothek.json   # selbst erfundene Strategien aus dem Labor
+allow_short: true
 
 poll_seconds: 60
 
@@ -53,9 +79,9 @@ risk:
   max_daily_loss_pct: 0.03
   max_drawdown_pct: 0.15
   min_order_value: 10
-  max_total_risk_pct: 0.03   # Gesamtrisiko aller offenen Positionen
-  max_open_positions: 3
-  max_trades_per_day: 6      # gegen Overtrading
+  max_total_risk_pct: 0.08   # Gesamtrisiko aller offenen Positionen (alle Horizonte)
+  max_open_positions: 6
+  max_trades_per_day: 10     # gegen Overtrading
   loss_streak_pause: 3       # nach 3 Verlusten in Folge ...
   pause_hours: 12            # ... 12 Stunden Pause
   max_spread_pct: 0.003      # kein Einstieg bei Spread > 0,3 %

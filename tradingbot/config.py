@@ -32,6 +32,20 @@ class RiskConfig:
 
 
 @dataclass
+class Horizon:
+    """Ein Zeithorizont eines Bots (kurz = Daytrading, mittel, lang). Alle Horizonte eines Bots teilen sich
+    ein Konto; jeder hat eigene Kerzen, eigene Strategie und eigene Stops. Leere Werte = Wert aus `risk`."""
+    name: str
+    timeframe: str
+    strategy: str
+    strategy_params: dict = field(default_factory=dict)
+    share: float = 1.0                  # Anteil am investierbaren Kapital (wird mit den anderen normiert)
+    stop_loss_atr: float | None = None
+    take_profit_atr: float | None = None
+    risk_per_trade: float | None = None
+
+
+@dataclass
 class Config:
     mode: str = "paper"                 # backtest | paper | live
     exchange: str = "kraken"
@@ -54,8 +68,12 @@ class Config:
     use_events: bool = True             # Schlüsselpersonen, Fed/SEC, Wirtschaftskalender
     event_pause_minutes: int = 30       # so lange nach einem Ereignis keine neuen Trades
     event_feeds: dict = field(default_factory=dict)   # zusätzliche RSS-Feeds, z.B. Trump/Musk-Konten
+    # Zeithorizonte (kurz/mittel/lang), alle auf einem Konto. Leer = ein Horizont aus strategy/timeframe.
+    horizons: dict = field(default_factory=dict)
+    main_horizon: str = ""              # dieser Horizont gilt für backtest/compare/status (Standard: der erste)
+    adaptive_shares: bool = False       # Kapital zum Horizont verschieben, der zuletzt mehr verdient hat
     risk: RiskConfig = field(default_factory=RiskConfig)
-    name: str = "config"                # Name der Konfigurationsdatei, für die Stand-Datei
+    name: str = "config"             # Name der Konfigurationsdatei, für die Stand-Datei
     title: str = ""                     # Anzeigename in der Übersicht (STATUS.md)
     description: str = ""               # ein Satz: was dieser Bot macht (für die Übersicht)
     api_key: str | None = None
@@ -68,7 +86,21 @@ class Config:
         cfg = cls(**raw, risk=risk, name=Path(path).stem)
         cfg.api_key = os.getenv("EXCHANGE_API_KEY")
         cfg.api_secret = os.getenv("EXCHANGE_API_SECRET")
+        if cfg.horizons:
+            main = cfg.horizon_list()[0]
+            cfg.timeframe, cfg.strategy, cfg.strategy_params = main.timeframe, main.strategy, main.strategy_params
         return cfg
+
+    def horizon_list(self) -> list[Horizon]:
+        """Alle Horizonte, der Haupthorizont zuerst."""
+        if not self.horizons:
+            return [Horizon("", self.timeframe, self.strategy, self.strategy_params)]
+        hz = [Horizon(name=n, **(h or {})) for n, h in self.horizons.items()]
+        return sorted(hz, key=lambda h: h.name != (self.main_horizon or hz[0].name))
+
+    def horizon_text(self) -> str:
+        """Kurzbeschreibung für die Übersicht, z.B. «kurz: adaptive 1h · lang: regime 1d»."""
+        return " · ".join(f"{h.name + ': ' if h.name else ''}{h.strategy} {h.timeframe}" for h in self.horizon_list())
 
     @property
     def state_path(self) -> Path:

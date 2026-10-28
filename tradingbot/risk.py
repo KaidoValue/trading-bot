@@ -43,13 +43,15 @@ class RiskManager:
             self.halted, self.halted_on = True, day
             self.halt_reason = f"Max. Drawdown {self.cfg.max_drawdown_pct:.0%} erreicht"
 
-    def can_open(self, equity: float, when=None, open_risk: float = 0.0, n_open: int = 0) -> bool:
+    def can_open(self, equity: float, when=None, open_risk: float = 0.0, n_open: int = 0,
+                 risk_pct: float | None = None) -> bool:
+        risk_pct = self.cfg.risk_per_trade if risk_pct is None else risk_pct
         checks = [
             (self.halted, "Not-Aus"),
             (equity < self.day_start_equity * (1 - self.cfg.max_daily_loss_pct), "Tagesverlust-Limit"),
             (self.trades_today >= self.cfg.max_trades_per_day, "max. Trades pro Tag"),
             (n_open >= self.cfg.max_open_positions, "max. offene Positionen"),
-            (open_risk + self.cfg.risk_per_trade > self.cfg.max_total_risk_pct + 1e-9, "Gesamtrisiko"),
+            (open_risk + risk_pct > self.cfg.max_total_risk_pct + 1e-9, "Gesamtrisiko"),
             (self.paused_until is not None and isinstance(when, datetime) and when < self.paused_until,
              "Pause nach Verlustserie"),
         ]
@@ -69,13 +71,19 @@ class RiskManager:
             self.loss_streak = 0
 
     def plan(self, equity: float, cash: float, price: float, atr: float, side: int = 1,
-             size_factor: float = 1.0, exposure: float | None = None) -> TradePlan | None:
+             size_factor: float = 1.0, exposure: float | None = None, stop_atr: float | None = None,
+             target_atr: float | None = None, risk_pct: float | None = None,
+             budget_share: float = 1.0) -> TradePlan | None:
         """side = +1 long (auf steigende Kurse), -1 short (auf fallende Kurse).
-        Chance-Risiko-Verhältnis (CRV) = take_profit_atr / stop_loss_atr, standardmässig 2:1."""
+        Chance-Risiko-Verhältnis (CRV) = take_profit_atr / stop_loss_atr, standardmässig 2:1.
+        stop_atr/target_atr/risk_pct überschreiben die Werte aus der Config (je Zeithorizont), budget_share
+        ist der Anteil des Horizonts an max_invested_pct (exposure dann nur die Positionen dieses Horizonts)."""
         if atr <= 0 or price <= 0:
             return None
-        stop_dist = self.cfg.stop_loss_atr * atr
-        qty = (equity * self.cfg.risk_per_trade * size_factor) / stop_dist
+        stop_dist = (self.cfg.stop_loss_atr if stop_atr is None else stop_atr) * atr
+        target_dist = (self.cfg.take_profit_atr if target_atr is None else target_atr) * atr
+        risk_pct = self.cfg.risk_per_trade if risk_pct is None else risk_pct
+        qty = (equity * risk_pct * size_factor) / stop_dist
         lev = self.cfg.leverage                     # mit Hebel darf die Position grösser als das Kapital sein
         qty = min(qty, equity * self.cfg.max_position_pct * lev / price)
         if side > 0:
@@ -83,9 +91,9 @@ class RiskManager:
         # Obergrenze für alle offenen Positionen zusammen (long und short), mit Hebel entsprechend höher
         if exposure is None:
             exposure = max(equity - cash, 0.0)
-        room = equity * self.cfg.max_invested_pct * lev - exposure
+        room = equity * self.cfg.max_invested_pct * lev * budget_share - exposure
         qty = min(qty, max(room, 0.0) / price)
         if qty * price < self.cfg.min_order_value:
             self.last_block = "Order kleiner als Mindestgrösse"
             return None
-        return TradePlan(qty=qty, stop=price - side * stop_dist, target=price + side * self.cfg.take_profit_atr * atr)
+        return TradePlan(qty=qty, stop=price - side * stop_dist, target=price + side * target_dist)

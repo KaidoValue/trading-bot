@@ -10,6 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 TZ = "Europe/Zurich"
+HORIZON_TEXT = {"kurz": "kurzfristig (Daytrading)", "mittel": "mittelfristig", "lang": "langfristig"}
 FOLDER = Path("lernen/tagebuch")
 
 WHY = {
@@ -18,6 +19,11 @@ WHY = {
     "adaptive": ("Die lernende KI: die Strategien, die in den letzten Wochen am besten funktioniert haben, "
                  "sagen gemeinsam «kaufen».",
                  "Die lernende KI: die zuletzt erfolgreichen Strategien sagen gemeinsam «raus»."),
+    "adaptive_memory": ("Die KI mit Gedächtnis: die Strategien, die in dieser Marktphase bisher am besten "
+                        "funktioniert haben, sagen gemeinsam «kaufen».",
+                        "Die KI mit Gedächtnis: die in dieser Marktphase erfolgreichen Strategien sagen «raus»."),
+    "trend": ("Trendfolge: der schnelle Durchschnitt liegt über dem langsamen (Aufwärtstrend).",
+              "Trendfolge: der schnelle Durchschnitt liegt unter dem langsamen (Abwärtstrend)."),
     "breakout": ("Ausbruch: der Kurs hat ein neues kurzfristiges Hoch gemacht.",
                  "Der Kurs hat ein neues kurzfristiges Tief gemacht (Ausbruch nach unten)."),
 }
@@ -55,12 +61,22 @@ def _market(ctx: dict) -> str:
     return ", ".join(p for p in parts if p)
 
 
+def _horizon(cfg, name: str) -> tuple[str, str]:
+    """Strategie und Beschreibung des Zeithorizonts, der einen Trade eröffnet hat."""
+    hz = cfg.horizon_list()
+    h = next((h for h in hz if h.name == name), hz[0])
+    label = f"{HORIZON_TEXT.get(h.name, h.name)}, {h.timeframe}-Kerzen" if h.name else f"{h.timeframe}-Kerzen"
+    return h.strategy, label
+
+
 def opened(cfg, symbol: str, t, when) -> str:
     stake = t.entry * t.qty
-    why = WHY.get(cfg.strategy, ("Signal der Strategie.", "Signal der Strategie."))[0 if t.side > 0 else 1]
+    strategy, horizon = _horizon(cfg, getattr(t, "horizon", ""))
+    why = WHY.get(strategy, ("Signal der Strategie.", "Signal der Strategie."))[0 if t.side > 0 else 1]
     action = "🟢 **Kauf**" if t.side > 0 else "🟣 **Short** (Wette auf fallende Kurse)"
     return (f"### {_local(when):%H:%M} · {cfg.title or cfg.name} · {action} {symbol}\n\n"
             f"- **Kurs:** {_chf(t.entry)} CHF, Menge {t.qty:.6f}, Einsatz {_chf(stake)} CHF\n"
+            f"- **Horizont:** {horizon}\n"
             f"- **Warum:** {why}\n"
             f"- **Stop-Loss:** {_chf(t.stop)} CHF ({(t.stop / t.entry - 1) * 100:+.1f} %), "
             f"möglicher Verlust ca. {_chf(abs(t.entry - t.stop) * t.qty)} CHF\n"
@@ -84,6 +100,7 @@ def closed(cfg, trade: dict) -> str:
             f"- **Ergebnis:** {icon} {'+' if pnl >= 0 else ''}{_chf(pnl)} CHF ({pnl / stake * 100:+.2f} %), "
             f"nach Gebühren\n"
             f"- **Einstieg → Ausstieg:** {_chf(trade['entry'])} → {_chf(trade['exit'])} CHF, gehalten {held_txt}\n"
+            f"- **Horizont:** {_horizon(cfg, trade.get('horizon', ''))[1]}\n"
             f"- **Grund:** {reason}\n"
             f"- **Was man daraus lernt:** {lesson}\n")
 

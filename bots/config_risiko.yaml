@@ -3,7 +3,7 @@
 
 mode: paper
 title: "3️⃣ Risiko-Bot (aggressiv, Hebel 3×)"
-description: "Sehr risikofreudig: viele Trades alle 30 Minuten, setzt auch auf fallende Kurse (Short), 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
+description: "Sehr risikofreudig: handelt kurz (30 Min.), mittel (4h) und lang (Tageskerzen), long und short, 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
 timeframe: 30m           # passt zum Takt auf GitHub (alle 30 Minuten)
@@ -15,11 +15,31 @@ slippage: 0.0005
 
 # Kurzer Donchian-Ausbruch: long nach einem 10-Kerzen-Hoch, short nach einem 5-Kerzen-Tief.
 # hold: die Richtung bleibt bis zum Gegensignal bestehen -> der Bot ist praktisch immer im Markt
-strategy: breakout
-strategy_params:
-  entry: 10
-  exit: 5
-  hold: true
+# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln, long und short.
+# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position, die dem Horizont gehört, der sie eröffnet hat.
+# share = Startanteil am investierbaren Kapital; mit adaptive_shares wandert Kapital zum Horizont, der zuletzt
+# mehr verdient hat (je Horizont 10-70 %). Der erste bzw. main_horizon gilt für backtest/compare/status.
+horizons:
+  kurz:                       # Daytrading: 10/5-Kerzen-Ausbruch auf 30-Minuten-Kerzen (Hauptstil)
+    timeframe: 30m
+    strategy: breakout
+    strategy_params: {entry: 10, exit: 5, hold: true}
+    share: 0.4
+  mittel:                     # 20/10-Ausbruch auf 4-Stunden-Kerzen
+    timeframe: 4h
+    strategy: breakout
+    strategy_params: {entry: 20, exit: 10, hold: true}
+    share: 0.3
+    stop_loss_atr: 2.0
+    take_profit_atr: 4.0
+  lang:                       # 20/10-Ausbruch auf Tageskerzen (Turtle-artig)
+    timeframe: 1d
+    strategy: breakout
+    strategy_params: {entry: 20, exit: 10, hold: true}
+    share: 0.3
+    stop_loss_atr: 3.0
+    take_profit_atr: 6.0
+adaptive_shares: true
 allow_short: true        # auch auf fallende Kurse (nur Demo; live gesperrt)
 poll_seconds: 60
 
@@ -36,8 +56,8 @@ risk:
   max_drawdown_pct: 0.90      # Not-Aus erst bei 90 % Verlust
   halt_days: 1
   min_order_value: 10
-  max_total_risk_pct: 0.40
-  max_open_positions: 6
+  max_total_risk_pct: 0.50
+  max_open_positions: 8       # verteilt auf alle Horizonte
   max_trades_per_day: 100
   loss_streak_pause: 99       # keine Pause nach Verlusten
   pause_hours: 0

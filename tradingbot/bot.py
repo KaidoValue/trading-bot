@@ -40,9 +40,14 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     quote = cfg.symbols[0].split("/")[1]
     exchange = data.make_exchange(cfg.exchange, cfg.api_key, cfg.api_secret,
                                   convert_to=None if cfg.mode == "live" else quote)
-    strategy = build(cfg.strategy, allow_short=cfg.allow_short, **cfg.strategy_params)
-    _pretrain(strategy, cfg)
+    horizons = cfg.horizon_list()
+    strategies = {h.name: build(h.strategy, allow_short=cfg.allow_short, **h.strategy_params) for h in horizons}
+    for h in horizons:
+        _pretrain(strategies[h.name], cfg, h.timeframe)
     trader = make_trader(cfg, exchange)
+    if cfg.horizons:
+        trader.horizons = {h.name: h for h in horizons}
+        trader.adaptive_shares = cfg.adaptive_shares
     cfg.symbols = available_symbols(exchange, cfg.symbols)
     if isinstance(trader.broker, PaperBroker):
         # Umgerechnete Coins: real müssten CHF erst in USD getauscht werden (hin und zurück je eine Order)
@@ -51,13 +56,15 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                        events=cfg.use_events, extra_feeds=cfg.event_feeds,
                        pause_minutes=cfg.event_pause_minutes) if cfg.use_news else None
     last_bar: dict[str, object] = state.load(cfg.state_path, trader)
+    for t in trader.open_trades.values():      # Positionen aus der Zeit vor den Horizonten: Haupthorizont
+        t.horizon = t.horizon if t.horizon in trader.horizons else horizons[0].name
     if last_bar:
         log.info("Gespeicherter Stand geladen (%s): %d offene Position(en), %d abgeschlossene Trades",
                  cfg.state_path, len(trader.open_trades), len(trader.closed))
     log_path = cfg.trades_path
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    log.info("Bot gestartet: Modus=%s, Börse=%s, Symbole=%s, Strategie=%s",
-             cfg.mode, cfg.exchange, cfg.symbols, cfg.strategy)
+    log.info("Bot gestartet: Modus=%s, Börse=%s, Symbole=%s, Horizonte=%s",
+             cfg.mode, cfg.exchange, cfg.symbols, cfg.horizon_text())
     n = 0
     while max_iterations is None or n < max_iterations:
         n += 1
@@ -89,26 +96,33 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     log.error("NOT-AUS: %s. Bot stoppt.", trader.risk.halt_reason)
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
-            frames, notes = {}, []
-            for s in ([] if trader.risk.halted else cfg.symbols):
-                df = frames[s] = data.fetch_recent(exchange, s, cfg.timeframe)
-                if last_bar.get(s) == df.index[-1] and not cfg.reevaluate:
-                    continue  # keine neue abgeschlossene Kerze
-                last_bar[s] = df.index[-1]
-                sig = int(strategy.signals(df).iloc[-1])
-                if hasattr(strategy, "learn"):
-                    strategy.learn(s, df)        # KI-Gedächtnis: neue Kerzen merken
-                if sig == 0:
-                    notes.append(f"{s}: kein Signal")
-                    continue
-                spread = _spread(exchange, s)
-                liquid = spread is None or spread <= cfg.risk.max_spread_pct
-                if not liquid:
-                    log.info("%s: Spread %.3f%% zu gross, kein Einstieg", s, spread * 100)
-                factor = _correlation_factor(s, sig, frames, trader, cfg.risk.correlation_limit)
-                trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
-                                 size_factor=factor, can_open_new=liquid)
-                notes.append(trader.note)
+            notes, spreads = [], {}
+            for h in ([] if trader.risk.halted else horizons):
+                strategy, frames = strategies[h.name], {}
+                prefix = f"[{h.name}] " if h.name else ""
+                for s in cfg.symbols:
+                    key = f"{h.name}:{s}" if h.name else s
+                    df = frames[s] = data.fetch_recent(exchange, s, h.timeframe)
+                    if last_bar.get(key) == df.index[-1] and not cfg.reevaluate:
+                        continue  # keine neue abgeschlossene Kerze
+                    last_bar[key] = df.index[-1]
+                    sig = int(strategy.signals(df).iloc[-1])
+                    if hasattr(strategy, "learn"):
+                        strategy.learn(s, df)        # KI-Gedächtnis: neue Kerzen merken
+                    if sig == 0:
+                        notes.append(f"{prefix}{s}: kein Signal")
+                        continue
+                    if s not in spreads:
+                        spreads[s] = _spread(exchange, s)
+                    spread = spreads[s]
+                    liquid = spread is None or spread <= cfg.risk.max_spread_pct
+                    if not liquid:
+                        log.info("%s: Spread %.3f%% zu gross, kein Einstieg", s, spread * 100)
+                    factor = _correlation_factor(s, sig, frames, trader, cfg.risk.correlation_limit)
+                    trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
+                                     size_factor=factor, can_open_new=liquid, horizon=h.name)
+                    eq = trader.equity(prices)
+                    notes.append(prefix + trader.note)
             if notes:
                 trader.note = " | ".join(notes)
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
@@ -123,14 +137,17 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             time.sleep(cfg.poll_seconds)
 
 
-def _pretrain(strategy, cfg: Config, days: int = 365) -> None:
-    """Füllt ein leeres KI-Gedächtnis einmalig mit einem Jahr Kursgeschichte (BTC und ETH)."""
+def _pretrain(strategy, cfg: Config, timeframe: str | None = None) -> None:
+    """Füllt ein leeres KI-Gedächtnis einmalig mit Kursgeschichte (BTC und ETH): ein Jahr bei kurzen Kerzen,
+    mehr bei 4h- und Tageskerzen, damit genug Kerzen zusammenkommen."""
     memory = getattr(strategy, "memory", None)
     if memory is None or memory.pretrained:
         return
+    timeframe = timeframe or cfg.timeframe
+    days = {"4h": 1095, "1d": 2500}.get(timeframe, 365)
     try:
         ex = data.make_exchange(cfg.history_exchange)
-        frames = [data.fetch_history(ex, s, cfg.timeframe, days) for s in dict.fromkeys([cfg.history_symbol, "ETH/USD"])]
+        frames = [data.fetch_history(ex, s, timeframe, days) for s in dict.fromkeys([cfg.history_symbol, "ETH/USD"])]
         n = strategy.pretrain(frames)
         log.info("KI-Gedächtnis mit %d Kerzen Kursgeschichte vorgefüllt", n)
     except Exception as e:
