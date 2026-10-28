@@ -349,15 +349,11 @@
   "note": "BTC/CHF: kein Signal | ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | SOL/CHF: kein Signal | TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0) | HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,rally, Wert -1.0)",
   "news": {
     "fear_greed": 51,
-    "news_score": -1.0,
+    "news_score": 0.5,
     "themes": {
       "rally": [
         "coindesk",
         "cointelegraph"
-      ],
-      "hack": [
-        "coindesk",
-        "decrypt"
       ]
     },
     "blackout": null,
@@ -368,13 +364,6 @@
         "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
         "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
         "published": "2026-10-28T09:15:22+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Bitcoin Wallet Maker Keystone Pulls Devices as Stolen Key Opens Door to Fakes",
-        "link": "https://decrypt.co/381983/bitcoin-wallet-keystone-devices-destroyed-stolen-key",
-        "published": "2026-10-27T18:16:02+00:00"
       },
       {
         "theme": "rally",
@@ -396,19 +385,12 @@
         "title": "Bitcoin drops below $80,000 as crypto ignores Asian tech rally, Fed meeting begins",
         "link": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
         "published": "2026-10-27T11:32:45+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Crypto wallet maker Keystone to destroy almost 19,000 devices after security breach",
-        "link": "https://www.coindesk.com/business/2026/10/27/crypto-wallet-maker-keystone-to-destroy-almost-19-000-devices-after-security-breach",
-        "published": "2026-10-27T11:13:54+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T11:12:52.759916+00:00"
+    "__dt__": "2026-10-28T11:15:42.811565+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -437,7 +419,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T11:12:35.384697+00:00"
+      "__dt__": "2026-10-28T11:15:32.675297+00:00"
     }
   }
 }

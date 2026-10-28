@@ -116,15 +116,11 @@
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 51,
-    "news_score": -1.0,
+    "news_score": 0.5,
     "themes": {
       "rally": [
         "coindesk",
         "cointelegraph"
-      ],
-      "hack": [
-        "coindesk",
-        "decrypt"
       ]
     },
     "blackout": null,
@@ -135,13 +131,6 @@
         "title": "Here's how much bitcoin and the S&P 500 could rally after midterms",
         "link": "https://www.coindesk.com/markets/2026/10/28/bitcoin-averages-over-50-in-the-12-months-after-midterms-s-and-p-500-gains-15",
         "published": "2026-10-28T09:15:22+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Bitcoin Wallet Maker Keystone Pulls Devices as Stolen Key Opens Door to Fakes",
-        "link": "https://decrypt.co/381983/bitcoin-wallet-keystone-devices-destroyed-stolen-key",
-        "published": "2026-10-27T18:16:02+00:00"
       },
       {
         "theme": "rally",
@@ -163,19 +152,12 @@
         "title": "Bitcoin drops below $80,000 as crypto ignores Asian tech rally, Fed meeting begins",
         "link": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
         "published": "2026-10-27T11:32:45+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Crypto wallet maker Keystone to destroy almost 19,000 devices after security breach",
-        "link": "https://www.coindesk.com/business/2026/10/27/crypto-wallet-maker-keystone-to-destroy-almost-19-000-devices-after-security-breach",
-        "published": "2026-10-27T11:13:54+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T11:12:23.901300+00:00"
+    "__dt__": "2026-10-28T11:15:21.181043+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -201,7 +183,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T11:12:04.535376+00:00"
+      "__dt__": "2026-10-28T11:15:01.769933+00:00"
     }
   }
 }
