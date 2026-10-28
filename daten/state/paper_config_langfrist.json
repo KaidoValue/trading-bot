@@ -116,14 +116,41 @@
   "note": "BTC/CHF: Position offen, Signal best\u00e4tigt | ETH/CHF: Position offen, Signal best\u00e4tigt | BNB/CHF: Position offen, Signal best\u00e4tigt | XRP/CHF: Position offen, Signal best\u00e4tigt | SOL/CHF: Position offen, Signal best\u00e4tigt | TRX/CHF: kein Einstieg (max. offene Positionen) | ZEC/CHF: kein Einstieg (max. offene Positionen) | HYPE/CHF: kein Einstieg (max. offene Positionen)",
   "news": {
     "fear_greed": 51,
-    "news_score": 0.0,
-    "themes": {},
+    "news_score": -1.0,
+    "themes": {
+      "hack": [
+        "cointelegraph",
+        "decrypt"
+      ]
+    },
     "blackout": null,
-    "evidence": [],
-    "alerts": []
+    "evidence": [
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Crypto PAC spending before midterms possibly obscured after reported FEC hack",
+        "link": "https://cointelegraph.com/news/crypto-pac-spending-midterms-fec-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-28T17:05:42+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Bitcoin Wallet Maker Keystone Pulls Devices as Stolen Key Opens Door to Fakes",
+        "link": "https://decrypt.co/381983/bitcoin-wallet-keystone-devices-destroyed-stolen-key",
+        "published": "2026-10-27T18:16:02+00:00"
+      }
+    ],
+    "alerts": [
+      {
+        "who": "powell (fed)",
+        "title": "Bitcoin price bounce rejected at 50-day trend line ahead of FOMC, earnings",
+        "source": "cointelegraph",
+        "published": "2026-10-28T16:53:26+00:00"
+      }
+    ]
   },
   "updated": {
-    "__dt__": "2026-10-28T16:48:16.735767+00:00"
+    "__dt__": "2026-10-28T17:18:17.137614+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -149,7 +176,7 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-10-28T16:47:57.266946+00:00"
+      "__dt__": "2026-10-28T17:17:57.762187+00:00"
     }
   }
 }
