@@ -54,24 +54,6 @@
       },
       "horizon": "mittel"
     },
-    "XRP/CHF": {
-      "side": -1,
-      "entry": 1.096668985203,
-      "qty": 43.27567815142146,
-      "stop": 1.1421040778016283,
-      "target": 1.0074446263967431,
-      "opened": {
-        "__dt__": "2026-10-28T19:19:00.448181+00:00"
-      },
-      "context": {
-        "fear_greed": 51,
-        "news_score": -1.0,
-        "news_themes": "hack",
-        "event": "-",
-        "session": "New York"
-      },
-      "horizon": "mittel"
-    },
     "TRX/CHF": {
       "side": -1,
       "entry": 0.27284167523784003,
@@ -469,6 +451,27 @@
       "news_themes": "rally",
       "event": "-",
       "session": "London"
+    },
+    {
+      "symbol": "XRP/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-28T19:19:00.448181+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-28T20:18:50.592343+00:00"
+      },
+      "entry": 1.096668985203,
+      "exit": 1.0989688552227002,
+      "qty": 43.27567815142146,
+      "pnl": -0.3468332716433244,
+      "reason": "Signal",
+      "horizon": "mittel",
+      "fear_greed": 51,
+      "news_score": -1.0,
+      "news_themes": "hack",
+      "event": "-",
+      "session": "New York"
     }
   ],
   "last_bar": {
@@ -497,52 +500,52 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-28T18:00:00+00:00"
+      "__dt__": "2026-10-28T19:00:00+00:00"
     },
     "mittel:BTC/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:ETH/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:BNB/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:XRP/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:SOL/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:TRX/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:ZEC/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "mittel:HYPE/CHF": {
-      "__dt__": "2026-10-28T12:00:00+00:00"
+      "__dt__": "2026-10-28T16:00:00+00:00"
     },
     "lang:BTC/CHF": {
       "__dt__": "2026-10-27T00:00:00+00:00"
@@ -569,7 +572,7 @@
       "__dt__": "2026-10-27T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [kurz] ETH/CHF: kein Signal | [kurz] BNB/CHF: kein Signal | [kurz] XRP/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [kurz] SOL/CHF: kein Signal | [kurz] TRX/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [kurz] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [kurz] HYPE/CHF: kein Signal | [mittel] BTC/CHF: short er\u00f6ffnet 0.003544 @ 67094.94 | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00abkurz\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00abkurz\u00bb | [mittel] XRP/CHF: short er\u00f6ffnet 43.275678 @ 1.10 | [mittel] SOL/CHF: kein Signal | [mittel] TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [mittel] HYPE/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] BTC/CHF: kein Signal | [lang] ETH/CHF: Position geh\u00f6rt zum Horizont \u00abkurz\u00bb | [lang] BNB/CHF: kein Signal | [lang] XRP/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [lang] SOL/CHF: kein Signal | [lang] TRX/CHF: short er\u00f6ffnet 870.667829 @ 0.27 | [lang] ZEC/CHF: kein Signal | [lang] HYPE/CHF: short er\u00f6ffnet 0.706372 @ 66.85",
+  "note": "[kurz] BTC/CHF: kein Signal | [kurz] ETH/CHF: kein Signal | [kurz] BNB/CHF: kein Signal | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] SOL/CHF: kein Signal | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: kein Einstieg (max. offene Positionen) | [kurz] HYPE/CHF: kein Signal | [mittel] BTC/CHF: Position offen, Signal best\u00e4tigt | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00abkurz\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00abkurz\u00bb | [mittel] XRP/CHF: kein Einstieg (Pause nach Verlustserie) | [mittel] SOL/CHF: kein Signal | [mittel] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ZEC/CHF: kein Einstieg (Pause nach Verlustserie) | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -599,7 +602,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-28T19:49:22.242554+00:00"
+    "__dt__": "2026-10-28T20:19:30.610993+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -608,28 +611,28 @@
     },
     "day_start_equity": 958.8737645953329,
     "trades_today": 8,
-    "loss_streak": 2,
+    "loss_streak": 0,
     "paused_until": {
-      "__dt__": "2026-10-27T01:13:35.156266+00:00"
+      "__dt__": "2026-10-29T08:18:50.592343+00:00"
     },
     "halted": false,
     "halted_on": null,
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1041.274861551599,
+    "cash": 993.4546614114944,
     "positions": {
       "BNB/CHF": 0.3827291047345546,
       "ZEC/CHF": 0.0,
       "TRX/CHF": -870.6678290892416,
-      "XRP/CHF": -43.27567815142146,
+      "XRP/CHF": 0.0,
       "BTC/CHF": -0.003544325474858462,
       "ETH/CHF": 0.12303058657248617,
       "HYPE/CHF": -0.7063716946566138
     },
-    "interest_paid": 0.014216278341555066,
+    "interest_paid": 0.028489104511851722,
     "interest_at": {
-      "__dt__": "2026-10-28T19:48:50.601316+00:00"
+      "__dt__": "2026-10-28T20:18:50.592343+00:00"
     }
   }
 }
