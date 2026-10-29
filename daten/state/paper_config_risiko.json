@@ -21,7 +21,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.01530431998331274
+      "interest": 0.015332201544829947
     },
     "BNB/CHF": {
       "side": 1,
@@ -44,7 +44,7 @@
       "sold": 0.23348231671573227,
       "sold_value": 146.6942541022943,
       "realized": 0.28053092797197177,
-      "interest": 0.010051728872302733
+      "interest": 0.010059741264638692
     },
     "BTC/CHF": {
       "side": 1,
@@ -67,7 +67,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.008223491642071803
+      "interest": 0.008247188990957353
     },
     "ETH/CHF": {
       "side": 1,
@@ -90,7 +90,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.0037260771940288567
+      "interest": 0.0037368176280494587
     }
   },
   "closed": [
@@ -3090,7 +3090,7 @@
   "note": "[kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-29T10:04:37.746367+00:00"
+    "__dt__": "2026-10-29T10:08:46.520261+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -3106,7 +3106,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": -18.810711903023584,
+    "cash": -18.810782234760342,
     "positions": {
       "BTC/CHF": 0.0019144533414070153,
       "ETH/CHF": 0.029963568383698336,
@@ -3117,9 +3117,9 @@
       "ZEC/CHF": 0.0,
       "HYPE/CHF": 0.0
     },
-    "interest_paid": 8.59644806403395,
+    "interest_paid": 8.59651839577071,
     "interest_at": {
-      "__dt__": "2026-10-29T10:03:44.909552+00:00"
+      "__dt__": "2026-10-29T10:08:14.111753+00:00"
     }
   }
 }
