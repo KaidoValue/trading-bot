@@ -525,52 +525,52 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T18:00:00+00:00"
+      "__dt__": "2026-10-29T19:00:00+00:00"
     },
     "mittel:BTC/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:ETH/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:BNB/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:XRP/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:SOL/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:TRX/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:ZEC/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "mittel:HYPE/CHF": {
-      "__dt__": "2026-10-29T12:00:00+00:00"
+      "__dt__": "2026-10-29T16:00:00+00:00"
     },
     "lang:BTC/CHF": {
       "__dt__": "2026-10-28T00:00:00+00:00"
@@ -597,7 +597,7 @@
       "__dt__": "2026-10-28T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -635,7 +635,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T19:46:46.018680+00:00"
+    "__dt__": "2026-10-29T20:17:06.805817+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -665,7 +665,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-29T19:46:14.518661+00:00"
+      "__dt__": "2026-10-29T20:16:14.951815+00:00"
     }
   }
 }
