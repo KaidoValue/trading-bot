@@ -1,40 +1,40 @@
 {
  "stats": {
   "Aufw\u00e4rtstrend, ruhig|lang": [
-   34.684648898334515,
-   46
+   32.50288548452241,
+   44
   ],
   "Aufw\u00e4rtstrend, wild|lang": [
-   0.5499533419895943,
-   38
+   0.7825765350116571,
+   36
   ],
   "Seitw\u00e4rts, ruhig|lang": [
-   59.560337633607816,
-   64
+   65.39236454092415,
+   71
   ],
   "Seitw\u00e4rts, wild|lang": [
-   2.373499751464795,
+   2.328805036283694,
    21
-  ],
-  "Seitw\u00e4rts, ruhig|kurz": [
-   0.008781508401180416,
-   2
-  ],
-  "Seitw\u00e4rts, ruhig|mittel": [
-   -0.35726813084307707,
-   21
-  ],
-  "Aufw\u00e4rtstrend, ruhig|mittel": [
-   -0.19738217008539616,
-   49
   ],
   "Aufw\u00e4rtstrend, wild|mittel": [
-   -0.21123396844341025,
-   16
+   -0.3147253447276565,
+   17
   ],
   "Seitw\u00e4rts, wild|mittel": [
-   0.13454628266970797,
-   5
+   0.12978806805401696,
+   7
+  ],
+  "Seitw\u00e4rts, ruhig|mittel": [
+   0.06254869407373566,
+   2
+  ],
+  "Aufw\u00e4rtstrend, ruhig|mittel": [
+   -0.10541903310544287,
+   46
+  ],
+  "Seitw\u00e4rts, ruhig|kurz": [
+   0.040398452075988196,
+   1
   ]
  },
  "bis": "2026-10-28"
