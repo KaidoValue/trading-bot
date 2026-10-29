@@ -1,0 +1,43 @@
+# Schliesst offene Positionen eines Demo-Bots von Hand (z.B. alte Shorts nach einer Regeländerung).
+# Starten: Actions -> "Position schliessen" -> Run workflow, Bot-Datei und Coins angeben.
+# Am besten kurz nach einem Bot-Durchlauf starten (Stand ist dann frisch gespeichert).
+name: Position schliessen
+
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: "Bot-Datei, z.B. bots/config_daytrading.yaml"
+        required: true
+        default: "bots/config_daytrading.yaml"
+      symbols:
+        description: "Coins, durch Leerzeichen getrennt, z.B. TRX/CHF HYPE/CHF"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  schliessen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Positionen schliessen
+        run: python -m tradingbot schliessen --config "${{ inputs.config }}" --symbols ${{ inputs.symbols }}
+      - name: Stand speichern
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add daten/state daten/logs
+          git diff --cached --quiet || git commit -m "Von Hand geschlossen: ${{ inputs.symbols }}"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1

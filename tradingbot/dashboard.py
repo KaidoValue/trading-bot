@@ -225,7 +225,7 @@ def chef_section(chef, phase: str) -> list[str]:
     gain = chef.equity - chef.start
     out = ["## 4️⃣ Chef-Bot (verteilt auf die drei Stile)", "",
            "Er handelt nicht selbst, sondern legt sein eigenes Kapital anteilig in die Stile der drei anderen Bots an "
-           "und schichtet um, wenn ein Stil in der aktuellen Marktphase besser läuft. Feste Grenzen: höchstens 50 % "
+           "und schichtet um, wenn ein Stil in der aktuellen Marktphase besser läuft. Feste Grenzen: höchstens 20 % "
            "im Risiko-Stil (Hebel), Notbremse bei mehr als 3 % Verlust eines Stils in 3 Stunden.", "",
            "| | |", "|---|---|",
            f"| Startkapital | {chf(chef.start)} CHF |",

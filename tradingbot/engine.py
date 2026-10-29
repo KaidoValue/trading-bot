@@ -7,6 +7,7 @@ from datetime import datetime
 
 from .broker import Broker
 from .news import MarketContext
+from .phase import PhaseBook, stretch_ok, trend_of
 from .risk import RiskManager
 
 log = logging.getLogger(__name__)
@@ -33,7 +34,9 @@ class OpenTrade:
     interest: float = 0.0     # bisher bezahlte Zinsen (Short oder Hebel), werden vom Ergebnis abgezogen
 
 
-MIN_SHARE, MAX_SHARE = 0.10, 0.70      # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
+MIN_SHARE, MAX_SHARE = 0.0, 1.0        # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
+WEAK = 0.05             # ein Horizont, der verliert, schrumpft bis auf 5 % seines Startanteils (praktisch aus,
+                        # handelt aber noch winzig weiter und kann sich so zurückkämpfen)
 MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240, "1d": 1440, "1w": 10080}
 PROBATION = 0.25        # Short-Probezeit: so gross sind Shorts, bis sie sich bewährt haben
 
@@ -51,6 +54,9 @@ class Trader:
     adaptive_shares: bool = False
     priority: bool = False      # längerer Horizont darf eine Position eines kürzeren übernehmen bzw. drehen
     short_probation: bool = False   # Shorts nur klein (PROBATION), bis die letzten Shorts Gewinn gebracht haben
+    phase_book: PhaseBook | None = None    # Marktphasen: welcher Horizont verdient in welcher Phase
+    phase_exit: bool = False                # Position schliessen, wenn die Phase gegen sie kippt
+    phases: dict = field(default_factory=dict)   # Coin -> aktuelle Marktphase
 
     def shorts_proven(self) -> bool:
         """Haben sich Shorts bewährt? Mindestens 10 Shorts, die letzten 20 zusammen im Gewinn."""
@@ -75,7 +81,8 @@ class Trader:
 
     def shares(self) -> dict[str, float]:
         """Anteil jedes Horizonts am investierbaren Kapital. Mit adaptive_shares bekommt der Horizont mehr,
-        dessen letzte 20 Trades mehr verdient haben (zwischen MIN_SHARE und MAX_SHARE)."""
+        dessen letzte 20 Trades mehr verdient haben (zwischen MIN_SHARE und MAX_SHARE). Ein Horizont, der
+        verliert, wird bis auf WEAK seines Startanteils verkleinert: so schaltet der Bot ihn praktisch ab."""
         if not self.horizons:
             return {}
         total = sum(h.share for h in self.horizons.values()) or 1.0
@@ -86,7 +93,7 @@ class Trader:
         w = {}
         for n, b in base.items():
             pnl = sum(t["pnl"] for t in [t for t in self.closed if t.get("horizon") == n][-20:])
-            w[n] = b * min(max(1 + 10 * pnl / capital, 0.25), 2.0)
+            w[n] = b * min(max(1 + 10 * pnl / capital, WEAK), 2.0)
         # Normieren: wer über/unter die Grenze käme, wird dort festgehalten, der Rest wird neu verteilt
         fixed: dict[str, float] = {}
         for _ in range(len(w)):
@@ -116,10 +123,13 @@ class Trader:
 
     def on_signal(self, symbol: str, signal: int, price: float, atr: float, equity: float, when,
                   size_factor: float = 1.0, can_open_new: bool = True, horizon: str = "",
-                  trend: int | None = None) -> None:
+                  trend: int | None = None, phase: str | None = None, anchor: float | None = None) -> None:
         """+1: long gehen (Short vorher schliessen), -1: Long schliessen und, falls erlaubt, short gehen.
         Pro Coin gibt es eine Position. Hält sie ein anderer Horizont, bleibt sie unberührt.
-        trend: langfristige Richtung des Coins (Trendfilter); neue Positionen nur in diese Richtung."""
+        trend: langfristige Richtung des Coins (Trendfilter); neue Positionen nur in diese Richtung.
+        phase: Marktphase des Coins (phase.py); anchor: 20er-Linie des Horizonts für den besten Einstieg."""
+        if phase:
+            self.phases[symbol] = phase
         if signal == 0:
             return
         t = self.open_trades.get(symbol)
@@ -155,6 +165,14 @@ class Trader:
             if first < h.min_edge * self.costs(symbol):
                 self.note = f"{symbol}: kein Einstieg (erwartete Bewegung zu klein für die Gebühren)"
                 return
+        if h and not stretch_ok(signal, price, anchor, atr, h.max_stretch_atr):
+            self.note = f"{symbol}: warte auf Rücksetzer (Kurs zu weit von der 20er-Linie entfernt)"
+            return
+        if self.phase_exit and signal == -trend_of(self.phases.get(symbol)):
+            self.note = f"{symbol}: kein Einstieg gegen die Marktphase «{self.phases[symbol]}»"
+            return
+        phase_factor, phase_why = (self.phase_book.factor(self.closed, self.phases.get(symbol), horizon)
+                                   if self.phase_book else (1.0, ""))
         risk_pct = h.risk_per_trade if h else None
         if not self.risk.can_open(equity, when, self.open_risk(equity), len(self.open_trades), risk_pct=risk_pct):
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
@@ -165,7 +183,7 @@ class Trader:
             self.note = f"{symbol}: Einstieg pausiert wegen Nachrichtenlage ({s['event'] if s['event'] != '-' else 'bestätigte Themen: ' + s['news_themes'] + ', Wert ' + str(s['news_score'])})"
             log.info("%s %s", when, self.note)
             return
-        factor = size_factor * (self.context.size_factor() if self.context else 1.0)
+        factor = size_factor * phase_factor * (self.context.size_factor() if self.context else 1.0)
         if signal < 0 and self.short_probation and not self.shorts_proven():
             factor *= PROBATION
         exposure = sum(abs(t.qty) * t.entry for t in self.open_trades.values() if not h or t.horizon == horizon)
@@ -181,15 +199,27 @@ class Trader:
         if fill:
             info = self.context.summary() if self.context else {}
             info["session"] = session(when)
+            if self.phases.get(symbol):
+                info["phase"] = self.phases[symbol]
             self.open_trades[symbol] = OpenTrade(
                 signal, fill.price, fill.qty, plan.stop, plan.target, when, info, horizon, fee=fill.fee,
                 partial=fill.price + signal * h.partial_atr * atr if h and h.partial_atr else 0.0,
                 partial_pct=h.partial_pct if h else 0.0,
                 trail=h.trail_atr * atr if h and h.trail_atr else 0.0, best=fill.price)
             self.risk.record_open()
-            self.note = f"{symbol}: {'gekauft' if signal > 0 else 'short eröffnet'} {fill.qty:.6f} @ {fill.price:.2f}"
+            self.note = (f"{symbol}: {'gekauft' if signal > 0 else 'short eröffnet'} {fill.qty:.6f} @ {fill.price:.2f}"
+                         + (f" ({phase_why})" if phase_why else ""))
             log.info("%s %s %s %.6f @ %.2f (Stop %.2f, Ziel %.2f)", when, "LONG" if signal > 0 else "SHORT",
                      symbol, fill.qty, fill.price, plan.stop, plan.target)
+
+    def check_phase(self, symbol: str, phase: str, price: float, when) -> None:
+        """Neue Marktphase des Coins merken. Mit phase_exit wird eine Position geschlossen, sobald die Phase gegen
+        sie kippt (Long im Abwärtstrend, Short im Aufwärtstrend): bester Ausstieg, bevor der Trend dreht."""
+        self.phases[symbol] = phase
+        t = self.open_trades.get(symbol)
+        h = self.horizons.get(t.horizon) if t else None
+        if self.phase_exit and t and t.side == -trend_of(phase) and (h is None or h.phase_exit):
+            self.exit(symbol, price, "Phase gekippt", when)
 
     def check_stops(self, symbol: str, open_: float, high: float, low: float, when) -> None:
         """Prüft Stop-Loss/Take-Profit innerhalb einer Kerze (konservativ: Stop zuerst), danach Teilgewinn und

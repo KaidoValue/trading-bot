@@ -13,7 +13,7 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 | **[STATUS.md](STATUS.md)** | 📈 Aktueller Stand aller 3 Demo-Bots: Kapital, Positionen, Kurse, Charts (alle 30 Min. neu) |
 | **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI, Auswertung von YouTube-Videos (`YOUTUBE.md`) und Trading-Büchern (`BUECHER.md`) |
 | **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Langfrist-Bot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-/Hebel-Bot), `config.yaml` (Vorlage). Jeder Bot handelt kurz-, mittel- und langfristig, long und short (siehe [Zeithorizonte](#zeithorizonte-gleiche-bedingungen-für-alle-bots)) |
-| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 50 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
+| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 20 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
 | **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
 | `tradingbot/` | 🧠 Der Programmcode |
 | `tests/` | ✅ Automatische Tests |
@@ -117,7 +117,7 @@ Was die Simulation gezeigt hat:
   Stunden-Bewegungen sind kleiner. Mit `min_edge: 5` handeln die Bots seltener, aber nur, wenn es sich lohnen kann.
   Auch mit 0,4 % Gebühr und doppelter Slippage bleiben die Ergebnisse fast gleich.
 - **Mehr investieren bringt mehr:** Der Langfrist-Bot darf jetzt bis 100 % statt 50 % investieren (je Coin bis 20 %),
-  der KI-Bot riskiert 2 % statt 1 % pro Trade, der Chef darf bis 50 % in den Risiko-Bot legen und hält keine feste
+  der KI-Bot riskiert 2 % statt 1 % pro Trade, der Chef darf bis 20 % in den Risiko-Bot legen (in der Simulation 50 %; im Demo-Betrieb verlor der Risiko-Bot aber 64 % in 6 Tagen) und hält keine feste
   Cash-Reserve mehr. Der Preis dafür sind grössere Rückgänge.
 - **Shorts verloren in jeder Variante** Geld, auch mit Trendfilter und Probezeit: Leihzinsen (bei Kraken ca. 0,12 %
   pro Tag) und Krypto steigt langfristig. Deshalb ist `allow_short` bei allen Bots aus, die Funktion bleibt aber
@@ -133,6 +133,24 @@ Grenzen: keine historischen News und Ereignisse, kein Orderbuch-Spread, keine Ko
 Die Jahre 2011-2013 hatten sehr wenig Handel an den Börsen. Kleine Details (z.B. welcher Coin bei gleichzeitigen
 Signalen zuerst Kapital bekommt) verschieben das Ergebnis um einige Prozent pro Jahr: Die Zahlen sind
 Grössenordnungen, keine Vorhersage. Vergangene Ergebnisse sind keine Garantie.
+
+## Marktphasen: der Bot wählt kurz, mittel oder lang selbst (Test: `bots/config_phasen.yaml`)
+
+Der 5️⃣ Phasen-Bot (vorerst nur in der Simulation) bestimmt für jeden Coin aus den Tageskerzen die **Marktphase**:
+Aufwärtstrend, Abwärtstrend oder Seitwärts (50- und 200-Tage-Linie), jeweils ruhig oder wild (`tradingbot/phase.py`).
+
+- **Horizont wählen** (`phase_gate`): Für jede Phase merkt er sich, was die Trades jedes Horizonts dort gebracht
+  haben. Nur ein Horizont, der in der aktuellen Phase bewiesen Geld verdient (mindestens 8 Trades, im Schnitt im
+  Plus), handelt mit voller Grösse. Die anderen handeln klein weiter (`phase_probation`, halbe Grösse), damit er
+  merkt, wenn sich das ändert. Vorwissen aus der Geschichts-Simulation liegt in `daten/state/phasen_wissen.json`
+  und zählt höchstens wie 20 eigene Trades; eigene Trades setzen sich also durch.
+- **Bester Einstieg**: Rücksetzer im Trend statt Ausbruch (`pullback` bei «kurz»), und mit `max_stretch_atr`
+  kein Kauf, wenn der Kurs der 20er-Linie davongelaufen ist.
+- **Bester Ausstieg**: Nachlauf-Stop und Teilgewinn sichern Gewinne; `phase_exit` schliesst eine Position, sobald
+  die Phase des Coins gegen sie kippt (Long im Abwärtstrend; nicht bei «lang», der über die 200-Tage-Linie aussteigt).
+
+In der Simulation lernt er ohne Vorwissen Trade für Trade (kein Blick in die Zukunft). Die Simulation läuft
+automatisch auf GitHub (`.github/workflows/historie.yml`) und schreibt das Ergebnis nach `lernen/HISTORIE.md`.
 
 ## Installation
 

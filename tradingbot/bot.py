@@ -12,6 +12,7 @@ from .broker import CCXTBroker, PaperBroker
 from .config import Config
 from .engine import Trader
 from .news import NewsMonitor
+from .phase import PhaseBook, coin_phases
 from .risk import RiskManager
 from .strategies import build, trend_direction
 from . import journal, state
@@ -49,6 +50,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
         trader.horizons = {h.name: h for h in horizons}
         trader.adaptive_shares, trader.priority = cfg.adaptive_shares, cfg.horizon_priority
     trader.short_probation = cfg.short_probation
+    if cfg.phase_gate:
+        trader.phase_book = PhaseBook.load(cfg.phase_prior, cfg.phase_probation)
+    trader.phase_exit = cfg.phase_exit
     cfg.symbols = available_symbols(exchange, cfg.symbols)
     if isinstance(trader.broker, PaperBroker):
         # Umgerechnete Coins: real müssten CHF erst in USD getauscht werden (hin und zurück je eine Order)
@@ -98,6 +102,11 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
             notes, spreads, trends = [], {}, {}
+            if (cfg.phase_gate or cfg.phase_exit) and not trader.risk.halted:
+                for s in cfg.symbols:
+                    phase = _phase(exchange, s)
+                    if phase:
+                        trader.check_phase(s, phase, prices[s], now)
             for h in ([] if trader.risk.halted else horizons):
                 strategy, frames = strategies[h.name], {}
                 prefix = f"[{h.name}] " if h.name else ""
@@ -124,7 +133,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                         trends[s] = _trend(exchange, s)
                     trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
                                      size_factor=factor, can_open_new=liquid, horizon=h.name,
-                                     trend=trends[s] if h.trend_filter else None)
+                                     trend=trends[s] if h.trend_filter else None,
+                                     anchor=float(ind.ema(df["close"], 20).iloc[-1]))
                     eq = trader.equity(prices)
                     notes.append(prefix + trader.note)
             if notes:
@@ -187,6 +197,15 @@ def _trend(exchange, symbol: str) -> int:
     except Exception as e:
         log.warning("%s: Tageskerzen für den Trendfilter nicht abrufbar: %s", symbol, e)
         return 0
+
+
+def _phase(exchange, symbol: str) -> str | None:
+    """Marktphase des Coins aus den Tageskerzen (phase.py), None wenn nicht abrufbar."""
+    try:
+        return str(coin_phases(data.fetch_recent(exchange, symbol, "1d", 400)).iloc[-1])
+    except Exception as e:
+        log.warning("%s: Tageskerzen für die Marktphase nicht abrufbar: %s", symbol, e)
+        return None
 
 
 def _spread(exchange, symbol: str) -> float | None:

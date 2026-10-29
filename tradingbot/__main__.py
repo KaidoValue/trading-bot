@@ -12,12 +12,14 @@
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
+  python -m tradingbot schliessen --config bots/config_daytrading.yaml --symbols TRX/CHF   # Position von Hand schliessen
   python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
   python -m tradingbot historie --bots ... --start 2022-01-01 # wie oben, aber erst ab diesem Tag handeln
 """
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 import logging
 import os
@@ -39,6 +41,31 @@ def _load_df(cfg: Config, args) -> pd.DataFrame:
     df = data.fetch_history(ex, symbol, cfg.timeframe, args.days)
     print(f"{len(df)} Kerzen von {df.index[0]:%d.%m.%Y} bis {df.index[-1]:%d.%m.%Y}\n")
     return df
+
+
+def schliessen(cfg: Config, symbols: list[str]) -> None:
+    """Schliesst offene Positionen des Paper-Kontos von Hand zum aktuellen Kurs (z.B. alte Shorts nach einer
+    Regeländerung). Der Stand und das Trade-Protokoll werden wie nach einem Bot-Durchlauf gespeichert."""
+    from datetime import datetime, timezone
+    from . import state
+    from .bot import _write_trades, make_trader
+    cfg.mode = "paper"
+    ex = data.make_exchange(cfg.exchange, convert_to=cfg.symbols[0].split("/")[1])
+    trader = make_trader(cfg, ex)
+    last_bar = state.load(cfg.state_path, trader)
+    if not last_bar:
+        raise SystemExit(f"Kein gespeicherter Stand ({cfg.state_path}).")
+    now = datetime.now(timezone.utc)
+    for s in symbols:
+        if s not in trader.open_trades:
+            print(f"{s}: keine offene Position")
+            continue
+        price = float(ex.fetch_ticker(s)["last"])
+        trader.exit(s, price, "Von Hand geschlossen", now)
+        print(f"{s}: geschlossen @ {price:.4f}, Ergebnis {trader.closed[-1]['pnl']:+.2f}")
+    cfg.trades_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_trades(cfg.trades_path, trader.closed)
+    state.save(cfg.state_path, trader, last_bar)
 
 
 def report(trades: pd.DataFrame) -> None:
@@ -102,7 +129,7 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube", "historie"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube", "historie", "schliessen"])
     p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--chef", help="dashboard: Stand-Datei des Chef-Bots")
@@ -113,6 +140,7 @@ def main() -> None:
     p.add_argument("--timeframe", help="z.B. 1h, 4h, 1d")
     p.add_argument("--short", action="store_true", help="auch auf fallende Kurse setzen")
     p.add_argument("--once", action="store_true", help="nur ein Durchlauf, dann beenden")
+    p.add_argument("--symbols", nargs="+", help="schliessen: diese Positionen des Paper-Kontos schliessen")
     p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
@@ -178,6 +206,12 @@ def main() -> None:
         curves.to_csv(historie.CACHE / "kurven.csv")
         for n, r in runs.items():
             r.trades.to_csv(historie.CACHE / f"trades_{n}.csv", index=False)
+            if r.cfg.phase_gate and r.cfg.phase_prior and len(r.trades):
+                # Vorwissen für den laufenden Bot: was hat jeder Horizont in jeder Phase gebracht
+                from .phase import PhaseBook
+                stats = PhaseBook.summarize(r.trades.to_dict("records"))
+                Path(r.cfg.phase_prior).write_text(json.dumps({"stats": stats, "bis": str(btc.index[-1].date())},
+                                                              indent=1), encoding="utf-8")
         print(text)
     elif args.command == "youtube":
         from .youtube import update
@@ -188,8 +222,9 @@ def main() -> None:
         print(render(args.bots or [args.config], chef_path=args.chef))
     elif args.command == "status":
         status(cfg)
+    elif args.command == "schliessen":
+        schliessen(cfg, args.symbols or [])
     elif args.command == "news":
-        import json
         from .news import briefing
         cfg.mode = "paper"
         st = json.loads(cfg.state_path.read_text()) if cfg.state_path.exists() else {}

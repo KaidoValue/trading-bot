@@ -7,7 +7,7 @@ gewichtet nach seiner Verteilung. Bei jedem Lauf entscheidet er neu:
 - Wie lief jeder Stil kurzfristig (letzter Tag), mittelfristig (7 Tage) und langfristig (30 Tage)?
   Alle drei Sichten zählen gleich viel (Durchschnitt der drei Renditen).
 - Was weiss sein Gedächtnis: Welcher Stil hat in der aktuellen Marktphase bisher am meisten gebracht?
-- Feste Grenzen: höchstens 50 % im Risiko-Stil (Hebel). Eine feste Cash-Reserve und das Halbieren des
+- Feste Grenzen: höchstens 20 % im Risiko-Stil (Hebel; der Risiko-Bot verlor im Demo-Betrieb 64 % in 6 Tagen). Eine feste Cash-Reserve und das Halbieren des
   Risiko-Anteils im Minus gibt es nicht mehr: In der Geschichts-Simulation 2011-2022 kosteten beide Gewinn
   (lernen/HISTORIE.md). Laufen alle Stile schlecht, bleibt trotzdem mehr in Cash.
 - Notbremse: Verliert ein Stil in den letzten 3 Stunden mehr als 3 %, zieht er sofort fast alles aus diesem
@@ -27,7 +27,7 @@ from .memory import Memory
 STYLES = {"config_langfrist": "Langfrist", "config_daytrading": "KI", "config_risiko": "Risiko"}
 DEFAULT = {"config_langfrist": 0.3, "config_daytrading": 0.3, "config_risiko": 0.3}   # gleiche Startbedingungen
 VIEWS = {"kurz": 1, "mittel": 7, "lang": 30}     # Sichten des Chefs in Tagen
-MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.50, 0.0, 0.05, 0.0026
+MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.20, 0.0, 0.05, 0.0026
 RISK_CUT = 0.0           # so weit unter dem Höchststand halbiert er den Risiko-Anteil (0 = nie)
 BRAKE_HOURS, BRAKE_LOSS = 3, -0.03
 

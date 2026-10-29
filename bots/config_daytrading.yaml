@@ -25,7 +25,7 @@ slippage: 0.0005
 # Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln.
 # Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position; mit horizon_priority darf ein längerer
 # Horizont die Position eines kürzeren übernehmen. share = Startanteil am investierbaren Kapital; mit adaptive_shares
-# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (10-70 %). Der erste Horizont gilt für backtest/status.
+# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (ein Verlierer schrumpft bis auf 5 % seines Anteils). Der erste Horizont gilt für backtest/status.
 #
 # Eingestellt nach der Geschichts-Simulation 2011-2026 (lernen/HISTORIE.md): gewählt nur nach 2011-2022, geprüft
 # auf 2023-2026. trend_filter = nur in Richtung der 200-Tage-Linie, min_edge = Gebührenfilter,
