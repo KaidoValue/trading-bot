@@ -815,7 +815,7 @@ def test_coin_phases_follow_200_day_line_without_lookahead():
 def test_phase_gate_trades_full_only_where_horizon_has_proven_itself():
     from tradingbot.phase import PhaseBook
     t = _tool_trader()
-    t.phase_book = PhaseBook(probation=0.25)
+    t.phase_book = PhaseBook(probation=0.25, loser=0.05)
     t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz", phase="Aufwärtstrend, ruhig")
     small = t.open_trades["X"].qty
     assert "Probezeit" in t.note and t.open_trades["X"].context["phase"] == "Aufwärtstrend, ruhig"
@@ -827,13 +827,13 @@ def test_phase_gate_trades_full_only_where_horizon_has_proven_itself():
     t.exit("X", 100, "Signal", 3)
     t.closed += [dict(win, pnl=-5.0)] * 8                                   # jetzt verliert der Horizont dort
     t.on_signal("X", 1, 100, atr=1, equity=t.equity({}), when=4, horizon="kurz")
-    assert t.open_trades["X"].qty == pytest.approx(small, rel=0.02) and "verliert" in t.note
+    assert t.open_trades["X"].qty == pytest.approx(small * 4 * 0.05, rel=0.02) and "verliert" in t.note
 
 
 def test_phase_prior_counts_like_at_most_20_own_trades():
     from tradingbot.phase import PhaseBook
     book = PhaseBook({"Seitwärts, wild|kurz": [-10.0, 1000]})            # Geschichte: verliert (-1 % pro Trade)
-    assert book.factor([], "Seitwärts, wild", "kurz")[0] == book.probation
+    assert book.factor([], "Seitwärts, wild", "kurz")[0] == book.loser
     own = [{"phase": "Seitwärts, wild", "horizon": "kurz", "entry": 1, "qty": 100, "pnl": 3.0}] * 30   # +3 %
     assert book.factor(own, "Seitwärts, wild", "kurz")[0] == 1.0       # eigene neue Erfahrung setzt sich durch
 

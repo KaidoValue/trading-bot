@@ -51,7 +51,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
         trader.adaptive_shares, trader.priority = cfg.adaptive_shares, cfg.horizon_priority
     trader.short_probation = cfg.short_probation
     if cfg.phase_gate:
-        trader.phase_book = PhaseBook.load(cfg.phase_prior, cfg.phase_probation)
+        trader.phase_book = PhaseBook.load(cfg.phase_prior, cfg.phase_probation, cfg.phase_loser)
     trader.phase_exit = cfg.phase_exit
     cfg.symbols = available_symbols(exchange, cfg.symbols)
     if isinstance(trader.broker, PaperBroker):

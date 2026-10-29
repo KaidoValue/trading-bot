@@ -141,8 +141,8 @@ Aufwärtstrend, Abwärtstrend oder Seitwärts (50- und 200-Tage-Linie), jeweils 
 
 - **Horizont wählen** (`phase_gate`): Für jede Phase merkt er sich, was die Trades jedes Horizonts dort gebracht
   haben. Nur ein Horizont, der in der aktuellen Phase bewiesen Geld verdient (mindestens 8 Trades, im Schnitt im
-  Plus), handelt mit voller Grösse. Die anderen handeln klein weiter (`phase_probation`, halbe Grösse), damit er
-  merkt, wenn sich das ändert. Vorwissen aus der Geschichts-Simulation liegt in `daten/state/phasen_wissen.json`
+  Plus), handelt mit voller Grösse. Fehlt die Erfahrung, handelt er klein (`phase_probation`, ein Viertel); verliert
+  er dort bewiesen, nur noch winzig (`phase_loser`, 5 %), damit er merkt, wenn sich das ändert. Vorwissen aus der Geschichts-Simulation liegt in `daten/state/phasen_wissen.json`
   und zählt höchstens wie 20 eigene Trades; eigene Trades setzen sich also durch.
 - **Bester Einstieg**: Rücksetzer im Trend statt Ausbruch (`pullback` bei «kurz»), und mit `max_stretch_atr`
   kein Kauf, wenn der Kurs der 20er-Linie davongelaufen ist.

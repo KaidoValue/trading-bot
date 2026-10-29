@@ -186,7 +186,7 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
         trader.priority = cfg.horizon_priority
     trader.short_probation = cfg.short_probation
     if cfg.phase_gate:      # ohne Vorwissen: der Bot lernt in der Simulation Trade für Trade (kein Blick in die Zukunft)
-        trader.phase_book = PhaseBook(probation=cfg.phase_probation)
+        trader.phase_book = PhaseBook(probation=cfg.phase_probation, loser=cfg.phase_loser)
     trader.phase_exit = cfg.phase_exit
     use_phase = cfg.phase_gate or cfg.phase_exit
     phases = {s: _cached(("phase", s, _fingerprint(df)), lambda: _phase_series(df)) for s, df in coins.items()} \
