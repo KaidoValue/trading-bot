@@ -1,6 +1,6 @@
 {
  "start": 1000.0,
- "equity": 956.5870851258109,
+ "equity": 957.1165275599869,
  "peak": 1000.0,
  "weights": {
   "config_langfrist": 0.2503,
@@ -8,9 +8,9 @@
   "config_risiko": 0.03
  },
  "last": {
-  "config_langfrist": 981.9595813575768,
-  "config_daytrading": 925.5276690218487,
-  "config_risiko": 353.5924619248159
+  "config_langfrist": 984.0489589101719,
+  "config_daytrading": 925.5140922535695,
+  "config_risiko": 353.86519754247223
  },
  "history": [
   {
@@ -2910,6 +2910,15 @@
     "config_risiko": -0.002686546547770674
    },
    "equity": 956.5870851258109
+  },
+  {
+   "t": "2026-10-29T22:48:01.813594+00:00",
+   "r": {
+    "config_langfrist": 0.0021277632931759882,
+    "config_daytrading": -1.466921922876896e-05,
+    "config_risiko": 0.0007713275791334517
+   },
+   "equity": 957.1165275599869
   }
  ],
  "fees": 4.014069361955841,
