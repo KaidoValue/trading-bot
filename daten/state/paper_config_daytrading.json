@@ -525,28 +525,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-29T21:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-29T16:00:00+00:00"
@@ -597,7 +597,7 @@
       "__dt__": "2026-10-28T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -613,7 +613,7 @@
       {
         "theme": "hack",
         "source": "coindesk",
-        "title": "Multi-billion Binance hack hitting crypto markets",
+        "title": "Binance loses $5.7 billion in largest crypto hack to date",
         "link": "https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets",
         "published": "2026-10-29T21:12:45+00:00"
       },
@@ -641,7 +641,7 @@
       {
         "theme": "hack",
         "source": "coindesk",
-        "title": "Live updates: Crypto falls amid report of multi-billion Binance hack, weak tech earnings",
+        "title": "Live updates: Crypto falls amid report of multi-billion Binance hack",
         "link": "https://www.coindesk.com/business/2026/10/29/live-updates-bitcoin-clings-to-usd80-000-as-strategy-s-cushion-thins-before-earnings",
         "published": "2026-10-29T10:41:39+00:00"
       }
@@ -649,7 +649,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T21:46:46.377246+00:00"
+    "__dt__": "2026-10-29T22:17:04.282584+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -679,7 +679,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-29T21:46:14.864517+00:00"
+      "__dt__": "2026-10-29T22:16:15.030604+00:00"
     }
   }
 }
