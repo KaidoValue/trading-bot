@@ -84,7 +84,8 @@ class Config:
     horizon_priority: bool = False      # längerer Horizont darf Positionen eines kürzeren übernehmen/drehen
     # Marktphase je Coin (phase.py): Horizonte handeln nur voll in Phasen, in denen sie bewiesen Geld verdienen
     phase_gate: bool = False
-    phase_probation: float = 0.25       # so gross handelt ein Horizont, der sich in der Phase (noch) nicht bewährt hat
+    phase_probation: float = 0.25       # so gross handelt ein Horizont, solange ihm in der Phase die Erfahrung fehlt
+    phase_loser: float = 0.05           # so gross handelt ein Horizont, der in der Phase bewiesen verliert (praktisch aus)
     phase_exit: bool = False            # Long schliessen, wenn die Phase des Coins in einen Abwärtstrend kippt
     phase_prior: str = ""               # Vorwissen aus der Geschichts-Simulation (JSON), leer = ohne
     risk: RiskConfig = field(default_factory=RiskConfig)
