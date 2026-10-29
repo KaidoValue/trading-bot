@@ -196,7 +196,6 @@ def main() -> None:
     elif args.command == "status":
         status(cfg)
     elif args.command == "news":
-        import json
         from .news import briefing
         cfg.mode = "paper"
         st = json.loads(cfg.state_path.read_text()) if cfg.state_path.exists() else {}
