@@ -314,11 +314,19 @@
     "themes": {
       "hack": [
         "coindesk",
+        "cointelegraph",
         "decrypt"
       ]
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Polymarket suspended trading amid reports of user funds being drained",
+        "link": "https://cointelegraph.com/news/polymarket-suspends-trading-user-funds-compromised?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-29T19:23:03+00:00"
+      },
       {
         "theme": "hack",
         "source": "coindesk",
@@ -337,7 +345,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T19:16:04.670607+00:00"
+    "__dt__": "2026-10-29T19:46:02.771111+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -365,7 +373,7 @@
     },
     "interest_paid": 0.012895995134820534,
     "interest_at": {
-      "__dt__": "2026-10-29T19:15:12.819821+00:00"
+      "__dt__": "2026-10-29T19:45:10.907537+00:00"
     }
   }
 }
