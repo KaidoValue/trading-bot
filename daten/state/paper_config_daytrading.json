@@ -52,7 +52,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.2241062931103832
+      "interest": 0.23005877356033355
     },
     "HYPE/CHF": {
       "side": -1,
@@ -79,7 +79,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.04532612273592389
+      "interest": 0.04671803958749237
     }
   },
   "closed": [
@@ -535,52 +535,52 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T14:00:00+00:00"
+      "__dt__": "2026-10-29T15:00:00+00:00"
     },
     "mittel:BTC/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:ETH/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:BNB/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:XRP/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:SOL/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:TRX/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:ZEC/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:HYPE/CHF": {
-      "__dt__": "2026-10-29T08:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "lang:BTC/CHF": {
       "__dt__": "2026-10-28T00:00:00+00:00"
@@ -607,7 +607,7 @@
       "__dt__": "2026-10-28T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Signal | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -637,7 +637,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T15:42:36.432361+00:00"
+    "__dt__": "2026-10-29T16:12:56.733880+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -655,7 +655,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1052.0188221495266,
+    "cash": 1052.0114777522251,
     "positions": {
       "BNB/CHF": 0.28963463385427063,
       "ZEC/CHF": 0.0,
@@ -665,9 +665,9 @@
       "ETH/CHF": 0.0,
       "HYPE/CHF": -0.7063716946566138
     },
-    "interest_paid": 0.3545521680710991,
+    "interest_paid": 0.361896565372618,
     "interest_at": {
-      "__dt__": "2026-10-29T15:42:04.702120+00:00"
+      "__dt__": "2026-10-29T16:12:04.518968+00:00"
     }
   }
 }
