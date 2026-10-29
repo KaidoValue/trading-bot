@@ -52,7 +52,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.1874165665556452
+      "interest": 0.1933878031636961
     },
     "HYPE/CHF": {
       "side": -1,
@@ -79,7 +79,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.03706732019723406
+      "interest": 0.038390416198481596
     }
   },
   "closed": [
@@ -535,28 +535,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T11:00:00+00:00"
+      "__dt__": "2026-10-29T12:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-29T08:00:00+00:00"
@@ -607,7 +607,7 @@
       "__dt__": "2026-10-28T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -617,7 +617,7 @@
         "cointelegraph"
       ]
     },
-    "blackout": "Advance GDP q/q (12:30 UTC)",
+    "blackout": null,
     "evidence": [
       {
         "theme": "hack",
@@ -637,7 +637,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T12:38:02.031801+00:00"
+    "__dt__": "2026-10-29T13:08:22.568621+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -655,7 +655,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1052.0637706786197,
+    "cash": 1052.0564763460104,
     "positions": {
       "BNB/CHF": 0.28963463385427063,
       "ZEC/CHF": 0.0,
@@ -665,9 +665,9 @@
       "ETH/CHF": 0.0,
       "HYPE/CHF": -0.7063716946566138
     },
-    "interest_paid": 0.3096036389776713,
+    "interest_paid": 0.31689797158696975,
     "interest_at": {
-      "__dt__": "2026-10-29T12:37:30.565971+00:00"
+      "__dt__": "2026-10-29T13:07:30.790276+00:00"
     }
   }
 }
