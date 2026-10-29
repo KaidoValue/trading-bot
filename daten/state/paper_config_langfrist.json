@@ -256,28 +256,28 @@
       "__dt__": "2026-10-29T04:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T07:00:00+00:00"
+      "__dt__": "2026-10-29T08:00:00+00:00"
     }
   },
   "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: Position offen, Signal best\u00e4tigt | [lang] BNB/CHF: Position offen, Signal best\u00e4tigt | [lang] XRP/CHF: Position offen, Signal best\u00e4tigt | [lang] SOL/CHF: Position offen, Signal best\u00e4tigt | [lang] TRX/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] TRX/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] ZEC/CHF: kein Signal | [mittel] HYPE/CHF: Signal 'raus', bleibe in Cash | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
@@ -310,7 +310,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T08:32:30.546743+00:00"
+    "__dt__": "2026-10-29T09:02:30.264328+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -338,7 +338,7 @@
     },
     "interest_paid": 0.012895995134820534,
     "interest_at": {
-      "__dt__": "2026-10-29T08:31:38.726851+00:00"
+      "__dt__": "2026-10-29T09:01:38.436194+00:00"
     }
   }
 }
