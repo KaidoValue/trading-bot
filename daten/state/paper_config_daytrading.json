@@ -613,6 +613,13 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Binance hack rattles crypto markets as BNB falls 7%, Bitcoin slides",
+        "link": "https://cointelegraph.com/markets/binance-hack-rattles-crypto-markets-bnb-bitcoin-slide?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-29T23:24:21+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "bitcoinmagazine",
         "title": "Bitcoin Price Slides Below $79,000 as Binance Loses $5.8 Billion in Massive Hack",
         "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-binance",
@@ -628,14 +635,14 @@
       {
         "theme": "hack",
         "source": "cointelegraph",
-        "title": "Live Updates: Binance hit in largest crypto hack in history",
+        "title": "Live Updates: Binance hit by largest crypto hack in history",
         "link": "https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-29T21:24:36+00:00"
       },
       {
         "theme": "hack",
         "source": "coindesk",
-        "title": "Binance loses $5.7 billion in largest crypto hack to date",
+        "title": "Binance loses $5.7 billion in 'biggest crypto hack in history'",
         "link": "https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets",
         "published": "2026-10-29T21:12:45+00:00"
       },
@@ -659,19 +666,12 @@
         "title": "Hackers Publish Work Details of 41,000 Homeland Security Employees",
         "link": "https://decrypt.co/382181/hackers-publish-work-details-homeland-security-employees",
         "published": "2026-10-29T18:46:02+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Live updates: Crypto falls amid report of multi-billion Binance hack",
-        "link": "https://www.coindesk.com/business/2026/10/29/live-updates-bitcoin-clings-to-usd80-000-as-strategy-s-cushion-thins-before-earnings",
-        "published": "2026-10-29T10:41:39+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T23:17:07.034078+00:00"
+    "__dt__": "2026-10-29T23:46:46.608057+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -701,7 +701,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-29T23:16:15.244189+00:00"
+      "__dt__": "2026-10-29T23:46:15.204462+00:00"
     }
   }
 }
