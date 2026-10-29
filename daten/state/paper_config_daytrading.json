@@ -26,60 +26,6 @@
       "sold_value": 58.49018529081109,
       "realized": 0.3045902965827266,
       "interest": 0.0
-    },
-    "TRX/CHF": {
-      "side": -1,
-      "entry": 0.27284167523784003,
-      "qty": 870.6678290892416,
-      "stop": 0.28529336889988416,
-      "target": 0.24219015287028958,
-      "opened": {
-        "__dt__": "2026-10-28T19:19:00.448181+00:00"
-      },
-      "context": {
-        "fear_greed": 51,
-        "news_score": -1.0,
-        "news_themes": "hack",
-        "event": "-",
-        "session": "New York"
-      },
-      "horizon": "lang",
-      "fee": 0.0,
-      "partial": 0.0,
-      "partial_pct": 0.0,
-      "trail": 0.0,
-      "best": 0.0,
-      "sold": 0.0,
-      "sold_value": 0.0,
-      "realized": 0.0,
-      "interest": 0.24790831762553447
-    },
-    "HYPE/CHF": {
-      "side": -1,
-      "entry": 66.8538087738,
-      "qty": 0.7063716946566138,
-      "stop": 80.0774615905541,
-      "target": 33.911729423614744,
-      "opened": {
-        "__dt__": "2026-10-28T19:19:00.448181+00:00"
-      },
-      "context": {
-        "fear_greed": 51,
-        "news_score": -1.0,
-        "news_themes": "hack",
-        "event": "-",
-        "session": "New York"
-      },
-      "horizon": "lang",
-      "fee": 0.0,
-      "partial": 0.0,
-      "partial_pct": 0.0,
-      "trail": 0.0,
-      "best": 0.0,
-      "sold": 0.0,
-      "sold_value": 0.0,
-      "realized": 0.0,
-      "interest": 0.05088963787657013
     }
   },
   "closed": [
@@ -507,6 +453,50 @@
       "news_themes": "-",
       "event": "-",
       "session": "London+New York"
+    },
+    {
+      "symbol": "TRX/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-28T19:19:00.448181+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-29T17:50:25.923462+00:00"
+      },
+      "entry": 0.27284167523784003,
+      "exit": 0.27343491657371993,
+      "qty": 870.6678290892416,
+      "pnl": -1.3834090252092306,
+      "reason": "Von Hand geschlossen",
+      "horizon": "lang",
+      "partial": false,
+      "fear_greed": 51,
+      "news_score": -1.0,
+      "news_themes": "hack",
+      "event": "-",
+      "session": "New York"
+    },
+    {
+      "symbol": "HYPE/CHF",
+      "side": "short",
+      "opened": {
+        "__dt__": "2026-10-28T19:19:00.448181+00:00"
+      },
+      "closed": {
+        "__dt__": "2026-10-29T17:50:25.923462+00:00"
+      },
+      "entry": 66.8538087738,
+      "exit": 77.5017747216,
+      "qty": 0.7063716946566138,
+      "pnl": -7.7146485449373525,
+      "reason": "Von Hand geschlossen",
+      "horizon": "lang",
+      "partial": false,
+      "fear_greed": 51,
+      "news_score": -1.0,
+      "news_themes": "hack",
+      "event": "-",
+      "session": "New York"
     }
   ],
   "last_bar": {
@@ -608,16 +598,9 @@
     }
   },
   "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
-  "news": {
-    "fear_greed": 51,
-    "news_score": 0.0,
-    "themes": {},
-    "blackout": null,
-    "evidence": [],
-    "alerts": []
-  },
+  "news": null,
   "updated": {
-    "__dt__": "2026-10-29T17:42:37.252933+00:00"
+    "__dt__": "2026-10-29T17:50:29.955643+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -626,7 +609,7 @@
     },
     "day_start_equity": 951.7207753314441,
     "trades_today": 0,
-    "loss_streak": 0,
+    "loss_streak": 2,
     "paused_until": {
       "__dt__": "2026-10-29T08:18:50.592343+00:00"
     },
@@ -635,15 +618,15 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1051.9894566098708,
+    "cash": 758.4120897330259,
     "positions": {
       "BNB/CHF": 0.28963463385427063,
       "ZEC/CHF": 0.0,
-      "TRX/CHF": -870.6678290892416,
+      "TRX/CHF": 0.0,
       "XRP/CHF": 0.0,
       "BTC/CHF": 0.0,
       "ETH/CHF": 0.0,
-      "HYPE/CHF": -0.7063716946566138
+      "HYPE/CHF": 0.0
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
