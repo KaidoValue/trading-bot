@@ -36,7 +36,8 @@ from .strategies import build
 
 log = logging.getLogger(__name__)
 
-SOURCES = (("bitstamp", "USD"), ("binance", "USDT"))
+# binance sperrt US-Server (auch GitHub): dann liefern binanceus, kucoin oder gateio die Altcoin-Geschichte
+SOURCES = (("bitstamp", "USD"), ("binance", "USDT"), ("binanceus", "USD"), ("kucoin", "USDT"), ("gateio", "USDT"))
 CACHE = Path("data/historie")
 TF_MS = {"30m": 1_800_000, "1h": 3_600_000, "4h": 14_400_000, "1d": 86_400_000}
 RULE = {"30m": "30min", "1h": "1h", "4h": "4h", "1d": "1D"}

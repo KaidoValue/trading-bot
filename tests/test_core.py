@@ -872,3 +872,13 @@ def test_paper_loop_with_phase_gate(df, monkeypatch, tmp_path):
     bot.run(cfg, max_iterations=200)
     trades = pd.read_csv(tmp_path / "daten" / "logs" / "trades_ph.csv")
     assert "phase" in trades and trades["phase"].notna().any()     # ohne Tageskerzen: ohne Phase
+
+
+def test_phase_exit_can_be_switched_off_per_horizon():
+    from tradingbot.config import Horizon
+    t = _tool_trader()
+    t.horizons["lang"] = Horizon("lang", "1d", "regime", stop_loss_atr=8.0, phase_exit=False)
+    t.phase_exit = True
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="lang")
+    t.check_phase("X", "Abwärtstrend, wild", 99, 1)
+    assert "X" in t.open_trades

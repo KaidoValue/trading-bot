@@ -29,6 +29,7 @@ horizons:
     strategy_params: {period: 200}
     share: 0.4
     trend_filter: true
+    phase_exit: false         # steigt über die 200-Tage-Linie aus (1. Simulation: Phasen-Ausstieg schadete hier)
   mittel:                     # Trendfolge auf 4-Stunden-Kerzen, Tage bis Wochen
     timeframe: 4h
     strategy: trend
@@ -48,13 +49,12 @@ horizons:
     take_profit_atr: 3.0
     risk_per_trade: 0.01
     trend_filter: true
-    partial_atr: 1.0
     max_stretch_atr: 0.5
-    min_edge: 5
+    min_edge: 2               # Ziel mind. 2x die Gebühren (mit 5x kam 1h nie zum Zug)
 adaptive_shares: true
 horizon_priority: true
 phase_gate: true
-phase_probation: 0.25
+phase_probation: 0.5      # ungeprüfte Horizonte mit halber Grösse
 phase_exit: true
 phase_prior: daten/state/phasen_wissen.json
 allow_short: false

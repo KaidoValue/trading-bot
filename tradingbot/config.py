@@ -49,6 +49,7 @@ class Horizon:
     trend_filter: bool = False          # nur in Richtung der 200-Tage-Linie des Coins einsteigen
     min_edge: float = 0.0               # erstes Ziel muss mindestens x-mal die Kosten (Gebühren + Slippage) bringen
     allow_short: bool | None = None     # Shorts in diesem Horizont (leer = Einstellung des Bots)
+    phase_exit: bool = True             # mit phase_exit des Bots: schliessen, wenn die Phase kippt (lang: eigenes Signal)
     max_stretch_atr: float | None = None   # bester Einstieg: nicht mehr als x × ATR über (Short: unter) der 20er-Linie
 
 

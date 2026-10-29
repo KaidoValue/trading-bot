@@ -141,13 +141,13 @@ Aufwärtstrend, Abwärtstrend oder Seitwärts (50- und 200-Tage-Linie), jeweils 
 
 - **Horizont wählen** (`phase_gate`): Für jede Phase merkt er sich, was die Trades jedes Horizonts dort gebracht
   haben. Nur ein Horizont, der in der aktuellen Phase bewiesen Geld verdient (mindestens 8 Trades, im Schnitt im
-  Plus), handelt mit voller Grösse. Die anderen handeln klein weiter (`phase_probation`, ein Viertel), damit er
+  Plus), handelt mit voller Grösse. Die anderen handeln klein weiter (`phase_probation`, halbe Grösse), damit er
   merkt, wenn sich das ändert. Vorwissen aus der Geschichts-Simulation liegt in `daten/state/phasen_wissen.json`
   und zählt höchstens wie 20 eigene Trades; eigene Trades setzen sich also durch.
 - **Bester Einstieg**: Rücksetzer im Trend statt Ausbruch (`pullback` bei «kurz»), und mit `max_stretch_atr`
   kein Kauf, wenn der Kurs der 20er-Linie davongelaufen ist.
 - **Bester Ausstieg**: Nachlauf-Stop und Teilgewinn sichern Gewinne; `phase_exit` schliesst eine Position, sobald
-  die Phase des Coins gegen sie kippt (Long im Abwärtstrend).
+  die Phase des Coins gegen sie kippt (Long im Abwärtstrend; nicht bei «lang», der über die 200-Tage-Linie aussteigt).
 
 In der Simulation lernt er ohne Vorwissen Trade für Trade (kein Blick in die Zukunft). Die Simulation läuft
 automatisch auf GitHub (`.github/workflows/historie.yml`) und schreibt das Ergebnis nach `lernen/HISTORIE.md`.

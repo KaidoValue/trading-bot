@@ -214,7 +214,8 @@ class Trader:
         sie kippt (Long im Abwärtstrend, Short im Aufwärtstrend): bester Ausstieg, bevor der Trend dreht."""
         self.phases[symbol] = phase
         t = self.open_trades.get(symbol)
-        if self.phase_exit and t and t.side == -trend_of(phase):
+        h = self.horizons.get(t.horizon) if t else None
+        if self.phase_exit and t and t.side == -trend_of(phase) and (h is None or h.phase_exit):
             self.exit(symbol, price, "Phase gekippt", when)
 
     def check_stops(self, symbol: str, open_: float, high: float, low: float, when) -> None:
