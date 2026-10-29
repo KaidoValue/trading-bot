@@ -3,10 +3,10 @@
 
 mode: paper
 title: "3️⃣ Risiko-Bot (aggressiv, Hebel 3×)"
-description: "Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang), Trendfolge (4h) und Ausbrüche (30 Min.), nur in Trendrichtung. Simulation 2011-2022: +66 %/Jahr, 2023-2026: +59 %/Jahr, Rückgänge bis −62 %, 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
+description: "Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang) und Trendfolge (4h), nur in Trendrichtung; Daytrading (30-Min.-Ausbrüche) seit 29.10. pausiert, weil es 64 % verlor. Simulation 2011-2022: +66 %/Jahr, 2023-2026: +59 %/Jahr, Rückgänge bis −62 %, 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
 exchange: kraken
 symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
-timeframe: 30m           # passt zum Takt auf GitHub (alle 30 Minuten)
+timeframe: 4h            # Haupthorizont «mittel» (kurz pausiert)
 history_exchange: bitstamp
 history_symbol: BTC/USD
 starting_capital: 1000
@@ -18,21 +18,24 @@ slippage: 0.0005
 # Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln.
 # Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position; mit horizon_priority darf ein längerer
 # Horizont die Position eines kürzeren übernehmen. share = Startanteil am investierbaren Kapital; mit adaptive_shares
-# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (10-70 %). Der erste Horizont gilt für backtest/status.
+# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (ein Verlierer schrumpft bis auf 5 % seines Anteils). Der erste Horizont gilt für backtest/status.
 #
 # Eingestellt nach der Geschichts-Simulation 2011-2026 (lernen/HISTORIE.md): gewählt nur nach 2011-2022, geprüft
 # auf 2023-2026. trend_filter = nur in Richtung der 200-Tage-Linie, min_edge = Gebührenfilter,
 # partial_atr = Teilgewinn mit Stop auf Einstand. Shorts lohnten sich in keiner Variante (Leihzinsen, Krypto steigt
 # langfristig): allow_short ist aus, kann aber jederzeit eingeschaltet werden (dann mit short_probation: true).
 horizons:
-  kurz:                       # Daytrading: 10/5-Kerzen-Ausbruch auf 30-Minuten-Kerzen (Hauptstil)
-    timeframe: 30m
-    strategy: breakout
-    strategy_params: {entry: 10, exit: 5, hold: true}
-    share: 0.4
-    trend_filter: true
-    partial_atr: 0.75         # Hälfte bei +0,75 ATR verkaufen, Rest mit Stop auf Einstand
-    min_edge: 5               # nur wenn das erste Ziel mindestens 5x die Gebühren bringt
+  # kurz (Daytrading, 10/5-Kerzen-Ausbruch auf 30-Minuten-Kerzen) ist seit 29.10.2026 PAUSIERT: im Demo-Betrieb
+  # verlor der Bot damit 64 % in 6 Tagen (181 Trades, 25 % Treffer, viele Stop-Loss-Lücken), und in der
+  # Geschichts-Simulation hat «kurz» einen Profit Factor von 0,2. Wieder einschalten: Kommentare entfernen.
+  # kurz:
+  #   timeframe: 30m
+  #   strategy: breakout
+  #   strategy_params: {entry: 10, exit: 5, hold: true}
+  #   share: 0.4
+  #   trend_filter: true
+  #   partial_atr: 0.75
+  #   min_edge: 5
   mittel:                     # Trendfolge auf 4-Stunden-Kerzen
     timeframe: 4h
     strategy: trend

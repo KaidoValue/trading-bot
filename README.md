@@ -13,7 +13,7 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 | **[STATUS.md](STATUS.md)** | 📈 Aktueller Stand aller 3 Demo-Bots: Kapital, Positionen, Kurse, Charts (alle 30 Min. neu) |
 | **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI, Auswertung von YouTube-Videos (`YOUTUBE.md`) und Trading-Büchern (`BUECHER.md`) |
 | **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Langfrist-Bot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-/Hebel-Bot), `config.yaml` (Vorlage). Jeder Bot handelt kurz-, mittel- und langfristig, long und short (siehe [Zeithorizonte](#zeithorizonte-gleiche-bedingungen-für-alle-bots)) |
-| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 50 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
+| **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 20 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
 | **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
 | `tradingbot/` | 🧠 Der Programmcode |
 | `tests/` | ✅ Automatische Tests |
@@ -117,7 +117,7 @@ Was die Simulation gezeigt hat:
   Stunden-Bewegungen sind kleiner. Mit `min_edge: 5` handeln die Bots seltener, aber nur, wenn es sich lohnen kann.
   Auch mit 0,4 % Gebühr und doppelter Slippage bleiben die Ergebnisse fast gleich.
 - **Mehr investieren bringt mehr:** Der Langfrist-Bot darf jetzt bis 100 % statt 50 % investieren (je Coin bis 20 %),
-  der KI-Bot riskiert 2 % statt 1 % pro Trade, der Chef darf bis 50 % in den Risiko-Bot legen und hält keine feste
+  der KI-Bot riskiert 2 % statt 1 % pro Trade, der Chef darf bis 20 % in den Risiko-Bot legen (in der Simulation 50 %; im Demo-Betrieb verlor der Risiko-Bot aber 64 % in 6 Tagen) und hält keine feste
   Cash-Reserve mehr. Der Preis dafür sind grössere Rückgänge.
 - **Shorts verloren in jeder Variante** Geld, auch mit Trendfilter und Probezeit: Leihzinsen (bei Kraken ca. 0,12 %
   pro Tag) und Krypto steigt langfristig. Deshalb ist `allow_short` bei allen Bots aus, die Funktion bleibt aber

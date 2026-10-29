@@ -603,7 +603,7 @@ def test_each_horizon_can_short_with_own_stops():
 
 
 def test_adaptive_shares_follow_winning_horizon():
-    from tradingbot.engine import MIN_SHARE, MAX_SHARE
+    from tradingbot.engine import MIN_SHARE, MAX_SHARE, WEAK
     t = _horizon_trader()
     assert t.shares() == {"kurz": 0.5, "lang": 0.5}
     t.adaptive_shares = True
@@ -611,6 +611,10 @@ def test_adaptive_shares_follow_winning_horizon():
     w = t.shares()
     assert w["kurz"] > w["lang"] and sum(w.values()) == pytest.approx(1)
     assert MIN_SHARE - 1e-9 <= w["lang"] and w["kurz"] <= MAX_SHARE + 1e-9
+    # ein Horizont, der klar verliert, wird praktisch abgeschaltet (5 % seines Startanteils), aber nicht ganz
+    t.closed = [{"pnl": -20.0, "horizon": "lang"}] * 20
+    w = t.shares()
+    assert 0 < w["lang"] <= 0.5 * WEAK / (0.5 + 0.5 * WEAK) + 1e-9
 
 
 def test_budget_share_limits_one_horizon():
@@ -622,7 +626,8 @@ def test_budget_share_limits_one_horizon():
 def test_bot_configs_trade_all_horizons_with_simulation_settings():
     for name in ("langfrist", "daytrading", "risiko"):
         cfg = Config.load(f"bots/config_{name}.yaml")
-        assert {h.name for h in cfg.horizon_list()} == {"kurz", "mittel", "lang"}
+        # Risiko-Bot: «kurz» seit 29.10.2026 pausiert (verlor im Demo-Betrieb 64 % in 6 Tagen)
+        assert {h.name for h in cfg.horizon_list()} == ({"mittel", "lang"} if name == "risiko" else {"kurz", "mittel", "lang"})
         assert all(h.trend_filter for h in cfg.horizon_list()) and cfg.horizon_priority
         assert cfg.short_probation                         # Shorts jederzeit einschaltbar, dann mit Probezeit
         assert cfg.strategy == cfg.horizon_list()[0].strategy
@@ -658,7 +663,8 @@ def test_history_simulation_runs_whole_bots(df):
             h.update(trend_filter=False, min_edge=0)
         runs[name] = simulate(cfg, coins)
         assert len(runs[name].equity) > 50 and runs[name].equity.iloc[0] == pytest.approx(cfg.starting_capital, rel=0.05)
-    assert {"kurz", "mittel"} <= set(runs["config_risiko"].trades["horizon"])
+    assert {"kurz", "mittel"} <= set(runs["config_daytrading"].trades["horizon"])
+    assert set(runs["config_risiko"].trades["horizon"]) <= {"mittel", "lang"}       # kurz pausiert
     chef = simulate_chef(runs, resample(btc, "1d"), Path(pytest.importorskip("tempfile").mkdtemp()) / "chef.json")
     assert len(chef) > 50
     text = report(runs, chef, resample(btc, "1d")["close"])
@@ -882,3 +888,24 @@ def test_phase_exit_can_be_switched_off_per_horizon():
     t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="lang")
     t.check_phase("X", "Abwärtstrend, wild", 99, 1)
     assert "X" in t.open_trades
+
+
+def test_close_positions_by_hand(df, monkeypatch, tmp_path):
+    import json
+    from tradingbot import state
+    from tradingbot.__main__ import schliessen
+    monkeypatch.chdir(tmp_path)
+    ex = MultiExchange(df)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    cfg = Config(symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="hand", allow_short=True,
+                 risk=RiskConfig(max_total_risk_pct=1))
+    t = bot.make_trader(cfg, None)
+    price = ex.fetch_ticker("ETH/CHF")["last"]
+    t.on_signal("ETH/CHF", -1, price, atr=price * 0.02, equity=1000.0, when=0)        # ein alter Short
+    assert t.open_trades["ETH/CHF"].side == -1
+    state.save(cfg.state_path, t, {"ETH/CHF": pd.Timestamp("2026-01-01", tz="UTC")})
+    schliessen(cfg, ["ETH/CHF", "DOGE/CHF"])
+    after = json.loads(cfg.state_path.read_text())
+    assert "ETH/CHF" not in after["open_trades"] and after["closed"][-1]["reason"] == "Von Hand geschlossen"
+    assert after["paper"]["positions"]["ETH/CHF"] == pytest.approx(0.0, abs=1e-12)
+    assert "Von Hand geschlossen" in set(pd.read_csv(tmp_path / "daten" / "logs" / "trades_hand.csv")["reason"])

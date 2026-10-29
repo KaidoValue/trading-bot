@@ -34,7 +34,9 @@ class OpenTrade:
     interest: float = 0.0     # bisher bezahlte Zinsen (Short oder Hebel), werden vom Ergebnis abgezogen
 
 
-MIN_SHARE, MAX_SHARE = 0.10, 0.70      # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
+MIN_SHARE, MAX_SHARE = 0.0, 1.0        # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
+WEAK = 0.05             # ein Horizont, der verliert, schrumpft bis auf 5 % seines Startanteils (praktisch aus,
+                        # handelt aber noch winzig weiter und kann sich so zurückkämpfen)
 MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240, "1d": 1440, "1w": 10080}
 PROBATION = 0.25        # Short-Probezeit: so gross sind Shorts, bis sie sich bewährt haben
 
@@ -79,7 +81,8 @@ class Trader:
 
     def shares(self) -> dict[str, float]:
         """Anteil jedes Horizonts am investierbaren Kapital. Mit adaptive_shares bekommt der Horizont mehr,
-        dessen letzte 20 Trades mehr verdient haben (zwischen MIN_SHARE und MAX_SHARE)."""
+        dessen letzte 20 Trades mehr verdient haben (zwischen MIN_SHARE und MAX_SHARE). Ein Horizont, der
+        verliert, wird bis auf WEAK seines Startanteils verkleinert: so schaltet der Bot ihn praktisch ab."""
         if not self.horizons:
             return {}
         total = sum(h.share for h in self.horizons.values()) or 1.0
@@ -90,7 +93,7 @@ class Trader:
         w = {}
         for n, b in base.items():
             pnl = sum(t["pnl"] for t in [t for t in self.closed if t.get("horizon") == n][-20:])
-            w[n] = b * min(max(1 + 10 * pnl / capital, 0.25), 2.0)
+            w[n] = b * min(max(1 + 10 * pnl / capital, WEAK), 2.0)
         # Normieren: wer über/unter die Grenze käme, wird dort festgehalten, der Rest wird neu verteilt
         fixed: dict[str, float] = {}
         for _ in range(len(w)):
