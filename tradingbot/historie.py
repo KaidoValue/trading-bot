@@ -36,8 +36,8 @@ from .strategies import build
 
 log = logging.getLogger(__name__)
 
-# binance sperrt US-Server (auch GitHub): dann liefern binanceus, kucoin oder gate die Altcoin-Geschichte
-SOURCES = (("bitstamp", "USD"), ("binance", "USDT"), ("binanceus", "USD"), ("kucoin", "USDT"), ("gate", "USDT"))
+# binance sperrt US-Server (auch GitHub): dann liefern binanceus oder kucoin die Altcoin-Geschichte
+SOURCES = (("bitstamp", "USD"), ("binance", "USDT"), ("binanceus", "USD"), ("kucoin", "USDT"))
 CACHE = Path("data/historie")
 TF_MS = {"30m": 1_800_000, "1h": 3_600_000, "4h": 14_400_000, "1d": 86_400_000}
 RULE = {"30m": "30min", "1h": "1h", "4h": "4h", "1d": "1D"}
@@ -78,7 +78,7 @@ def load_coin(coin: str, timeframe: str, exchanges: dict | None = None) -> pd.Da
             return df
     import ccxt
     exchanges = exchanges or {}
-    best = None
+    found = []
     for name, quote in SOURCES:
         ex = exchanges.setdefault(name, getattr(ccxt, name)({"enableRateLimit": True}))
         symbol = f"{coin}/{quote}"
@@ -89,13 +89,18 @@ def load_coin(coin: str, timeframe: str, exchanges: dict | None = None) -> pd.Da
         except Exception as e:          # Börse nicht erreichbar: nächste versuchen
             log.warning("%s %s: %s", name, symbol, e)
             continue
-        if first is not None and (best is None or first < best[2]):
-            best = (name, ex, first, symbol)
-    if best is None:
+        if first is not None:
+            found.append((first, name, ex, symbol))
+    df = None
+    for first, name, ex, symbol in sorted(found, key=lambda f: f[0]):     # längste Geschichte zuerst
+        log.warning("Lade %s %s von %s ab %s ...", coin, timeframe, name, ex.iso8601(first)[:10])
+        try:
+            df = download(ex, symbol, timeframe, first)
+            break
+        except Exception as e:          # z.B. Börse liefert nur die letzten Kerzen: nächste versuchen
+            log.warning("%s %s: %s", name, symbol, e)
+    if df is None:
         return None
-    name, ex, first, symbol = best
-    log.warning("Lade %s %s von %s ab %s ...", coin, timeframe, name, ex.iso8601(first)[:10])
-    df = download(ex, symbol, timeframe, first)
     for old in cached:
         old.unlink()
     df.to_csv(CACHE / f"{name}_{coin}_{timeframe}.csv")
