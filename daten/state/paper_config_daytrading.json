@@ -632,10 +632,17 @@
         "published": "2026-10-29T18:46:02+00:00"
       }
     ],
-    "alerts": []
+    "alerts": [
+      {
+        "who": "powell (fed)",
+        "title": "Federal Reserve Board announces approval of application by The Bank of Nova Scotia",
+        "source": "federalreserve",
+        "published": "2026-10-29T20:30:00+00:00"
+      }
+    ]
   },
   "updated": {
-    "__dt__": "2026-10-29T20:17:06.805817+00:00"
+    "__dt__": "2026-10-29T20:46:46.291672+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -665,7 +672,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-29T20:16:14.951815+00:00"
+      "__dt__": "2026-10-29T20:46:14.905744+00:00"
     }
   }
 }
