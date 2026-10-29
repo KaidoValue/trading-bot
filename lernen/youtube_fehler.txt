@@ -1,1 +1,2 @@
-2026-10-28 11:36:21,340 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: VideoUnplayable
+2026-10-29 11:44:10,586 WARNING Abschrift XYmSwI3PRA0 nicht abrufbar: RequestBlocked
+2026-10-29 11:44:11,505 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: VideoUnplayable
