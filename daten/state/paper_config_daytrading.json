@@ -525,28 +525,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T17:00:00+00:00"
+      "__dt__": "2026-10-29T18:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-29T12:00:00+00:00"
@@ -600,14 +600,34 @@
   "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 51,
-    "news_score": 0.0,
-    "themes": {},
+    "news_score": -1.0,
+    "themes": {
+      "hack": [
+        "coindesk",
+        "decrypt"
+      ]
+    },
     "blackout": null,
-    "evidence": [],
+    "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Polymarket suspends trading after third-party breach leads to user losses",
+        "link": "https://www.coindesk.com/markets/2026/10/29/polymarket-suspends-trading-after-third-party-breach-leads-to-user-losses",
+        "published": "2026-10-29T18:55:35+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Hackers Publish Work Details of 41,000 Homeland Security Employees",
+        "link": "https://decrypt.co/382181/hackers-publish-work-details-homeland-security-employees",
+        "published": "2026-10-29T18:46:02+00:00"
+      }
+    ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T18:42:36.859364+00:00"
+    "__dt__": "2026-10-29T19:12:57.484469+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -637,7 +657,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-29T18:42:05.049532+00:00"
+      "__dt__": "2026-10-29T19:12:05.711980+00:00"
     }
   }
 }
