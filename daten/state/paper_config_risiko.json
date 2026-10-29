@@ -21,7 +21,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.009520369874471935
+      "interest": 0.011297902990222807
     },
     "TRX/CHF": {
       "side": 1,
@@ -44,7 +44,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.007218074132058454
+      "interest": 0.008576914587826516
     },
     "BNB/CHF": {
       "side": 1,
@@ -67,7 +67,7 @@
       "sold": 0.23348231671573227,
       "sold_value": 146.6942541022943,
       "realized": 0.28053092797197177,
-      "interest": 0.007712628367532312
+      "interest": 0.00810849841181667
     },
     "BTC/CHF": {
       "side": 1,
@@ -90,7 +90,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.0013295177276440703
+      "interest": 0.002502776583209957
     },
     "ETH/CHF": {
       "side": 1,
@@ -113,7 +113,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.0006055667663912976
+      "interest": 0.0011380744995849476
     }
   },
   "closed": [
@@ -3020,28 +3020,28 @@
       "__dt__": "2026-10-28T18:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T00:00:00+00:00"
+      "__dt__": "2026-10-29T00:30:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-28T20:00:00+00:00"
@@ -3092,10 +3092,10 @@
       "__dt__": "2026-10-28T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00abmittel\u00bb | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": null,
   "updated": {
-    "__dt__": "2026-10-29T00:59:09.168147+00:00"
+    "__dt__": "2026-10-29T01:29:40.869889+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -3111,7 +3111,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": -208.2121123485271,
+    "cash": -208.21735035873166,
     "positions": {
       "BTC/CHF": 0.0019144533414070153,
       "ETH/CHF": 0.029963568383698336,
@@ -3122,9 +3122,9 @@
       "ZEC/CHF": 0.0,
       "HYPE/CHF": 0.0
     },
-    "interest_paid": 8.568969809308031,
+    "interest_paid": 8.574207819512594,
     "interest_at": {
-      "__dt__": "2026-10-29T00:58:36.672149+00:00"
+      "__dt__": "2026-10-29T01:28:47.982406+00:00"
     }
   }
 }

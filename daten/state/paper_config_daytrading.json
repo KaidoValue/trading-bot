@@ -52,7 +52,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.04839345919855189
+      "interest": 0.054322484219156454
     },
     "HYPE/CHF": {
       "side": -1,
@@ -79,7 +79,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.009634621204133643
+      "interest": 0.010800754933932866
     }
   },
   "closed": [
@@ -535,28 +535,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-28T23:00:00+00:00"
+      "__dt__": "2026-10-29T00:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-28T20:00:00+00:00"
@@ -607,7 +607,7 @@
       "__dt__": "2026-10-28T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: kein Signal | [kurz] ETH/CHF: Position offen, Signal best\u00e4tigt | [kurz] BNB/CHF: Position offen, Signal best\u00e4tigt | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: kein Signal | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Signal | [mittel] BTC/CHF: Position offen, Signal best\u00e4tigt | [mittel] ETH/CHF: Position vom Horizont \u00abmittel\u00bb \u00fcbernommen | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00abkurz\u00bb (Order kleiner als Mindestgr\u00f6sse) | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [lang] BTC/CHF: kein Einstieg (Pause nach Verlustserie) | [lang] ETH/CHF: Signal 'raus', bleibe in Cash | [lang] BNB/CHF: Position vom Horizont \u00ablang\u00bb \u00fcbernommen | [lang] XRP/CHF: kein Signal | [lang] SOL/CHF: Signal 'raus', bleibe in Cash | [lang] TRX/CHF: Position offen, Signal best\u00e4tigt | [lang] ZEC/CHF: Signal 'raus', bleibe in Cash | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: kein Signal | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Signal",
   "news": {
     "fear_greed": 51,
     "news_score": -1.0,
@@ -637,7 +637,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-29T00:58:25.888701+00:00"
+    "__dt__": "2026-10-29T01:28:37.191209+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -655,7 +655,7 @@
     "halt_reason": ""
   },
   "paper": {
-    "cash": 1052.23022648497,
+    "cash": 1052.2231313262196,
     "positions": {
       "BNB/CHF": 0.28963463385427063,
       "ZEC/CHF": 0.0,
@@ -665,9 +665,9 @@
       "ETH/CHF": 0.0,
       "HYPE/CHF": -0.7063716946566138
     },
-    "interest_paid": 0.1431478326274776,
+    "interest_paid": 0.15024299137788139,
     "interest_at": {
-      "__dt__": "2026-10-29T00:57:54.079863+00:00"
+      "__dt__": "2026-10-29T01:27:52.156241+00:00"
     }
   }
 }
