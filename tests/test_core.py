@@ -790,3 +790,85 @@ def test_history_simulation_can_start_later(df):
     run = simulate(cfg, {"BTC/USD": btc}, start=start)
     assert run.equity.index[0] >= start.normalize() and run.equity.iloc[0] == pytest.approx(cfg.starting_capital, rel=0.02)
     assert len(run.trades) == 0 or (pd.to_datetime(run.trades["opened"], utc=True) >= start).all()
+
+
+# --- Marktphase je Coin: Horizont wählen, bester Einstieg, Ausstieg wenn die Phase kippt
+
+def test_coin_phases_follow_200_day_line_without_lookahead():
+    from tradingbot.phase import coin_phases
+    idx = pd.date_range("2018-01-01", periods=500, freq="1D", tz="UTC")
+    up = pd.Series(range(100, 600), index=idx, dtype=float)
+    daily = pd.DataFrame({"open": up, "high": up * 1.01, "low": up * 0.99, "close": up, "volume": 1.0})
+    ph = coin_phases(daily)
+    assert ph.iloc[100].startswith("Seitwärts") and ph.iloc[-1].startswith("Aufwärtstrend")
+    pd.testing.assert_series_equal(ph.iloc[:300], coin_phases(daily.iloc[:300]))
+    down = daily.iloc[::-1].set_axis(idx)
+    assert coin_phases(down).iloc[-1].startswith("Abwärtstrend")
+
+
+def test_phase_gate_trades_full_only_where_horizon_has_proven_itself():
+    from tradingbot.phase import PhaseBook
+    t = _tool_trader()
+    t.phase_book = PhaseBook(probation=0.25)
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz", phase="Aufwärtstrend, ruhig")
+    small = t.open_trades["X"].qty
+    assert "Probezeit" in t.note and t.open_trades["X"].context["phase"] == "Aufwärtstrend, ruhig"
+    t.exit("X", 100, "Signal", 1)
+    win = {"phase": "Aufwärtstrend, ruhig", "horizon": "kurz", "entry": 100, "qty": 1, "pnl": 2.0}
+    t.closed += [win] * 8
+    t.on_signal("X", 1, 100, atr=1, equity=t.equity({}), when=2, horizon="kurz")
+    assert t.open_trades["X"].qty == pytest.approx(small * 4, rel=0.02) and "voll" in t.note
+    t.exit("X", 100, "Signal", 3)
+    t.closed += [dict(win, pnl=-5.0)] * 8                                   # jetzt verliert der Horizont dort
+    t.on_signal("X", 1, 100, atr=1, equity=t.equity({}), when=4, horizon="kurz")
+    assert t.open_trades["X"].qty == pytest.approx(small, rel=0.02) and "verliert" in t.note
+
+
+def test_phase_prior_counts_like_at_most_20_own_trades():
+    from tradingbot.phase import PhaseBook
+    book = PhaseBook({"Seitwärts, wild|kurz": [-10.0, 1000]})            # Geschichte: verliert (-1 % pro Trade)
+    assert book.factor([], "Seitwärts, wild", "kurz")[0] == book.probation
+    own = [{"phase": "Seitwärts, wild", "horizon": "kurz", "entry": 1, "qty": 100, "pnl": 3.0}] * 30   # +3 %
+    assert book.factor(own, "Seitwärts, wild", "kurz")[0] == 1.0       # eigene neue Erfahrung setzt sich durch
+
+
+def test_waits_for_pullback_and_exits_when_phase_turns():
+    t = _tool_trader(max_stretch_atr=1.0)
+    t.phase_exit = True
+    t.on_signal("X", 1, 105, atr=2, equity=10_000, when=0, horizon="kurz", anchor=100)    # 2,5 ATR darüber
+    assert not t.open_trades and "Rücksetzer" in t.note
+    t.on_signal("X", 1, 101, atr=2, equity=10_000, when=1, horizon="kurz", anchor=100)
+    assert "X" in t.open_trades
+    t.check_phase("X", "Seitwärts, ruhig", 101, 2)
+    assert "X" in t.open_trades
+    t.check_phase("X", "Abwärtstrend, wild", 99, 3)
+    assert not t.open_trades and t.closed[-1]["reason"] == "Phase gekippt"
+    t.on_signal("X", 1, 99, atr=2, equity=t.equity({}), when=4, horizon="kurz", anchor=100)
+    assert not t.open_trades and "Marktphase" in t.note
+
+
+def test_phasen_bot_in_history_simulation(df, tmp_path):
+    from tradingbot.historie import simulate, report, resample
+    btc = df.set_axis(pd.date_range("2020-01-01", periods=len(df), freq="1h", tz="UTC"))
+    cfg = Config.load("bots/config_phasen.yaml")
+    cfg.risk.max_drawdown_pct = 0.99
+    for h in cfg.horizons.values():
+        h.update(trend_filter=False, min_edge=0)
+    run = simulate(cfg, {"BTC/USD": btc})
+    assert len(run.equity) > 50
+    if len(run.trades):
+        assert "phase" in run.trades
+        assert "Nach Marktphase" in report({"p": run}, None, resample(btc, "1d")["close"])
+
+
+def test_paper_loop_with_phase_gate(df, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    cfg = Config(poll_seconds=0, symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="ph",
+                 phase_gate=True, phase_exit=True, phase_prior="fehlt.json",
+                 horizons={"kurz": {"timeframe": "1h", "strategy": "trend", "max_stretch_atr": 2.0}},
+                 risk=RiskConfig(loss_streak_pause=99, max_total_risk_pct=1, max_daily_loss_pct=1,
+                                 max_trades_per_day=999))
+    bot.run(cfg, max_iterations=200)
+    trades = pd.read_csv(tmp_path / "daten" / "logs" / "trades_ph.csv")
+    assert "phase" in trades and trades["phase"].notna().any()     # ohne Tageskerzen: ohne Phase

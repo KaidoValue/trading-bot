@@ -1,0 +1,87 @@
+# Phasen-Bot (Test, nur Demo): bestimmt für jeden Coin die Marktphase und entscheidet daraus selbst, ob er kurz-,
+# mittel- oder langfristig handelt. Benutzen mit:  py -3.13 -m tradingbot historie --bots ... bots/config_phasen.yaml
+#
+# 1. Marktphase je Coin (Tageskerzen): Aufwärtstrend / Abwärtstrend / Seitwärts, jeweils ruhig oder wild.
+# 2. Horizont wählen (phase_gate): Ein Horizont handelt nur mit voller Grösse in Phasen, in denen seine Trades
+#    bewiesen Geld gebracht haben (mind. 8 Trades). Sonst nur klein (phase_probation), damit er weiter lernt.
+#    Vorwissen aus der Geschichts-Simulation steht in phase_prior, eigene Trades kommen laufend dazu.
+# 3. Bester Einstieg: Pullback statt Ausbruch; mit max_stretch_atr kein Einstieg, wenn der Kurs der 20er-Linie
+#    davongelaufen ist (Rücksetzer abwarten).
+# 4. Bester Ausstieg: Nachlauf-Stop sichert Gewinne, Teilgewinn beim kurzen Horizont, und phase_exit schliesst
+#    eine Position, sobald die Phase des Coins in einen Abwärtstrend kippt.
+
+mode: paper
+title: "5️⃣ Phasen-Bot (wählt kurz, mittel oder lang selbst)"
+description: "Bestimmt für jeden Coin die Marktphase und handelt nur mit den Horizonten voll, die in dieser Phase bewiesen Geld verdienen. Einstieg beim Rücksetzer, Ausstieg mit Nachlauf-Stop oder wenn die Phase kippt. Ohne Hebel, ohne Short."
+exchange: kraken
+symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
+timeframe: 1d
+history_exchange: bitstamp
+history_symbol: BTC/USD
+starting_capital: 1000
+fee_rate: 0.0026
+slippage: 0.0005
+
+horizons:
+  lang:                       # 200-Tage-Linie: grosse Trends über Wochen bis Monate
+    timeframe: 1d
+    strategy: regime
+    strategy_params: {period: 200}
+    share: 0.4
+    trend_filter: true
+  mittel:                     # Trendfolge auf 4-Stunden-Kerzen, Tage bis Wochen
+    timeframe: 4h
+    strategy: trend
+    share: 0.3
+    stop_loss_atr: 2.5
+    take_profit_atr: 1000     # kein festes Ziel: Nachlauf-Stop oder Signal
+    trail_atr: 3.0
+    risk_per_trade: 0.02
+    trend_filter: true
+    max_stretch_atr: 1.0      # nicht kaufen, wenn der Kurs mehr als 1 ATR über der 20er-Linie liegt
+    min_edge: 3
+  kurz:                       # Rücksetzer im Trend auf 1-Stunden-Kerzen (Stunden bis Tage)
+    timeframe: 1h
+    strategy: pullback
+    share: 0.3
+    stop_loss_atr: 1.5
+    take_profit_atr: 3.0
+    risk_per_trade: 0.01
+    trend_filter: true
+    partial_atr: 1.0
+    max_stretch_atr: 0.5
+    min_edge: 5
+adaptive_shares: true
+horizon_priority: true
+phase_gate: true
+phase_probation: 0.25
+phase_exit: true
+phase_prior: daten/state/phasen_wissen.json
+allow_short: false
+poll_seconds: 300
+reevaluate: true
+
+use_news: true
+news_refresh_minutes: 15
+news_min_sources: 2
+use_events: true
+event_pause_minutes: 30
+event_feeds: {}
+
+risk:
+  risk_per_trade: 0.05        # gilt für «lang»; die Grösse begrenzt ohnehin max_position_pct
+  stop_loss_atr: 8.0
+  take_profit_atr: 1000
+  max_position_pct: 0.20
+  max_invested_pct: 1.0
+  max_daily_loss_pct: 0.15
+  max_drawdown_pct: 0.35
+  halt_days: 30
+  min_order_value: 10
+  max_total_risk_pct: 1.0
+  max_open_positions: 8
+  max_trades_per_day: 10
+  loss_streak_pause: 99
+  pause_hours: 0
+  max_spread_pct: 0.003
+  correlation_limit: 0.8

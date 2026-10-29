@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 import logging
 import os
@@ -178,6 +179,12 @@ def main() -> None:
         curves.to_csv(historie.CACHE / "kurven.csv")
         for n, r in runs.items():
             r.trades.to_csv(historie.CACHE / f"trades_{n}.csv", index=False)
+            if r.cfg.phase_gate and r.cfg.phase_prior and len(r.trades):
+                # Vorwissen für den laufenden Bot: was hat jeder Horizont in jeder Phase gebracht
+                from .phase import PhaseBook
+                stats = PhaseBook.summarize(r.trades.to_dict("records"))
+                Path(r.cfg.phase_prior).write_text(json.dumps({"stats": stats, "bis": str(btc.index[-1].date())},
+                                                              indent=1), encoding="utf-8")
         print(text)
     elif args.command == "youtube":
         from .youtube import update

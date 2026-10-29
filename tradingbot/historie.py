@@ -25,6 +25,7 @@ import pandas as pd
 
 from . import indicators as ind
 from .backtest import WARMUP, Result
+from .phase import PhaseBook
 from .bot import liquidation
 from .broker import PaperBroker
 from .config import Config
@@ -140,14 +141,15 @@ def _fingerprint(df: pd.DataFrame) -> tuple:
 
 
 def _signals(h, params: dict, allow_short: bool, df: pd.DataFrame, base_tf: str):
-    """Schlusszeit, Signal und ATR jeder Horizont-Kerze (nach der Vorlaufzeit)."""
+    """Schlusszeit, Signal, ATR und 20er-Linie jeder Horizont-Kerze (nach der Vorlaufzeit)."""
     hdf = df if h.timeframe == base_tf else resample(df, h.timeframe)
     if len(hdf) <= WARMUP:
-        return df.index[:0], np.array([]), np.array([])
+        return df.index[:0], np.array([]), np.array([]), np.array([])
     strat = build(h.strategy, allow_short=allow_short, **params)
     sig, atr = strat.signals(hdf).to_numpy(), ind.atr(hdf).to_numpy()
+    ema = ind.ema(hdf["close"], 20).to_numpy()
     closes = hdf.index + pd.Timedelta(milliseconds=TF_MS[h.timeframe])
-    return closes[WARMUP:], sig[WARMUP:], atr[WARMUP:]
+    return closes[WARMUP:], sig[WARMUP:], atr[WARMUP:], ema[WARMUP:]
 
 
 def _trend_series(df: pd.DataFrame):
@@ -155,6 +157,13 @@ def _trend_series(df: pd.DataFrame):
     from .strategies import trend_direction
     daily = resample(df, "1d")
     return daily.index + pd.Timedelta(days=1), trend_direction(daily).to_numpy()
+
+
+def _phase_series(df: pd.DataFrame):
+    """Marktphase des Coins (phase.py), gültig ab Schluss der jeweiligen Tageskerze."""
+    from .phase import coin_phases
+    daily = resample(df, "1d")
+    return daily.index + pd.Timedelta(days=1), coin_phases(daily).to_numpy()
 
 
 def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | None = None) -> BotRun:
@@ -170,6 +179,12 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
         trader.horizons, trader.adaptive_shares = {h.name: h for h in hz}, cfg.adaptive_shares
         trader.priority = cfg.horizon_priority
     trader.short_probation = cfg.short_probation
+    if cfg.phase_gate:      # ohne Vorwissen: der Bot lernt in der Simulation Trade für Trade (kein Blick in die Zukunft)
+        trader.phase_book = PhaseBook(probation=cfg.phase_probation)
+    trader.phase_exit = cfg.phase_exit
+    use_phase = cfg.phase_gate or cfg.phase_exit
+    phases = {s: _cached(("phase", s, _fingerprint(df)), lambda: _phase_series(df)) for s, df in coins.items()} \
+        if use_phase else {}
 
     # Langfristige Richtung je Coin (Trendfilter): gilt ab Schluss der Tageskerze
     trends = {}
@@ -183,13 +198,21 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
         params = {k: v for k, v in h.strategy_params.items() if k not in ("memory_file", "library_file")}
         for s, df in coins.items():
             key = (h.strategy, repr(sorted(params.items())), cfg.allow_short, h.timeframe, base_tf, s, _fingerprint(df))
-            closes, sig, atr = _cached(key, lambda: _signals(h, params, cfg.allow_short, df, base_tf))
+            closes, sig, atr, ema = _cached(key, lambda: _signals(h, params, cfg.allow_short, df, base_tf))
             if h.trend_filter:
                 p = trends[s][0].searchsorted(closes, side="right") - 1
                 trend = np.where(p >= 0, trends[s][1][np.clip(p, 0, None)], 0)
+            if use_phase:
+                p = phases[s][0].searchsorted(closes, side="right") - 1
+                phase = np.where(p >= 0, phases[s][1][np.clip(p, 0, None)], None)
             for i in np.flatnonzero((sig != 0) & (atr > 0)):
                 events[closes[i]].append((h.name, s, int(sig[i]), float(atr[i]),
-                                          int(trend[i]) if h.trend_filter else None))
+                                          int(trend[i]) if h.trend_filter else None,
+                                          phase[i] if use_phase else None, float(ema[i])))
+    # Phasenwechsel je Coin (für den Ausstieg, wenn die Phase kippt)
+    for s, (times, ph) in phases.items():
+        for i in np.flatnonzero(np.r_[True, ph[1:] != ph[:-1]]):
+            events[times[i]].append(("", s, 0, 0.0, None, ph[i], None))
 
     idx = coins[next(iter(coins))].index
     for df in coins.values():
@@ -210,9 +233,14 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
             continue
         bar = {s: c[i] for s, c in cols.items() if not np.isnan(c[i][0])}
         px.update({s: b[0] for s, b in bar.items()})
-        for name, s, g, a, trend in events.get(t, ()):
-            if s in bar and not trader.risk.halted:
-                trader.on_signal(s, g, px[s], a, trader.equity(px), t, horizon=name, trend=trend)
+        for name, s, g, a, trend, phase, ema in events.get(t, ()):
+            if s not in bar:
+                continue
+            if g == 0:
+                trader.check_phase(s, phase, px[s], t)
+            elif not trader.risk.halted:
+                trader.on_signal(s, g, px[s], a, trader.equity(px), t, horizon=name, trend=trend, phase=phase,
+                                 anchor=ema)
         for s in list(trader.open_trades):
             if s in bar:
                 trader.check_stops(s, *bar[s][:3], t)
@@ -346,6 +374,8 @@ def report(runs: dict[str, BotRun], chef: pd.Series | None, btc: pd.Series) -> s
             out += ["**Nach Zeithorizont**", "", _md(_group(r.trades, "horizon")), "",
                     "**Nach Coin**", "", _md(_group(r.trades, "symbol")), "",
                     "**Nach Richtung**", "", _md(_group(r.trades, "side")), "",
+                    *(["**Nach Marktphase und Horizont**", "", _md(_group(r.trades, ["phase", "horizon"])), ""]
+                      if "phase" in r.trades else []),
                     "**Nach Ausstiegsgrund**", "", _md(_group(r.trades, "reason")), ""]
     return "\n".join(out)
 
@@ -367,5 +397,7 @@ def run_all(config_paths: list[str], coins: list[str],
         runs[cfg.name] = simulate(cfg, frames, start)
     btc = data["BTC", "1h"] if ("BTC", "1h") in data else next(v for (c, _), v in data.items() if c == "BTC")
     btc_daily = resample(btc, "1d")
-    chef = simulate_chef(runs, btc_daily, CACHE / "chef_sim.json") if len(runs) == 3 else None
+    # Der Chef verteilt auf die drei Stil-Bots (die ersten drei); weitere Bots laufen nur zum Vergleich mit
+    three = dict(list(runs.items())[:3])
+    chef = simulate_chef(three, btc_daily, CACHE / "chef_sim.json") if len(three) == 3 else None
     return runs, chef, btc_daily["close"]

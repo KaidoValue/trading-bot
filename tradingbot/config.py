@@ -49,6 +49,7 @@ class Horizon:
     trend_filter: bool = False          # nur in Richtung der 200-Tage-Linie des Coins einsteigen
     min_edge: float = 0.0               # erstes Ziel muss mindestens x-mal die Kosten (Gebühren + Slippage) bringen
     allow_short: bool | None = None     # Shorts in diesem Horizont (leer = Einstellung des Bots)
+    max_stretch_atr: float | None = None   # bester Einstieg: nicht mehr als x × ATR über (Short: unter) der 20er-Linie
 
 
 @dataclass
@@ -80,6 +81,11 @@ class Config:
     main_horizon: str = ""              # dieser Horizont gilt für backtest/compare/status (Standard: der erste)
     adaptive_shares: bool = False       # Kapital zum Horizont verschieben, der zuletzt mehr verdient hat
     horizon_priority: bool = False      # längerer Horizont darf Positionen eines kürzeren übernehmen/drehen
+    # Marktphase je Coin (phase.py): Horizonte handeln nur voll in Phasen, in denen sie bewiesen Geld verdienen
+    phase_gate: bool = False
+    phase_probation: float = 0.25       # so gross handelt ein Horizont, der sich in der Phase (noch) nicht bewährt hat
+    phase_exit: bool = False            # Long schliessen, wenn die Phase des Coins in einen Abwärtstrend kippt
+    phase_prior: str = ""               # Vorwissen aus der Geschichts-Simulation (JSON), leer = ohne
     risk: RiskConfig = field(default_factory=RiskConfig)
     name: str = "config"             # Name der Konfigurationsdatei, für die Stand-Datei
     title: str = ""                     # Anzeigename in der Übersicht (STATUS.md)

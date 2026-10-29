@@ -134,6 +134,24 @@ Die Jahre 2011-2013 hatten sehr wenig Handel an den Börsen. Kleine Details (z.B
 Signalen zuerst Kapital bekommt) verschieben das Ergebnis um einige Prozent pro Jahr: Die Zahlen sind
 Grössenordnungen, keine Vorhersage. Vergangene Ergebnisse sind keine Garantie.
 
+## Marktphasen: der Bot wählt kurz, mittel oder lang selbst (Test: `bots/config_phasen.yaml`)
+
+Der 5️⃣ Phasen-Bot (vorerst nur in der Simulation) bestimmt für jeden Coin aus den Tageskerzen die **Marktphase**:
+Aufwärtstrend, Abwärtstrend oder Seitwärts (50- und 200-Tage-Linie), jeweils ruhig oder wild (`tradingbot/phase.py`).
+
+- **Horizont wählen** (`phase_gate`): Für jede Phase merkt er sich, was die Trades jedes Horizonts dort gebracht
+  haben. Nur ein Horizont, der in der aktuellen Phase bewiesen Geld verdient (mindestens 8 Trades, im Schnitt im
+  Plus), handelt mit voller Grösse. Die anderen handeln klein weiter (`phase_probation`, ein Viertel), damit er
+  merkt, wenn sich das ändert. Vorwissen aus der Geschichts-Simulation liegt in `daten/state/phasen_wissen.json`
+  und zählt höchstens wie 20 eigene Trades; eigene Trades setzen sich also durch.
+- **Bester Einstieg**: Rücksetzer im Trend statt Ausbruch (`pullback` bei «kurz»), und mit `max_stretch_atr`
+  kein Kauf, wenn der Kurs der 20er-Linie davongelaufen ist.
+- **Bester Ausstieg**: Nachlauf-Stop und Teilgewinn sichern Gewinne; `phase_exit` schliesst eine Position, sobald
+  die Phase des Coins gegen sie kippt (Long im Abwärtstrend).
+
+In der Simulation lernt er ohne Vorwissen Trade für Trade (kein Blick in die Zukunft). Die Simulation läuft
+automatisch auf GitHub (`.github/workflows/historie.yml`) und schreibt das Ergebnis nach `lernen/HISTORIE.md`.
+
 ## Installation
 
 Python 3.10 bis 3.13 wird benötigt. Mit ganz neuen Versionen (z.B. 3.15) fehlen für einige Bausteine noch fertige Pakete, die Installation bricht dann mit „Microsoft Visual C++ 14.0 or greater is required" ab. Unter Windows: `py install 3.13`, danach alle Befehle mit `py -3.13` statt `python`.

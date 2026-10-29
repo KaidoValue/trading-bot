@@ -1,0 +1,51 @@
+# Geschichts-Simulation 2011-2026 für alle Bots (lernen/HISTORIE.md) und Vorwissen des Phasen-Bots
+# (daten/state/phasen_wissen.json). Läuft bei Änderungen auf einem claude/-Zweig und von Hand
+# (Actions -> "Geschichts-Simulation" -> Run workflow). Das Ergebnis wird auf denselben Zweig gespeichert.
+name: Geschichts-Simulation
+
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["tradingbot/**", "bots/**", ".github/workflows/historie.yml"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historie-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  historie:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Kursgeschichte aus dem Zwischenspeicher
+        uses: actions/cache@v4
+        with:
+          path: data/historie
+          key: historie-${{ github.run_id }}
+          restore-keys: historie-
+      - run: python -m pytest -q
+      - name: Alle Bots über die ganze Geschichte
+        run: |
+          python -m tradingbot historie --bots bots/config_langfrist.yaml bots/config_daytrading.yaml \
+            bots/config_risiko.yaml bots/config_phasen.yaml
+      - name: Ergebnis speichern
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add lernen/HISTORIE.md daten/state/phasen_wissen.json
+          git diff --cached --quiet || git commit -m "Geschichts-Simulation $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep 5
+          done
+          exit 1
