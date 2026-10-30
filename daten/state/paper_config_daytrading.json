@@ -519,28 +519,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-30T09:00:00+00:00"
+      "__dt__": "2026-10-30T10:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-30T04:00:00+00:00"
@@ -591,7 +591,7 @@
       "__dt__": "2026-10-29T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -605,6 +605,20 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Crypto liquidations jump to $1.57 billion as Binance hack sends bitcoin, ether lower",
+        "link": "https://www.coindesk.com/markets/2026/10/30/crypto-liquidations-jump-to-usd1-57-billion-as-binance-hack-sends-bitcoin-ether-lower",
+        "published": "2026-10-30T11:09:24+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Binance hacker\u2019s Bitcoin haul tops Coinbase\u2019s corporate treasury",
+        "link": "https://cointelegraph.com/news/binance-hacker-bitcoin-holdings-exceed-coinbase-btc-treasury?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-30T10:54:30+00:00"
+      },
       {
         "theme": "hack",
         "source": "coindesk",
@@ -646,26 +660,12 @@
         "title": "Crypto's longtime foe, North Korea's Lazarus Group, likely behind Binance hack: blockchain sleuths",
         "link": "https://www.coindesk.com/policy/2026/10/29/crypto-s-longtime-foe-north-korea-s-lazarus-group-likely-behind-binance-hack-blockchain-sleuths",
         "published": "2026-10-30T03:36:11+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Binance hack rattles markets as BNB falls 8%, Bitcoin nears $77K",
-        "link": "https://cointelegraph.com/markets/binance-hack-rattles-crypto-markets-bnb-bitcoin-slide?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-29T23:24:21+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "Bitcoin Price Slides Below $79,000 as Binance Loses $5.8 Billion in Massive Hack",
-        "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-binance",
-        "published": "2026-10-29T23:06:37+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T10:58:32.489561+00:00"
+    "__dt__": "2026-10-30T11:28:50.466288+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T10:58:01.140265+00:00"
+      "__dt__": "2026-10-30T11:28:00.991230+00:00"
     }
   }
 }
