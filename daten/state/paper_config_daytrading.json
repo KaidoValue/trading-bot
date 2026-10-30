@@ -612,6 +612,13 @@
       {
         "theme": "hack",
         "source": "coindesk",
+        "title": "Wall Street analysts urge investors to buy crypto stocks after $6.3 billion Binance hack",
+        "link": "https://www.coindesk.com/markets/2026/10/30/wall-street-analysts-urge-investors-to-buy-crypto-stocks-on-weakness-after-usd6-3-billion-binance-hack",
+        "published": "2026-10-30T14:13:34+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
         "title": "Binance arranges $6.34 billion to cover losses from record crypto hack",
         "link": "https://www.coindesk.com/business/2026/10/30/binance-arranges-usd6-34-billion-to-cover-losses-from-record-crypto-hack",
         "published": "2026-10-30T12:13:02+00:00"
@@ -657,19 +664,12 @@
         "title": "Binance hack bites India's largest crypto exchange as it curbs futures trading",
         "link": "https://www.coindesk.com/markets/2026/10/30/coindcx-halts-new-crypto-futures-bets-as-binance-incident-disrupts-liquidity",
         "published": "2026-10-30T05:43:07+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Binance hacker splits $1.4 billion of bitcoin into 19 wallets that no one can freeze",
-        "link": "https://www.coindesk.com/markets/2026/10/30/binance-hacker-splits-usd1-4-billion-of-bitcoin-into-19-wallets-that-no-one-can-freeze",
-        "published": "2026-10-30T04:50:42+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T14:02:58.796299+00:00"
+    "__dt__": "2026-10-30T14:32:39.452944+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -699,7 +699,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T14:02:06.529910+00:00"
+      "__dt__": "2026-10-30T14:32:07.535441+00:00"
     }
   }
 }
