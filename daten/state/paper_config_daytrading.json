@@ -519,52 +519,52 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-30T02:00:00+00:00"
+      "__dt__": "2026-10-30T03:00:00+00:00"
     },
     "mittel:BTC/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:ETH/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:BNB/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:XRP/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:SOL/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:TRX/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:ZEC/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "mittel:HYPE/CHF": {
-      "__dt__": "2026-10-29T20:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "lang:BTC/CHF": {
       "__dt__": "2026-10-29T00:00:00+00:00"
@@ -591,7 +591,7 @@
       "__dt__": "2026-10-29T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Signal",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -605,6 +605,27 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "Bitcoin Price Briefly Slides to $76,300 as Binance Confirms Hack Estimated at $6.3 Billion",
+        "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-near-76000-binance",
+        "published": "2026-10-30T04:05:40+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "$6 billion Binance hack sends bitcoin, ether tumbling; Standard Chartered expects more pain",
+        "link": "https://www.coindesk.com/markets/2026/10/30/usd6-billion-binance-hack-sends-bitcoin-ether-tumbling-standard-chartered-sees-more-losses-ahead",
+        "published": "2026-10-30T04:00:43+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Institutional crypto investors rush to pull funds from exchanges after Binance hack",
+        "link": "https://www.coindesk.com/markets/2026/10/30/institutional-crypto-investors-rush-to-pull-funds-from-exchanges-after-binance-hack",
+        "published": "2026-10-30T03:56:40+00:00"
+      },
       {
         "theme": "hack",
         "source": "coindesk",
@@ -639,33 +660,12 @@
         "title": "Binance loses over $6 billion in 'biggest crypto hack in history'",
         "link": "https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets",
         "published": "2026-10-29T21:12:45+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Polymarket suspended trading amid reports of user funds being drained",
-        "link": "https://cointelegraph.com/news/polymarket-suspends-trading-user-funds-compromised?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-29T19:23:03+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Polymarket suspends trading after third-party breach leads to user losses",
-        "link": "https://www.coindesk.com/markets/2026/10/29/polymarket-suspends-trading-after-third-party-breach-leads-to-user-losses",
-        "published": "2026-10-29T18:55:35+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Hackers Publish Work Details of 41,000 Homeland Security Employees",
-        "link": "https://decrypt.co/382181/hackers-publish-work-details-homeland-security-employees",
-        "published": "2026-10-29T18:46:02+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T03:50:33.422104+00:00"
+    "__dt__": "2026-10-30T04:20:54.917132+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T03:50:01.897998+00:00"
+      "__dt__": "2026-10-30T04:20:02.971015+00:00"
     }
   }
 }
