@@ -657,7 +657,7 @@
       {
         "theme": "hack",
         "source": "coindesk",
-        "title": "Live updates: Binance confirms security breach, cryptos fall",
+        "title": "Live updates: Binance confirms security breach, says 'will cover all hacking losses'",
         "link": "https://www.coindesk.com/business/2026/10/29/live-updates-bitcoin-clings-to-usd80-000-as-strategy-s-cushion-thins-before-earnings",
         "published": "2026-10-29T10:41:39+00:00"
       }
@@ -665,7 +665,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T00:20:54.566965+00:00"
+    "__dt__": "2026-10-30T00:50:34.193137+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T00:20:02.655358+00:00"
+      "__dt__": "2026-10-30T00:50:02.793361+00:00"
     }
   }
 }
