@@ -47,7 +47,7 @@ def schliessen(cfg: Config, symbols: list[str]) -> None:
     """Schliesst offene Positionen des Paper-Kontos von Hand zum aktuellen Kurs (z.B. alte Shorts nach einer
     Regeländerung). Der Stand und das Trade-Protokoll werden wie nach einem Bot-Durchlauf gespeichert."""
     from datetime import datetime, timezone
-    from . import state
+    from . import buchhaltung, state
     from .bot import _write_trades, make_trader
     cfg.mode = "paper"
     ex = data.make_exchange(cfg.exchange, convert_to=cfg.symbols[0].split("/")[1])
@@ -55,6 +55,7 @@ def schliessen(cfg: Config, symbols: list[str]) -> None:
     last_bar = state.load(cfg.state_path, trader)
     if not last_bar:
         raise SystemExit(f"Kein gespeicherter Stand ({cfg.state_path}).")
+    buchhaltung.nachbuchen(trader, cfg.state_path, cfg.starting_capital)     # wie im Bot: alte Trades zuerst
     now = datetime.now(timezone.utc)
     for s in symbols:
         if s not in trader.open_trades:
@@ -74,7 +75,10 @@ def report(trades: pd.DataFrame) -> None:
         g = trades.groupby(by)["pnl"]
         return pd.DataFrame({"Trades": g.size(), "Gewinn": g.sum().round(2),
                              "Trefferquote %": (g.apply(lambda s: (s > 0).mean()) * 100).round(1)})
-    print(f"Trades: {len(trades)}, Gesamtergebnis: {trades['pnl'].sum():.2f}\n")
+    # ältere Protokolle haben keine Spalten für Gebühren und Zinsen: fehlende Werte zählen als 0
+    kosten = {c: trades[c].fillna(0).sum() if c in trades else 0.0 for c in ("fees", "interest")}
+    print(f"Trades: {len(trades)}, Gesamtergebnis: {trades['pnl'].sum():.2f}")
+    print(f"Gebühren gesamt: {kosten['fees']:.2f}, Zinsen gesamt: {kosten['interest']:.2f}\n")
     print("Nach Richtung:\n", table("side"), "\n")
     print("Nach Ausstiegsgrund:\n", table("reason"), "\n")
     if "session" in trades:

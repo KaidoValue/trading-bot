@@ -83,6 +83,16 @@ Für den ganzen Bot: `short_probation: true` (Short-Probezeit) lässt Shorts nur
 die letzten 20 eigenen Shorts zusammen Gewinn gebracht haben (mindestens 10 Shorts). Trade-Ergebnisse enthalten
 **alle Kosten**: Kauf- und Verkaufsgebühr, Slippage und Zinsen für Shorts oder Hebel.
 
+**Buchhaltung** (`tradingbot/buchhaltung.py`): Jeder abgeschlossene Trade speichert `fees` (Kaufgebühr und alle
+Verkaufsgebühren, auch von Teilverkäufen) und `interest` (Zinsen); das Ergebnis `pnl` ist der Kursgewinn minus beides.
+Bei jedem Lauf prüft der Bot: Kapital = Startkapital + Ergebnisse aller Trades (offene zum aktuellen Kurs) − Altlasten.
+Mehr als 1 CHF Abweichung kommt als Fehler ins Protokoll; die Übersicht zeigt «Gebühren bisher» und «Buchhaltung»
+(✅ stimmt oder ⚠️ Abweichung). Bis zum 28.10.2026 21:26 UTC fehlte in den Ergebnissen die Kaufgebühr (das Cash
+stimmte). Der erste Lauf danach bucht einmal nach: alte Ergebnisse um die Kaufgebühr korrigiert (alter Wert in
+`pnl_alt`, Spalte `nachgebucht`), alte offene Positionen bekommen ihre Kaufgebühr, der alte Stand liegt in
+`daten/state/archiv/<Name>_vor_nachbuchung_<Datum>.json`. Was dann noch fehlt (Zinsen von vor dem 28.10., die keinem
+Trade gehören), zeigt die Übersicht als «Altlasten».
+
 ## Geschichts-Simulation (2011-2026)
 
 ```bash
@@ -237,7 +247,7 @@ So fliesst das in die Entscheidung ein:
 
 Die Stichwörter stehen in `THEMES` in `tradingbot/news.py` und lassen sich erweitern. Ist eine Quelle nicht erreichbar, läuft der Bot ohne sie weiter. Abschalten mit `use_news: false`.
 
-Jeder Trade wird zusammen mit der Nachrichtenlage beim Einstieg in `daten/logs/trades.csv` gespeichert (bei den anderen Configs `daten/logs/trades_<name>.csv`, z.B. `daten/logs/trades_config_langfrist.csv`). `python -m tradingbot report` zeigt dann, in welcher Lage der Bot gewinnt oder verliert. Nach einigen Wochen Paper-Betrieb ist das die Grundlage, um die Regeln anzupassen oder später ein Machine-Learning-Modell darauf zu trainieren.
+Jeder Trade wird zusammen mit der Nachrichtenlage beim Einstieg in `daten/logs/trades.csv` gespeichert (bei den anderen Configs `daten/logs/trades_<name>.csv`, z.B. `daten/logs/trades_config_langfrist.csv`). `python -m tradingbot report` zeigt dann, in welcher Lage der Bot gewinnt oder verliert, dazu die Gebühren und Zinsen aller Trades zusammen. Nach einigen Wochen Paper-Betrieb ist das die Grundlage, um die Regeln anzupassen oder später ein Machine-Learning-Modell darauf zu trainieren.
 
 Im Backtest gibt es keine historischen Nachrichten, dort entscheidet der Bot nur nach Kursen.
 

@@ -32,6 +32,7 @@ class OpenTrade:
     sold_value: float = 0.0   # Erlös daraus (Menge × Kurs)
     realized: float = 0.0     # Ergebnis der schon verkauften Teile nach Gebühren
     interest: float = 0.0     # bisher bezahlte Zinsen (Short oder Hebel), werden vom Ergebnis abgezogen
+    fees_done: float = 0.0    # Verkaufsgebühren der schon verkauften Teile
 
 
 MIN_SHARE, MAX_SHARE = 0.0, 1.0        # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
@@ -57,6 +58,8 @@ class Trader:
     phase_book: PhaseBook | None = None    # Marktphasen: welcher Horizont verdient in welcher Phase
     phase_exit: bool = False                # Position schliessen, wenn die Phase gegen sie kippt
     phases: dict = field(default_factory=dict)   # Coin -> aktuelle Marktphase
+    altlasten: float = 0.0      # Kosten vor dem 28.10.2026, die zu keinem Trade gehören (buchhaltung.py)
+    buchhaltung: dict = field(default_factory=dict)   # Angaben zur einmaligen Nachbuchung (buchhaltung.py)
 
     def shorts_proven(self) -> bool:
         """Haben sich Shorts bewährt? Mindestens 10 Shorts, die letzten 20 zusammen im Gewinn."""
@@ -109,6 +112,22 @@ class Trader:
 
     def equity(self, prices: dict[str, float]) -> float:
         return self.broker.cash() + sum(self.broker.position(s) * p for s, p in prices.items())
+
+    def abgleich(self, prices: dict[str, float], start: float) -> dict:
+        """Buchhaltung prüfen: Kapital = Startkapital + Ergebnisse aller Trades (offene zum aktuellen Kurs, alle
+        nach Gebühren und Zinsen) - Altlasten. Die Kurse heben sich dabei auf: eine Differenz ist eine echte Lücke.
+        Coins ohne Kurs zählen zum Einstiegskurs."""
+        px = {s: t.entry for s, t in self.open_trades.items()} | prices
+        kapital = self.equity(px)
+        offen = sum(t.side * (px[s] - t.entry) * t.qty - t.fee * t.qty / (t.qty + t.sold) - t.interest + t.realized
+                    for s, t in self.open_trades.items())
+        erwartet = start + sum(c["pnl"] for c in self.closed) + offen - self.altlasten
+        return {"kapital": kapital, "erwartet": erwartet, "differenz": kapital - erwartet}
+
+    def gebuehren_bisher(self) -> float:
+        """Alle bisher bezahlten Gebühren: abgeschlossene Trades und offene Positionen (Kauf und Teilverkäufe)."""
+        return (sum(c.get("fees", 0.0) for c in self.closed)
+                + sum(t.fee + t.fees_done for t in self.open_trades.values()))
 
     def costs(self, symbol: str) -> float:
         """Kosten für Kauf und Verkauf zusammen (Gebühren + Slippage) als Anteil am Kurs."""
@@ -256,6 +275,7 @@ class Trader:
         if not fill:
             return False
         t.realized += t.side * (fill.price - t.entry) * fill.qty - fill.fee - t.fee * fill.qty / (t.qty + t.sold)
+        t.fees_done += fill.fee
         t.qty -= fill.qty
         t.sold += fill.qty
         t.sold_value += fill.qty * fill.price
@@ -316,8 +336,10 @@ class Trader:
         pnl = (t.side * (fill.price - t.entry) * fill.qty - fill.fee - t.fee * fill.qty / total + t.realized
                - t.interest)
         exit_price = (fill.price * fill.qty + t.sold_value) / (fill.qty + t.sold)
+        # fees: ganze Kaufgebühr + alle Verkaufsgebühren, interest: Zinsen; pnl = Kursgewinn - fees - interest
         self.closed.append(dict(symbol=symbol, side="long" if t.side > 0 else "short", opened=t.opened,
                                 closed=when, entry=t.entry, exit=exit_price, qty=fill.qty + t.sold, pnl=pnl,
+                                fees=t.fee + t.fees_done + fill.fee, interest=t.interest,
                                 reason=reason, horizon=t.horizon, partial=t.sold > 0, **t.context))
         self.risk.record_close(pnl, when)
         log.info("%s SCHLIESSEN %s @ %.2f (%s) PnL %.2f", when, symbol, fill.price, reason, pnl)
