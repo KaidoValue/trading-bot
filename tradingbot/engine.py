@@ -140,12 +140,11 @@ class Trader:
             if t.side == signal:                       # gleiche Richtung: längerer Horizont übernimmt
                 self._take_over(symbol, t, horizon, price, atr, equity)
                 return
-            self.exit(symbol, price, f"Vorrang {horizon}", when)     # Gegenrichtung: schliessen, dann neu
-            equity = self.equity({symbol: price})
+            # Gegenrichtung: schliessen, dann neu
+            equity = self._exit_equity(symbol, price, f"Vorrang {horizon}", when, equity)
             t = None
         if t and t.side != signal:
-            self.exit(symbol, price, "Signal", when)
-            equity = self.equity({symbol: price})
+            equity = self._exit_equity(symbol, price, "Signal", when, equity)
             t = None
         if t:
             self.note = f"{symbol}: Position offen, Signal bestätigt"
@@ -187,8 +186,9 @@ class Trader:
         if signal < 0 and self.short_probation and not self.shorts_proven():
             factor *= PROBATION
         exposure = sum(abs(t.qty) * t.entry for t in self.open_trades.values() if not h or t.horizon == horizon)
+        total = sum(abs(t.qty) * t.entry for t in self.open_trades.values())
         plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor,
-                              exposure=exposure, risk_pct=risk_pct,
+                              exposure=exposure, exposure_total=total, risk_pct=risk_pct,
                               stop_atr=h.stop_loss_atr if h else None, target_atr=h.take_profit_atr if h else None,
                               budget_share=self.shares().get(horizon, 1.0))
         if not plan:
@@ -281,9 +281,10 @@ class Trader:
         Stops und seine Grösse (höchstens die vorhandene Menge, ein Überschuss wird verkauft)."""
         h = self.horizons[horizon]
         others = sum(abs(o.qty) * o.entry for s, o in self.open_trades.items() if o.horizon == horizon and s != symbol)
+        total = sum(abs(o.qty) * o.entry for s, o in self.open_trades.items() if s != symbol)
         cash = self.broker.cash() + (t.qty * price if t.side > 0 else 0.0)
-        plan = self.risk.plan(equity, cash, price, atr, side=t.side, exposure=others, risk_pct=h.risk_per_trade,
-                              stop_atr=h.stop_loss_atr, target_atr=h.take_profit_atr,
+        plan = self.risk.plan(equity, cash, price, atr, side=t.side, exposure=others, exposure_total=total,
+                              risk_pct=h.risk_per_trade, stop_atr=h.stop_loss_atr, target_atr=h.take_profit_atr,
                               budget_share=self.shares().get(horizon, 1.0))
         if not plan:
             self.note = f"{symbol}: Position gehört zum Horizont «{t.horizon}» ({self.risk.last_block})"
@@ -295,6 +296,15 @@ class Trader:
         t.partial_pct = h.partial_pct
         t.trail = h.trail_atr * atr if h.trail_atr else 0.0
         self.note = f"{symbol}: Position vom Horizont «{horizon}» übernommen"
+
+    def _exit_equity(self, symbol: str, price: float, reason: str, when, equity: float) -> float:
+        """Position schliessen und das Kapital danach zurückgeben. `equity` bewertet schon alle Positionen zum
+        aktuellen Kurs; der Ausstieg ändert es nur um seine Kosten (Gebühr, Slippage). Nicht aus Cash plus diesem
+        Coin neu rechnen: dann fehlen die anderen Coins, und mit Shorts oder Hebel steckt geliehenes Geld im Cash."""
+        t, cash = self.open_trades[symbol], self.broker.cash()
+        side, qty = t.side, t.qty
+        self.exit(symbol, price, reason, when)
+        return equity + self.broker.cash() - cash - side * qty * price
 
     def exit(self, symbol: str, price: float, reason: str, when) -> None:
         t = self.open_trades.pop(symbol)

@@ -89,11 +89,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     trader.charge_interest(prices, (now - b.interest_at).total_seconds() / 3600,
                                            cfg.risk.margin_interest_per_day)
                 b.interest_at = now
-            eq = trader.equity(prices)
-            if liquidation(trader, prices, cfg.risk):
-                log.error("LIQUIDATION: Sicherheit aufgebraucht, alle Positionen zwangsweise geschlossen")
-                trader.close_all(prices, "Liquidation", now)
-                eq = trader.equity(prices)
+            eq = _liquidate(trader, prices, cfg.risk, now)
             trader.risk.update(eq, now.date())
             if trader.risk.halted:
                 trader.close_all(prices, "Not-Aus", now)
@@ -108,11 +104,13 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     if phase:
                         trader.check_phase(s, phase, prices[s], now)
             for h in ([] if trader.risk.halted else horizons):
-                strategy, frames = strategies[h.name], {}
+                strategy = strategies[h.name]
+                # zuerst alle Kerzen holen: die Korrelations-Sperre braucht auch die Coins, die später drankommen
+                frames = {s: data.fetch_recent(exchange, s, h.timeframe) for s in cfg.symbols}
                 prefix = f"[{h.name}] " if h.name else ""
                 for s in cfg.symbols:
                     key = f"{h.name}:{s}" if h.name else s
-                    df = frames[s] = data.fetch_recent(exchange, s, h.timeframe)
+                    df = frames[s]
                     if last_bar.get(key) == df.index[-1] and not cfg.reevaluate:
                         continue  # keine neue abgeschlossene Kerze
                     last_bar[key] = df.index[-1]
@@ -137,6 +135,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                                      anchor=float(ind.ema(df["close"], 20).iloc[-1]))
                     eq = trader.equity(prices)
                     notes.append(prefix + trader.note)
+            eq = _liquidate(trader, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
             if notes:
                 trader.note = " | ".join(notes)
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
@@ -175,6 +174,14 @@ def liquidation(trader: Trader, prices: dict[str, float], risk) -> bool:
         return False
     notional = sum(abs(trader.broker.position(s)) * p for s, p in prices.items())
     return notional > 0 and trader.equity(prices) < notional / risk.leverage * risk.liquidation_margin
+
+
+def _liquidate(trader: Trader, prices: dict[str, float], risk, now) -> float:
+    """Zwangsschliessung prüfen und ausführen (vor und nach den Signalen). Gibt das Kapital danach zurück."""
+    if liquidation(trader, prices, risk):
+        log.error("LIQUIDATION: Sicherheit aufgebraucht, alle Positionen zwangsweise geschlossen")
+        trader.close_all(prices, "Liquidation", now)
+    return trader.equity(prices)
 
 
 def available_symbols(exchange, symbols: list[str]) -> list[str]:
