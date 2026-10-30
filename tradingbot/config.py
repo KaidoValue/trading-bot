@@ -27,7 +27,9 @@ class RiskConfig:
     max_spread_pct: float = 0.003       # kein Einstieg, wenn Spread grösser (Liquiditätsfilter, nur Paper/Live)
     correlation_limit: float = 0.8      # stark korrelierte Positionen in gleicher Richtung nur halb so gross
     leverage: float = 1.0               # Hebel, NUR Demo: Positionen bis zum x-fachen des Kapitals
-    margin_interest_per_day: float = 0.0012   # Zinsen auf Geliehenes (Kraken ca. 0,02 % pro 4 Std.), auch für Shorts
+    margin_open_fee: float = 0.0003     # Margin-Eröffnungsgebühr auf den geliehenen Teil (Kraken 0,02-0,04 %)
+    margin_interest_per_day: float = 0.0018   # Rollover auf den geliehenen Teil, auch für Shorts: 0,03 % alle 4 Std.
+                                        # (Mitte von Krakens 0,02-0,04 %; BTC kostet dort 0,01-0,02 %, vereinfacht)
     liquidation_margin: float = 0.5     # Zwangsschliessung, wenn Kapital < 50 % der hinterlegten Sicherheit
 
 
@@ -63,7 +65,8 @@ class Config:
     history_exchange: str = "bitstamp"
     history_symbol: str = "BTC/USD"
     starting_capital: float = 1000.0
-    fee_rate: float = 0.0026            # 0.26 % pro Order (Taker-Gebühr, an Börse anpassen)
+    fee_rate: float = 0.0026            # fester Satz pro Order (fee_model «fix»), z.B. für Backtests
+    fee_model: str = "fix"              # fix = immer fee_rate, kraken = Kraken-Staffel nach 30-Tage-Umsatz (broker.py)
     slippage: float = 0.0005
     strategy: str = "adaptive"
     allow_short: bool = False           # auch auf fallende Kurse setzen (nur Backtest/Paper)

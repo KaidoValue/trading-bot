@@ -131,7 +131,7 @@ Ein Bot hat keine Gefühle, aber die typischen Fehler lassen sich als Regeln ver
 |---|---|
 | Trendfolge, Breakout, Pullback, Momentum, Mean Reversion, Range | ✅ (je eigene Strategie, alle in der lernenden KI) |
 | Daytrading, Swingtrading, Positionstrading | ✅ über die Zeiteinheit: 15m–1h ≈ Daytrading, 4h ≈ Swing, 1D ≈ Position |
-| Scalping | ➖ Mit 0,2–0,4 % Gebühr pro Order bei Privatkonten nicht profitabel |
+| Scalping | ➖ Mit 0,2–0,8 % Gebühr pro Order (Kraken: 0,8 % in der kleinsten Stufe) bei Privatkonten nicht profitabel |
 
 ## Märkte und Plattformen
 

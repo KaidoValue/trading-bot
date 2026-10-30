@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import data, indicators as ind
-from .broker import CCXTBroker, PaperBroker
+from .broker import CCXTBroker, PaperBroker, paper_broker
 from .config import Config
 from .engine import Trader
 from .news import NewsMonitor
@@ -31,8 +31,7 @@ def make_trader(cfg: Config, exchange) -> Trader:
         broker = CCXTBroker(exchange, cfg.symbols[0].split("/")[1])
         start = broker.cash()
     else:
-        broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
-        broker.leverage = cfg.risk.leverage
+        broker = paper_broker(cfg)
         start = cfg.starting_capital
     return Trader(broker, RiskManager(cfg.risk, start), allow_short=cfg.allow_short)
 
@@ -54,9 +53,6 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
         trader.phase_book = PhaseBook.load(cfg.phase_prior, cfg.phase_probation, cfg.phase_loser)
     trader.phase_exit = cfg.phase_exit
     cfg.symbols = available_symbols(exchange, cfg.symbols)
-    if isinstance(trader.broker, PaperBroker):
-        # Umgerechnete Coins: real müssten CHF erst in USD getauscht werden (hin und zurück je eine Order)
-        trader.broker.extra_fee = {s: cfg.fee_rate for s in cfg.symbols if getattr(exchange, "virtual", {}).get(s)}
     news = NewsMonitor(cfg.symbols[0].split("/")[0], cfg.news_refresh_minutes, cfg.news_min_sources,
                        events=cfg.use_events, extra_feeds=cfg.event_feeds,
                        pause_minutes=cfg.event_pause_minutes) if cfg.use_news else None
@@ -82,14 +78,17 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
         before_open = {(s, str(t.opened)) for s, t in trader.open_trades.items()}
         before_closed = len(trader.closed)
         try:
-            prices = {s: float(exchange.fetch_ticker(s)["last"]) for s in cfg.symbols}
+            tickers = {s: exchange.fetch_ticker(s) for s in cfg.symbols}
+            prices = {s: float(t["last"]) for s, t in tickers.items()}       # bewertet wird zum letzten Kurs
             if news:
                 trader.context = news.current()
             now = datetime.now(timezone.utc)
+            if paper:
+                sync_paper(trader.broker, exchange, tickers, now)
             for s in cfg.symbols:
                 p = prices[s]
                 trader.check_stops(s, p, p, p, now)
-            if isinstance(trader.broker, PaperBroker):
+            if paper:
                 b = trader.broker
                 if b.interest_at is not None:
                     trader.charge_interest(prices, (now - b.interest_at).total_seconds() / 3600,
@@ -172,6 +171,19 @@ def _pretrain(strategy, cfg: Config, timeframe: str | None = None) -> None:
         log.info("KI-Gedächtnis mit %d Kerzen Kursgeschichte vorgefüllt", n)
     except Exception as e:
         log.warning("Vorwissen für das KI-Gedächtnis nicht abrufbar: %s", e)
+
+
+def sync_paper(broker: PaperBroker, exchange, tickers: dict, now) -> None:
+    """Demo-Konto auf den Stand der Börse bringen: Zeit (30-Tage-Umsatz), Geld- und Briefkurs je Coin für
+    Market-Orders und den USD-Wert der Kontowährung (Kraken rechnet die Gebührenstufe in USD)."""
+    broker.now = now
+    broker.quotes = {s: (float(t["bid"]), float(t["ask"])) for s, t in tickers.items()
+                     if t.get("bid") and t.get("ask")}
+    if hasattr(exchange, "usd_value"):          # Converted: CHF-Konto; ohne (Tests): 1 Einheit = 1 USD
+        try:
+            broker.quote_usd = exchange.usd_value()
+        except Exception as e:                  # Kurs nicht abrufbar: mit dem letzten bekannten weiterrechnen
+            log.warning("USD-Kurs der Kontowährung nicht abrufbar, Gebührenstufe mit dem letzten Kurs: %s", e)
 
 
 def liquidation(trader: Trader, prices: dict[str, float], risk) -> bool:

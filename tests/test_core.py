@@ -435,15 +435,18 @@ def test_breakout_hold_has_no_lookahead_and_stays_in_market(df):
 def test_leverage_sizing_interest_and_liquidation():
     from tradingbot.broker import PaperBroker
     from tradingbot.engine import Trader
-    rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, liquidation_margin=0.5)
+    rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, liquidation_margin=0.5,
+                    max_total_risk_pct=1)
     plan = RiskManager(rc, 1000).plan(1000, 1000, 100, 1)
     assert plan.qty == pytest.approx(29.7)                 # 3 x 1000 CHF Kaufkraft (minus Reserve)
     b = PaperBroker(1000, 0.0, 0.0)
     b.leverage = 3.0
     t = Trader(b, RiskManager(rc, 1000))
-    b.buy("BTC/CHF", 30, 100)                               # 3000 CHF Position, 2000 geliehen
-    assert b.cash() == pytest.approx(-2000)
-    assert b.charge_interest({"BTC/CHF": 100}, 24, 0.001) == pytest.approx(2.0)
+    t.on_signal("BTC/CHF", 1, 100, atr=1, equity=1000, when=0)    # 2970 CHF Position, 1970 geliehen
+    tr = t.open_trades["BTC/CHF"]
+    assert tr.margin_value == pytest.approx(1970) and b.cash() == pytest.approx(-1970 * 1.0003)   # + Eröffnung
+    t.charge_interest({"BTC/CHF": 100}, 24, 0.001)                 # Zinsen nur auf den geliehenen Teil
+    assert tr.interest == pytest.approx(1970 * 0.0013) and b.interest_paid == pytest.approx(tr.interest)
     assert not bot.liquidation(t, {"BTC/CHF": 95}, rc)     # -5 % Kurs = -15 % Konto
     assert bot.liquidation(t, {"BTC/CHF": 79}, rc)         # -21 % Kurs: Kapital < 50 % der Sicherheit -> zu
 
@@ -1043,29 +1046,31 @@ class CountingBroker(PaperBroker):
     """PaperBroker, der alle verlangten Gebühren zusammenzählt."""
     charged = 0.0
 
-    def buy(self, symbol, qty, price):
-        fill = super().buy(symbol, qty, price)
+    def buy(self, symbol, qty, price, **kw):
+        fill = super().buy(symbol, qty, price, **kw)
         self.charged += fill.fee if fill else 0.0
         return fill
 
-    def sell(self, symbol, qty, price, short=False):
-        fill = super().sell(symbol, qty, price, short)
+    def sell(self, symbol, qty, price, short=False, **kw):
+        fill = super().sell(symbol, qty, price, short, **kw)
         self.charged += fill.fee if fill else 0.0
         return fill
 
 
 def test_bookkeeping_reconciles_at_every_step():
-    """Zufällige Trades mit Hebel 3, Shorts, Teilgewinnen, Übernahmen, Zinsen und Zwangsschliessung: nach jedem
-    Schritt ist Kapital = Start + alle Ergebnisse (offene zum aktuellen Kurs), und die Gebühren der Trades sind genau
-    die, die der Broker verlangt hat."""
+    """Zufällige Trades mit Hebel 3, Shorts, Teilgewinnen, Übernahmen, Zinsen und Zwangsschliessung, mit
+    Kraken-Gebührenstaffel, Geld-/Briefkurs und Margin-Gebühren: nach jedem Schritt ist Kapital = Start + alle
+    Ergebnisse (offene zum aktuellen Kurs), und die Gebühren der Trades sind genau die, die der Broker verlangt hat."""
     import random
+    from tradingbot.broker import KRAKEN_TIERS
     from tradingbot.config import Horizon
     rng = random.Random(3)
     # knapp eingestellte Sicherheit (liquidation_margin), damit auch Zwangsschliessungen vorkommen
     rc = RiskConfig(leverage=3.0, risk_per_trade=0.05, max_position_pct=0.5, max_total_risk_pct=1, max_open_positions=8,
                     max_daily_loss_pct=1, max_trades_per_day=10_000, loss_streak_pause=10_000, liquidation_margin=0.97)
-    b = CountingBroker(1000, 0.0026, 0.0005)
+    b = CountingBroker(1000, 0.0026, 0.0005, tiers=KRAKEN_TIERS)
     b.leverage, b.extra_fee = 3.0, {"C": 0.0026}
+    t0, stufen = datetime(2026, 1, 1, tzinfo=timezone.utc), set()
     t = Trader(b, RiskManager(rc, 1000), allow_short=True)
     t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=1.5, take_profit_atr=4.0, partial_atr=0.75),
                   "lang": Horizon("lang", "1d", "regime", stop_loss_atr=3.0, take_profit_atr=8.0, partial_atr=1.5)}
@@ -1075,6 +1080,8 @@ def test_bookkeeping_reconciles_at_every_step():
         s = rng.choice(list(px))
         old, px[s] = px[s], px[s] * (1 + rng.gauss(0, 0.015))
         high, low = max(old, px[s]) * (1 + rng.random() / 100), min(old, px[s]) * (1 - rng.random() / 100)
+        b.now, b.quotes = t0 + timedelta(hours=4 * step), {k: (p * 0.9996, p * 1.0004) for k, p in px.items()}
+        stufen.add(b.tier()[0])
         t.check_stops(s, old, high, low, step)
         if rng.random() < 0.5:
             t.on_signal(s, rng.choice((1, -1)), px[s], atr=px[s] / 100, equity=t.equity(px), when=step,
@@ -1084,7 +1091,7 @@ def test_bookkeeping_reconciles_at_every_step():
             t.close_all(px, "Liquidation", step)
         assert abs(t.abgleich(px, 1000)["differenz"]) < 0.01
     reasons = {c["reason"] for c in t.closed}
-    assert len(t.closed) >= 50 and {c["side"] for c in t.closed} == {"long", "short"}
+    assert len(t.closed) >= 50 and {c["side"] for c in t.closed} == {"long", "short"} and len(stufen) >= 2
     assert {"Vorrang lang", "Liquidation", "Stop auf Einstand"} <= reasons
     assert any(c["partial"] for c in t.closed) and all("fees" in c and "interest" in c for c in t.closed)
     assert t.gebuehren_bisher() == pytest.approx(b.charged)
@@ -1100,16 +1107,16 @@ def _old_style_trader():
     t0 = datetime(2026, 10, 25, 12, tzinfo=timezone.utc)
     b = PaperBroker(1000, 0.0026, 0.0005)
     b.extra_fee = {"SOL/CHF": 0.0026, "XRP/CHF": 0.0026}          # über USD umgerechnet: 0,52 % pro Order
-    t = Trader(b, RiskManager(RiskConfig(max_total_risk_pct=1, max_position_pct=0.3, max_open_positions=8), 1000),
-               allow_short=True)
+    t = Trader(b, RiskManager(RiskConfig(max_total_risk_pct=1, max_position_pct=0.3, max_open_positions=8,
+                                         margin_open_fee=0.0), 1000), allow_short=True)    # alter Code: ohne
     fees = []
     for i, (s, side, entry, exit_) in enumerate([("BTC/CHF", 1, 60_000, 61_000), ("SOL/CHF", -1, 80, 78),
                                                   ("ETH/CHF", 1, 2000, 1900)]):
         t.on_signal(s, side, entry, atr=entry * 0.02, equity=t.equity({}), when=t0 + timedelta(hours=i))
         fees.append(t.open_trades[s].fee)
         t.open_trades[s].fee = 0.0                                 # alter Code: Kaufgebühr nicht beim Trade gemerkt
-        if side < 0:
-            b.charge_interest({s: entry}, 48, 0.0012)              # alter Code: Zinsen keinem Trade zugeordnet
+        if side < 0:                                               # alter Code: Zinsen keinem Trade zugeordnet
+            b.book_interest(t.open_trades[s].qty * entry * 0.0012 * 2)     # 2 Tage auf den geliehenen Short
         t.exit(s, exit_, "Signal", t0 + timedelta(hours=i, minutes=30))
         del t.closed[-1]["fees"], t.closed[-1]["interest"]
     t.on_signal("XRP/CHF", 1, 2.0, atr=0.04, equity=t.equity({}), when=t0 + timedelta(hours=5))
@@ -1192,3 +1199,303 @@ def test_dashboard_and_report_show_fees_and_bookkeeping(capsys):
     report(pd.DataFrame([{"pnl": -1.0, "side": "long", "reason": "Signal", "fees": 0.5, "interest": 0.1},
                          {"pnl": 2.0, "side": "short", "reason": "Signal"}]))      # alter Eintrag ohne Gebühren
     assert "Gebühren gesamt: 0.50, Zinsen gesamt: 0.10" in capsys.readouterr().out
+
+
+# --- Echte Kraken-Kosten: Gebührenstaffel, Kauf zum Brief-/Verkauf zum Geldkurs, Margin-Kosten
+
+def test_kraken_fee_tiers_follow_30_day_volume():
+    """Gebühr = Taker-Satz der Stufe, die der Umsatz der letzten 30 Tage in USD vor der Order erreicht hat."""
+    from tradingbot.broker import KRAKEN_TIERS
+    t0 = datetime(2026, 10, 1, tzinfo=timezone.utc)
+    b = PaperBroker(10_000, 0.0026, 0.0, tiers=KRAKEN_TIERS)
+    b.now, b.quote_usd = t0, 1.25                                  # CHF-Konto: 1 CHF = 1.25 USD
+    b.load_volume([(t0, 1999.2)])                                  # 2'499 USD
+    assert b.tier()[0] == 1 and b.fee("SOL/CHF") == 0.008
+    b.load_volume([(t0, 2000.0)])                                  # 2'500 USD
+    assert b.tier() == (2, 0.003, 0.006, 2000.0) and b.fee("SOL/CHF") == 0.006
+    b.quote_usd = 1.0                                              # dieselben 2'000 als USD-Konto: noch Stufe 1
+    assert b.tier()[0] == 1
+    b.quote_usd = 1.25
+    b.load_volume([])
+    first = b.buy("BTC/CHF", 1, 2000.0)                            # Umsatz vorher 0: 0,80 %
+    b.now = t0 + timedelta(days=29)
+    second = b.sell("BTC/CHF", 1, 2000.0)                          # vorher 2'000 CHF = 2'500 USD: 0,60 %
+    assert first.fee == pytest.approx(16.0) and second.fee == pytest.approx(12.0) and b.volume == 4000.0
+    b.now = t0 + timedelta(days=31)                                # der erste Fill ist älter als 30 Tage
+    assert b.tier() == (2, 0.003, 0.006, 2000.0) and len(b.volume_log) == 1
+    b.now = t0 + timedelta(days=60)
+    assert b.tier() == (1, 0.004, 0.008, 0.0) and not b.volume_log
+    flat = PaperBroker(1000, 0.0026, 0.0)                          # ohne Staffel: fester Satz wie bisher
+    flat.load_volume([(t0, 1e9)])
+    assert flat.tier()[:3] == (0, 0.0026, 0.0026) and flat.fee("BTC/CHF") == 0.0026
+
+
+def test_volume_log_is_saved_and_rebuilt_from_trades(tmp_path):
+    """Alte Stände haben kein Umsatz-Protokoll: beim Laden aus den Trades der letzten 30 Tage nachbilden
+    (abgeschlossene: Kauf und Verkauf, offene: Kauf der ganzen Menge); danach wird es mitgespeichert."""
+    import json
+    from tradingbot import state
+    from tradingbot.broker import KRAKEN_TIERS
+    from tradingbot.engine import OpenTrade
+    now = datetime.now(timezone.utc)
+    old = Trader(PaperBroker(1000, 0.0026, 0.0), RiskManager(RiskConfig(), 1000))
+    old.closed = [dict(symbol="BTC/CHF", side="long", opened=now - timedelta(days=40), closed=now - timedelta(days=20),
+                       entry=100.0, exit=110.0, qty=10.0, pnl=0.0),            # Kauf zu alt, Verkauf zählt
+                  dict(symbol="ETH/CHF", side="short", opened=now - timedelta(days=5), closed=now - timedelta(days=4),
+                       entry=50.0, exit=40.0, qty=20.0, pnl=0.0)]
+    old.open_trades = {"SOL/CHF": OpenTrade(1, 20.0, 5.0, 15.0, 30.0, now - timedelta(days=2), sold=5.0)}
+    path = tmp_path / "paper_alt.json"
+    state.save(path, old, {})
+    raw = json.loads(path.read_text())
+    del raw["paper"]["volume"], raw["paper"]["quote_usd"]          # Stand von vor der Gebührenstaffel
+    path.write_text(json.dumps(raw))
+    b = PaperBroker(1000, 0.0026, 0.0, tiers=KRAKEN_TIERS)
+    t = Trader(b, RiskManager(RiskConfig(), 1000))
+    state.load(path, t)
+    assert [v for _, v in b.volume_log] == [1100.0, 1000.0, 800.0, 200.0]        # SOL: (5 + 5 verkauft) × 20
+    assert b.volume == 3100.0 and b.tier()[0] == 2 and b.quote_usd == 1.0
+    b.now, b.quote_usd = now + timedelta(days=15), 1.25            # der BTC-Verkauf ist jetzt älter als 30 Tage
+    state.save(path, t, {})
+    saved = json.loads(path.read_text())["paper"]
+    assert [v for _, v in saved["volume"]] == [1000.0, 800.0, 200.0] and saved["quote_usd"] == 1.25
+    again = PaperBroker(1000, 0.0026, 0.0, tiers=KRAKEN_TIERS)
+    state.load(path, Trader(again, RiskManager(RiskConfig(), 1000)))
+    assert again.volume == 2000.0 and again.volume_log[0][0] == now - timedelta(days=5) and again.quote_usd == 1.25
+
+
+def test_market_orders_fill_at_bid_and_ask_stops_at_level():
+    """Market-Orders (Einstieg, Ausstieg per Signal, Not-Aus) zum Brief- bzw. Geldkurs ohne Slippage; Stop-Loss und
+    Teilgewinn zur Marke plus/minus Slippage. Der Spread beim Einstieg steht beim Trade."""
+    from tradingbot.config import Horizon
+    b = PaperBroker(10_000, 0.001, 0.001)
+    b.quotes = {"X": (99.0, 101.0)}
+    t = Trader(b, RiskManager(RiskConfig(max_total_risk_pct=1, max_position_pct=0.5), 10_000), allow_short=True)
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=2.0, take_profit_atr=10.0, partial_atr=1.0)}
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")
+    tr = t.open_trades["X"]
+    assert tr.entry == 101.0 and tr.context["spread"] == 0.02                  # Kauf zum Briefkurs
+    t.check_stops("X", 101, 102.5, 100.5, 1)                                   # Teilgewinn bei 102 = Einstieg + 1 ATR
+    assert tr.sold_value / tr.sold == pytest.approx(102 * 0.999)              # zur Marke minus Slippage
+    t.on_signal("X", -1, 100, atr=1, equity=t.equity({"X": 100}), when=2, horizon="kurz")   # Rest zum Geldkurs, Short
+    c, s = t.closed[-1], t.open_trades["X"]
+    assert c["exit"] == pytest.approx((tr.sold_value + 99.0 * tr.qty) / c["qty"]) and c["spread"] == 0.02
+    assert s.side == -1 and s.entry == 99.0                                    # Leerverkauf zum Geldkurs
+    t.check_stops("X", 99, s.stop + 1, 98, 3)                                   # Stop-Loss: Marke plus Slippage
+    assert t.closed[-1]["reason"] == "Stop-Loss" and t.closed[-1]["exit"] == pytest.approx(s.stop * 1.001)
+    t.on_signal("X", 1, 100, atr=1, equity=t.equity({}), when=4, horizon="kurz")
+    t.close_all({"X": 100}, "Not-Aus", 5)                                       # Not-Aus: Market-Order zum Geldkurs
+    assert t.closed[-1]["reason"] == "Not-Aus" and t.closed[-1]["exit"] == 99.0
+    plain = Trader(PaperBroker(10_000, 0.001, 0.001), RiskManager(RiskConfig(max_total_risk_pct=1), 10_000))
+    plain.on_signal("X", 1, 100, atr=1, equity=10_000, when=0)                 # ohne Geld-/Briefkurs: Slippage
+    assert plain.open_trades["X"].entry == pytest.approx(100.1) and "spread" not in plain.open_trades["X"].context
+
+
+def test_takeover_and_phase_exit_are_market_orders():
+    """Auch die Übernahme durch den längeren Horizont (Überschuss verkaufen) und der Ausstieg, wenn die Phase kippt,
+    sind Market-Orders zum Geldkurs."""
+    from tradingbot.config import Horizon
+    b = PaperBroker(10_000, 0.0, 0.001)
+    t = Trader(b, RiskManager(RiskConfig(max_total_risk_pct=1, max_position_pct=0.5), 10_000))
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=2.0),
+                  "lang": Horizon("lang", "1d", "regime", stop_loss_atr=8.0)}
+    t.priority, t.phase_exit = True, True
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=0, horizon="kurz")             # 50 Stück
+    b.quotes = {"X": (99.0, 101.0)}
+    t.on_signal("X", 1, 100, atr=2, equity=t.equity({"X": 100}), when=1, horizon="lang")    # behält gut 6 Stück
+    tr = t.open_trades["X"]
+    assert tr.horizon == "lang" and tr.sold > 40 and tr.sold_value / tr.sold == 99.0
+    t.check_phase("X", "Abwärtstrend, wild", 100, 2)
+    assert t.closed[-1]["reason"] == "Phase gekippt" and t.closed[-1]["exit"] == 99.0
+
+
+def test_converted_ticker_converts_bid_and_ask():
+    class Ex:
+        id = "fake"
+
+        def load_markets(self):
+            return {"BTC/CHF": {}, "SOL/USD": {"spot": True}, "USD/CHF": {"spot": True}}
+
+        def fetch_ticker(self, s):
+            return {"SOL/USD": {"last": 100.0, "bid": 99.5, "ask": 100.5, "percentage": 2.0}, "USD/CHF": {"last": 0.8},
+                    "BTC/CHF": {"last": 50_000.0, "bid": 49_990.0, "ask": 50_010.0}}[s]
+    ex = data.Converted(Ex(), "CHF")
+    t = ex.fetch_ticker("SOL/CHF")
+    assert (t["last"], t["bid"], t["ask"], t["percentage"]) == pytest.approx((80.0, 79.6, 80.4, 2.0))
+    assert ex.fetch_ticker("BTC/CHF")["bid"] == 49_990.0                      # echtes CHF-Paar unverändert
+    assert ex.usd_value() == pytest.approx(1.25)                              # 1 CHF = 1 / 0.80 USD
+
+
+def _margin_trader():
+    """Hebel 3 ohne Gebühren: A (600 CHF) zahlt das Cash ganz, B (800 CHF) nur zur Hälfte, dazu ein Short C."""
+    rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=0.12, max_total_risk_pct=1, max_open_positions=8)
+    b = PaperBroker(1000, 0.0, 0.0)
+    b.leverage = 3.0
+    t = Trader(b, RiskManager(rc, 1000), allow_short=True)
+    px = {"A": 100.0, "B": 10.0, "C": 50.0}
+    t.on_signal("A", 1, 100, atr=10, equity=1000, when=0)           # 1000 × 12 % / (2 × 10) = 6 Stück = 600 CHF
+    t.on_signal("B", 1, 10, atr=0.75, equity=t.equity(px), when=0)  # 80 Stück = 800 CHF, 400 davon geliehen
+    return t, px
+
+
+def test_margin_costs_only_on_the_borrowed_part():
+    """Eröffnungsgebühr und Rollover nur auf den geliehenen Teil: bei Longs, was das Cash beim Kauf nicht deckte
+    (bleibt bis zum Schliessen gleich, nach Teilverkäufen anteilig), bei Shorts auf den Wert der geliehenen Coins.
+    Die Buchhaltung geht dabei auf."""
+    t, px = _margin_trader()
+    a, b = t.open_trades["A"], t.open_trades["B"]
+    assert a.margin_value == 0 and a.interest == 0                              # ganz mit Cash bezahlt
+    assert b.margin_value == pytest.approx(400) and b.interest == pytest.approx(400 * 0.0003)   # Eröffnungsgebühr
+    t.on_signal("C", -1, 50, atr=6, equity=t.equity(px), when=0)               # Short, ca. 500 CHF
+    c = t.open_trades["C"]
+    assert c.margin_value == pytest.approx(c.qty * 50) and c.interest == pytest.approx(c.qty * 50 * 0.0003)
+    before = {s: tr.interest for s, tr in t.open_trades.items()}
+    t.charge_interest(px, 24, 0.0018)                                           # ein Tag Rollover
+    assert t.open_trades["A"].interest == 0
+    assert b.interest - before["B"] == pytest.approx(400 * 0.0018)
+    assert c.interest - before["C"] == pytest.approx(c.qty * 50 * 0.0018)
+    t._reduce("B", b, 40, 10)                                                   # halb verkauft: halber Zins
+    px["C"] = 60.0                                                              # Short: Zins auf den Wert jetzt
+    before = {s: tr.interest for s, tr in t.open_trades.items()}
+    t.charge_interest(px, 24, 0.0018)
+    assert b.margin_value == pytest.approx(400) and b.interest - before["B"] == pytest.approx(200 * 0.0018)
+    assert c.interest - before["C"] == pytest.approx(c.qty * 60 * 0.0018)
+    assert t.broker.interest_paid == pytest.approx(sum(tr.interest for tr in t.open_trades.values()))
+    assert abs(t.abgleich(px, 1000)["differenz"]) < 1e-9
+
+
+def test_old_positions_share_the_borrowed_cash(tmp_path):
+    """Stände von vor der Margin-Rechnung (ohne margin_value): Longs teilen sich das geliehene Cash nach ihrem Wert,
+    Shorts sind ganz geliehen; so zahlen alte Hebel-Positionen weiter Zinsen."""
+    import json
+    from tradingbot import state
+    t, px = _margin_trader()
+    t.on_signal("C", -1, 50, atr=30, equity=t.equity(px), when=0)              # kleiner Short, ca. 100 CHF
+    path = tmp_path / "paper_alt.json"
+    state.save(path, t, {})
+    raw = json.loads(path.read_text())
+    for tr in raw["open_trades"].values():
+        del tr["margin_value"]
+    path.write_text(json.dumps(raw))
+    again = Trader(PaperBroker(1000, 0.0, 0.0), RiskManager(RiskConfig(leverage=3.0), 1000))
+    again.broker.leverage = 3.0
+    state.load(path, again)
+    o, debt = again.open_trades, -again.broker.cash()
+    assert debt == pytest.approx(-t.broker.cash()) and debt > 200
+    assert o["A"].margin_value == pytest.approx(debt * 600 / 1400)
+    assert o["B"].margin_value == pytest.approx(debt * 800 / 1400)
+    assert o["C"].margin_value == pytest.approx(o["C"].qty * o["C"].entry)
+
+
+def test_liquidation_pays_two_percent_instead_of_the_trading_fee():
+    from tradingbot.broker import KRAKEN_TIERS
+    rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, max_total_risk_pct=1, max_daily_loss_pct=1)
+    b = PaperBroker(1000, 0.0026, 0.0, tiers=KRAKEN_TIERS)
+    b.leverage = 3.0
+    t = Trader(b, RiskManager(rc, 1000))
+    t.on_signal("X", 1, 100, atr=1, equity=1000, when=0)
+    tr = t.open_trades["X"]
+    assert tr.fee == pytest.approx(tr.qty * 100 * 0.008)                       # Kauf: Taker der kleinsten Stufe
+    assert bot.liquidation(t, {"X": 79}, rc)
+    t.close_all({"X": 79}, "Liquidation", 1)
+    c = t.closed[-1]
+    assert c["fees"] == pytest.approx(tr.fee + 0.02 * tr.qty * 79) and b.fee_override is None
+    assert t.equity({}) == pytest.approx(1000 + c["pnl"])
+    t.on_signal("X", 1, 100, atr=1, equity=t.equity({}), when=2)
+    tr = t.open_trades["X"]
+    t.close_all({"X": 100}, "Not-Aus", 3)                                       # Not-Aus: normale Gebühr
+    assert t.closed[-1]["fees"] == pytest.approx(tr.fee + tr.qty * 100 * 0.006)   # Umsatz jetzt über 2'500 USD
+
+
+def test_history_simulation_with_kraken_fees_costs_more(df):
+    """Die Geschichts-Simulation rechnet mit der Kraken-Staffel: mit 1'000 USD Kapital deutlich teurer als 0,26 %."""
+    from tradingbot.historie import simulate
+    btc = df.set_axis(pd.date_range("2020-01-01", periods=len(df), freq="1h", tz="UTC"))
+    runs = {}
+    for model in ("fix", "kraken"):
+        cfg = Config(strategy="trend", symbols=["BTC/USD"], name=model, fee_model=model, fee_rate=0.0026)
+        cfg.risk.max_drawdown_pct = 0.99
+        runs[model] = simulate(cfg, {"BTC/USD": btc})
+    fix, kraken = runs["fix"].trades, runs["kraken"].trades
+    rate = lambda tr: tr["fees"].sum() / (tr["qty"] * (tr["entry"] + tr["exit"])).sum()      # Gebühr je Umsatz
+    assert len(kraken) >= 10 and len(runs["kraken"].equity) > 50
+    assert rate(fix) == pytest.approx(0.0026) and rate(kraken) > 0.0059
+    assert kraken["fees"].sum() > 2 * fix["fees"].sum()
+
+
+class QuoteExchange(MultiExchange):
+    """Börse mit Geld- und Briefkurs im Ticker und USD-Wert der Kontowährung (wie data.Converted)."""
+
+    def fetch_ticker(self, symbol):
+        t = super().fetch_ticker(symbol)
+        return {**t, "bid": t["last"] * 0.999, "ask": t["last"] * 1.001}
+
+    def usd_value(self):
+        return 1.25
+
+
+def test_sync_paper_sets_clock_and_quotes_and_keeps_last_usd_rate():
+    class Offline:
+        def usd_value(self):
+            raise OSError("offline")
+    now = datetime(2026, 10, 30, 12, tzinfo=timezone.utc)
+    b = PaperBroker(1000, 0.0, 0.0)
+    b.quote_usd = 1.2
+    bot.sync_paper(b, Offline(), {"X": {"last": 1.0, "bid": 0.99, "ask": 1.01}, "Y": {"last": 2.0}}, now)
+    assert b.now == now and b.quotes == {"X": (0.99, 1.01)} and b.quote_usd == 1.2     # letzter Kurs bleibt
+
+
+def test_bot_run_buys_at_ask_with_kraken_fee_and_keeps_the_volume(df, monkeypatch, tmp_path):
+    import json
+    monkeypatch.chdir(tmp_path)
+    ex = QuoteExchange(df)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(1))
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="kosten", poll_seconds=0, fee_model="kraken",
+                 risk=RiskConfig(max_total_risk_pct=1))
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    tr = st["open_trades"]["BTC/CHF"]
+    assert tr["entry"] == pytest.approx(df["close"].iloc[ex.i] * 1.001)       # Kauf zum Briefkurs
+    assert tr["context"]["spread"] == pytest.approx(0.002) and tr["margin_value"] == 0
+    assert tr["fee"] == pytest.approx(tr["qty"] * tr["entry"] * 0.008)         # Stufe 1: 0,80 %
+    assert st["paper"]["quote_usd"] == 1.25
+    assert [v for _, v in st["paper"]["volume"]] == [pytest.approx(tr["qty"] * tr["entry"], abs=0.01)]
+
+
+def test_dashboard_shows_fee_tier():
+    from tradingbot import dashboard
+    from tradingbot.broker import KRAKEN_TIERS
+    b = PaperBroker(1000, 0.006, 0, tiers=KRAKEN_TIERS)
+    b.quote_usd = 1.25
+    b.load_volume([(datetime.now(timezone.utc), 3420.0)])                     # 4'275 USD: Stufe 2
+    kraken = dashboard.Bot(Config(title="K"), Trader(b, RiskManager(RiskConfig(), 1000)), 1000.0, 0.0)
+    fix = dashboard.Bot(Config(title="F"), Trader(PaperBroker(1000, 0.0026, 0), RiskManager(RiskConfig(), 1000)),
+                        1000.0, 0.0)
+    assert ("| Gebührenstufe | Stufe 2: 0.60 % je Market-Order (30-Tage-Umsatz 3'420 CHF) "
+            "| fest 0.26 % je Order (30-Tage-Umsatz 0 CHF) |") in dashboard.overview([kraken, fix])
+
+
+def test_bot_configs_use_kraken_costs():
+    from tradingbot.broker import KRAKEN_TIERS, CCXTBroker, paper_broker
+    from tradingbot.chef import FEE
+    for name in ("config", "config_langfrist", "config_daytrading", "config_risiko", "config_phasen"):
+        cfg = Config.load(f"bots/{name}.yaml")
+        assert cfg.fee_model == "kraken" and cfg.fee_rate == 0.006 and paper_broker(cfg).tiers is KRAKEN_TIERS
+    risk = Config.load("bots/config_risiko.yaml").risk
+    assert (risk.margin_interest_per_day, risk.margin_open_fee, paper_broker(Config()).tiers) == (0.0018, 0.0003, None)
+    assert FEE == 0.008
+    with pytest.raises(ValueError):
+        paper_broker(Config(fee_model="Kraken"))
+
+    class Live:                                     # echte Börse: market wird angenommen und nicht gebraucht
+        def amount_to_precision(self, s, q):
+            return q
+
+        def create_order(self, s, kind, side, qty):
+            return {"average": 100.0, "filled": qty, "fee": {"cost": 0.1}}
+
+        def fetch_balance(self):
+            return {"free": {"CHF": 1000.0, "BTC": 1.0}}
+    live = CCXTBroker(Live(), "CHF")
+    assert live.buy("BTC/CHF", 0.5, 99.0, market=True).price == 100.0
+    assert live.sell("BTC/CHF", 2.0, 99.0, market=True).qty == 1.0

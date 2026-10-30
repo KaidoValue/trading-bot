@@ -7,9 +7,12 @@ Dazu der Chef-Bot, der täglich auf die drei Bots verteilt.
 Kursgeschichte: Jeder Coin kommt von der Börse mit der längsten Geschichte (Bitcoin bei Bitstamp ab 2011,
 die meisten anderen bei Binance ab 2017). Ein Coin wird gehandelt, sobald es ihn gibt. Gerechnet wird in USD.
 
-Grenzen (bewusst ehrlich): keine historischen News und Ereignisse, kein Orderbuch-Spread, keine
-Korrelationsprüfung zwischen Coins. KI-Gedächtnis und Labor-Bibliothek werden nicht verwendet, weil sie die
-Kurse schon kennen; die KI lernt hier Kerze für Kerze von vorne.
+Kosten wie im Demo-Betrieb: Gebühren nach `fee_model` (Kraken-Staffel nach 30-Tage-Umsatz), Margin-Kosten auf den
+geliehenen Teil, Liquidationsgebühr.
+
+Grenzen (bewusst ehrlich): keine historischen News und Ereignisse, kein Orderbuch-Spread (Slippage statt Geld- und
+Briefkurs), keine Korrelationsprüfung zwischen Coins. KI-Gedächtnis und Labor-Bibliothek werden nicht verwendet,
+weil sie die Kurse schon kennen; die KI lernt hier Kerze für Kerze von vorne.
 """
 from __future__ import annotations
 
@@ -27,7 +30,7 @@ from . import indicators as ind
 from .backtest import WARMUP, Result
 from .phase import PhaseBook
 from .bot import liquidation
-from .broker import PaperBroker
+from .broker import paper_broker
 from .config import Config
 from .data import to_frame
 from .engine import Trader
@@ -178,8 +181,7 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
     nutzen die Kurse davor als Vorlauf, so wie ein Bot, der an diesem Tag eingeschaltet wird."""
     hz = cfg.horizon_list()
     base_tf = min((h.timeframe for h in hz), key=TF_MS.get)
-    broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
-    broker.leverage = cfg.risk.leverage
+    broker = paper_broker(cfg)             # gerechnet wird in USD: quote_usd bleibt 1
     trader = Trader(broker, RiskManager(cfg.risk, cfg.starting_capital), allow_short=cfg.allow_short)
     if cfg.horizons:
         trader.horizons, trader.adaptive_shares = {h.name: h for h in hz}, cfg.adaptive_shares
@@ -237,6 +239,7 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
     for i, t in enumerate(idx):
         if start is not None and t < start:
             continue
+        broker.now = t                      # für den 30-Tage-Umsatz (Gebührenstufe)
         bar = {s: c[i] for s, c in cols.items() if not np.isnan(c[i][0])}
         px.update({s: b[0] for s, b in bar.items()})
         for name, s, g, a, trend, phase, ema in events.get(t, ()):

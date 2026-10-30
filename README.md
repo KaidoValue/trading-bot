@@ -34,7 +34,7 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/risk.py` | Positionsgrösse, Stop-Loss, Take-Profit, Gesamtrisiko, Overtrading- und Verlustserien-Sperre, Tageslimit, Not-Aus |
 | `tradingbot/engine.py` | Gemeinsame Handelslogik für Backtest, Demo und Live |
 | `tradingbot/backtest.py` | Backtest mit Gebühren und Slippage, Kennzahlen (Rendite, Drawdown, Sharpe, Trefferquote, CRV, Expectancy, Profit Factor), Walk-Forward-Analyse |
-| `tradingbot/broker.py` | `PaperBroker` (simuliert) und `CCXTBroker` (echte Orders) |
+| `tradingbot/broker.py` | `PaperBroker` (simuliert, mit Kraken-Gebührenstaffel, Geld-/Briefkurs und Margin-Kosten) und `CCXTBroker` (echte Orders) |
 | `tradingbot/news.py` | Infos aus dem Netz: Fear & Greed Index und News-Schlagzeilen, nur von mehreren Portalen bestätigte Themen zählen |
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
 | `tradingbot/bot.py` | Laufender Bot: holt jede Minute neue Kurse, prüft Orderbuch und Nachrichtenlage und entscheidet |
@@ -81,7 +81,8 @@ Werkzeuge je Horizont (alle optional):
 
 Für den ganzen Bot: `short_probation: true` (Short-Probezeit) lässt Shorts nur mit einem Viertel der Grösse zu, bis
 die letzten 20 eigenen Shorts zusammen Gewinn gebracht haben (mindestens 10 Shorts). Trade-Ergebnisse enthalten
-**alle Kosten**: Kauf- und Verkaufsgebühr, Slippage und Zinsen für Shorts oder Hebel.
+**alle Kosten**: Kauf- und Verkaufsgebühr, Spread bzw. Slippage und Margin-Kosten (Eröffnung, Zinsen) für Shorts oder
+Hebel (siehe [Realistische Kosten](#realistische-kosten-wie-bei-kraken)).
 
 **Buchhaltung** (`tradingbot/buchhaltung.py`): Jeder abgeschlossene Trade speichert `fees` (Kaufgebühr und alle
 Verkaufsgebühren, auch von Teilverkäufen) und `interest` (Zinsen); das Ergebnis `pnl` ist der Kursgewinn minus beides.
@@ -92,6 +93,45 @@ stimmte). Der erste Lauf danach bucht einmal nach: alte Ergebnisse um die Kaufge
 `pnl_alt`, Spalte `nachgebucht`), alte offene Positionen bekommen ihre Kaufgebühr, der alte Stand liegt in
 `daten/state/archiv/<Name>_vor_nachbuchung_<Datum>.json`. Was dann noch fehlt (Zinsen von vor dem 28.10., die keinem
 Trade gehören), zeigt die Übersicht als «Altlasten».
+
+## Realistische Kosten (wie bei Kraken)
+
+Demo-Betrieb und Geschichts-Simulation rechnen mit den Kosten eines echten Kraken-Kontos (`fee_model: kraken` in den
+Bot-Configs, `tradingbot/broker.py`):
+
+- **Gebührenstaffel** (gültig seit 9.7.2026): Der Satz hängt vom Handelsvolumen der letzten 30 Tage in USD ab (beim
+  CHF-Konto mit dem USD/CHF-Kurs umgerechnet). Der Bot sendet nur Market-Orders und zahlt deshalb immer die
+  Taker-Gebühr. Die aktuelle Stufe jedes Bots steht in der Übersicht («Gebührenstufe»).
+
+  | 30-Tage-Umsatz | Maker | Taker |
+  |---|---|---|
+  | ab 0 $ | 0,40 % | 0,80 % |
+  | ab 2'500 $ | 0,30 % | 0,60 % |
+  | ab 10'000 $ | 0,22 % | 0,38 % |
+  | ab 25'000 $ | 0,20 % | 0,35 % |
+  | ab 50'000 $ | 0,15 % | 0,30 % |
+  | ab 100'000 $ | 0,12 % | 0,25 % |
+  | … ab 10 Mio. $ | 0,00 % | 0,10 % |
+
+- **Kauf zum Brief-, Verkauf zum Geldkurs:** Market-Orders (Einstieg, Ausstieg per Signal oder Phase, Übernahme durch
+  einen längeren Horizont, Not-Aus, Zwangsschliessung, von Hand) laufen zum Ask bzw. Bid des Tickers, ohne zusätzliche
+  Slippage. Stop-Loss, Take-Profit, Nachlauf-Stop und Teilgewinn laufen zur Marke plus/minus Slippage. Den Spread beim
+  Einstieg zeigt das Trade-Protokoll (Spalte `spread`); bewertet wird weiterhin zum letzten Kurs.
+- **Hebel und Shorts (Margin):** Eröffnungsgebühr `margin_open_fee` (0,03 %) und Rollover `margin_interest_per_day`
+  (0,18 % pro Tag, also 0,03 % alle 4 Std., Mitte von Krakens 0,02-0,04 %; BTC kostet dort 0,01-0,02 %, vereinfacht
+  ein Satz für alle) nur auf den geliehenen Teil: bei Longs, was das Cash beim Kauf nicht deckte (bleibt bis zum
+  Schliessen gleich, nach Teilverkäufen anteilig), bei Shorts der Wert der geliehenen Coins. Beides zählt zu den
+  Zinsen des Trades. Offene Positionen von vor dieser Rechnung teilen sich das geliehene Cash nach ihrem Wert.
+- **Zwangsschliessung:** 2 % des Positionswerts statt der Handelsgebühr.
+- **Chef-Bot:** Umschichten kostet 0,8 % (Taker der kleinsten Stufe).
+
+Vereinfachungen: Coins ohne CHF-Paar (z.B. SOL) handelt ein echtes Konto über ein USD-Guthaben; den einmaligen Umtausch
+CHF → USD rechnet der Bot nicht ein. Maker-Gebühren nutzt er nicht, weil er nur Market-Orders sendet. Die
+Geschichts-Simulation kennt keinen Geld-/Briefkurs (dort Slippage) und rechnet in USD. Ältere Stände ohne
+Umsatz-Protokoll bilden es beim ersten Laden aus den Trades der letzten 30 Tage nach. `fee_rate` (0,6 %) ist nur noch
+ein Schätzwert für das Strategie-Labor und einzelne Backtests (`backtest`, `compare`, `walkforward`); mit
+`fee_model: fix` rechnet ein Bot wie früher mit diesem festen Satz. Die Simulationszahlen unten (Oktober 2026) wurden
+noch mit 0,26 % je Order gerechnet; die nächste Geschichts-Simulation rechnet mit der Staffel.
 
 ## Geschichts-Simulation (2011-2026)
 
@@ -125,15 +165,16 @@ Selbst ausprobieren: `python -m tradingbot historie --bots ... --start 2022-01-0
 Was die Simulation gezeigt hat:
 
 - **Trendfilter** war die wichtigste Verbesserung (+18 % pro Jahr beim Langfrist-Bot im Schnitt aller Varianten).
-- **Kurzfristiger Handel verliert ohne Gebührenfilter**: Kauf und Verkauf kosten zusammen rund 0,6 %, die meisten
+- **Kurzfristiger Handel verliert ohne Gebührenfilter**: Kauf und Verkauf kosteten in der Simulation zusammen rund
+  0,6 % (0,26 % Gebühr je Order plus Slippage; mit der Kraken-Staffel in der kleinsten Stufe rund 1,7 %), die meisten
   Stunden-Bewegungen sind kleiner. Mit `min_edge: 5` handeln die Bots seltener, aber nur, wenn es sich lohnen kann.
   Auch mit 0,4 % Gebühr und doppelter Slippage bleiben die Ergebnisse fast gleich.
 - **Mehr investieren bringt mehr:** Der Langfrist-Bot darf jetzt bis 100 % statt 50 % investieren (je Coin bis 20 %),
   der KI-Bot riskiert 2 % statt 1 % pro Trade, der Chef darf bis 20 % in den Risiko-Bot legen (in der Simulation 50 %; im Demo-Betrieb verlor der Risiko-Bot aber 64 % in 6 Tagen) und hält keine feste
   Cash-Reserve mehr. Der Preis dafür sind grössere Rückgänge.
-- **Shorts verloren in jeder Variante** Geld, auch mit Trendfilter und Probezeit: Leihzinsen (bei Kraken ca. 0,12 %
-  pro Tag) und Krypto steigt langfristig. Deshalb ist `allow_short` bei allen Bots aus, die Funktion bleibt aber
-  erhalten (mit Short-Probezeit).
+- **Shorts verloren in jeder Variante** Geld, auch mit Trendfilter und Probezeit: Leihzinsen (bei Kraken 0,02-0,04 %
+  alle 4 Std., also 0,12-0,24 % pro Tag) und Krypto steigt langfristig. Deshalb ist `allow_short` bei allen Bots aus,
+  die Funktion bleibt aber erhalten (mit Short-Probezeit).
 - **Teilgewinne** heben die Trefferquote auf über 70 %, verkaufen aber in grossen Aufschwüngen zu früh und kosten
   bei Trendfolgern viel Gewinn. Weil Gewinn das Ziel ist, gibt es Teilgewinne nur bei «kurz» und «mittel». Für eine
   hohe Trefferquote: `partial_atr: 0.75` auch beim Horizont `lang` eintragen.
@@ -207,12 +248,12 @@ Swissquote bietet für das eTrading-Konto (auch Krypto) nach meinem Kenntnisstan
 | Börse | API | Gebühr pro Order (kleinste Stufe) | Sicherheit / Regulierung | `exchange:` |
 |---|---|---|---|---|
 | Bitstamp | ja | 0,30–0,40 %, laut TradingView gebührenfrei unter 1'000 $ Monatsvolumen | EU-lizenziert, eine der ältesten Börsen | `bitstamp` |
-| Kraken | ja | ca. 0,25–0,40 % (Quellen widersprechen sich) | MiCA-Lizenz, Proof of Reserves, CHF-Paare | `kraken` (voreingestellt) |
+| Kraken | ja | 0,80 % Taker, 0,40 % Maker unter 2'500 $ Monatsumsatz (Staffel seit 9.7.2026, siehe [Realistische Kosten](#realistische-kosten-wie-bei-kraken)) | MiCA-Lizenz, Proof of Reserves, CHF-Paare | `kraken` (voreingestellt) |
 | Coinbase | ja | 0,40–0,60 % | US-reguliert, kein CHF | `coinbase` |
 | Binance | ja | 0,10 % | keine FINMA-Lizenz, Probleme mit Behörden; nicht empfohlen | `binance` |
 | Swissquote | nein | 0,5–1 % + Depotgebühr | FINMA | – |
 
-Empfehlung: Bitstamp für den Start mit kleinem Betrag, Kraken wegen der CHF-Paare. `fee_rate` in `bots/config.yaml` an die gewählte Börse anpassen.
+Empfehlung: Bitstamp für den Start mit kleinem Betrag, Kraken wegen der CHF-Paare. Für Kraken rechnet `fee_model: kraken` mit der Staffel; für eine andere Börse in `bots/config.yaml` `fee_model: fix` setzen und `fee_rate` anpassen.
 
 Den Börsennamen in `bots/config.yaml` unter `exchange` ändern. Beim API-Schlüssel **nur Handelsrechte, niemals Auszahlungsrechte** freigeben.
 
@@ -282,7 +323,7 @@ Short-Handel läuft vorerst **nur im Backtest und im Paper-Modus**. Live braucht
 
 ## Startkapital
 
-Der Paper-Modus braucht gar kein Geld. Für echten Handel gilt: Börsen haben Mindestordergrössen (meist etwa 5 bis 10 CHF pro Order), und Gebühren von rund 0,1 bis 0,4 % pro Order fallen bei kleinen Beträgen stark ins Gewicht. Mit 1 CHF ist daher kein echter Handel möglich. Realistisch sind mindestens 50 bis 100 CHF.
+Der Paper-Modus braucht gar kein Geld. Für echten Handel gilt: Börsen haben Mindestordergrössen (meist etwa 5 bis 10 CHF pro Order), und Gebühren von rund 0,1 bis 0,8 % pro Order (Kraken: 0,8 % unter 2'500 $ Monatsumsatz) fallen bei kleinen Beträgen stark ins Gewicht. Mit 1 CHF ist daher kein echter Handel möglich. Realistisch sind mindestens 50 bis 100 CHF.
 
 ## Risikoregeln (Standard)
 
@@ -299,9 +340,9 @@ Der Paper-Modus braucht gar kein Geld. Für echten Handel gilt: Börsen haben Mi
 - Kein Einstieg, wenn der Spread im Orderbuch grösser als 0,3 % ist.
 - Stark korrelierte Positionen (z.B. BTC und ETH in gleicher Richtung) nur halb so gross; verglichen wird mit allen
   offenen Positionen, egal in welcher Reihenfolge die Coins geprüft werden.
-- Mit Hebel (nur Demo): Zwangsschliessung wie an der Börse, wenn das Kapital unter `liquidation_margin` der
-  hinterlegten Sicherheit fällt, geprüft vor und nach den neuen Signalen. Den tatsächlichen Hebel (Wert aller
-  Positionen geteilt durch das Kapital) zeigt die Übersicht als «Hebel aktuell».
+- Mit Hebel (nur Demo): Zwangsschliessung wie an der Börse (Gebühr 2 % des Positionswerts), wenn das Kapital unter
+  `liquidation_margin` der hinterlegten Sicherheit fällt, geprüft vor und nach den neuen Signalen. Den tatsächlichen
+  Hebel (Wert aller Positionen geteilt durch das Kapital) zeigt die Übersicht als «Hebel aktuell».
 
 ## Langfrist-Variante (`bots/config_langfrist.yaml`)
 

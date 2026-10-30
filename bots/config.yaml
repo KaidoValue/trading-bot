@@ -12,7 +12,8 @@ history_symbol: BTC/USD
 
 # Startkapital für Backtest und Paper-Trading (in Quote-Währung, hier CHF)
 starting_capital: 1000
-fee_rate: 0.0026     # Börsengebühr pro Order
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
 slippage: 0.0005
 
 # trend | mean_reversion | breakout | pullback | momentum | price_action | smc | reversal | range

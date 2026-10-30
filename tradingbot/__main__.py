@@ -48,7 +48,7 @@ def schliessen(cfg: Config, symbols: list[str]) -> None:
     Regeländerung). Der Stand und das Trade-Protokoll werden wie nach einem Bot-Durchlauf gespeichert."""
     from datetime import datetime, timezone
     from . import buchhaltung, state
-    from .bot import _write_trades, make_trader
+    from .bot import _write_trades, make_trader, sync_paper
     cfg.mode = "paper"
     ex = data.make_exchange(cfg.exchange, convert_to=cfg.symbols[0].split("/")[1])
     trader = make_trader(cfg, ex)
@@ -57,13 +57,14 @@ def schliessen(cfg: Config, symbols: list[str]) -> None:
         raise SystemExit(f"Kein gespeicherter Stand ({cfg.state_path}).")
     buchhaltung.nachbuchen(trader, cfg.state_path, cfg.starting_capital)     # wie im Bot: alte Trades zuerst
     now = datetime.now(timezone.utc)
+    tickers = {s: ex.fetch_ticker(s) for s in symbols if s in trader.open_trades}
+    sync_paper(trader.broker, ex, tickers, now)          # Market-Order zum Geldkurs (Long) bzw. Briefkurs (Short)
     for s in symbols:
         if s not in trader.open_trades:
             print(f"{s}: keine offene Position")
             continue
-        price = float(ex.fetch_ticker(s)["last"])
-        trader.exit(s, price, "Von Hand geschlossen", now)
-        print(f"{s}: geschlossen @ {price:.4f}, Ergebnis {trader.closed[-1]['pnl']:+.2f}")
+        trader.exit(s, float(tickers[s]["last"]), "Von Hand geschlossen", now, market=True)
+        print(f"{s}: geschlossen @ {trader.closed[-1]['exit']:.4f}, Ergebnis {trader.closed[-1]['pnl']:+.2f}")
     cfg.trades_path.parent.mkdir(parents=True, exist_ok=True)
     _write_trades(cfg.trades_path, trader.closed)
     state.save(cfg.state_path, trader, last_bar)
@@ -93,13 +94,12 @@ def report(trades: pd.DataFrame) -> None:
 
 def status(cfg: Config) -> None:
     """Zeigt Kapital, offene Positionen und das heutige Signal des Paper-Kontos."""
-    from .broker import PaperBroker
+    from .broker import paper_broker
     from .engine import Trader
     from .risk import RiskManager
     from . import state
     cfg.mode = "paper"
-    trader = Trader(PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage),
-                    RiskManager(cfg.risk, cfg.starting_capital))
+    trader = Trader(paper_broker(cfg), RiskManager(cfg.risk, cfg.starting_capital))
     if not state.load(cfg.state_path, trader):
         print(f"Noch kein gespeicherter Stand ({cfg.state_path}). Zuerst 'paper' laufen lassen.")
         return
