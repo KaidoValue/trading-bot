@@ -17,6 +17,7 @@ import pandas as pd
 
 from . import data, state
 from .broker import PaperBroker
+from .buchhaltung import TOLERANZ
 from .config import Config
 from .engine import Trader
 from .risk import RiskManager
@@ -67,6 +68,7 @@ class Bot:
     trader: Trader
     equity: float
     invested: float
+    abgleich: dict | None = None    # Buchhaltung, mit den Kursen von jetzt geprüft (Trader.abgleich)
 
 
 def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
@@ -78,7 +80,7 @@ def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
         return None
     value = sum(trader.broker.position(s) * prices[s] for s in prices)          # Shorts zählen negativ
     invested = sum(abs(trader.broker.position(s)) * prices[s] for s in prices)
-    return Bot(cfg, trader, trader.broker.cash() + value, invested)
+    return Bot(cfg, trader, trader.broker.cash() + value, invested, trader.abgleich(prices, cfg.starting_capital))
 
 
 def _shares_text(b: Bot) -> str:
@@ -96,6 +98,15 @@ def _leverage_text(b: Bot) -> str:
     return f"{b.invested / b.equity:.2f}× (erlaubt {b.cfg.risk.leverage:g}×)"
 
 
+def _buchhaltung_text(b: Bot) -> str:
+    """Stimmt das Kapital mit den Ergebnissen aller Trades (nach Gebühren und Zinsen) überein?"""
+    d = (b.abgleich or b.trader.abgleich({}, b.cfg.starting_capital))["differenz"]
+    text = f"✅ stimmt (Abweichung {chf(abs(d))} CHF)" if abs(d) <= TOLERANZ else f"⚠️ Abweichung {chf(d)} CHF"
+    if round(b.trader.altlasten, 2):
+        text += f" · Altlasten vor 28.10.: {chf(b.trader.altlasten)} CHF"
+    return text
+
+
 def overview(bots: list[Bot]) -> list[str]:
     head = "| | " + " | ".join(f"**{b.cfg.title or b.cfg.name}**" for b in bots) + " |"
     rows = [
@@ -107,6 +118,7 @@ def overview(bots: list[Bot]) -> list[str]:
         ("Cash (nicht investiert)", lambda b: f"{chf(b.trader.broker.cash())} CHF"),
         ("Offene Positionen", lambda b: str(len(b.trader.open_trades))),
         ("Abgeschlossene Trades", lambda b: str(len(b.trader.closed))),
+        ("Gebühren bisher", lambda b: f"{chf(b.trader.gebuehren_bisher())} CHF"),
         ("Horizonte (Strategie, Kerzen)", lambda b: b.cfg.horizon_text()),
         ("Kapitalanteil je Horizont", lambda b: _shares_text(b)),
         ("Short erlaubt", lambda b: "ja" if b.cfg.allow_short else "nein"),
@@ -115,6 +127,7 @@ def overview(bots: list[Bot]) -> list[str]:
     ]
     if any(b.cfg.risk.leverage > 1 for b in bots):
         rows.append(("Hebel aktuell", _leverage_text))
+    rows.append(("Buchhaltung", _buchhaltung_text))
     out = [head, "|---" * (len(bots) + 1) + "|"]
     out += [f"| {label} | " + " | ".join(fn(b) for b in bots) + " |" for label, fn in rows]
     if any(b.trader.risk.halted for b in bots):

@@ -15,7 +15,7 @@ from .news import NewsMonitor
 from .phase import PhaseBook, coin_phases
 from .risk import RiskManager
 from .strategies import build, trend_direction
-from . import journal, state
+from . import buchhaltung, journal, state
 
 log = logging.getLogger(__name__)
 
@@ -61,6 +61,12 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                        events=cfg.use_events, extra_feeds=cfg.event_feeds,
                        pause_minutes=cfg.event_pause_minutes) if cfg.use_news else None
     last_bar: dict[str, object] = state.load(cfg.state_path, trader)
+    paper, hinweis = isinstance(trader.broker, PaperBroker), ""
+    try:                        # einmalig: alte Trades um die Kaufgebühr korrigieren (buchhaltung.py)
+        if paper and buchhaltung.nachbuchen(trader, cfg.state_path, cfg.starting_capital):
+            hinweis = trader.note
+    except Exception as e:      # die Nachbuchung darf den Handel nicht stoppen; die Übersicht zeigt die Lücke
+        log.exception("Nachbuchung der Buchhaltung fehlgeschlagen: %s", e)
     for t in trader.open_trades.values():      # Positionen aus der Zeit vor den Horizonten: Haupthorizont
         t.horizon = t.horizon if t.horizon in trader.horizons else horizons[0].name
     if last_bar:
@@ -97,7 +103,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     log.error("NOT-AUS: %s. Bot stoppt.", trader.risk.halt_reason)
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
-            notes, spreads, trends = [], {}, {}
+            notes, spreads, trends = [hinweis] if hinweis and n == 1 else [], {}, {}
             if (cfg.phase_gate or cfg.phase_exit) and not trader.risk.halted:
                 for s in cfg.symbols:
                     phase = _phase(exchange, s)
@@ -139,8 +145,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             if notes:
                 trader.note = " | ".join(notes)
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
+            abgleich = buchhaltung.pruefen(trader, prices, cfg.starting_capital) if paper else None
             _write_trades(log_path, trader.closed)
-            state.save(cfg.state_path, trader, last_bar)
+            state.save(cfg.state_path, trader, last_bar, abgleich)
             journal.write(cfg, before_open, before_closed, trader, now)
         except KeyboardInterrupt:
             raise

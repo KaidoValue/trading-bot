@@ -1035,3 +1035,160 @@ def test_dashboard_shows_current_leverage():
     rows = dashboard.overview([bot_(plain, 500.0), bot_(lev, 1550.0)])
     assert "| Hebel aktuell | – | 1.55× (erlaubt 3×) |" in rows
     assert not any("Hebel aktuell" in row for row in dashboard.overview([bot_(plain, 500.0)]))
+
+
+# --- Buchhaltung: Gebühren und Zinsen je Trade, Abgleich mit dem Kapital, einmalige Nachbuchung
+
+class CountingBroker(PaperBroker):
+    """PaperBroker, der alle verlangten Gebühren zusammenzählt."""
+    charged = 0.0
+
+    def buy(self, symbol, qty, price):
+        fill = super().buy(symbol, qty, price)
+        self.charged += fill.fee if fill else 0.0
+        return fill
+
+    def sell(self, symbol, qty, price, short=False):
+        fill = super().sell(symbol, qty, price, short)
+        self.charged += fill.fee if fill else 0.0
+        return fill
+
+
+def test_bookkeeping_reconciles_at_every_step():
+    """Zufällige Trades mit Hebel 3, Shorts, Teilgewinnen, Übernahmen, Zinsen und Zwangsschliessung: nach jedem
+    Schritt ist Kapital = Start + alle Ergebnisse (offene zum aktuellen Kurs), und die Gebühren der Trades sind genau
+    die, die der Broker verlangt hat."""
+    import random
+    from tradingbot.config import Horizon
+    rng = random.Random(3)
+    # knapp eingestellte Sicherheit (liquidation_margin), damit auch Zwangsschliessungen vorkommen
+    rc = RiskConfig(leverage=3.0, risk_per_trade=0.05, max_position_pct=0.5, max_total_risk_pct=1, max_open_positions=8,
+                    max_daily_loss_pct=1, max_trades_per_day=10_000, loss_streak_pause=10_000, liquidation_margin=0.97)
+    b = CountingBroker(1000, 0.0026, 0.0005)
+    b.leverage, b.extra_fee = 3.0, {"C": 0.0026}
+    t = Trader(b, RiskManager(rc, 1000), allow_short=True)
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=1.5, take_profit_atr=4.0, partial_atr=0.75),
+                  "lang": Horizon("lang", "1d", "regime", stop_loss_atr=3.0, take_profit_atr=8.0, partial_atr=1.5)}
+    t.priority = True
+    px = {"A": 100.0, "B": 20.0, "C": 5.0}
+    for step in range(600):
+        s = rng.choice(list(px))
+        old, px[s] = px[s], px[s] * (1 + rng.gauss(0, 0.015))
+        high, low = max(old, px[s]) * (1 + rng.random() / 100), min(old, px[s]) * (1 - rng.random() / 100)
+        t.check_stops(s, old, high, low, step)
+        if rng.random() < 0.5:
+            t.on_signal(s, rng.choice((1, -1)), px[s], atr=px[s] / 100, equity=t.equity(px), when=step,
+                        horizon=rng.choice(("kurz", "lang")))
+        t.charge_interest(px, 4, 0.0012)
+        if bot.liquidation(t, px, rc):
+            t.close_all(px, "Liquidation", step)
+        assert abs(t.abgleich(px, 1000)["differenz"]) < 0.01
+    reasons = {c["reason"] for c in t.closed}
+    assert len(t.closed) >= 50 and {c["side"] for c in t.closed} == {"long", "short"}
+    assert {"Vorrang lang", "Liquidation", "Stop auf Einstand"} <= reasons
+    assert any(c["partial"] for c in t.closed) and all("fees" in c and "interest" in c for c in t.closed)
+    assert t.gebuehren_bisher() == pytest.approx(b.charged)
+    assert (sum(c["interest"] for c in t.closed) + sum(o.interest for o in t.open_trades.values())
+            == pytest.approx(b.interest_paid))
+    assert all(c["pnl"] == pytest.approx(c["qty"] * (c["exit"] - c["entry"]) * (1 if c["side"] == "long" else -1)
+                                         - c["fees"] - c["interest"]) for c in t.closed)
+
+
+def _old_style_trader():
+    """Stand wie vor dem 28.10.2026: Ergebnisse ohne Kaufgebühr, eine offene Position ohne Kaufgebühr und Zinsen,
+    die keinem Trade gehören. Gibt den Trader, die richtigen Kaufgebühren und die Zinsen zurück."""
+    t0 = datetime(2026, 10, 25, 12, tzinfo=timezone.utc)
+    b = PaperBroker(1000, 0.0026, 0.0005)
+    b.extra_fee = {"SOL/CHF": 0.0026, "XRP/CHF": 0.0026}          # über USD umgerechnet: 0,52 % pro Order
+    t = Trader(b, RiskManager(RiskConfig(max_total_risk_pct=1, max_position_pct=0.3, max_open_positions=8), 1000),
+               allow_short=True)
+    fees = []
+    for i, (s, side, entry, exit_) in enumerate([("BTC/CHF", 1, 60_000, 61_000), ("SOL/CHF", -1, 80, 78),
+                                                  ("ETH/CHF", 1, 2000, 1900)]):
+        t.on_signal(s, side, entry, atr=entry * 0.02, equity=t.equity({}), when=t0 + timedelta(hours=i))
+        fees.append(t.open_trades[s].fee)
+        t.open_trades[s].fee = 0.0                                 # alter Code: Kaufgebühr nicht beim Trade gemerkt
+        if side < 0:
+            b.charge_interest({s: entry}, 48, 0.0012)              # alter Code: Zinsen keinem Trade zugeordnet
+        t.exit(s, exit_, "Signal", t0 + timedelta(hours=i, minutes=30))
+        del t.closed[-1]["fees"], t.closed[-1]["interest"]
+    t.on_signal("XRP/CHF", 1, 2.0, atr=0.04, equity=t.equity({}), when=t0 + timedelta(hours=5))
+    fees.append(t.open_trades["XRP/CHF"].fee)
+    t.open_trades["XRP/CHF"].fee = 0.0
+    return t, fees, b.interest_paid
+
+
+def test_nachbuchung_fixes_old_trades_once(tmp_path):
+    """Nach der Nachbuchung enthält jedes Ergebnis die Kaufgebühr (alter Wert in pnl_alt), die offene Position hat
+    ihre Kaufgebühr, die alten Zinsen sind Altlasten, die Buchhaltung stimmt und das Archiv hat den alten Stand.
+    Ein zweiter Lauf ändert nichts."""
+    from tradingbot import buchhaltung, state
+    old, fees, interest = _old_style_trader()
+    path = tmp_path / "daten" / "state" / "paper_alt.json"
+    state.save(path, old, {})
+    original = path.read_text()
+    t = Trader(PaperBroker(1000, 0.0026, 0.0005), RiskManager(RiskConfig(), 1000))
+    state.load(path, t)
+    assert interest > 0 and abs(t.abgleich({}, 1000)["differenz"]) > 1          # vorher: Lücke
+    pnl_alt = [c["pnl"] for c in t.closed]
+    info = buchhaltung.nachbuchen(t, path, 1000)
+    assert [c["pnl_alt"] for c in t.closed] == pnl_alt and all(c["nachgebucht"] for c in t.closed)
+    assert [c["pnl"] for c in t.closed] == pytest.approx([p - f for p, f in zip(pnl_alt, fees)])
+    assert all(c["interest"] == pytest.approx(0) for c in t.closed)
+    assert t.open_trades["XRP/CHF"].fee == pytest.approx(fees[-1])
+    assert info["trades_korrigiert"] == 3 and info["positionen_korrigiert"] == 1
+    assert info["summe_korrektur"] == pytest.approx(-sum(fees), abs=0.01)
+    assert t.altlasten == pytest.approx(interest) and info["zinsen_ohne_zuordnung"] == pytest.approx(interest, abs=0.01)
+    assert info["rest"] == pytest.approx(0)
+    assert abs(t.abgleich({"XRP/CHF": 2.5}, 1000)["differenz"]) < 0.005
+    assert t.note.startswith("Buchhaltung nachgebucht: 3 Trades und 1 offene Position um die Kaufgebühr korrigiert")
+    assert "(−" in t.note and "Zinsen ohne Trade-Zuordnung" in t.note
+    archiv = path.parent / "archiv" / f"paper_alt_vor_nachbuchung_{datetime.now(timezone.utc):%Y-%m-%d}.json"
+    assert archiv.read_text() == original
+    state.save(path, t, {})                                         # gespeichert und neu geladen
+    again = Trader(PaperBroker(1000, 0.0026, 0.0005), RiskManager(RiskConfig(), 1000))
+    state.load(path, again)
+    assert again.altlasten == pytest.approx(interest) and again.buchhaltung["trades_korrigiert"] == 3
+    assert buchhaltung.nachbuchen(again, path, 1000) is None        # zweiter Lauf: nichts zu tun
+    assert [c["pnl"] for c in again.closed] == pytest.approx([c["pnl"] for c in t.closed])
+    assert abs(again.abgleich({}, 1000)["differenz"]) < 0.005
+
+
+def test_bot_run_books_old_state_and_stores_reconciliation(df, monkeypatch, tmp_path):
+    """Der Bot bucht beim Laden einmal nach, prüft bei jedem Lauf die Buchhaltung und speichert das Ergebnis;
+    das Trade-Protokoll bekommt die Spalten für Gebühren und Zinsen."""
+    import json
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    cfg = Config(strategy="trend", symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="alt", poll_seconds=0)
+    t = bot.make_trader(cfg, None)
+    t.on_signal("ETH/CHF", 1, 100.0, atr=2.0, equity=1000.0, when=datetime(2026, 10, 25, tzinfo=timezone.utc))
+    t.open_trades["ETH/CHF"].fee = 0.0
+    t.exit("ETH/CHF", 101.0, "Signal", datetime(2026, 10, 26, tzinfo=timezone.utc))
+    del t.closed[-1]["fees"], t.closed[-1]["interest"]
+    state.save(cfg.state_path, t, {})
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    assert st["buchhaltung"]["trades_korrigiert"] == 1 and "Buchhaltung nachgebucht" in st["note"]
+    assert set(st["abgleich"]) == {"kapital", "erwartet", "differenz"} and abs(st["abgleich"]["differenz"]) < 0.01
+    assert {"fees", "interest", "pnl_alt", "nachgebucht"} <= set(pd.read_csv(cfg.trades_path).columns)
+    assert len(list((tmp_path / "daten" / "state" / "archiv").glob("paper_alt_vor_nachbuchung_*.json"))) == 1
+
+
+def test_dashboard_and_report_show_fees_and_bookkeeping(capsys):
+    from tradingbot import dashboard
+    from tradingbot.__main__ import report
+    t = Trader(PaperBroker(1000, 0.0026, 0), RiskManager(RiskConfig(max_total_risk_pct=1), 1000))
+    t.on_signal("X", 1, 100, atr=2, equity=1000, when=0)
+    t.exit("X", 102, "Signal", 1)
+    t.altlasten, t.broker._cash = 8.6, t.broker._cash - 8.6           # alte Zinsen ohne Trade
+    rows = dashboard.overview([dashboard.Bot(Config(title="A"), t, t.equity({}), 0.0)])
+    assert f"| Gebühren bisher | {dashboard.chf(t.closed[-1]['fees'])} CHF |" in rows
+    assert "| Buchhaltung | ✅ stimmt (Abweichung 0.00 CHF) · Altlasten vor 28.10.: 8.60 CHF |" in rows
+    t.broker._cash -= 12.34                                           # Geld fehlt, das kein Trade erklärt
+    rows = dashboard.overview([dashboard.Bot(Config(title="A"), t, t.equity({}), 0.0)])
+    assert any(r.startswith("| Buchhaltung | ⚠️ Abweichung -12.34 CHF") for r in rows)
+    report(pd.DataFrame([{"pnl": -1.0, "side": "long", "reason": "Signal", "fees": 0.5, "interest": 0.1},
+                         {"pnl": 2.0, "side": "short", "reason": "Signal"}]))      # alter Eintrag ohne Gebühren
+    assert "Gebühren gesamt: 0.50, Zinsen gesamt: 0.10" in capsys.readouterr().out

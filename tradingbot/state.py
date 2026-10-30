@@ -35,7 +35,8 @@ def _walk(obj, fn):
     return fn(obj)
 
 
-def save(path: Path, trader: Trader, last_bar: dict) -> None:
+def save(path: Path, trader: Trader, last_bar: dict, abgleich: dict | None = None) -> None:
+    """abgleich: Ergebnis von Trader.abgleich (bot.py), für die Anzeige gespeichert."""
     r = trader.risk
     state = {
         "open_trades": {s: vars(t) for s, t in trader.open_trades.items()},
@@ -48,6 +49,10 @@ def save(path: Path, trader: Trader, last_bar: dict) -> None:
                  "trades_today": r.trades_today, "loss_streak": r.loss_streak, "paused_until": r.paused_until,
                  "halted": r.halted, "halted_on": r.halted_on, "halt_reason": r.halt_reason},
     }
+    if trader.buchhaltung or trader.altlasten:
+        state["buchhaltung"] = trader.buchhaltung | {"altlasten": trader.altlasten}
+    if abgleich:
+        state["abgleich"] = abgleich
     if isinstance(trader.broker, PaperBroker):
         state["paper"] = {"cash": trader.broker._cash, "positions": trader.broker.positions,
                           "interest_paid": trader.broker.interest_paid, "interest_at": trader.broker.interest_at}
@@ -65,6 +70,8 @@ def load(path: Path, trader: Trader) -> dict:
     trader.open_trades = {s: OpenTrade(**t) for s, t in state["open_trades"].items()}
     trader.closed = state["closed"]
     trader.note = state.get("note", "")
+    trader.buchhaltung = state.get("buchhaltung") or {}
+    trader.altlasten = trader.buchhaltung.get("altlasten", 0.0)
     for k, v in state["risk"].items():
         setattr(trader.risk, k, v)
     if "paper" in state and isinstance(trader.broker, PaperBroker):
