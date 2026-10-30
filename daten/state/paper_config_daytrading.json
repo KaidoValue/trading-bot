@@ -629,7 +629,7 @@
       {
         "theme": "hack",
         "source": "coindesk",
-        "title": "$6 billion Binance hack sends bitcoin, ether tumbling; Standard Chartered expects more pain",
+        "title": "Standard Chartered sees more pain after $6 billion Binance hack sends bitcoin lower",
         "link": "https://www.coindesk.com/markets/2026/10/30/usd6-billion-binance-hack-sends-bitcoin-ether-tumbling-standard-chartered-sees-more-losses-ahead",
         "published": "2026-10-30T04:00:43+00:00"
       },
@@ -665,7 +665,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T09:28:50.305864+00:00"
+    "__dt__": "2026-10-30T09:58:32.578831+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T09:28:00.860151+00:00"
+      "__dt__": "2026-10-30T09:58:01.101379+00:00"
     }
   }
 }
