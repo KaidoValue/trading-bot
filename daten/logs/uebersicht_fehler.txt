@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/trading-bot/trading-bot/tradingbot/__main__.py", line 243, in <module>
+    main()
+    ~~~~^^
+  File "/home/runner/work/trading-bot/trading-bot/tradingbot/__main__.py", line 222, in main
+    print(render(args.bots or [args.config], chef_path=args.chef))
+          ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/trading-bot/trading-bot/tradingbot/dashboard.py", line 259, in render
+    tickers = {s: _retry(lambda: ex.fetch_ticker(s)) for s in symbols}
+                  ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/trading-bot/trading-bot/tradingbot/dashboard.py", line 33, in _retry
+    return fn()
+  File "/home/runner/work/trading-bot/trading-bot/tradingbot/dashboard.py", line 259, in <lambda>
+    tickers = {s: _retry(lambda: ex.fetch_ticker(s)) for s in symbols}
+                                 ~~~~~~~~~~~~~~~^^^
+  File "/home/runner/work/trading-bot/trading-bot/tradingbot/data.py", line 69, in fetch_ticker
+    return self.ex.fetch_ticker(symbol)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/kraken.py", line 1146, in fetch_ticker
+    response = self.publicGetTicker(self.extend(request, params))
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/base/types.py", line 43, in unbound_method
+    return _self.request(self.path, self.api, self.method, params, config=self.config)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/base/exchange.py", line 6018, in request
+    return self.fetch2(path, api, method, params, config)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/base/exchange.py", line 6014, in fetch2
+    raise e
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/base/exchange.py", line 5995, in fetch2
+    response = self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/base/exchange.py", line 678, in fetch
+    self.handle_errors(http_status_code, http_status_text, url, method, headers, http_response, json_response, request_headers, request_body)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/site-packages/ccxt/kraken.py", line 3520, in handle_errors
+    raise ExchangeError(message)
+ccxt.base.errors.ExchangeError: kraken {"error":["EGeneral:No data"],"result":{}}
