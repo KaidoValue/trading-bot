@@ -610,6 +610,13 @@
     "blackout": null,
     "evidence": [
       {
+        "theme": "crash",
+        "source": "cointelegraph",
+        "title": "Bitcoin risks worst October in 12 years as tech sell-off spreads to gold",
+        "link": "https://cointelegraph.com/markets/bitcoin-risks-worst-october-in-12-years-as-tech-sell-off-spreads-to-gold?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-30T16:06:28+00:00"
+      },
+      {
         "theme": "hack",
         "source": "coindesk",
         "title": "Wall Street analysts urge investors to buy crypto stocks after $6.3 billion Binance hack",
@@ -657,19 +664,12 @@
         "title": "Live updates: Bitcoin falls to $77,000 as Binance exploit combines with tech woes",
         "link": "https://www.coindesk.com/markets/2026/10/30/live-news-binance-hack-rattles-crypto-as-intel-plunges-and-ai-spending-fears-hit-tech",
         "published": "2026-10-30T08:36:52+00:00"
-      },
-      {
-        "theme": "crash",
-        "source": "coindesk",
-        "title": "Bitcoin, ether and XRP selloff wipes out $1.5 billion in leveraged crypto bets",
-        "link": "https://www.coindesk.com/markets/2026/10/30/bitcoin-ether-and-xrp-selloff-wipes-out-usd1-5-billion-in-leveraged-crypto-bets",
-        "published": "2026-10-30T06:22:00+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T16:02:59.319674+00:00"
+    "__dt__": "2026-10-30T16:32:39.012997+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -699,7 +699,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T16:02:06.892928+00:00"
+      "__dt__": "2026-10-30T16:32:07.143114+00:00"
     }
   }
 }
