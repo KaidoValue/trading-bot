@@ -608,6 +608,13 @@
       {
         "theme": "hack",
         "source": "coindesk",
+        "title": "Binance hack bites India's largest crypto exchange as it curbs futures trading",
+        "link": "https://www.coindesk.com/markets/2026/10/30/coindcx-halts-new-crypto-futures-bets-as-binance-incident-disrupts-liquidity",
+        "published": "2026-10-30T05:43:07+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
         "title": "Binance hacker splits $1.4 billion of bitcoin into 19 wallets that no one can freeze",
         "link": "https://www.coindesk.com/markets/2026/10/30/binance-hacker-splits-usd1-4-billion-of-bitcoin-into-19-wallets-that-no-one-can-freeze",
         "published": "2026-10-30T04:50:42+00:00"
@@ -653,19 +660,12 @@
         "title": "Bitcoin Price Slides Below $79,000 as Binance Loses $5.8 Billion in Massive Hack",
         "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-binance",
         "published": "2026-10-29T23:06:37+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Binance Hacker Hunts for Exit Ramps as DeFi Exchanges Pause Markets",
-        "link": "https://decrypt.co/382194/binance-hack-exit-ramps-defi-exchange-ethereum",
-        "published": "2026-10-29T22:57:48+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T05:25:13.793333+00:00"
+    "__dt__": "2026-10-30T05:54:58.451118+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T05:24:26.781382+00:00"
+      "__dt__": "2026-10-30T05:54:27.064206+00:00"
     }
   }
 }
