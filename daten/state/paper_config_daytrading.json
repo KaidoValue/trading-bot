@@ -519,28 +519,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-30T16:00:00+00:00"
+      "__dt__": "2026-10-30T17:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-30T12:00:00+00:00"
@@ -591,7 +591,7 @@
       "__dt__": "2026-10-29T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -609,6 +609,20 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Secret Service, FBI Join Binance Hack Probe as Circle Freezes $823 Million",
+        "link": "https://decrypt.co/382268/secret-service-fbi-binance-hack-probe",
+        "published": "2026-10-30T17:50:26+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Coinbase leads crypto stock selloff following $6.3B Binance hack",
+        "link": "https://cointelegraph.com/markets/coinbase-leads-crypto-stock-selloff-shares-tumble?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-30T17:48:27+00:00"
+      },
       {
         "theme": "hack",
         "source": "cointelegraph",
@@ -650,26 +664,12 @@
         "title": "Bitcoin price metrics hint at rebound as $1.6B liquidations follow Binance hack",
         "link": "https://cointelegraph.com/markets/bitcoin-price-metrics-hint-at-rebound-as-16b-liquidations-follow-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-30T11:29:23+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Crypto liquidations jump to $1.57 billion as Binance hack sends bitcoin, ether lower",
-        "link": "https://www.coindesk.com/markets/2026/10/30/crypto-liquidations-jump-to-usd1-57-billion-as-binance-hack-sends-bitcoin-ether-lower",
-        "published": "2026-10-30T11:09:24+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Binance hacker\u2019s Bitcoin haul tops Coinbase\u2019s corporate treasury",
-        "link": "https://cointelegraph.com/news/binance-hacker-bitcoin-holdings-exceed-coinbase-btc-treasury?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-30T10:54:30+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T17:32:39.070920+00:00"
+    "__dt__": "2026-10-30T18:02:59.520000+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -699,7 +699,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T17:32:07.095486+00:00"
+      "__dt__": "2026-10-30T18:02:07.299872+00:00"
     }
   }
 }
