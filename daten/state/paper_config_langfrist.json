@@ -283,28 +283,28 @@
       "__dt__": "2026-10-29T20:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-29T23:00:00+00:00"
+      "__dt__": "2026-10-30T00:00:00+00:00"
     }
   },
   "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: Position offen, Signal best\u00e4tigt | [lang] BNB/CHF: Position offen, Signal best\u00e4tigt | [lang] XRP/CHF: kein Signal | [lang] SOL/CHF: Position offen, Signal best\u00e4tigt | [lang] TRX/CHF: Position offen, Signal best\u00e4tigt | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Signal | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] TRX/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
@@ -344,6 +344,13 @@
       },
       {
         "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Live updates: Binance says $3B in crypto frozen in connection to hack",
+        "link": "https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-10-29T21:24:36+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "coindesk",
         "title": "Binance loses $5.7 billion in 'biggest crypto hack in history'",
         "link": "https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets",
@@ -369,19 +376,12 @@
         "title": "Hackers Publish Work Details of 41,000 Homeland Security Employees",
         "link": "https://decrypt.co/382181/hackers-publish-work-details-homeland-security-employees",
         "published": "2026-10-29T18:46:02+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Live updates: Binance confirms security breach, says 'will cover all hacking losses'",
-        "link": "https://www.coindesk.com/business/2026/10/29/live-updates-bitcoin-clings-to-usd80-000-as-strategy-s-cushion-thins-before-earnings",
-        "published": "2026-10-29T10:41:39+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T00:49:50.871316+00:00"
+    "__dt__": "2026-10-30T01:19:50.272790+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -409,7 +409,7 @@
     },
     "interest_paid": 0.012895995134820534,
     "interest_at": {
-      "__dt__": "2026-10-30T00:48:59.019374+00:00"
+      "__dt__": "2026-10-30T01:18:58.424541+00:00"
     }
   }
 }
