@@ -608,6 +608,13 @@
       {
         "theme": "hack",
         "source": "coindesk",
+        "title": "Live News: Binance hack rattles crypto as Intel plunges and AI spending fears hit tech",
+        "link": "https://www.coindesk.com/markets/2026/10/30/live-news-binance-hack-rattles-crypto-as-intel-plunges-and-ai-spending-fears-hit-tech",
+        "published": "2026-10-30T08:36:52+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
         "title": "Binance hack bites India's largest crypto exchange as it curbs futures trading",
         "link": "https://www.coindesk.com/markets/2026/10/30/coindcx-halts-new-crypto-futures-bets-as-binance-incident-disrupts-liquidity",
         "published": "2026-10-30T05:43:07+00:00"
@@ -653,19 +660,12 @@
         "title": "Binance hack rattles markets as BNB falls 8%, Bitcoin nears $77K",
         "link": "https://cointelegraph.com/markets/binance-hack-rattles-crypto-markets-bnb-bitcoin-slide?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-29T23:24:21+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "Bitcoin Price Slides Below $79,000 as Binance Loses $5.8 Billion in Massive Hack",
-        "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-binance",
-        "published": "2026-10-29T23:06:37+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T08:25:18.167072+00:00"
+    "__dt__": "2026-10-30T08:54:57.647445+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T08:24:26.371431+00:00"
+      "__dt__": "2026-10-30T08:54:26.277885+00:00"
     }
   }
 }
