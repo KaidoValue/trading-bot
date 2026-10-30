@@ -56,6 +56,8 @@ denselben Gebühren. Die Einstellungen stammen aus der [Geschichts-Simulation](#
 So funktioniert es (Einstellung `horizons:` in den Configs):
 
 - Alle Horizonte eines Bots teilen sich **ein Konto** und die gemeinsamen Risikoregeln (Not-Aus, Tageslimit, max. Positionen).
+  Alle Positionen zusammen sind höchstens `max_invested_pct` × Hebel des Kapitals gross, auch wenn ein Horizont mehr
+  hält, als sein Anteil heute erlaubt (Anteile wandern, Übernahmen).
 - Jeder Horizont hat eigene Kerzen, eigene Strategie und eigene Stops (`stop_loss_atr`, `take_profit_atr`, `risk_per_trade`).
 - Pro Coin gibt es eine Position. Sie gehört dem Horizont, der sie eröffnet hat; nur er schliesst sie per Signal
   (Stops gelten immer). Mit `horizon_priority: true` darf ein **längerer** Horizont eine Position eines kürzeren
@@ -276,14 +278,20 @@ Der Paper-Modus braucht gar kein Geld. Für echten Handel gilt: Börsen haben Mi
 
 - Pro Trade wird höchstens 1 % des Kapitals riskiert (Abstand zum Stop-Loss).
 - Stop-Loss bei 2 × ATR unter dem Einstieg, Take-Profit bei 4 × ATR darüber.
-- Höchstens 25 % des Kapitals in einer Position.
+- Höchstens 25 % des Kapitals in einer Position, alle zusammen höchstens `max_invested_pct` (long und short, alle
+  Horizonte; mit Hebel entsprechend mehr). Die Grösse richtet sich immer nach dem ganzen Kapital (alle Coins zum
+  aktuellen Kurs), auch direkt nachdem der Bot eine Position gedreht hat.
 - Nach 3 % Tagesverlust werden für den Rest des Tages keine neuen Trades eröffnet.
 - Fällt das Kapital 15 % unter den Höchststand, schliesst der Bot alles und stoppt (Not-Aus).
 - Alle offenen Positionen zusammen riskieren höchstens 3 %, maximal 3 Positionen gleichzeitig.
 - Höchstens 6 neue Trades pro Tag (gegen Overtrading).
 - Nach 3 Verlusten in Folge 12 Stunden Pause (gegen "Revenge Trading").
 - Kein Einstieg, wenn der Spread im Orderbuch grösser als 0,3 % ist.
-- Stark korrelierte Positionen (z.B. BTC und ETH in gleicher Richtung) nur halb so gross.
+- Stark korrelierte Positionen (z.B. BTC und ETH in gleicher Richtung) nur halb so gross; verglichen wird mit allen
+  offenen Positionen, egal in welcher Reihenfolge die Coins geprüft werden.
+- Mit Hebel (nur Demo): Zwangsschliessung wie an der Börse, wenn das Kapital unter `liquidation_margin` der
+  hinterlegten Sicherheit fällt, geprüft vor und nach den neuen Signalen. Den tatsächlichen Hebel (Wert aller
+  Positionen geteilt durch das Kapital) zeigt die Übersicht als «Hebel aktuell».
 
 ## Langfrist-Variante (`bots/config_langfrist.yaml`)
 

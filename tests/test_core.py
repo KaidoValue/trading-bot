@@ -909,3 +909,129 @@ def test_close_positions_by_hand(df, monkeypatch, tmp_path):
     assert "ETH/CHF" not in after["open_trades"] and after["closed"][-1]["reason"] == "Von Hand geschlossen"
     assert after["paper"]["positions"]["ETH/CHF"] == pytest.approx(0.0, abs=1e-12)
     assert "Von Hand geschlossen" in set(pd.read_csv(tmp_path / "daten" / "logs" / "trades_hand.csv")["reason"])
+
+
+# --- Kapital nach Ausstieg, Hebel-Grenze über alle Horizonte, Korrelations-Sperre
+
+class ConstStrategy:
+    """Strategie mit immer demselben Signal, für Tests des Paper-Loops."""
+    def __init__(self, sig):
+        self.sig = sig
+
+    def signals(self, frame):
+        return pd.Series(self.sig, index=frame.index)
+
+
+def test_turning_a_position_keeps_the_true_capital():
+    """Dreht der längere Horizont eine Position, zählt danach das ganze Kapital (alle Coins), nicht nur Cash plus
+    diesen Coin: sonst sperrt ein falsches «Tagesverlust-Limit» den Einstieg (Langfrist-Bot 28.10.)."""
+    from tradingbot.config import Horizon
+    rc = RiskConfig(risk_per_trade=0.05, max_position_pct=0.2, max_total_risk_pct=1, max_open_positions=8,
+                    max_daily_loss_pct=0.15, max_trades_per_day=99)
+    t = Trader(PaperBroker(1000, 0.0026, 0.0005), RiskManager(rc, 1000), allow_short=True)
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", share=0.1, stop_loss_atr=2.0),
+                  "lang": Horizon("lang", "1d", "regime", share=0.9, stop_loss_atr=2.0)}
+    t.priority = True
+    px = {"A": 100.0, "B": 50.0, "C": 20.0, "D": 10.0}
+    for s in "ABC":                                                 # drei Longs in anderen Coins
+        t.on_signal(s, 1, px[s], atr=px[s] * 0.05, equity=t.equity(px), when=0, horizon="lang")
+    t.on_signal("D", -1, px["D"], atr=0.5, equity=t.equity(px), when=0, horizon="kurz")
+    assert len(t.open_trades) == 4 and t.broker.cash() < 500
+    t.on_signal("D", 1, px["D"], atr=0.2, equity=t.equity(px), when=1, horizon="lang")     # «lang» dreht D
+    assert t.closed[-1]["reason"] == "Vorrang lang" and "Tagesverlust" not in t.note
+    d = t.open_trades["D"]
+    true_equity = t.equity(px) + d.fee + d.qty * (d.entry - px["D"])     # Kapital vor dem neuen Kauf
+    assert d.side == 1 and d.qty * px["D"] == pytest.approx(0.2 * true_equity)    # 20 % vom wahren Kapital
+
+
+def test_leverage_after_turn_stays_within_limits():
+    """Hebel 3 mit Shorts: das Cash enthält die Erlöse der Shorts. Nach dem Drehen einer Position darf es nicht als
+    Kapital gelten, und alle Positionen zusammen bleiben unter Kapital × max_invested_pct × Hebel, auch wenn ein
+    Horizont noch mehr hält, als sein Anteil heute erlaubt (Risiko-Bot 25.10.: Positionen von 8,7× Hebel)."""
+    from tradingbot.config import Horizon
+    rc = RiskConfig(leverage=3.0, risk_per_trade=0.05, max_position_pct=0.5, max_invested_pct=1.0,
+                    max_total_risk_pct=1, max_open_positions=8, max_daily_loss_pct=0.5, max_trades_per_day=99)
+    b = PaperBroker(1000, 0.0026, 0.0005)
+    b.leverage = 3.0
+    t = Trader(b, RiskManager(rc, 1000), allow_short=True)
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", share=1.0, stop_loss_atr=2.0),
+                  "lang": Horizon("lang", "1d", "regime", share=0.0, stop_loss_atr=2.0)}
+    t.priority = True
+    px = {"A": 100.0, "B": 50.0, "C": 20.0}
+    t.on_signal("A", -1, px["A"], atr=2.5, equity=t.equity(px), when=0, horizon="kurz")     # Short, ca. 1'000 CHF
+    t.on_signal("B", -1, px["B"], atr=1.25, equity=t.equity(px), when=0, horizon="kurz")    # Short, ca. 1'000 CHF
+    t.on_signal("C", 1, px["C"], atr=1.0, equity=t.equity(px), when=0, horizon="kurz")      # Long, ca. 500 CHF
+    assert [tr.side for tr in t.open_trades.values()] == [-1, -1, 1] and b.cash() > 2000
+    t.horizons["lang"].share = 1.0                  # Anteile verschoben: «kurz» hält mehr als seine Hälfte
+    eq = t.equity(px)
+    t.on_signal("C", -1, px["C"], atr=0.1, equity=eq, when=1, horizon="lang")              # «lang» dreht C
+    assert t.closed[-1]["symbol"] == "C" and t.open_trades["C"].side == -1
+    assert t.open_trades["C"].qty * px["C"] <= rc.max_position_pct * 3 * eq
+    assert sum(tr.qty * px[s] for s, tr in t.open_trades.items()) <= eq * rc.max_invested_pct * 3
+
+
+def test_correlation_sees_positions_of_later_coins(df, monkeypatch, tmp_path):
+    """Korrelations-Sperre: Eine offene Position in einem Coin, der in der Liste später kommt, zählt auch."""
+    import json
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    ex = MultiExchange(df)                                   # BTC und ETH: gleiche Kurse, nur anders skaliert
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(1))
+    factors, real = {}, bot._correlation_factor
+    monkeypatch.setattr(bot, "_correlation_factor", lambda s, *a: factors.setdefault(s, real(s, *a)))
+    cfg = Config(symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="korr", poll_seconds=0,
+                 risk=RiskConfig(max_total_risk_pct=1))
+    t = bot.make_trader(cfg, ex)
+    price = ex.fetch_ticker("ETH/CHF")["last"]
+    t.on_signal("ETH/CHF", 1, price, atr=price * 0.02, equity=1000.0, when=0)     # ETH long schon offen
+    state.save(cfg.state_path, t, {})
+    bot.run(cfg, max_iterations=1)
+    assert factors["BTC/CHF"] == 0.5 and "BTC/CHF" in json.loads(cfg.state_path.read_text())["open_trades"]
+
+
+def test_total_cap_over_all_horizons():
+    """Alle Horizonte zusammen nie über Kapital × max_invested_pct × Hebel, auch wenn der Anteil des Horizonts
+    noch Platz hätte."""
+    from tradingbot.config import Horizon
+    rm = RiskManager(RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0), 1000)
+    short = dict(side=-1, exposure=0, budget_share=0.5)                   # Anteil des Horizonts: 1'500 CHF
+    assert rm.plan(1000, 1000, 100, 1, **short).qty == pytest.approx(15)
+    assert rm.plan(1000, 1000, 100, 1, **short, exposure_total=2900).qty == pytest.approx(1)    # alle: 3'000
+    assert rm.plan(1000, 1000, 100, 1, **short, exposure_total=3000) is None
+    assert rm.last_block == "Obergrenze für investiertes Kapital erreicht"
+    # Übernahme durch den längeren Horizont: nach Verlusten passt nicht mehr die ganze Position unter die Grenze
+    rc = RiskConfig(max_position_pct=0.5, risk_per_trade=0.5, max_total_risk_pct=1, max_open_positions=8)
+    t = Trader(PaperBroker(1000, 0, 0), RiskManager(rc, 1000))
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", share=1.0), "lang": Horizon("lang", "1d", "regime", share=0.0)}
+    t.priority = True
+    t.on_signal("A", 1, 100, atr=1, equity=1000, when=0, horizon="kurz")             # 500 CHF
+    t.on_signal("X", 1, 10, atr=0.1, equity=t.equity({"A": 100}), when=0, horizon="kurz")  # 495 CHF (Cash-Reserve)
+    t.horizons["lang"].share = 1.0
+    px = {"A": 80.0, "X": 10.0}                                                     # A verliert: Kapital 900
+    t.on_signal("X", 1, 10, atr=0.1, equity=t.equity(px), when=1, horizon="lang")
+    assert t.open_trades["X"].horizon == "lang"
+    assert t.open_trades["X"].qty * 10 == pytest.approx(t.equity(px) - 500)          # 900 - 500 (A zum Einstieg)
+
+
+def test_liquidation_checked_again_after_signals(df, monkeypatch, tmp_path):
+    """Braucht eine neue Position schon beim Einstieg mehr Sicherheit als vorhanden, wird sie im selben Lauf
+    zwangsweise geschlossen, nicht erst 30 Minuten später (hier mit knapp eingestellter Sicherheit)."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(-1))
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="liq", poll_seconds=0, allow_short=True,
+                 risk=RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, max_total_risk_pct=1,
+                                 liquidation_margin=1.0))
+    bot.run(cfg, max_iterations=1)
+    assert list(pd.read_csv(tmp_path / "daten" / "logs" / "trades_liq.csv")["reason"]) == ["Liquidation"]
+
+
+def test_dashboard_shows_current_leverage():
+    from tradingbot import dashboard
+    def bot_(cfg, invested):
+        return dashboard.Bot(cfg, Trader(PaperBroker(1000, 0, 0), RiskManager(cfg.risk, 1000)), 1000.0, invested)
+    plain, lev = Config(title="Ohne"), Config(title="Mit Hebel", risk=RiskConfig(leverage=3.0))
+    rows = dashboard.overview([bot_(plain, 500.0), bot_(lev, 1550.0)])
+    assert "| Hebel aktuell | – | 1.55× (erlaubt 3×) |" in rows
+    assert not any("Hebel aktuell" in row for row in dashboard.overview([bot_(plain, 500.0)]))

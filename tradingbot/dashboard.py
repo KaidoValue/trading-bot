@@ -89,6 +89,13 @@ def _shares_text(b: Bot) -> str:
     return " · ".join(f"{n} {v * 100:.0f} %" for n, v in b.trader.shares().items())
 
 
+def _leverage_text(b: Bot) -> str:
+    """Tatsächlicher Hebel: Wert aller Positionen (auch Shorts) geteilt durch das Kapital."""
+    if b.cfg.risk.leverage <= 1 or b.equity <= 0:
+        return "–"
+    return f"{b.invested / b.equity:.2f}× (erlaubt {b.cfg.risk.leverage:g}×)"
+
+
 def overview(bots: list[Bot]) -> list[str]:
     head = "| | " + " | ".join(f"**{b.cfg.title or b.cfg.name}**" for b in bots) + " |"
     rows = [
@@ -106,6 +113,8 @@ def overview(bots: list[Bot]) -> list[str]:
         ("Hebel", lambda b: (f"{b.cfg.risk.leverage:g}× (Zinsen bisher {chf(b.trader.broker.interest_paid)} CHF)"
                              if b.cfg.risk.leverage > 1 else "ohne")),
     ]
+    if any(b.cfg.risk.leverage > 1 for b in bots):
+        rows.append(("Hebel aktuell", _leverage_text))
     out = [head, "|---" * (len(bots) + 1) + "|"]
     out += [f"| {label} | " + " | ".join(fn(b) for b in bots) + " |" for label, fn in rows]
     if any(b.trader.risk.halted for b in bots):
