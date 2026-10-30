@@ -613,6 +613,13 @@
       {
         "theme": "hack",
         "source": "decrypt",
+        "title": "Worried About Crypto Hacks? Buy Bitcoin Proxies in Stock Market Instead, Say Wall Street Firms",
+        "link": "https://decrypt.co/382282/crypto-hacks-buy-bitcoin-proxies-stock-market-wall-street",
+        "published": "2026-10-30T20:06:03+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "decrypt",
         "title": "Binance Hack: Why Bitcoin Didn't Crash Like It Did in 2018",
         "link": "https://decrypt.co/382257/binance-hack-why-bitcoin-didnt-crash",
         "published": "2026-10-30T18:45:03+00:00"
@@ -658,19 +665,12 @@
         "title": "Binance arranges $6.34 billion to cover losses from record crypto hack",
         "link": "https://www.coindesk.com/business/2026/10/30/binance-arranges-usd6-34-billion-to-cover-losses-from-record-crypto-hack",
         "published": "2026-10-30T12:13:02+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Here's how big bitcoin traders responded after the Binance hack hit",
-        "link": "https://www.coindesk.com/daybook-us/2026/10/30/here-s-how-big-bitcoin-traders-responded-after-the-binance-hack-hit",
-        "published": "2026-10-30T11:51:26+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T20:07:11.104363+00:00"
+    "__dt__": "2026-10-30T20:36:50.795793+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -700,7 +700,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T20:06:18.910629+00:00"
+      "__dt__": "2026-10-30T20:36:19.155347+00:00"
     }
   }
 }
