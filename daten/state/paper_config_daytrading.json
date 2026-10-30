@@ -608,7 +608,7 @@
       {
         "theme": "hack",
         "source": "cointelegraph",
-        "title": "Binance hack rattles crypto markets as BNB falls 7%, Bitcoin slides",
+        "title": "Binance hack rattles markets as BNB falls 8%, Bitcoin nears $77K",
         "link": "https://cointelegraph.com/markets/binance-hack-rattles-crypto-markets-bnb-bitcoin-slide?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-29T23:24:21+00:00"
       },
@@ -665,7 +665,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T01:20:51.614926+00:00"
+    "__dt__": "2026-10-30T01:50:33.971743+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T01:20:02.230795+00:00"
+      "__dt__": "2026-10-30T01:50:02.503642+00:00"
     }
   }
 }
