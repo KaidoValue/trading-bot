@@ -519,28 +519,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-30T07:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-30T04:00:00+00:00"
@@ -591,7 +591,7 @@
       "__dt__": "2026-10-29T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -605,13 +605,6 @@
     },
     "blackout": null,
     "evidence": [
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Live News: Binance hack rattles crypto as Intel plunges and AI spending fears hit tech",
-        "link": "https://www.coindesk.com/markets/2026/10/30/live-news-binance-hack-rattles-crypto-as-intel-plunges-and-ai-spending-fears-hit-tech",
-        "published": "2026-10-30T08:36:52+00:00"
-      },
       {
         "theme": "hack",
         "source": "coindesk",
@@ -660,12 +653,19 @@
         "title": "Binance hack rattles markets as BNB falls 8%, Bitcoin nears $77K",
         "link": "https://cointelegraph.com/markets/binance-hack-rattles-crypto-markets-bnb-bitcoin-slide?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-10-29T23:24:21+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "Bitcoin Price Slides Below $79,000 as Binance Loses $5.8 Billion in Massive Hack",
+        "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-binance",
+        "published": "2026-10-29T23:06:37+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T08:58:33.098330+00:00"
+    "__dt__": "2026-10-30T09:28:50.305864+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T08:58:01.696718+00:00"
+      "__dt__": "2026-10-30T09:28:00.860151+00:00"
     }
   }
 }
