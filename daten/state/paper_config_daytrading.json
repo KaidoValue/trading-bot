@@ -519,28 +519,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-30T17:00:00+00:00"
+      "__dt__": "2026-10-30T18:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-30T12:00:00+00:00"
@@ -591,7 +591,7 @@
       "__dt__": "2026-10-29T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Signal",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -604,11 +604,19 @@
       ],
       "crash": [
         "coindesk",
-        "cointelegraph"
+        "cointelegraph",
+        "decrypt"
       ]
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Binance Hack: Why Bitcoin Didn't Crash Like It Did in 2018",
+        "link": "https://decrypt.co/382257/binance-hack-why-bitcoin-didnt-crash",
+        "published": "2026-10-30T18:45:03+00:00"
+      },
       {
         "theme": "hack",
         "source": "decrypt",
@@ -657,19 +665,12 @@
         "title": "Here's how big bitcoin traders responded after the Binance hack hit",
         "link": "https://www.coindesk.com/daybook-us/2026/10/30/here-s-how-big-bitcoin-traders-responded-after-the-binance-hack-hit",
         "published": "2026-10-30T11:51:26+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Bitcoin price metrics hint at rebound as $1.6B liquidations follow Binance hack",
-        "link": "https://cointelegraph.com/markets/bitcoin-price-metrics-hint-at-rebound-as-16b-liquidations-follow-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-30T11:29:23+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T18:36:50.418377+00:00"
+    "__dt__": "2026-10-30T19:07:08.835786+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -699,7 +700,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T18:36:18.583608+00:00"
+      "__dt__": "2026-10-30T19:06:19.160596+00:00"
     }
   }
 }
