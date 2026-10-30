@@ -607,6 +607,13 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "coindesk",
+        "title": "Crypto's longtime foe, North Korea's Lazarus Group, likely behind Binance hack: blockchain sleuths",
+        "link": "https://www.coindesk.com/policy/2026/10/29/crypto-s-longtime-foe-north-korea-s-lazarus-group-likely-behind-binance-hack-blockchain-sleuths",
+        "published": "2026-10-30T03:36:11+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "cointelegraph",
         "title": "Binance hack rattles markets as BNB falls 8%, Bitcoin nears $77K",
         "link": "https://cointelegraph.com/markets/binance-hack-rattles-crypto-markets-bnb-bitcoin-slide?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
@@ -658,7 +665,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T03:20:49.486455+00:00"
+    "__dt__": "2026-10-30T03:50:33.422104+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -688,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T03:20:02.531003+00:00"
+      "__dt__": "2026-10-30T03:50:01.897998+00:00"
     }
   }
 }
