@@ -1499,3 +1499,215 @@ def test_bot_configs_use_kraken_costs():
     live = CCXTBroker(Live(), "CHF")
     assert live.buy("BTC/CHF", 0.5, 99.0, market=True).price == 100.0
     assert live.sell("BTC/CHF", 2.0, 99.0, market=True).qty == 1.0
+
+
+# --- Stops minutengenau: Minutenkerzen seit dem letzten Lauf wie eine Stop-Order an der Börse
+
+T0 = datetime(2026, 10, 30, 12, tzinfo=timezone.utc)       # Einstieg
+LAUF = T0 + timedelta(minutes=30, seconds=20)               # der nächste Lauf, 30 Minuten später
+TIEF = (99.0, 99.2, 97.5, 98.8)                             # Minute, die den Stop (98) berührt und wieder steigt
+
+
+class MinuteExchange(FakeExchange):
+    """Wie FakeExchange (Stundenkerzen für die Strategie), dazu Minutenkerzen [(Beginn, open, high, low, close)] und
+    ein fester Ticker. Die letzte Minutenkerze läuft noch; mit fail=True sind sie nicht abrufbar."""
+
+    def __init__(self, df, minutes, last, fail=False):
+        super().__init__(df)
+        self.minutes, self.last, self.fail, self.calls = minutes, last, fail, []
+
+    def fetch_ticker(self, symbol):
+        return {**super().fetch_ticker(symbol), "last": self.last}
+
+    def fetch_ohlcv(self, symbol, timeframe, limit=300, since=None):
+        if timeframe not in ("1m", "5m"):
+            return super().fetch_ohlcv(symbol, timeframe, limit, since)
+        self.calls.append((timeframe, limit))
+        if self.fail:
+            raise OSError("Börse nicht erreichbar")
+        return [[int(t.timestamp() * 1000), o, h, l, c, 1.0] for t, o, h, l, c in self.minutes][-limit:]
+
+
+def _minutes(start, n, special=None, flat=99.5):
+    """n abgeschlossene 1-Minuten-Kerzen ab `start` plus die laufende, flach bei `flat`; special: {Minute: (o, h, l, c)}."""
+    return [(start + timedelta(minutes=k), *(special or {}).get(k, (flat,) * 4)) for k in range(n + 1)]
+
+
+def _stop_trader(when):
+    """Long X zu 100 (mit Slippage 100.10), Stop 98, Ziel 104, ohne Gebühren, Slippage 0,1 %."""
+    t = Trader(PaperBroker(10_000, 0.0, 0.001), RiskManager(RiskConfig(), 10_000))
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=when)
+    assert (t.open_trades["X"].stop, t.open_trades["X"].target) == (98, 104)
+    return t
+
+
+def test_stop_touched_inside_a_minute_fills_at_the_stop_at_that_time(df):
+    """Der Kurs beim Durchlauf (99.50) liegt wieder über dem Stop, aber die Minute 12:14-12:15 hat ihn berührt: Der
+    Stop greift wie eine Stop-Order an der Börse, an der Marke minus Slippage um 12:15 (früher: verpasst). Der Zähler
+    merkt sich, dass die Prüfung nur mit dem Ticker das verpasst hätte."""
+    t = _stop_trader(T0)
+    ex, last_bar = MinuteExchange(df, _minutes(T0, 30, {14: TIEF}), last=99.5), {}
+    bot.replay_stops(t, ex, "X", 99.5, LAUF, last_bar)
+    c = t.closed[-1]
+    assert not t.open_trades and c["reason"] == "Stop-Loss" and c["exit"] == pytest.approx(98 * 0.999)
+    assert c["closed"] == T0 + timedelta(minutes=15) and last_bar["stop:X"] == T0 + timedelta(minutes=15)
+    assert t.zaehler == {"minutenkerze_getroffen": 1}
+    assert ex.calls == [("1m", 37)]           # 30,3 Minuten seit dem Einstieg + 5, dazu die laufende Kerze
+
+
+def test_minutes_before_the_entry_or_the_last_check_are_ignored(df):
+    """Es zählen nur Kerzen, die nach dem Einstieg bzw. nach der letzten Prüfung schliessen. Ohne gespeicherte
+    Prüfung geht der Bot höchstens 35 Minuten zurück."""
+    t = _stop_trader(T0 + timedelta(minutes=10))                     # 12:09-12:10 schliesst genau beim Einstieg
+    last_bar = {}
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30, {5: TIEF, 9: TIEF}), 99.5), "X", 99.5, LAUF, last_bar)
+    assert "X" in t.open_trades and last_bar["stop:X"] == T0 + timedelta(minutes=30)     # bis 12:30 geprüft
+    last_bar = {"stop:X": pd.Timestamp(T0 + timedelta(minutes=20))}
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30, {15: TIEF}), 99.5), "X", 99.5, LAUF, last_bar)
+    assert "X" in t.open_trades and not t.closed and not t.zaehler
+    old = _stop_trader(T0 - timedelta(hours=2))                     # alte Position, noch nie mit Kerzen geprüft
+    ex = MinuteExchange(df, _minutes(T0 - timedelta(minutes=40), 70, {34: TIEF, 35: TIEF}), 99.5)
+    bot.replay_stops(old, ex, "X", 99.5, LAUF, {})                  # ab 11:55:20: 11:54-11:55 zu alt, 11:55-11:56 zählt
+    assert old.closed[-1]["closed"] == T0 - timedelta(minutes=4)
+
+
+def test_without_minute_candles_only_the_ticker_counts(df, caplog):
+    """Sind die Minutenkerzen nicht abrufbar, prüft der Bot wie früher nur mit dem Kurs beim Durchlauf und sagt das
+    im Grund: «Stop-Loss (Ticker)» zum Kurs von jetzt, nicht «Gap». Die letzte Prüfung bleibt stehen, damit der
+    nächste Lauf die Kerzen nachspielt."""
+    t, last_bar = _stop_trader(T0), {}
+    with caplog.at_level("WARNING"):
+        bot.replay_stops(t, MinuteExchange(df, [], last=97.5, fail=True), "X", 97.5, LAUF, last_bar)
+    c = t.closed[-1]
+    assert c["reason"] == "Stop-Loss (Ticker)" and c["exit"] == pytest.approx(97.5 * 0.999) and c["closed"] == LAUF
+    assert "stop:X" not in last_bar and "nicht abrufbar" in caplog.text
+
+
+def test_take_profit_touched_inside_a_minute_fills_at_the_target(df):
+    t = _stop_trader(T0)
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30, {20: (101.0, 104.5, 100.8, 102.0)}), 103.0),
+                     "X", 103.0, LAUF, {})
+    c = t.closed[-1]
+    assert c["reason"] == "Take-Profit" and c["exit"] == pytest.approx(104 * 0.999)
+    assert c["closed"] == T0 + timedelta(minutes=21) and t.zaehler == {"minutenkerze_getroffen": 1}
+
+
+def test_gap_only_when_a_minute_opens_beyond_the_stop(df):
+    """«Gap» nur, wenn eine Minute schon unter dem Stop eröffnet (dann zu ihrem Eröffnungskurs). Liegt auch der Kurs
+    beim Durchlauf unter dem Stop, gilt trotzdem die erste Berührung an der Marke; das hätte der Ticker nicht verpasst.
+    Trifft es erst die laufende Minute, zählt der Ticker («Ticker»)."""
+    t = _stop_trader(T0)
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30, {12: (97.0, 97.6, 96.8, 97.2)}), 97.0), "X", 97.0, LAUF, {})
+    assert t.closed[-1]["reason"] == "Stop-Loss (Gap)" and t.closed[-1]["exit"] == pytest.approx(97.0 * 0.999)
+    t = _stop_trader(T0)
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30, {14: TIEF}), 97.0), "X", 97.0, LAUF, {})
+    assert t.closed[-1]["reason"] == "Stop-Loss" and t.closed[-1]["exit"] == pytest.approx(98 * 0.999)
+    assert not t.zaehler
+    t = _stop_trader(T0)
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30), 97.0), "X", 97.0, LAUF, {})
+    assert t.closed[-1]["reason"] == "Stop-Loss (Ticker)" and t.closed[-1]["closed"] == LAUF
+
+
+def test_partial_profit_inside_a_minute_and_breakeven_stop_afterwards(df):
+    """Teilgewinn in einer Minute (an der Marke), danach gilt der Stop auf Einstand schon für die nächsten Minuten."""
+    from tradingbot.config import Horizon
+    t = Trader(PaperBroker(10_000, 0.0, 0.001), RiskManager(RiskConfig(), 10_000))
+    t.horizons = {"kurz": Horizon("kurz", "1h", "trend", stop_loss_atr=2.0, take_profit_atr=10.0, partial_atr=1.0)}
+    t.on_signal("X", 1, 100, atr=1, equity=10_000, when=T0, horizon="kurz")
+    tr = t.open_trades["X"]
+    partial, breakeven = tr.partial, tr.entry * 1.002            # 100.10 + 1 ATR; Einstand plus Kosten (2 × Slippage)
+    special = {5: (100.5, 101.2, 100.4, 101.0), 9: (100.5, 100.6, 99.9, 100.2)}    # Teilgewinn, dann Einstand
+    bot.replay_stops(t, MinuteExchange(df, _minutes(T0, 30, special, flat=100.5), 99.5), "X", 99.5, LAUF, {})
+    c = t.closed[-1]
+    assert partial == pytest.approx(101.1) and tr.sold_value / tr.sold == pytest.approx(partial * 0.999)
+    assert c["reason"] == "Stop auf Einstand" and c["closed"] == T0 + timedelta(minutes=10) and c["partial"]
+    assert tr.stop == pytest.approx(breakeven)                   # Rest an der Marke, nicht zum Kurs 99.50
+    assert c["exit"] == pytest.approx((tr.sold_value + breakeven * 0.999 * tr.qty) / (tr.sold + tr.qty))
+    assert t.zaehler == {"minutenkerze_getroffen": 1}   # Teilgewinn verpasst; den Stop (Kurs 99.50 darunter) nicht
+
+
+def test_long_pause_uses_5_minute_candles_or_only_the_ticker(df):
+    """Letzte Prüfung über 12 Std. her: 5-Minuten-Kerzen (Schluss = Beginn + 5 Min.). Über 60 Std.: nur der Ticker,
+    und ab jetzt wird wieder lückenlos geprüft."""
+    t, start = _stop_trader(T0 - timedelta(days=5)), T0 - timedelta(hours=20)
+    five = [(start + timedelta(minutes=5 * k), *(TIEF if k == 10 else (99.5,) * 4)) for k in range(247)]
+    ex = MinuteExchange(df, five, 99.5)
+    bot.replay_stops(t, ex, "X", 99.5, LAUF, {"stop:X": pd.Timestamp(start)})
+    assert ex.calls == [("5m", 253)] and t.closed[-1]["closed"] == start + timedelta(minutes=55)
+    t, ex, last_bar = _stop_trader(T0 - timedelta(days=5)), MinuteExchange(df, [], 99.5), {}
+    last_bar["stop:X"] = pd.Timestamp(T0 - timedelta(days=3))
+    bot.replay_stops(t, ex, "X", 99.5, LAUF, last_bar)
+    assert not ex.calls and "X" in t.open_trades and last_bar["stop:X"] == LAUF
+
+
+def test_paper_loop_replays_minutes_and_keeps_the_counter(df, monkeypatch, tmp_path):
+    """Im Paper-Loop: Stop in einer Minutenkerze zur echten Zeit geschlossen, Zähler und letzte Prüfung im Stand,
+    Lehre im Tagebuch. Ohne Minutenkerzen läuft der Durchlauf weiter, Grund «Stop-Loss (Ticker)»."""
+    import json
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    start = datetime.now(timezone.utc).replace(second=0, microsecond=0) - timedelta(minutes=30)
+    runs = {"minute": MinuteExchange(df, _minutes(start, 30, {14: TIEF}), 99.5),
+            "ohne": MinuteExchange(df, [], 97.5, fail=True)}
+    cfgs, st = {}, {}
+    for name, ex in runs.items():
+        monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+        cfg = cfgs[name] = Config(symbols=["BTC/CHF"], use_news=False, name=name, poll_seconds=0, fee_rate=0.0)
+        t = bot.make_trader(cfg, None)
+        t.on_signal("BTC/CHF", 1, 100, atr=1, equity=1000.0, when=start)            # Stop 98
+        state.save(cfg.state_path, t, {})
+        bot.run(cfg, max_iterations=1)                  # läuft auch ohne Minutenkerzen durch und speichert
+        st[name] = json.loads(cfg.state_path.read_text())
+        assert not st[name]["open_trades"] and len(st[name]["closed"]) == 1
+        assert abs(st[name]["abgleich"]["differenz"]) < 0.01
+    c = st["minute"]["closed"][-1]
+    assert c["reason"] == "Stop-Loss" and c["exit"] == pytest.approx(98 * (1 - cfgs["minute"].slippage))
+    assert c["closed"]["__dt__"] == (start + timedelta(minutes=15)).isoformat()
+    assert st["minute"]["last_bar"]["stop:BTC/CHF"]["__dt__"] == c["closed"]["__dt__"]
+    assert st["minute"]["zaehler"] == {"minutenkerze_getroffen": 1} and "zaehler" not in st["ohne"]
+    again = bot.make_trader(cfgs["minute"], None)
+    state.load(cfgs["minute"].state_path, again)
+    assert again.zaehler == {"minutenkerze_getroffen": 1}           # bleibt über den Neustart erhalten
+    assert st["ohne"]["closed"][-1]["reason"] == "Stop-Loss (Ticker)"
+    assert list(pd.read_csv("daten/logs/trades_ohne.csv")["reason"]) == ["Stop-Loss (Ticker)"]
+    text = "".join(p.read_text() for p in Path("lernen/tagebuch").glob("*.md"))
+    assert "Stop-Loss hat den Verlust" in text and "nur mit dem Kurs beim Durchlauf geprüft" in text
+
+
+def test_journal_lessons_for_gap_and_ticker():
+    """Die Lehre passt zum Grund, auch mit Zusatz: echte Gaps, nur mit dem Ticker geprüft, andere Stops mit Zusatz."""
+    from tradingbot import journal
+    assert "gesprungen" in journal.lesson("Stop-Loss (Gap)", -5.0)
+    assert "nur mit dem Kurs beim Durchlauf" in journal.lesson("Stop-Loss (Ticker)", -5.0)
+    trail = journal.lesson("Nachlauf-Stop (Ticker)", 3.0)
+    assert trail == journal.LESSON["Nachlauf-Stop"] + " " + journal.FILL["Ticker"]
+    assert journal.lesson("Stop auf Einstand (Gap)", 0.1).endswith(journal.FILL["Gap"])
+    assert journal.lesson("Signal", 2.0) == "Die Strategie hat rechtzeitig verlassen und den Gewinn mitgenommen."
+
+
+def test_live_mode_checks_stops_only_with_the_ticker(df, monkeypatch, tmp_path):
+    """Live (echte Orders) bleibt wie bisher beim Kurs von jetzt: keine Minutenkerzen, denn eine echte Order kann nicht
+    rückwirkend ausgeführt werden."""
+    from tradingbot.broker import CCXTBroker
+    from tradingbot.engine import OpenTrade
+
+    class Live(MinuteExchange):
+        def fetch_balance(self):
+            return {"free": {"CHF": 1000.0, "BTC": 1.0}}
+
+        def amount_to_precision(self, s, q):
+            return q
+
+        def create_order(self, s, kind, side, qty):
+            return {"average": self.last, "filled": qty, "fee": {"cost": 0.0}}
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    ex = Live(df, _minutes(T0, 30, {14: TIEF}), 97.5)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    cfg = Config(mode="live", symbols=["BTC/CHF"], use_news=False, name="echt", poll_seconds=0)
+    t = Trader(CCXTBroker(ex, "CHF"), RiskManager(cfg.risk, 1000))
+    t.open_trades["BTC/CHF"] = OpenTrade(1, 100.0, 1.0, 98.0, 104.0, T0)
+    monkeypatch.setattr(bot, "make_trader", lambda *a: t)
+    bot.run(cfg, max_iterations=1)
+    assert not ex.calls and t.closed[-1]["reason"] == "Stop-Loss (Gap)" and t.closed[-1]["exit"] == 97.5

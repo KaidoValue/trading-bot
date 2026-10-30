@@ -75,7 +75,7 @@
 | Orderbuch, Markttiefe, Bid, Ask, Spread, Liquidität | ✅ | Vor jedem Einstieg wird das Orderbuch geprüft; bei zu grossem Spread kein Trade |
 | Slippage, Gebühren | ✅ | In Backtest und Demo eingerechnet |
 | Market-Orders | ✅ | Live-Ausführung |
-| Limit-, Stop-, Stop-Limit-Orders | 🟡 | Stops und Ziele überwacht der Bot selbst und schliesst per Market-Order. Echte Stop-Orders an der Börse folgen in einer späteren Version |
+| Limit-, Stop-, Stop-Limit-Orders | 🟡 | Stops und Ziele überwacht der Bot selbst. Im Demo-Betrieb spielt er alle 30 Minuten die Minutenkerzen seit dem letzten Lauf durch wie eine Stop-Order an der Börse (Ausführung an der Marke minus Slippage), live schliesst er per Market-Order. Echte Stop-Orders an der Börse folgen in einer späteren Version |
 | Stop-Loss, Take-Profit | ✅ | Bei jedem Trade, aus der ATR berechnet |
 | Handelszeiten, London- und New-York-Session | ✅ | Jeder Trade wird einer Sitzung zugeordnet; `report` zeigt, wann der Bot am besten handelt |
 

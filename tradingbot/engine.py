@@ -61,6 +61,7 @@ class Trader:
     phases: dict = field(default_factory=dict)   # Coin -> aktuelle Marktphase
     altlasten: float = 0.0      # Kosten vor dem 28.10.2026, die zu keinem Trade gehören (buchhaltung.py)
     buchhaltung: dict = field(default_factory=dict)   # Angaben zur einmaligen Nachbuchung (buchhaltung.py)
+    zaehler: dict = field(default_factory=dict)       # laufende Zähler im Stand (z.B. Stop-Treffer nur in Minutenkerzen)
 
     def shorts_proven(self) -> bool:
         """Haben sich Shorts bewährt? Mindestens 10 Shorts, die letzten 20 zusammen im Gewinn."""
@@ -254,9 +255,11 @@ class Trader:
         if self.phase_exit and t and t.side == -trend_of(phase) and (h is None or h.phase_exit):
             self.exit(symbol, price, "Phase gekippt", when, market=True)
 
-    def check_stops(self, symbol: str, open_: float, high: float, low: float, when) -> None:
+    def check_stops(self, symbol: str, open_: float, high: float, low: float, when, gap_label: str = "Gap") -> None:
         """Prüft Stop-Loss/Take-Profit innerhalb einer Kerze (konservativ: Stop zuerst), danach Teilgewinn und
-        Nachlauf-Stop. Ein nachgezogener Stop gilt erst ab der nächsten Kerze (kein Blick in die Zukunft)."""
+        Nachlauf-Stop. Ein nachgezogener Stop gilt erst ab der nächsten Kerze (kein Blick in die Zukunft).
+        Eröffnet die Kerze schon jenseits des Stops, wird zu diesem Kurs geschlossen, im Grund mit gap_label:
+        «Gap» = echter Kurssprung, «Ticker» = nur mit dem Kurs beim Durchlauf geprüft (open = high = low)."""
         t = self.open_trades.get(symbol)
         if not t:
             return
@@ -268,7 +271,7 @@ class Trader:
         reason = ("Stop-Loss" if s * (t.stop - t.entry) < 0
                   else "Nachlauf-Stop" if t.trail else "Stop auf Einstand")
         if gap:
-            self.exit(symbol, open_, f"{reason} (Gap)", when)
+            self.exit(symbol, open_, f"{reason} ({gap_label})", when)
         elif stop_hit:
             self.exit(symbol, t.stop, reason, when)
         elif target_hit:

@@ -37,7 +37,7 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/broker.py` | `PaperBroker` (simuliert, mit Kraken-Gebührenstaffel, Geld-/Briefkurs und Margin-Kosten) und `CCXTBroker` (echte Orders) |
 | `tradingbot/news.py` | Infos aus dem Netz: Fear & Greed Index und News-Schlagzeilen, nur von mehreren Portalen bestätigte Themen zählen |
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
-| `tradingbot/bot.py` | Laufender Bot: holt jede Minute neue Kurse, prüft Orderbuch und Nachrichtenlage und entscheidet |
+| `tradingbot/bot.py` | Laufender Bot (auf GitHub ein Durchlauf alle 30 Minuten): holt Kurse, prüft die Stops mit den Minutenkerzen seit dem letzten Lauf, dazu Orderbuch und Nachrichtenlage, und entscheidet |
 | `tradingbot/historie.py` | Geschichts-Simulation der kompletten Bots über 2011-2026 inkl. Chef, Kursgeschichte mit Cache |
 
 ## Zeithorizonte: gleiche Bedingungen für alle Bots
@@ -132,6 +132,30 @@ Umsatz-Protokoll bilden es beim ersten Laden aus den Trades der letzten 30 Tage 
 ein Schätzwert für das Strategie-Labor und einzelne Backtests (`backtest`, `compare`, `walkforward`); mit
 `fee_model: fix` rechnet ein Bot wie früher mit diesem festen Satz. Die Simulationszahlen unten (Oktober 2026) wurden
 noch mit 0,26 % je Order gerechnet; die nächste Geschichts-Simulation rechnet mit der Staffel.
+
+## Stops minutengenau (Demo-Betrieb)
+
+Der Demo-Bot läuft alle 30 Minuten. Bei jedem Lauf spielt er für jede offene Position die **1-Minuten-Kerzen seit
+dem letzten Lauf** der Reihe nach durch, so als läge der Stop als Stop-Order an der Börse (`replay_stops` in
+`tradingbot/bot.py`):
+
+- Berührt eine Minute den Stop, das Ziel oder den Teilgewinn, wird zu diesem Zeitpunkt (Ende der Minute) an der Marke
+  ausgeführt, minus Slippage. Auch wenn der Kurs beim Lauf schon wieder auf der sicheren Seite liegt.
+- **«Stop-Loss (Gap)»** heisst jetzt nur noch: Eine Minute hat schon jenseits des Stops eröffnet (echter Kurssprung),
+  ausgeführt zu ihrem Eröffnungskurs.
+- Danach prüft er die laufende Minute mit dem aktuellen Kurs. Liegt dieser schon jenseits des Stops, schliesst er zu
+  diesem Kurs und schreibt das in den Grund: **«Stop-Loss (Ticker)»**. Gleich, wenn die Minutenkerzen nicht abrufbar
+  sind (dann wie früher nur mit dem Kurs beim Lauf); der nächste Lauf spielt die fehlenden Minuten nach.
+- Liegt die letzte Prüfung mehr als 12 Stunden zurück, nimmt er 5-Minuten-Kerzen (mehr als 720 Kerzen liefert Kraken
+  nicht), nach mehr als 60 Stunden nur den aktuellen Kurs.
+- Wie oft die alte Prüfung nur mit dem Kurs beim Lauf einen Treffer verpasst hätte, zählt der Stand unter `zaehler`
+  (`minutenkerze_getroffen`).
+
+Bis zum 30.10.2026 prüfte der Bot nur den Kurs beim Lauf: Jeder Stop-Treffer wurde als Gap zum Kurs in diesem Moment
+gebucht (z.B. «Stop-Loss (Gap)», schlechter als der Stop), und Stops oder Ziele, die zwischen zwei Läufen berührt
+wurden, während der Kurs danach wieder zurückkam, wurden gar nicht ausgelöst. Trefferquote, Ergebnis je
+Ausstiegsgrund und Stop-Verluste vor und nach dem 30.10.2026 sind deshalb nicht direkt vergleichbar. Live (echtes
+Geld) prüft der Bot weiterhin nur zum Kurs beim Lauf, weil eine echte Order nicht rückwirkend ausgeführt werden kann.
 
 ## Geschichts-Simulation (2011-2026)
 
@@ -374,7 +398,9 @@ schtasks /create /tn "TradingBot" /tr "C:\trading-bot\scripts\bot_taeglich.bat" 
 
 Der PC muss um diese Zeit eingeschaltet sein (sonst läuft der Bot beim nächsten Durchlauf). Protokoll: `logs\bot.log`. Entfernen: `schtasks /delete /tn "TradingBot"`.
 
-Hinweis: Bei einem Durchlauf pro Tag wird der Notfall-Stop nur einmal täglich geprüft.
+Hinweis: Bei einem Durchlauf pro Tag spielt der Demo-Bot die Stops rückwirkend mit 5-Minuten-Kerzen nach (siehe
+[Stops minutengenau](#stops-minutengenau-demo-betrieb)); Signale und Not-Aus prüft er aber nur einmal täglich, und mit
+echtem Geld würde auch ein Stop nur dann greifen.
 
 ## KI-Gedächtnis und Strategie-Labor
 
@@ -396,7 +422,8 @@ In `tradingbot/strategies.py` eine Klasse von `Strategy` ableiten, `signals()` i
 
 - Live nur Spot-Handel (kein Short, kein Hebel). Short nur im Backtest/Paper.
 - News und Ereignisse werden über Stichwörter bewertet, nicht über ein Sprachmodell. Ironie oder komplexe Meldungen erkennt das nicht.
-- Stops überwacht der Bot selbst (jede Minute); echte Stop-Orders an der Börse folgen später.
+- Stops überwacht der Bot selbst: im Demo-Betrieb alle 30 Minuten rückwirkend mit den Minutenkerzen, live nur zum Kurs
+  beim Lauf. Echte Stop-Orders an der Börse folgen später.
 - Die Quellen-URLs (News, Fed, SEC, Kalender) konnten bei der Entwicklung nicht live getestet werden. Beim ersten `paper`-Lauf im Protokoll prüfen, ob sie ankommen.
 - Backtest ohne historische News.
 - Der Paper-Modus speichert seinen Stand nicht über einen Neustart hinweg.
