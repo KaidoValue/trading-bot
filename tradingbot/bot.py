@@ -3,14 +3,15 @@ from __future__ import annotations
 
 import csv
 import logging
+import math
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import data, indicators as ind
 from .broker import CCXTBroker, PaperBroker, paper_broker
 from .config import Config
-from .engine import Trader
+from .engine import MINUTES, Trader
 from .news import NewsMonitor
 from .phase import PhaseBook, coin_phases
 from .risk import RiskManager
@@ -18,6 +19,9 @@ from .strategies import build, trend_direction
 from . import buchhaltung, journal, state
 
 log = logging.getLogger(__name__)
+
+STOP_BACK = timedelta(minutes=35)   # erste Stop-Prüfung ohne gespeicherte Zeit: so weit zurück (alle 30 Min. ein Lauf)
+MAX_CANDLES = 720                   # mehr Kerzen liefert Kraken nicht: 1m reicht 12 Std. zurück, 5m 60 Std.
 
 
 def make_trader(cfg: Config, exchange) -> Trader:
@@ -86,8 +90,11 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             if paper:
                 sync_paper(trader.broker, exchange, tickers, now)
             for s in cfg.symbols:
-                p = prices[s]
-                trader.check_stops(s, p, p, p, now)
+                if paper:       # Demo: Minutenkerzen seit dem letzten Lauf, wie eine Stop-Order an der Börse
+                    replay_stops(trader, exchange, s, prices[s], now, last_bar)
+                else:           # live: eine echte Order kann nicht rückwirkend laufen, also zum Kurs von jetzt
+                    p = prices[s]
+                    trader.check_stops(s, p, p, p, now)
             if paper:
                 b = trader.broker
                 if b.interest_at is not None:
@@ -184,6 +191,59 @@ def sync_paper(broker: PaperBroker, exchange, tickers: dict, now) -> None:
             broker.quote_usd = exchange.usd_value()
         except Exception as e:                  # Kurs nicht abrufbar: mit dem letzten bekannten weiterrechnen
             log.warning("USD-Kurs der Kontowährung nicht abrufbar, Gebührenstufe mit dem letzten Kurs: %s", e)
+
+
+def replay_stops(trader: Trader, exchange, symbol: str, price: float, now, last_bar: dict) -> None:
+    """Stops wie eine Stop-Order, die an der Börse liegt (Demo): die 1-Minuten-Kerzen seit der letzten Prüfung (über
+    12 Std. her: 5-Minuten-Kerzen) der Reihe nach durch check_stops, geschlossen zur Schlusszeit der Kerze, an der Marke
+    minus Slippage; ein Gap nur, wenn eine Kerze schon jenseits des Stops eröffnet. Danach die laufende Minute mit dem
+    Ticker. Ohne Kerzen (nicht abrufbar, letzte Prüfung über 60 Std. her) zählt nur der Ticker: «Stop-Loss (Ticker)».
+    Die letzte Prüfung steht in last_bar["stop:<Coin>"]; Treffer, die der Ticker allein verpasst hätte, zählt
+    trader.zaehler["minutenkerze_getroffen"]."""
+    t = trader.open_trades.get(symbol)
+    if t is None:
+        return
+    key, opened = f"stop:{symbol}", state._utc(t.opened)
+    start = last_bar.get(key) or now - STOP_BACK
+    if opened is not None:
+        start = max(start, opened)
+    minutes = max((now - start).total_seconds(), 0) / 60
+    need = {tf: math.ceil(minutes / MINUTES[tf]) + 5 for tf in ("1m", "5m")}       # Kerzen seit der Prüfung + 5
+    tf = next((tf for tf, n in need.items() if n <= MAX_CANDLES), None)
+    rows = []
+    if tf is None:              # so weit reichen keine Kerzen: nur der Ticker, ab jetzt wieder lückenlos
+        log.warning("%s: letzte Stop-Prüfung vor %.0f Std., so weit reichen keine Kerzen: nur der Kurs beim Durchlauf",
+                    symbol, minutes / 60)
+        last_bar[key] = now
+    else:
+        try:
+            df = data.fetch_recent(exchange, symbol, tf, need[tf])
+            close = df.index + timedelta(minutes=MINUTES[tf])
+            rows = list(df[["open", "high", "low"]].set_axis(close)[(close > start) & (close <= now)].itertuples())
+        except Exception as e:  # wie früher nur mit dem Ticker; der nächste Lauf spielt die Kerzen nach
+            log.warning("%s: Kerzen für die Stops nicht abrufbar, nur der Kurs beim Durchlauf: %s", symbol, e)
+    for when, o, h, l in rows:
+        stop, target, partial, n = t.stop, t.target, t.partial, len(trader.closed)
+        trader.check_stops(symbol, o, h, l, when.to_pydatetime())
+        last_bar[key] = when
+        hit = None
+        if len(trader.closed) > n:
+            hit = ("Ziel", target, False) if trader.closed[-1]["reason"] == "Take-Profit" else ("Stop", stop, True)
+        elif partial and not t.partial:
+            hit = ("Teilgewinn", partial, False)
+        if hit and _missed(t.side, price, hit[1], hit[2]):
+            trader.zaehler["minutenkerze_getroffen"] = trader.zaehler.get("minutenkerze_getroffen", 0) + 1
+            log.info("%s: %s %.4f in der Kerze bis %s berührt, der Kurs beim Durchlauf (%.4f) ist wieder auf der "
+                     "sicheren Seite: nur mit dem Ticker wäre das verpasst worden", symbol, *hit[:2], when, price)
+        if symbol not in trader.open_trades:
+            break
+    trader.check_stops(symbol, price, price, price, now, gap_label="Ticker")
+
+
+def _missed(side: int, price: float, level: float, stop: bool) -> bool:
+    """Liegt der Kurs beim Durchlauf wieder auf der sicheren Seite der Marke (Long: über dem Stop, unter Ziel bzw.
+    Teilgewinn; Short umgekehrt)? Dann hätte die alte Prüfung nur mit dem Ticker diesen Treffer verpasst."""
+    return side * (price - level) > 0 if stop else side * (level - price) > 0
 
 
 def liquidation(trader: Trader, prices: dict[str, float], risk) -> bool:

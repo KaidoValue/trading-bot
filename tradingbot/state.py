@@ -51,6 +51,8 @@ def save(path: Path, trader: Trader, last_bar: dict, abgleich: dict | None = Non
     }
     if trader.buchhaltung or trader.altlasten:
         state["buchhaltung"] = trader.buchhaltung | {"altlasten": trader.altlasten}
+    if trader.zaehler:
+        state["zaehler"] = trader.zaehler
     if abgleich:
         state["abgleich"] = abgleich
     if isinstance(trader.broker, PaperBroker):
@@ -75,6 +77,7 @@ def load(path: Path, trader: Trader) -> dict:
     trader.note = state.get("note", "")
     trader.buchhaltung = state.get("buchhaltung") or {}
     trader.altlasten = trader.buchhaltung.get("altlasten", 0.0)
+    trader.zaehler = state.get("zaehler") or {}
     for k, v in state["risk"].items():
         setattr(trader.risk, k, v)
     if "paper" in state and isinstance(trader.broker, PaperBroker):

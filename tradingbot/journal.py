@@ -31,8 +31,12 @@ WHY = {
 LESSON = {
     "Stop-Loss": "Der Stop-Loss hat den Verlust auf den vorher geplanten Betrag begrenzt. Verluste klein "
                  "halten ist wichtiger als jeder einzelne Gewinn.",
-    "Stop-Loss (Gap)": "Der Kurs ist über den Stop hinweg gesprungen (Gap). Stops schützen gut, aber nicht "
-                       "immer exakt auf den Rappen.",
+    "Stop-Loss (Gap)": "Der Kurs ist über den Stop hinweg gesprungen (Gap): Ausgeführt wurde zum ersten Kurs danach, "
+                       "schlechter als der Stop. Stops schützen gut, aber nicht immer exakt auf den Rappen.",
+    "Stop-Loss (Ticker)": "Der Stop wurde nur mit dem Kurs beim Durchlauf geprüft (die Minutenkerzen waren nicht "
+                          "abrufbar oder die Minute lief noch) und zu diesem Kurs ausgeführt, jenseits des Stops: Der "
+                          "Verlust ist grösser als geplant. Eine Stop-Order an der Börse hätte schon beim Erreichen "
+                          "des Stops gegriffen.",
     "Take-Profit": "Das Gewinnziel wurde erreicht: Der Plan mit festem Chance-Risiko-Verhältnis ist aufgegangen.",
     "Stop auf Einstand": "Nach dem Teilgewinn lag der Stop auf dem Einstiegskurs: Der Rest wurde ohne Verlust "
                          "geschlossen, der Teilgewinn bleibt. So wird aus einem Wackler kein Verlust.",
@@ -43,6 +47,24 @@ LESSON = {
     "Not-Aus": "Das Verlustlimit des ganzen Kontos wurde erreicht. Der Not-Aus verhindert, dass aus einem "
                "schlechten Lauf ein Totalverlust wird.",
 }
+# Zusatz für andere Stops, die nicht an ihrer Marke ausgeführt wurden, z.B. «Nachlauf-Stop (Gap)»
+FILL = {"Gap": "Ausgeführt wurde nach einem Kurssprung über die Marke hinweg (Gap), nicht genau an der Marke.",
+        "Ticker": "Nur mit dem Kurs beim Durchlauf geprüft (Minutenkerzen nicht abrufbar oder die Minute lief noch), "
+                  "darum zu diesem Kurs ausgeführt, nicht genau an der Marke."}
+
+
+def lesson(reason: str, pnl: float) -> str:
+    """Was man aus dem Ausstieg lernt. Gründe mit Zusatz ohne eigene Lehre («Stop auf Einstand (Ticker)»): Lehre zum
+    Grund plus Hinweis zur Ausführung."""
+    if reason in LESSON:
+        return LESSON[reason]
+    base, _, how = reason.partition(" (")
+    text = LESSON.get(base) or (
+        "Die Strategie hat rechtzeitig verlassen und den Gewinn mitgenommen." if pnl > 0 else
+        "Das Signal hat gedreht, bevor der Trade aufging. Auch gute Strategien haben viele kleine Verlierer; "
+        "entscheidend ist, dass die Gewinner grösser sind.")
+    note = FILL.get(how.removesuffix(")"))
+    return f"{text} {note}" if note else text
 
 
 def _local(ts) -> pd.Timestamp:
@@ -95,10 +117,6 @@ def closed(cfg, trade: dict) -> str:
     hours = held.total_seconds() / 3600
     held_txt = f"{hours:.0f} Stunden" if hours < 48 else f"{hours / 24:.0f} Tage"
     reason = trade["reason"]
-    lesson = LESSON.get(reason) or (
-        "Die Strategie hat rechtzeitig verlassen und den Gewinn mitgenommen." if pnl > 0 else
-        "Das Signal hat gedreht, bevor der Trade aufging. Auch gute Strategien haben viele kleine Verlierer; "
-        "entscheidend ist, dass die Gewinner grösser sind.")
     icon = "✅" if pnl > 0 else "❌"
     return (f"### {_local(trade['closed']):%H:%M} · {cfg.title or cfg.name} · 🔴 **Verkauf** {trade['symbol']}\n\n"
             f"- **Ergebnis:** {icon} {'+' if pnl >= 0 else ''}{_chf(pnl)} CHF ({pnl / stake * 100:+.2f} %), "
@@ -106,7 +124,7 @@ def closed(cfg, trade: dict) -> str:
             f"- **Einstieg → Ausstieg:** {_chf(trade['entry'])} → {_chf(trade['exit'])} CHF, gehalten {held_txt}\n"
             f"- **Horizont:** {_horizon(cfg, trade.get('horizon', ''))[1]}\n"
             f"- **Grund:** {reason}\n"
-            f"- **Was man daraus lernt:** {lesson}\n")
+            f"- **Was man daraus lernt:** {lesson(reason, pnl)}\n")
 
 
 def write(cfg, before_open: set[tuple], before_closed: int, trader, when) -> None:
