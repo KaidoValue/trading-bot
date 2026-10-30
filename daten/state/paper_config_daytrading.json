@@ -593,7 +593,7 @@
   },
   "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
-    "fear_greed": 30,
+    "fear_greed": null,
     "news_score": -1.0,
     "themes": {
       "hack": [
@@ -605,6 +605,13 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Binance hacker splits $1.4 billion of bitcoin into 19 wallets that no one can freeze",
+        "link": "https://www.coindesk.com/markets/2026/10/30/binance-hacker-splits-usd1-4-billion-of-bitcoin-into-19-wallets-that-no-one-can-freeze",
+        "published": "2026-10-30T04:50:42+00:00"
+      },
       {
         "theme": "hack",
         "source": "bitcoinmagazine",
@@ -653,19 +660,12 @@
         "title": "Binance Hacker Hunts for Exit Ramps as DeFi Exchanges Pause Markets",
         "link": "https://decrypt.co/382194/binance-hack-exit-ramps-defi-exchange-ethereum",
         "published": "2026-10-29T22:57:48+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Binance loses over $6 billion in 'biggest crypto hack in history'",
-        "link": "https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets",
-        "published": "2026-10-29T21:12:45+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T04:25:00.647084+00:00"
+    "__dt__": "2026-10-30T04:54:58.275262+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -695,7 +695,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T04:24:29.251796+00:00"
+      "__dt__": "2026-10-30T04:54:26.863505+00:00"
     }
   }
 }
