@@ -329,6 +329,13 @@
       {
         "theme": "hack",
         "source": "decrypt",
+        "title": "Binance Hack Shows Why Offshore Exchanges Need US Oversight, CFTC Chair Says",
+        "link": "https://decrypt.co/382285/binance-hack-why-offshore-exchanges-need-us-oversight-cftc-chair",
+        "published": "2026-10-30T21:16:04+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "decrypt",
         "title": "Worried About Crypto Hacks? Buy Bitcoin Proxies in Stock Market Instead, Say Wall Street Firms",
         "link": "https://decrypt.co/382282/crypto-hacks-buy-bitcoin-proxies-stock-market-wall-street",
         "published": "2026-10-30T20:06:03+00:00"
@@ -374,19 +381,12 @@
         "title": "Wall Street analysts urge investors to buy crypto stocks after $6.3 billion Binance hack",
         "link": "https://www.coindesk.com/markets/2026/10/30/wall-street-analysts-urge-investors-to-buy-crypto-stocks-on-weakness-after-usd6-3-billion-binance-hack",
         "published": "2026-10-30T14:13:34+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Binance arranges $6.34 billion to cover losses from record crypto hack",
-        "link": "https://www.coindesk.com/business/2026/10/30/binance-arranges-usd6-34-billion-to-cover-losses-from-record-crypto-hack",
-        "published": "2026-10-30T12:13:02+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T21:06:06.970364+00:00"
+    "__dt__": "2026-10-30T21:36:07.301350+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -414,7 +414,7 @@
     },
     "interest_paid": 0.012895995134820534,
     "interest_at": {
-      "__dt__": "2026-10-30T21:05:15.146077+00:00"
+      "__dt__": "2026-10-30T21:35:15.348028+00:00"
     }
   }
 }
