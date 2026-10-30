@@ -23,9 +23,10 @@ def make_exchange(name: str, api_key: str | None = None, api_secret: str | None 
 
 
 class Converted:
-    """Bietet Coins, die die Börse nicht direkt in CHF handelt (z.B. SOL), als SOL/CHF an: Kurse kommen von
-    SOL/USD und werden mit dem USD/CHF-Kurs der Börse umgerechnet. So läuft das ganze Demo-Konto in Franken.
-    Echt müsste man dafür CHF in USD tauschen; diese Kosten rechnet der Bot im Demo als Zusatzgebühr ein."""
+    """Bietet Coins, die die Börse nicht direkt in CHF handelt (z.B. SOL), als SOL/CHF an: Kurse (auch Geld- und
+    Briefkurs) kommen von SOL/USD und werden mit dem USD/CHF-Kurs der Börse umgerechnet. So läuft das ganze
+    Demo-Konto in Franken. Vereinfachung: Ein echtes Konto hielte für diese Coins ein USD-Guthaben und handelte
+    direkt SOL/USD zur gleichen Gebühr; den einmaligen Umtausch CHF -> USD rechnet der Demo-Bot nicht ein."""
 
     def __init__(self, exchange, quote: str = "CHF", via: str = "USD"):
         self.ex, self.quote, self.via = exchange, quote, via
@@ -67,11 +68,16 @@ class Converted:
         src = self.source(symbol)
         if not src:
             return self.ex.fetch_ticker(symbol)
-        t = self.ex.fetch_ticker(src)
-        return {**t, "last": float(t["last"]) * self._fx_last()}
+        t, fx = self.ex.fetch_ticker(src), self._fx_last()
+        return {**t, **{k: float(t[k]) * fx for k in ("last", "bid", "ask") if t.get(k) is not None}}
 
     def _fx_last(self) -> float:
+        """CHF pro USD (letzter USD/CHF-Kurs)."""
         return float(self._cached("ticker", lambda: self.ex.fetch_ticker(self.bridge))["last"])
+
+    def usd_value(self) -> float:
+        """Wert einer Einheit der Kontowährung in USD (1 CHF = 1 / USD/CHF), für die Gebührenstufe in USD."""
+        return 1.0 if self.quote == self.via else 1 / self._fx_last()
 
     def fetch_ohlcv(self, symbol, timeframe="1h", since=None, limit=None):
         src = self.source(symbol)

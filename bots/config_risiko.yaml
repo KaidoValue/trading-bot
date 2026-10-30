@@ -10,7 +10,8 @@ timeframe: 4h            # Haupthorizont «mittel» (kurz pausiert)
 history_exchange: bitstamp
 history_symbol: BTC/USD
 starting_capital: 1000
-fee_rate: 0.0026
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
 slippage: 0.0005
 
 # Kurzer Donchian-Ausbruch: long nach einem 10-Kerzen-Hoch, short nach einem 5-Kerzen-Tief.
@@ -80,5 +81,7 @@ risk:
   max_spread_pct: 0.01
   correlation_limit: 1.01     # keine Verkleinerung bei ähnlichen Coins
   leverage: 3.0               # Hebel 3x, NUR Demo (live gesperrt): Positionen bis zum 3-fachen des Kapitals
-  margin_interest_per_day: 0.0012   # Zinsen auf geliehenes Geld bzw. geliehene Coins (Kraken ca. 0,02 % pro 4 Std.)
+  margin_open_fee: 0.0003     # Margin-Eröffnungsgebühr auf den geliehenen Teil (Kraken 0,02-0,04 %)
+  margin_interest_per_day: 0.0018   # Rollover 0,03 % alle 4 Std. auf geliehenes Geld bzw. geliehene Coins
+                                    # (Kraken 0,02-0,04 %, BTC 0,01-0,02 %: vereinfacht ein Satz)
   liquidation_margin: 0.5     # Zwangsschliessung, wenn das Kapital unter 50 % der Sicherheit fällt

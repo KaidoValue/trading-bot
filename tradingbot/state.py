@@ -5,12 +5,12 @@ So kann der Bot beendet und später fortgesetzt werden, z.B. einmal täglich per
 from __future__ import annotations
 
 import json
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pandas as pd
 
-from .broker import PaperBroker
+from .broker import WINDOW, PaperBroker
 from .engine import OpenTrade, Trader
 
 
@@ -54,8 +54,11 @@ def save(path: Path, trader: Trader, last_bar: dict, abgleich: dict | None = Non
     if abgleich:
         state["abgleich"] = abgleich
     if isinstance(trader.broker, PaperBroker):
-        state["paper"] = {"cash": trader.broker._cash, "positions": trader.broker.positions,
-                          "interest_paid": trader.broker.interest_paid, "interest_at": trader.broker.interest_at}
+        b = trader.broker
+        b._prune()
+        state["paper"] = {"cash": b._cash, "positions": b.positions, "interest_paid": b.interest_paid,
+                          "interest_at": b.interest_at, "quote_usd": b.quote_usd,
+                          "volume": [[t, round(v, 2)] for t, v in b.volume_log]}     # Umsatz der letzten 30 Tage
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(_walk(state, _enc), indent=2, default=str))
@@ -75,8 +78,46 @@ def load(path: Path, trader: Trader) -> dict:
     for k, v in state["risk"].items():
         setattr(trader.risk, k, v)
     if "paper" in state and isinstance(trader.broker, PaperBroker):
-        trader.broker._cash = state["paper"]["cash"]
-        trader.broker.positions = state["paper"]["positions"]
-        trader.broker.interest_paid = state["paper"].get("interest_paid", 0.0)
-        trader.broker.interest_at = state["paper"].get("interest_at")
+        p, b = state["paper"], trader.broker
+        b._cash = p["cash"]
+        b.positions = p["positions"]
+        b.interest_paid = p.get("interest_paid", 0.0)
+        b.interest_at = p.get("interest_at")
+        b.quote_usd = p.get("quote_usd", 1.0)
+        now = b.now or datetime.now(timezone.utc)
+        b.load_volume(p["volume"] if "volume" in p else _volume_from_trades(trader, now))
+        _margin_alt(trader, state["open_trades"])
     return {s: pd.Timestamp(v) for s, v in state["last_bar"].items()}
+
+
+def _utc(x) -> datetime | None:
+    """Zeitpunkt mit Zeitzone (UTC); None, wenn keiner (z.B. Zahlen statt Zeiten in Tests)."""
+    if not isinstance(x, (date, str)):          # datetime ist auch ein date
+        return None
+    try:
+        t = pd.Timestamp(x)
+    except ValueError:
+        return None
+    return (t.tz_localize("UTC") if t.tzinfo is None else t.tz_convert("UTC")).to_pydatetime()
+
+
+def _volume_from_trades(trader: Trader, now: datetime) -> list:
+    """Stand ohne Umsatz-Protokoll (vor der Gebührenstaffel): die Fills der letzten 30 Tage aus den Trades
+    nachbilden. Abgeschlossene: Kauf beim Eröffnen, Verkauf beim Schliessen; offene: Kauf der ganzen Menge."""
+    fills = [f for c in trader.closed
+             for f in ((c.get("opened"), c["qty"] * c["entry"]), (c.get("closed"), c["qty"] * c["exit"]))]
+    fills += [(t.opened, (t.qty + t.sold) * t.entry) for t in trader.open_trades.values()]
+    fills = [(z, v) for z, v in ((_utc(z), v) for z, v in fills) if z is not None and z >= now - WINDOW]
+    return sorted(fills, key=lambda f: f[0])
+
+
+def _margin_alt(trader: Trader, raw: dict) -> None:
+    """Positionen von vor der Margin-Rechnung (ohne margin_value): Shorts sind ganz geliehen; Longs mit Hebel teilen
+    sich das geliehene Cash nach ihrem Wert, so wie bisher die Zinsen verteilt wurden."""
+    alt = [t for s, t in trader.open_trades.items() if "margin_value" not in raw[s]]
+    b = trader.broker
+    debt = max(0.0, -b.cash()) if b.leverage > 1 else 0.0
+    longs = sum(t.qty * t.entry for t in alt if t.side > 0)
+    for t in alt:
+        t.margin_value = ((t.qty + t.sold) * t.entry if t.side < 0
+                          else debt * (t.qty + t.sold) * t.entry / longs if longs else 0.0)

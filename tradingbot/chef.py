@@ -27,7 +27,8 @@ from .memory import Memory
 STYLES = {"config_langfrist": "Langfrist", "config_daytrading": "KI", "config_risiko": "Risiko"}
 DEFAULT = {"config_langfrist": 0.3, "config_daytrading": 0.3, "config_risiko": 0.3}   # gleiche Startbedingungen
 VIEWS = {"kurz": 1, "mittel": 7, "lang": 30}     # Sichten des Chefs in Tagen
-MAX_RISK, MIN_CASH, MIN_CHANGE, FEE = 0.20, 0.0, 0.05, 0.0026
+MAX_RISK, MIN_CASH, MIN_CHANGE = 0.20, 0.0, 0.05
+FEE = 0.008              # Umschichten: Kraken-Taker der kleinsten Stufe (der Chef schichtet selbst wenig um)
 RISK_CUT = 0.0           # so weit unter dem Höchststand halbiert er den Risiko-Anteil (0 = nie)
 BRAKE_HOURS, BRAKE_LOSS = 3, -0.03
 

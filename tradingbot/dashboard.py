@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import data, state
-from .broker import PaperBroker
+from .broker import paper_broker
 from .buchhaltung import TOLERANZ
 from .config import Config
 from .engine import Trader
@@ -74,8 +74,8 @@ class Bot:
 def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
     cfg = Config.load(path)
     cfg.mode = "paper"
-    trader = Trader(PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage),
-                    RiskManager(cfg.risk, cfg.starting_capital))
+    trader = Trader(paper_broker(cfg), RiskManager(cfg.risk, cfg.starting_capital))
+    trader.broker.now = datetime.now(timezone.utc)       # Umsatz der letzten 30 Tage ab jetzt (Gebührenstufe)
     if not state.load(cfg.state_path, trader):
         return None
     value = sum(trader.broker.position(s) * prices[s] for s in prices)          # Shorts zählen negativ
@@ -96,6 +96,14 @@ def _leverage_text(b: Bot) -> str:
     if b.cfg.risk.leverage <= 1 or b.equity <= 0:
         return "–"
     return f"{b.invested / b.equity:.2f}× (erlaubt {b.cfg.risk.leverage:g}×)"
+
+
+def _fee_text(b: Bot) -> str:
+    """Gebührenstufe nach dem Umsatz der letzten 30 Tage (Kraken-Staffel) bzw. fester Satz."""
+    stufe, _, taker, umsatz = b.trader.broker.tier()
+    umsatz = f"30-Tage-Umsatz {umsatz:,.0f} CHF".replace(",", "'")
+    return (f"Stufe {stufe}: {taker * 100:.2f} % je Market-Order ({umsatz})" if stufe
+            else f"fest {taker * 100:.2f} % je Order ({umsatz})")
 
 
 def _buchhaltung_text(b: Bot) -> str:
@@ -119,6 +127,7 @@ def overview(bots: list[Bot]) -> list[str]:
         ("Offene Positionen", lambda b: str(len(b.trader.open_trades))),
         ("Abgeschlossene Trades", lambda b: str(len(b.trader.closed))),
         ("Gebühren bisher", lambda b: f"{chf(b.trader.gebuehren_bisher())} CHF"),
+        ("Gebührenstufe", _fee_text),
         ("Horizonte (Strategie, Kerzen)", lambda b: b.cfg.horizon_text()),
         ("Kapitalanteil je Horizont", lambda b: _shares_text(b)),
         ("Short erlaubt", lambda b: "ja" if b.cfg.allow_short else "nein"),
