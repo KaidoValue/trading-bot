@@ -519,52 +519,52 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-30T10:00:00+00:00"
+      "__dt__": "2026-10-30T11:00:00+00:00"
     },
     "mittel:BTC/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:ETH/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:BNB/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:XRP/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:SOL/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:TRX/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:ZEC/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "mittel:HYPE/CHF": {
-      "__dt__": "2026-10-30T04:00:00+00:00"
+      "__dt__": "2026-10-30T08:00:00+00:00"
     },
     "lang:BTC/CHF": {
       "__dt__": "2026-10-29T00:00:00+00:00"
@@ -591,7 +591,7 @@
       "__dt__": "2026-10-29T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: kein Signal | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -609,6 +609,13 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Binance arranges $6.34 billion to cover losses from record crypto hack",
+        "link": "https://www.coindesk.com/business/2026/10/30/binance-arranges-usd6-34-billion-to-cover-losses-from-record-crypto-hack",
+        "published": "2026-10-30T12:13:02+00:00"
+      },
       {
         "theme": "hack",
         "source": "coindesk",
@@ -657,19 +664,12 @@
         "title": "Binance hacker splits $1.4 billion of bitcoin into 19 wallets that no one can freeze",
         "link": "https://www.coindesk.com/markets/2026/10/30/binance-hacker-splits-usd1-4-billion-of-bitcoin-into-19-wallets-that-no-one-can-freeze",
         "published": "2026-10-30T04:50:42+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "Bitcoin Price Briefly Slides to $76,300 as Binance Confirms Hack Estimated at $6.3 Billion",
-        "link": "https://bitcoinmagazine.com/news/bitcoin-price-slides-near-76000-binance",
-        "published": "2026-10-30T04:05:40+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-30T11:58:32.688538+00:00"
+    "__dt__": "2026-10-30T12:28:52.836542+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -699,7 +699,7 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-30T11:58:01.332886+00:00"
+      "__dt__": "2026-10-30T12:28:00.996627+00:00"
     }
   }
 }
