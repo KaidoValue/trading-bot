@@ -706,6 +706,13 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "coindesk",
+        "title": "A stolen iPhone, $14,000 in losses and London's crypto theft problem",
+        "link": "https://www.coindesk.com/business/2026/11/01/a-stolen-iphone-usd14-000-in-losses-and-london-s-crypto-theft-problem",
+        "published": "2026-10-31T16:09:30+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "cointelegraph",
         "title": "Bitcoin held up better than expected after Binance hack, Strive CEO says",
         "link": "https://cointelegraph.com/markets/bitcoin-binance-hack-strive-ceo?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
@@ -752,19 +759,12 @@
         "title": "Worried About Crypto Hacks? Buy Bitcoin Proxies in Stock Market Instead, Say Wall Street Firms",
         "link": "https://decrypt.co/382282/crypto-hacks-buy-bitcoin-proxies-stock-market-wall-street",
         "published": "2026-10-30T20:06:03+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Binance Hack: Why Bitcoin Didn't Crash Like It Did in 2018",
-        "link": "https://decrypt.co/382257/binance-hack-why-bitcoin-didnt-crash",
-        "published": "2026-10-30T18:45:03+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-31T16:03:48.547451+00:00"
+    "__dt__": "2026-10-31T16:33:27.851425+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -794,36 +794,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63942.6,
-      "2026-10-31T16:02:56+00:00"
+      63984.1,
+      "2026-10-31T16:32:56+00:00"
     ],
     "ETH/CHF": [
       1851.06,
-      "2026-10-31T16:02:56+00:00"
+      "2026-10-31T16:32:56+00:00"
     ],
     "BNB/CHF": [
-      581.9922276000001,
-      "2026-10-31T16:02:56+00:00"
+      581.974292,
+      "2026-10-31T16:32:56+00:00"
     ],
     "XRP/CHF": [
-      1.0336528104,
-      "2026-10-31T16:02:56+00:00"
+      1.033992438,
+      "2026-10-31T16:32:56+00:00"
     ],
     "SOL/CHF": [
-      79.145262,
-      "2026-10-31T16:02:56+00:00"
+      79.12815599999999,
+      "2026-10-31T16:32:56+00:00"
     ],
     "TRX/CHF": [
-      0.25882358544,
-      "2026-10-31T16:02:56+00:00"
+      0.2575719748,
+      "2026-10-31T16:32:56+00:00"
     ],
     "ZEC/CHF": [
-      1062.90807,
-      "2026-10-31T16:02:56+00:00"
+      1058.8490180000001,
+      "2026-10-31T16:32:56+00:00"
     ],
     "HYPE/CHF": [
-      72.2505,
-      "2026-10-31T16:02:56+00:00"
+      72.38137,
+      "2026-10-31T16:32:56+00:00"
     ]
   },
   "abgleich": {
@@ -844,9 +844,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-31T16:02:56.305073+00:00"
+      "__dt__": "2026-10-31T16:32:56.140800+00:00"
     },
-    "quote_usd": 1.2110642832921572,
+    "quote_usd": 1.2109469605231291,
     "volume": [
       [
         {
