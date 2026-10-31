@@ -615,28 +615,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-10-31T07:00:00+00:00"
+      "__dt__": "2026-10-31T08:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-10-31T04:00:00+00:00"
@@ -687,7 +687,7 @@
       "__dt__": "2026-10-30T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: kein Signal | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: kein Signal | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -765,7 +765,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-31T08:33:27.230777+00:00"
+    "__dt__": "2026-10-31T09:03:46.724913+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -795,36 +795,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63855.7,
-      "2026-10-31T08:32:55+00:00"
+      63757.3,
+      "2026-10-31T09:02:57+00:00"
     ],
     "ETH/CHF": [
       1848.95,
-      "2026-10-31T08:32:55+00:00"
+      "2026-10-31T09:02:57+00:00"
     ],
     "BNB/CHF": [
-      577.6902264,
-      "2026-10-31T08:32:55+00:00"
+      578.7010488,
+      "2026-10-31T09:02:57+00:00"
     ],
     "XRP/CHF": [
-      1.026204816,
-      "2026-10-31T08:32:55+00:00"
+      1.0279955675999999,
+      "2026-10-31T09:02:57+00:00"
     ],
     "SOL/CHF": [
-      78.5920296,
-      "2026-10-31T08:32:55+00:00"
+      78.69237919999999,
+      "2026-10-31T09:02:57+00:00"
     ],
     "TRX/CHF": [
-      0.26998649412000003,
-      "2026-10-31T08:32:55+00:00"
+      0.26905248068,
+      "2026-10-31T09:02:57+00:00"
     ],
     "ZEC/CHF": [
-      1046.558814,
-      "2026-10-31T08:32:55+00:00"
+      1051.1277588,
+      "2026-10-31T09:02:57+00:00"
     ],
     "HYPE/CHF": [
-      71.8128684,
-      "2026-10-31T08:32:55+00:00"
+      72.3108004,
+      "2026-10-31T09:02:57+00:00"
     ]
   },
   "abgleich": {
@@ -845,9 +845,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-31T08:32:55.606875+00:00"
+      "__dt__": "2026-10-31T09:02:57.234105+00:00"
     },
-    "quote_usd": 1.2110642832921572,
+    "quote_usd": 1.2112989970444306,
     "volume": [
       [
         {
