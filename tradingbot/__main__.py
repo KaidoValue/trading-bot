@@ -16,6 +16,7 @@
   python -m tradingbot schliessen --config ... --symbols TRX/CHF --sofort   # direkt (nur lokal, kein Bot-Lauf aktiv)
   python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
   python -m tradingbot historie --bots ... --start 2022-01-01 # wie oben, aber erst ab diesem Tag handeln
+  python -m tradingbot historie --bots ... --gebuehren alt     # Vergleich: fest 0,26 % statt Kraken-Staffel
 """
 from __future__ import annotations
 
@@ -171,6 +172,9 @@ def main() -> None:
     p.add_argument("--sofort", action="store_true", help="schliessen: direkt statt als Auftrag (nur lokal und nur, "
                    "wenn gerade kein Bot-Durchlauf läuft)")
     p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf)")
+    p.add_argument("--gebuehren", choices=["normiert", "staffel", "alt"], default="normiert",
+                   help="historie: Gebührenstufe wie für ein Konto mit Startkapital (normiert, Standard), nach dem "
+                   "Umsatz des wachsenden Simulationskontos (staffel) oder fest 0,26 %% wie früher (alt)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
 
@@ -225,9 +229,9 @@ def main() -> None:
         # Reihenfolge wie im laufenden Bot: bei gleichzeitigen Signalen bekommt der erste Coin zuerst Kapital
         coins = list(dict.fromkeys(s.split("/")[0] for p in (args.bots or [args.config]) for s in Config.load(p).symbols))
         start = pd.Timestamp(args.start, tz="UTC") if args.start else None
-        runs, chef, btc = historie.run_all(args.bots or [args.config], coins, start)
+        runs, chef, btc = historie.run_all(args.bots or [args.config], coins, start, args.gebuehren)
         btc = btc[btc.index >= start] if start is not None else btc
-        text = historie.report(runs, chef, btc)
+        text = historie.report(runs, chef, btc, args.gebuehren)
         Path("lernen").mkdir(exist_ok=True)
         Path("lernen/HISTORIE.md").write_text(text, encoding="utf-8")
         curves = pd.DataFrame({n: r.equity for n, r in runs.items()} | ({"chef": chef} if chef is not None else {})

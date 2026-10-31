@@ -1423,6 +1423,36 @@ def test_history_simulation_with_kraken_fees_costs_more(df):
     assert kraken["fees"].sum() > 2 * fix["fees"].sum()
 
 
+def test_history_fee_tier_as_for_account_with_starting_capital(df, monkeypatch):
+    """normiert (Standard): Die Stufe zählt den Umsatz im Verhältnis zum Kapital wie bei einem Konto mit Startkapital,
+    ein gewachsenes Simulationskonto bekommt also keinen Mengenrabatt; staffel: echter Umsatz; alt: fest 0,26 %."""
+    from tradingbot import historie
+    from tradingbot.broker import KRAKEN_TIERS
+    t0 = datetime(2026, 10, 1, tzinfo=timezone.utc)
+    b = PaperBroker(100_000, 0.006, 0.0, tiers=KRAKEN_TIERS)
+    b.now = t0
+    b.load_volume([(t0, 300_000.0)])
+    assert b.tier()[2] == 0.0022                                   # 300'000 USD in 30 Tagen: 0,22 %
+    b.volume_scale = 0.01                                          # 100'000er-Konto, gerechnet wie 1'000
+    assert b.tier()[0] == 2 and b.fee("BTC/USD") == 0.006
+    brokers, build_broker = {}, historie.paper_broker
+    monkeypatch.setattr(historie, "paper_broker", lambda cfg: brokers.setdefault(cfg.name, build_broker(cfg)))
+    btc = df.set_axis(pd.date_range("2020-01-01", periods=len(df), freq="1h", tz="UTC"))
+    runs = {}
+    for fees in historie.FEES:
+        cfg = Config(strategy="trend", symbols=["BTC/USD"], name=fees, fee_model="kraken", fee_rate=0.006)
+        cfg.risk.max_drawdown_pct = 0.99
+        runs[fees] = historie.simulate(cfg, {"BTC/USD": btc}, fees=fees)
+    last = brokers["normiert"]
+    eq = last.cash() + last.position("BTC/USD") * btc["close"].iloc[-1]
+    assert last.volume_scale == pytest.approx(min(1.0, 1000 / eq)) and brokers["staffel"].volume_scale == 1.0
+    rate = lambda tr: tr["fees"].sum() / (tr["qty"] * (tr["entry"] + tr["exit"])).sum()      # Gebühr je Umsatz
+    assert rate(runs["alt"].trades) == pytest.approx(0.0026) and rate(runs["normiert"].trades) > 0.0059
+    assert rate(runs["normiert"].trades) >= rate(runs["staffel"].trades) - 1e-12
+    with pytest.raises(ValueError):
+        historie.simulate(cfg, {"BTC/USD": btc}, fees="billig")
+
+
 class QuoteExchange(MultiExchange):
     """Börse mit Geld- und Briefkurs im Ticker und USD-Wert der Kontowährung (wie data.Converted)."""
 

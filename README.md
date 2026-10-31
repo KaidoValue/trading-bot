@@ -131,7 +131,13 @@ Geschichts-Simulation kennt keinen Geld-/Briefkurs (dort Slippage) und rechnet i
 Umsatz-Protokoll bilden es beim ersten Laden aus den Trades der letzten 30 Tage nach. `fee_rate` (0,6 %) ist nur noch
 ein Schätzwert für das Strategie-Labor und einzelne Backtests (`backtest`, `compare`, `walkforward`); mit
 `fee_model: fix` rechnet ein Bot wie früher mit diesem festen Satz. Die Simulationszahlen unten (Oktober 2026) wurden
-noch mit 0,26 % je Order gerechnet; die nächste Geschichts-Simulation rechnet mit der Staffel.
+noch mit 0,26 % je Order gerechnet; die Geschichts-Simulation rechnet jetzt mit der Staffel.
+
+**Gebührenstufe in der Geschichts-Simulation:** Ein Simulationskonto wächst über die Jahre auf ein Vielfaches von
+1'000 und käme so in billige Stufen, die ein 1'000er-Konto nie erreicht. Darum zählt die Simulation den Umsatz im
+Verhältnis zum Kapital, also wie bei einem Konto mit dem Startkapital (`--gebuehren normiert`, Standard). Zum
+Vergleich: `--gebuehren staffel` (Stufe nach dem echten Umsatz des Simulationskontos) und `--gebuehren alt` (fest
+0,26 % wie früher). Der Bericht zeigt je Abschnitt die Kosten (Gebühren und Zinsen) in % des Kapitals pro Jahr.
 
 ## Läufe kurz nach Kerzenschluss
 
@@ -258,7 +264,8 @@ Unterschiede sind Zufall); Leitplanke: kein Rückgang über 75 %.
 | Bitcoin halten | | | +90,4 % (max. −85 %) | +51,3 % (max. −53 %) | 1'000 → 1'691 (max. −67 %) |
 
 „Start erst 2022“: frische 1'000 am 1. Januar 2022 (Beginn eines Crashs, Bitcoin −65 % im Jahr 2022), bis Oktober 2026.
-Selbst ausprobieren: `python -m tradingbot historie --bots ... --start 2022-01-01`.
+Selbst ausprobieren: `python -m tradingbot historie --bots ... --start 2022-01-01` (Gebührenstufe wählbar mit
+`--gebuehren normiert|staffel|alt`, siehe [Realistische Kosten](#realistische-kosten-wie-bei-kraken)).
 
 Was die Simulation gezeigt hat:
 

@@ -54,6 +54,8 @@ class PaperBroker(Broker):
         self.quotes: dict[str, tuple[float, float]] = {}   # Geld- und Briefkurs je Coin für Market-Orders
         self.volume_log: deque = deque()          # Fills der letzten 30 Tage: (Zeit, Betrag in Kontowährung)
         self.volume = 0.0                         # Summe davon
+        self.volume_scale = 1.0                   # Umsatz × Faktor für die Stufe (Simulation: wie ein Konto mit
+                                                  # Startkapital, auch wenn das simulierte Konto wächst)
 
     def cash(self):
         return self._cash
@@ -64,7 +66,7 @@ class PaperBroker(Broker):
         self._prune()
         if not self.tiers:
             return 0, self.fee_rate, self.fee_rate, self.volume
-        stufe = max(bisect_right([t[0] for t in self.tiers], self.volume * self.quote_usd), 1)
+        stufe = max(bisect_right([t[0] for t in self.tiers], self.volume * self.quote_usd * self.volume_scale), 1)
         _, maker, taker = self.tiers[stufe - 1]
         return stufe, maker, taker, self.volume
 
