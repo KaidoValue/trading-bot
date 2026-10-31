@@ -144,11 +144,13 @@ class Trader:
 
     def on_signal(self, symbol: str, signal: int, price: float, atr: float, equity: float, when,
                   size_factor: float = 1.0, can_open_new: bool = True, horizon: str = "",
-                  trend: int | None = None, phase: str | None = None, anchor: float | None = None) -> None:
+                  trend: int | None = None, phase: str | None = None, anchor: float | None = None,
+                  extra: dict | None = None) -> None:
         """+1: long gehen (Short vorher schliessen), -1: Long schliessen und, falls erlaubt, short gehen.
         Pro Coin gibt es eine Position. Hält sie ein anderer Horizont, bleibt sie unberührt.
         trend: langfristige Richtung des Coins (Trendfilter); neue Positionen nur in diese Richtung.
-        phase: Marktphase des Coins (phase.py); anchor: 20er-Linie des Horizonts für den besten Einstieg."""
+        phase: Marktphase des Coins (phase.py); anchor: 20er-Linie des Horizonts für den besten Einstieg.
+        extra: weitere Angaben zum Einstieg für das Trade-Protokoll (z.B. delay_min aus bot.py)."""
         if phase:
             self.phases[symbol] = phase
         if signal == 0:
@@ -228,6 +230,7 @@ class Trader:
             if quote:
                 bid, ask = quote
                 info["spread"] = round((ask - bid) / ((ask + bid) / 2), 5)
+            info.update(extra or {})
             # Geliehener Teil (bei Kraken eine Margin-Position bis zum Schliessen): Shorts ganz, Longs mit Hebel nur,
             # was das Cash vor dem Kauf nicht deckte
             margin = (fill.qty * fill.price if signal < 0

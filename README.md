@@ -37,7 +37,7 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/broker.py` | `PaperBroker` (simuliert, mit Kraken-Gebührenstaffel, Geld-/Briefkurs und Margin-Kosten) und `CCXTBroker` (echte Orders) |
 | `tradingbot/news.py` | Infos aus dem Netz: Fear & Greed Index und News-Schlagzeilen, nur von mehreren Portalen bestätigte Themen zählen |
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
-| `tradingbot/bot.py` | Laufender Bot (auf GitHub ein Durchlauf alle 30 Minuten): holt Kurse, prüft die Stops mit den Minutenkerzen seit dem letzten Lauf, dazu Orderbuch und Nachrichtenlage, und entscheidet |
+| `tradingbot/bot.py` | Laufender Bot (auf GitHub ein Durchlauf alle 30 Minuten, kurz nach Kerzenschluss): holt Kurse, prüft die Stops mit den Minutenkerzen seit dem letzten Lauf, dazu Orderbuch und Nachrichtenlage, und entscheidet |
 | `tradingbot/historie.py` | Geschichts-Simulation der kompletten Bots über 2011-2026 inkl. Chef, Kursgeschichte mit Cache |
 
 ## Zeithorizonte: gleiche Bedingungen für alle Bots
@@ -132,6 +132,26 @@ Umsatz-Protokoll bilden es beim ersten Laden aus den Trades der letzten 30 Tage 
 ein Schätzwert für das Strategie-Labor und einzelne Backtests (`backtest`, `compare`, `walkforward`); mit
 `fee_model: fix` rechnet ein Bot wie früher mit diesem festen Satz. Die Simulationszahlen unten (Oktober 2026) wurden
 noch mit 0,26 % je Order gerechnet; die nächste Geschichts-Simulation rechnet mit der Staffel.
+
+## Läufe kurz nach Kerzenschluss
+
+Signale entstehen beim Schluss einer Kerze (um :00 oder :30 UTC); die noch offene Kerze zählt nicht. Vorher startete
+jeder Durchlauf 30 Minuten nach dem vorherigen, ohne Bezug zur Uhr: Einstiege und Ausstiege per Signal kamen 0 bis 30
+Minuten nach dem Signal, im Mittel rund 15 Minuten (221 Einstiege vom 23. bis 30.10.2026). Die Geschichts-Simulation
+handelt dagegen zum Eröffnungskurs der nächsten Kerze, also gleich beim Kerzenschluss, wie ein echter Bot, der innert
+einer Minute reagiert.
+
+Jetzt wartet `.github/workflows/bot.yml` vor jedem Durchlauf (auch vor dem ersten, z.B. nach einem Start von Hand)
+bis zur nächsten vollen oder halben Stunde plus 90 Sekunden, damit die Börse die Kerze sicher abgeschlossen hat: Die
+Bots laufen um ca. **:01:30 und :31:30 UTC**, nacheinander (Langfrist-, KI-, Risiko-Bot). Ein Block hat 9 Durchläufe
+(ca. 4½ Stunden) und startet dann den nächsten.
+
+Jeder Einstieg speichert **`delay_min`**: die Minuten vom Schluss der Signalkerze (Beginn der letzten abgeschlossenen
+Kerze plus ihre Länge) bis zum Durchlauf, zu dessen Kurs der Bot einsteigt. Der Wert steht im Trade-Protokoll (Spalte
+`delay_min`) und bei offenen Positionen im Stand unter `context`. Erwartet sind etwa 2 bis 4 Minuten (90 Sekunden
+Wartezeit, dazu die Laufzeit der Bots, die vorher drankommen). Deutlich mehr heisst, dass ein Durchlauf ausgefallen ist
+oder zu spät kam (z.B. Kette abgerissen) oder dass ein Einstieg nachgeholt wurde, etwa beim Langfrist-Bot
+(`reevaluate: true`) nach einer Pause wegen der Nachrichtenlage. Ältere Trades haben in dieser Spalte keinen Wert.
 
 ## Stops minutengenau (Demo-Betrieb)
 

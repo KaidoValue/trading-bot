@@ -2040,3 +2040,47 @@ def test_cli_schliessen_writes_an_order_by_default(df, monkeypatch, tmp_path):
     with pytest.raises(SystemExit, match="Welche Coins"):
         run("--config", "b.yaml")
     assert list(bot.AUFTRAEGE.glob("*.txt")) == [order]
+
+
+# --- Läufe kurz nach Kerzenschluss: Verzögerung zwischen Signal und Einstieg messen
+
+def test_entry_keeps_the_delay_after_candle_close(tmp_path):
+    """delay_min (Minuten seit dem Schluss der Signalkerze) kommt über extra zu den Angaben des Einstiegs: in den
+    offenen und den abgeschlossenen Trade und als Spalte ins Trade-Protokoll. Ohne extra (Backtest, Simulation) nicht.
+    Gerechnet wird mit der Kerzenlänge des Horizonts; ist sie unbekannt, gibt es keinen Wert statt eines Fehlers."""
+    t = Trader(PaperBroker(1000, 0, 0), RiskManager(RiskConfig(), 1000))
+    t.on_signal("X", 1, 100, atr=1, equity=1000, when=T0, extra={"delay_min": 1.5})
+    assert t.open_trades["X"].context["delay_min"] == 1.5
+    t.exit("X", 101, "Signal", T0 + timedelta(hours=1))
+    assert t.closed[-1]["delay_min"] == 1.5
+    bot._write_trades(tmp_path / "trades.csv", t.closed)
+    assert list(pd.read_csv(tmp_path / "trades.csv")["delay_min"]) == [1.5]
+    t.on_signal("Y", 1, 100, atr=1, equity=t.equity({}), when=T0)
+    assert "Y" in t.open_trades and "delay_min" not in t.open_trades["Y"].context
+    frame = pd.DataFrame({"close": [1.0, 2.0]}, index=pd.date_range("2026-10-31 04:00", periods=2, freq="4h", tz="UTC"))
+    lauf = datetime(2026, 10, 31, 12, 1, 30, tzinfo=timezone.utc)      # letzte Kerze 08:00-12:00, Lauf 90 s danach
+    assert bot._verzoegerung(frame, "4h", lauf) == {"delay_min": 1.5}
+    assert bot._verzoegerung(frame, "4h", lauf + timedelta(minutes=30)) == {"delay_min": 31.5}
+    assert bot._verzoegerung(frame, "2w", lauf) == {}
+
+
+def test_paper_loop_stores_the_delay_after_candle_close(df, monkeypatch, tmp_path):
+    """Im Paper-Loop speichert ein Einstieg delay_min: Minuten vom Schluss der Signalkerze (Beginn der letzten
+    abgeschlossenen Kerze plus die Kerzenlänge des Horizonts, hier 4 Std.) bis zum Lauf. Die Signalkerze schloss an der
+    letzten 4-Stunden-Grenze, die Kerze danach läuft noch und zählt nicht."""
+    import json
+    monkeypatch.chdir(tmp_path)
+    offen = pd.Timestamp.now(tz="UTC").floor("4h")                  # Beginn der noch offenen 4h-Kerze
+    zeiten = pd.date_range(end=offen, periods=302, freq="4h").as_unit("ns")     # FakeExchange rechnet in ns
+    ex = MultiExchange(df.iloc[:302].set_axis(zeiten))              # nach dem ersten Ticker ist i = 301: offene Kerze
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(1))
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="takt", poll_seconds=0,
+                 horizons={"mittel": {"timeframe": "4h", "strategy": "trend"}}, risk=RiskConfig(max_total_risk_pct=1))
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    tr = st["open_trades"]["BTC/CHF"]
+    lauf = datetime.fromisoformat(tr["opened"]["__dt__"])           # Zeit des Laufs = Zeit des Einstiegs
+    assert pd.Timestamp(st["last_bar"]["mittel:BTC/CHF"]["__dt__"]) == offen - pd.Timedelta(hours=4)
+    delay = tr["context"]["delay_min"]
+    assert tr["horizon"] == "mittel" and delay == round((lauf - offen).total_seconds() / 60, 1) and delay >= 0

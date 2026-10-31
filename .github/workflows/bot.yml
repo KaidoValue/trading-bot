@@ -1,5 +1,6 @@
 # Lässt die Demo-Bots rund um die Uhr auf den Servern von GitHub laufen (kein eigener PC nötig).
-# Ein Lauf dauert ca. 5 Stunden und handelt alle 30 Minuten. Am Ende startet er selbst den nächsten Lauf.
+# Ein Lauf dauert ca. 4½ Stunden und handelt alle 30 Minuten, jeweils kurz nach Kerzenschluss (ca. :01:30 und
+# :31:30 UTC). Am Ende startet er selbst den nächsten Lauf.
 # STOPPEN: auf GitHub unter Actions -> "Trading-Bot stündlich" -> "..." -> "Disable workflow".
 # Der Zeitplan unten ist nur die Absicherung, falls die Kette einmal abreisst (GitHub lässt geplante
 # Läufe oft ausfallen). Der Stand wird nach jedem Durchlauf ins Repository gespeichert.
@@ -33,21 +34,19 @@ jobs:
       - name: Bausteine installieren
         run: pip install -r requirements.txt
 
-      - name: Bots alle 30 Minuten laufen lassen (ca. 5 Stunden lang)
+      - name: Bots kurz nach jedem Kerzenschluss laufen lassen (9 Durchläufe, ca. 4½ Stunden)
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
-          for i in $(seq 1 10); do
-            start=$(date +%s)
-            echo "=== Durchlauf $i um $(date -u '+%H:%M') UTC ==="
+          for i in $(seq 1 9); do
+            # Signale entstehen beim Kerzenschluss um :00 und :30 UTC: vor jedem Durchlauf (auch dem ersten) bis zur
+            # nächsten vollen oder halben Stunde plus 90 Sekunden warten, damit die Börse die Kerze abgeschlossen hat
+            now=$(date +%s); sleep $(( 1800 - now % 1800 + 90 ))
+            echo "=== Durchlauf $i um $(date -u '+%H:%M:%S') UTC ==="
             git rebase --abort 2>/dev/null || true      # falls ein früherer Durchlauf hängen geblieben ist
             git pull -q --rebase -X theirs origin main || true
             # Kopie ausführen: das Skript kann sich während des Laufs durch git pull ändern
             cp scripts/zyklus.sh "$RUNNER_TEMP/zyklus.sh" && bash "$RUNNER_TEMP/zyklus.sh"
-            if [ "$i" -lt 10 ]; then
-              rest=$(( 1800 - ($(date +%s) - start) ))
-              sleep $(( rest > 60 ? rest : 60 ))
-            fi
           done
 
       - name: Nächsten Block starten (Kette)

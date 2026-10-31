@@ -152,7 +152,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
                                      size_factor=factor, can_open_new=liquid, horizon=h.name,
                                      trend=trends[s] if h.trend_filter else None,
-                                     anchor=float(ind.ema(df["close"], 20).iloc[-1]))
+                                     anchor=float(ind.ema(df["close"], 20).iloc[-1]),
+                                     extra=_verzoegerung(df, h.timeframe, now))
                     eq = trader.equity(px)
                     notes.append(prefix + trader.note)
             eq = _liquidate(trader, px, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
@@ -410,6 +411,16 @@ def _frames(exchange, symbols: list[str], timeframe: str, fehler_path: Path) -> 
             log.warning("%s: %s-Kerzen nicht abrufbar, Signal ausgesetzt: %s", s, timeframe, e)
             waechter.melden(fehler_path, e, f"Kerzen {s} {timeframe}: ")
     return frames
+
+
+def _verzoegerung(df, timeframe: str, now) -> dict:
+    """Wie lange nach dem Signal kommt die Order? delay_min: Minuten vom Schluss der Signalkerze (Beginn der letzten
+    abgeschlossenen Kerze plus ihre Länge) bis zu diesem Lauf, für das Trade-Protokoll. Leer, wenn die Kerzenlänge
+    unbekannt ist."""
+    if timeframe not in MINUTES:
+        return {}
+    close = df.index[-1] + timedelta(minutes=MINUTES[timeframe])
+    return {"delay_min": round((now - close).total_seconds() / 60, 1)}
 
 
 def available_symbols(exchange, symbols: list[str]) -> list[str]:
