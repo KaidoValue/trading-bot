@@ -13,13 +13,17 @@
       "entry": 617.5179626789999,
       "exit": 611.7906746385001,
       "qty": 0.40504894613085246,
-      "pnl": -3.6084188586702908,
+      "pnl": -4.909068858670291,
       "reason": "Signal",
       "fear_greed": 50,
       "news_score": -0.3,
       "news_themes": "klage",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 2.58923687367804,
+      "interest": 0.0,
+      "pnl_alt": -3.6084188586702908,
+      "nachgebucht": true
     },
     {
       "symbol": "ZEC/CHF",
@@ -33,13 +37,17 @@
       "entry": 1020.506302152,
       "exit": 960.7911337152001,
       "qty": 0.24509892733885827,
-      "pnl": -15.860665886324362,
+      "pnl": -17.161315886324363,
       "reason": "Stop-Loss (Gap)",
       "fear_greed": 50,
       "news_score": -0.3,
       "news_themes": "klage",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 2.5251921566054616,
+      "interest": 0.0,
+      "pnl_alt": -15.860665886324362,
+      "nachgebucht": true
     },
     {
       "symbol": "XRP/CHF",
@@ -53,13 +61,17 @@
       "entry": 1.08039109688565,
       "exit": 1.0634682778609998,
       "qty": 229.54934933078465,
-      "pnl": -5.154038042279075,
+      "pnl": -6.443654023506019,
       "reason": "Stop-Loss (Gap)",
       "fear_greed": 50,
       "news_score": -0.3,
       "news_themes": "klage",
       "event": "-",
-      "session": "Nach US-Schluss"
+      "session": "Nach US-Schluss",
+      "fees": 2.5590319275549405,
+      "interest": 0.0,
+      "pnl_alt": -5.154038042279075,
+      "nachgebucht": true
     },
     {
       "symbol": "ZEC/CHF",
@@ -73,13 +85,17 @@
       "entry": 1006.5506716239,
       "exit": 1003.5770548528,
       "qty": 0.2416170871197966,
-      "pnl": -1.9793797188515225,
+      "pnl": -3.244018893695979,
       "reason": "Signal",
       "fear_greed": 54,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "Asien"
+      "session": "Asien",
+      "fees": 2.5255422712522053,
+      "interest": 0.0,
+      "pnl_alt": -1.9793797188515225,
+      "nachgebucht": true
     },
     {
       "symbol": "BNB/CHF",
@@ -93,13 +109,17 @@
       "entry": 604.09992131115,
       "exit": 615.0680837179336,
       "qty": 0.40157110391684064,
-      "pnl": 3.1201305249456555,
+      "pnl": 1.8586673491052812,
       "reason": "Take-Profit",
       "fear_greed": 51,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 2.5458297365260316,
+      "interest": 0.0,
+      "pnl_alt": 3.1201305249456555,
+      "nachgebucht": true
     },
     {
       "symbol": "BTC/CHF",
@@ -113,13 +133,17 @@
       "entry": 66685.22595,
       "exit": 66692.93685000001,
       "qty": 0.003636017571127371,
-      "pnl": -0.6024544267781103,
+      "pnl": -1.2328729253289876,
       "reason": "Signal",
       "fear_greed": 54,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "Asien"
+      "session": "Asien",
+      "fees": 1.2609098932182665,
+      "interest": 0.0,
+      "pnl_alt": -0.6024544267781103,
+      "nachgebucht": true
     },
     {
       "symbol": "BNB/CHF",
@@ -133,13 +157,17 @@
       "entry": 616.8211114275,
       "exit": 613.8328951174501,
       "qty": 0.3922390594571355,
-      "pnl": -2.4240951896209815,
+      "pnl": -3.6821901191390447,
       "reason": "Signal",
       "fear_greed": 54,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "Asien"
+      "session": "Asien",
+      "fees": 2.5100949642306025,
+      "interest": 0.0,
+      "pnl_alt": -2.4240951896209815,
+      "nachgebucht": true
     },
     {
       "symbol": "ZEC/CHF",
@@ -153,13 +181,17 @@
       "entry": 1003.7654599139998,
       "exit": 993.72447510705,
       "qty": 0.24103372975232334,
-      "pnl": -3.665725824627886,
+      "pnl": -4.923820754145949,
       "reason": "Signal",
       "fear_greed": 54,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "Asien"
+      "session": "Asien",
+      "fees": 2.5036047357404176,
+      "interest": 0.0,
+      "pnl_alt": -3.665725824627886,
+      "nachgebucht": true
     },
     {
       "symbol": "BTC/CHF",
@@ -173,13 +205,17 @@
       "entry": 66419.29305000001,
       "exit": 65838.16445000001,
       "qty": 0.0036116937806704597,
-      "pnl": -2.7171055019842605,
+      "pnl": -3.340809485809816,
       "reason": "Stop-Loss (Gap)",
       "fear_greed": 54,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "Nach US-Schluss"
+      "session": "Nach US-Schluss",
+      "fees": 1.241950935420098,
+      "interest": 0.0,
+      "pnl_alt": -2.7171055019842605,
+      "nachgebucht": true
     },
     {
       "symbol": "TRX/CHF",
@@ -193,13 +229,17 @@
       "entry": 0.27228983303807996,
       "exit": 0.273372778523355,
       "qty": 918.327343444289,
-      "pnl": -0.31093917626333245,
+      "pnl": -1.6112054111712268,
       "reason": "Signal",
       "fear_greed": 50,
       "news_score": -0.3,
       "news_themes": "klage",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 2.6057038617588444,
+      "interest": 0.0,
+      "pnl_alt": -0.31093917626333245,
+      "nachgebucht": true
     },
     {
       "symbol": "ETH/CHF",
@@ -213,13 +253,17 @@
       "entry": 1930.965,
       "exit": 1911.2838800000002,
       "qty": 0.12377651763989007,
-      "pnl": -3.05114786036067,
+      "pnl": -3.672568981160397,
       "reason": "Signal",
       "fear_greed": 50,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "London"
+      "session": "London",
+      "fees": 1.2365084843076364,
+      "interest": 0.0,
+      "pnl_alt": -3.05114786036067,
+      "nachgebucht": true
     },
     {
       "symbol": "BTC/CHF",
@@ -233,13 +277,17 @@
       "entry": 66289.22805,
       "exit": 66013.87655,
       "qty": 0.0036072719008063796,
-      "pnl": -1.6124057338444056,
+      "pnl": -2.2341262349887745,
       "reason": "Signal",
       "fear_greed": 50,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "London"
+      "session": "London",
+      "fees": 1.240858506193871,
+      "interest": 0.0,
+      "pnl_alt": -1.6124057338444056,
+      "nachgebucht": true
     },
     {
       "symbol": "ZEC/CHF",
@@ -253,13 +301,17 @@
       "entry": 1006.9183081502999,
       "exit": 1072.5128160155518,
       "qty": 0.23748030772245907,
-      "pnl": 14.25296041010828,
+      "pnl": 13.009519407819543,
       "reason": "Take-Profit",
       "fear_greed": 50,
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "London"
+      "session": "London",
+      "fees": 2.5678845049237395,
+      "interest": 0.0,
+      "pnl_alt": 14.25296041010828,
+      "nachgebucht": true
     },
     {
       "symbol": "BNB/CHF",
@@ -273,13 +325,17 @@
       "entry": 622.332744867,
       "exit": 614.5588013827501,
       "qty": 0.38704683177529353,
-      "pnl": -4.245767988456155,
+      "pnl": -5.498301957952286,
       "reason": "Stop-Loss (Gap)",
       "fear_greed": 48,
       "news_score": 0.5,
       "news_themes": "rally",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 2.489421761973171,
+      "interest": 0.0,
+      "pnl_alt": -4.245767988456155,
+      "nachgebucht": true
     },
     {
       "symbol": "ETH/CHF",
@@ -293,13 +349,17 @@
       "entry": 1928.153595,
       "exit": 1963.282481846642,
       "qty": 0.12472949597683369,
-      "pnl": 3.7449223411145933,
+      "pnl": 3.1196285133318917,
       "reason": "Take-Profit",
       "fear_greed": 48,
       "news_score": 0.5,
       "news_themes": "rally",
       "event": "-",
-      "session": "London+New York"
+      "session": "London+New York",
+      "fees": 1.2619798372769861,
+      "interest": 0.0,
+      "pnl_alt": 3.7449223411145933,
+      "nachgebucht": true
     },
     {
       "symbol": "BTC/CHF",
@@ -313,13 +373,17 @@
       "entry": 66509.8383,
       "exit": 66883.94129999999,
       "qty": 0.003615970692718853,
-      "pnl": 0.7239345180169056,
+      "pnl": 0.09864069023420385,
       "reason": "Signal",
       "fear_greed": 48,
       "news_score": 0.5,
       "news_themes": "rally",
       "event": "-",
-      "session": "London+New York"
+      "session": "London+New York",
+      "fees": 1.2541047938239547,
+      "interest": 0.0,
+      "pnl_alt": 0.7239345180169056,
+      "nachgebucht": true
     },
     {
       "symbol": "ETH/CHF",
@@ -333,13 +397,17 @@
       "entry": 1946.7829049999998,
       "exit": 1929.9145600000002,
       "qty": 0.12349368363977908,
-      "pnl": -2.7027979320801574,
+      "pnl": -3.3278779517621975,
       "reason": "Stop-Loss (Gap)",
       "fear_greed": 51,
       "news_score": 0.5,
       "news_themes": "rally",
       "event": "-",
-      "session": "London"
+      "session": "London",
+      "fees": 1.244743890805593,
+      "interest": 0.0,
+      "pnl_alt": -2.7027979320801574,
+      "nachgebucht": true
     },
     {
       "symbol": "BNB/CHF",
@@ -353,13 +421,17 @@
       "entry": 627.3589391081999,
       "exit": 619.6643214457,
       "qty": 0.38321824588512937,
-      "pnl": -4.1835445897504595,
+      "pnl": -5.43370462911454,
       "reason": "Stop-Loss (Gap)",
       "fear_greed": 51,
       "news_score": 0.5,
       "news_themes": "rally",
       "event": "-",
-      "session": "London"
+      "session": "London",
+      "fees": 2.484986745734585,
+      "interest": 0.0,
+      "pnl_alt": -4.1835445897504595,
+      "nachgebucht": true
     },
     {
       "symbol": "XRP/CHF",
@@ -373,14 +445,18 @@
       "entry": 1.096668985203,
       "exit": 1.0989688552227002,
       "qty": 43.27567815142146,
-      "pnl": -0.3468332716433244,
+      "pnl": -0.5936205606632377,
       "reason": "Signal",
       "horizon": "mittel",
       "fear_greed": 51,
       "news_score": -1.0,
       "news_themes": "hack",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 0.49409212590059226,
+      "interest": 0.0,
+      "pnl_alt": -0.3468332716433244,
+      "nachgebucht": true
     },
     {
       "symbol": "BTC/CHF",
@@ -394,7 +470,7 @@
       "entry": 67094.93575,
       "exit": 67266.31635,
       "qty": 0.003544325474858462,
-      "pnl": -1.2690249548251178,
+      "pnl": -1.8873213088581813,
       "reason": "Vorrang lang",
       "horizon": "mittel",
       "partial": false,
@@ -402,7 +478,11 @@
       "news_score": -1.0,
       "news_themes": "hack",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 1.238172022494966,
+      "interest": 0.041721,
+      "pnl_alt": -1.2690249548251178,
+      "nachgebucht": true
     },
     {
       "symbol": "ETH/CHF",
@@ -416,7 +496,7 @@
       "entry": 1934.1666,
       "exit": 1953.6826700000001,
       "qty": 0.12303058657248617,
-      "pnl": 1.7761304550365533,
+      "pnl": 1.1574301615865843,
       "reason": "Vorrang lang",
       "horizon": "mittel",
       "partial": true,
@@ -424,7 +504,11 @@
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "London+New York"
+      "session": "London+New York",
+      "fees": 1.2436433781031315,
+      "interest": 0.0,
+      "pnl_alt": 1.7761304550365533,
+      "nachgebucht": true
     },
     {
       "symbol": "TRX/CHF",
@@ -438,7 +522,7 @@
       "entry": 0.27284167523784003,
       "exit": 0.27343491657371993,
       "qty": 870.6678290892416,
-      "pnl": -1.3834090252092306,
+      "pnl": -2.618692264344121,
       "reason": "Von Hand geschlossen",
       "horizon": "lang",
       "partial": false,
@@ -446,7 +530,11 @@
       "news_score": -1.0,
       "news_themes": "hack",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 1.854267800682031,
+      "interest": 0.247908,
+      "pnl_alt": -1.3834090252092306,
+      "nachgebucht": true
     },
     {
       "symbol": "HYPE/CHF",
@@ -460,7 +548,7 @@
       "entry": 66.8538087738,
       "exit": 77.5017747216,
       "qty": 0.7063716946566138,
-      "pnl": -7.7146485449373525,
+      "pnl": -7.960211463565904,
       "reason": "Von Hand geschlossen",
       "horizon": "lang",
       "partial": false,
@@ -468,7 +556,11 @@
       "news_score": -1.0,
       "news_themes": "hack",
       "event": "-",
-      "session": "New York"
+      "session": "New York",
+      "fees": 0.38790007449592956,
+      "interest": 0.05089,
+      "pnl_alt": -7.7146485449373525,
+      "nachgebucht": true
     },
     {
       "symbol": "BNB/CHF",
@@ -482,7 +574,7 @@
       "entry": 621.7495570187999,
       "exit": 582.5935022718141,
       "qty": 0.3827291047345546,
-      "pnl": -16.14563432390409,
+      "pnl": -17.383034910804028,
       "reason": "Signal",
       "horizon": "lang",
       "partial": true,
@@ -490,7 +582,11 @@
       "news_score": 0.0,
       "news_themes": "-",
       "event": "-",
-      "session": "London+New York"
+      "session": "London+New York",
+      "fees": 2.3968731325529546,
+      "interest": 0.0,
+      "pnl_alt": -16.14563432390409,
+      "nachgebucht": true
     }
   ],
   "last_bar": {
@@ -591,7 +687,7 @@
       "__dt__": "2026-10-30T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] HYPE/CHF: kein Signal",
+  "note": "Buchhaltung nachgebucht: 24 Trades um die Kaufgeb\u00fchr korrigiert (\u221222.55 CHF), Zinsen ohne Trade-Zuordnung 0.04 CHF",
   "news": {
     "fear_greed": 30,
     "news_score": -1.0,
@@ -669,7 +765,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-10-31T06:14:46.727558+00:00"
+    "__dt__": "2026-10-31T06:44:38.716023+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -686,6 +782,56 @@
     "halted_on": null,
     "halt_reason": ""
   },
+  "buchhaltung": {
+    "nachgebucht_am": {
+      "__dt__": "2026-10-31T06:43:57.247057+00:00"
+    },
+    "trades_korrigiert": 24,
+    "positionen_korrigiert": 0,
+    "summe_korrektur": -22.55,
+    "zinsen_ohne_zuordnung": 0.04,
+    "rest": 0.0,
+    "altlasten": 0.043399092337949696
+  },
+  "prices": {
+    "BTC/CHF": [
+      63685.3,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "ETH/CHF": [
+      1850.91,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "BNB/CHF": [
+      579.8523779,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "XRP/CHF": [
+      1.0289008665000001,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "SOL/CHF": [
+      79.187507,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "TRX/CHF": [
+      0.27163709517999995,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "ZEC/CHF": [
+      1043.3593988,
+      "2026-10-31T06:44:06+00:00"
+    ],
+    "HYPE/CHF": [
+      72.92847359999999,
+      "2026-10-31T06:44:06+00:00"
+    ]
+  },
+  "abgleich": {
+    "kapital": 922.04,
+    "erwartet": 922.04,
+    "differenz": 0.0
+  },
   "paper": {
     "cash": 922.0420704087342,
     "positions": {
@@ -699,7 +845,298 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-10-31T06:13:57.055881+00:00"
-    }
+      "__dt__": "2026-10-31T06:44:06.830274+00:00"
+    },
+    "quote_usd": 1.2110496167027964,
+    "volume": [
+      [
+        {
+          "__dt__": "2026-10-23T16:10:29.028886+00:00"
+        },
+        250.12
+      ],
+      [
+        {
+          "__dt__": "2026-10-23T16:10:29.028886+00:00"
+        },
+        250.12
+      ],
+      [
+        {
+          "__dt__": "2026-10-23T18:16:35.158990+00:00"
+        },
+        250.05
+      ],
+      [
+        {
+          "__dt__": "2026-10-23T19:16:25.252717+00:00"
+        },
+        247.81
+      ],
+      [
+        {
+          "__dt__": "2026-10-23T21:16:25.628399+00:00"
+        },
+        248.0
+      ],
+      [
+        {
+          "__dt__": "2026-10-23T22:49:05.721029+00:00"
+        },
+        235.49
+      ],
+      [
+        {
+          "__dt__": "2026-10-23T23:19:05.446435+00:00"
+        },
+        244.12
+      ],
+      [
+        {
+          "__dt__": "2026-10-24T20:17:17.734806+00:00"
+        },
+        242.59
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T02:23:11.196762+00:00"
+        },
+        243.2
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T03:23:11.333592+00:00"
+        },
+        242.48
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T04:23:11.213027+00:00"
+        },
+        242.47
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T04:53:11.475512+00:00"
+        },
+        246.99
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T05:23:11.351673+00:00"
+        },
+        242.5
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T05:23:11.351673+00:00"
+        },
+        241.94
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T05:23:11.351673+00:00"
+        },
+        241.94
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T06:26:03.436718+00:00"
+        },
+        240.77
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T06:26:03.436718+00:00"
+        },
+        239.52
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T23:04:20.535280+00:00"
+        },
+        239.89
+      ],
+      [
+        {
+          "__dt__": "2026-10-25T23:34:19.807891+00:00"
+        },
+        237.79
+      ],
+      [
+        {
+          "__dt__": "2026-10-26T09:10:32.686805+00:00"
+        },
+        239.12
+      ],
+      [
+        {
+          "__dt__": "2026-10-26T09:10:32.686805+00:00"
+        },
+        239.12
+      ],
+      [
+        {
+          "__dt__": "2026-10-26T10:13:34.607375+00:00"
+        },
+        251.05
+      ],
+      [
+        {
+          "__dt__": "2026-10-26T12:13:35.437569+00:00"
+        },
+        239.01
+      ],
+      [
+        {
+          "__dt__": "2026-10-26T13:13:35.156266+00:00"
+        },
+        236.57
+      ],
+      [
+        {
+          "__dt__": "2026-10-26T14:16:32.294459+00:00"
+        },
+        238.13
+      ],
+      [
+        {
+          "__dt__": "2026-10-27T15:00:54.751658+00:00"
+        },
+        240.5
+      ],
+      [
+        {
+          "__dt__": "2026-10-27T15:00:54.751658+00:00"
+        },
+        240.5
+      ],
+      [
+        {
+          "__dt__": "2026-10-27T16:30:54.468118+00:00"
+        },
+        254.7
+      ],
+      [
+        {
+          "__dt__": "2026-10-27T17:00:54.637936+00:00"
+        },
+        240.87
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T00:06:47.745741+00:00"
+        },
+        237.86
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T08:42:35.428365+00:00"
+        },
+        244.88
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T12:15:31.513190+00:00"
+        },
+        240.42
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T12:15:31.513190+00:00"
+        },
+        240.42
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T13:15:31.607132+00:00"
+        },
+        241.85
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T14:45:31.162010+00:00"
+        },
+        238.33
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T14:45:31.162010+00:00"
+        },
+        237.47
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T15:15:35.192390+00:00"
+        },
+        237.96
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T15:15:35.192390+00:00"
+        },
+        237.96
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T19:19:00.448181+00:00"
+        },
+        47.46
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T19:19:00.448181+00:00"
+        },
+        237.81
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T19:19:00.448181+00:00"
+        },
+        237.55
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T19:19:00.448181+00:00"
+        },
+        47.22
+      ],
+      [
+        {
+          "__dt__": "2026-10-28T20:18:50.592343+00:00"
+        },
+        47.56
+      ],
+      [
+        {
+          "__dt__": "2026-10-29T00:23:19.381065+00:00"
+        },
+        238.41
+      ],
+      [
+        {
+          "__dt__": "2026-10-29T00:23:19.381065+00:00"
+        },
+        240.36
+      ],
+      [
+        {
+          "__dt__": "2026-10-29T17:50:25.923462+00:00"
+        },
+        238.07
+      ],
+      [
+        {
+          "__dt__": "2026-10-29T17:50:25.923462+00:00"
+        },
+        54.75
+      ],
+      [
+        {
+          "__dt__": "2026-10-30T00:20:02.655358+00:00"
+        },
+        222.98
+      ]
+    ]
   }
 }
