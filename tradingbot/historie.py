@@ -7,9 +7,15 @@ Dazu der Chef-Bot, der täglich auf die drei Bots verteilt.
 Kursgeschichte: Jeder Coin kommt von der Börse mit der längsten Geschichte (Bitcoin bei Bitstamp ab 2011,
 die meisten anderen bei Binance ab 2017). Ein Coin wird gehandelt, sobald es ihn gibt. Gerechnet wird in USD.
 
-Grenzen (bewusst ehrlich): keine historischen News und Ereignisse, kein Orderbuch-Spread, keine
-Korrelationsprüfung zwischen Coins. KI-Gedächtnis und Labor-Bibliothek werden nicht verwendet, weil sie die
-Kurse schon kennen; die KI lernt hier Kerze für Kerze von vorne.
+Kosten wie im Demo-Betrieb: Gebühren nach `fee_model` (Kraken-Staffel nach 30-Tage-Umsatz), Margin-Kosten auf den
+geliehenen Teil, Liquidationsgebühr. Gebührenstufe (`fees`): «normiert» = wie für ein Konto mit Startkapital (der
+Umsatz zählt im Verhältnis zum Kapital, ein über die Jahre gewachsenes Simulationskonto bekommt so keinen Rabatt, den
+ein 1'000er-Konto nie hätte), «staffel» = nach dem echten Umsatz des Simulationskontos, «alt» = fest 0,26 % wie in
+den früheren Berichten (nur zum Vergleich).
+
+Grenzen (bewusst ehrlich): keine historischen News und Ereignisse, kein Orderbuch-Spread (Slippage statt Geld- und
+Briefkurs), keine Korrelationsprüfung zwischen Coins. KI-Gedächtnis und Labor-Bibliothek werden nicht verwendet,
+weil sie die Kurse schon kennen; die KI lernt hier Kerze für Kerze von vorne.
 """
 from __future__ import annotations
 
@@ -27,7 +33,7 @@ from . import indicators as ind
 from .backtest import WARMUP, Result
 from .phase import PhaseBook
 from .bot import liquidation
-from .broker import PaperBroker
+from .broker import paper_broker
 from .config import Config
 from .data import to_frame
 from .engine import Trader
@@ -35,6 +41,9 @@ from .risk import RiskManager
 from .strategies import build
 
 log = logging.getLogger(__name__)
+
+FEES = ("normiert", "staffel", "alt")      # Gebührenstufe in der Simulation (siehe oben)
+OLD_FEE = 0.0026                           # fester Satz der früheren Berichte
 
 # binance sperrt US-Server (auch GitHub): dann liefern binanceus oder kucoin die Altcoin-Geschichte
 SOURCES = (("bitstamp", "USD"), ("binance", "USDT"), ("binanceus", "USD"), ("kucoin", "USDT"))
@@ -172,21 +181,26 @@ def _phase_series(df: pd.DataFrame):
     return daily.index + pd.Timedelta(days=1), coin_phases(daily).to_numpy()
 
 
-def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | None = None) -> BotRun:
+def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | None = None,
+             fees: str = "normiert") -> BotRun:
     """Ein Bot über die ganze Geschichte. `coins`: Kerzen je Coin im kürzesten Zeitraum des Bots.
     Mit `start` beginnt der Handel (und das Startkapital) erst dann; Indikatoren, Trendfilter und KI-Gedächtnis
-    nutzen die Kurse davor als Vorlauf, so wie ein Bot, der an diesem Tag eingeschaltet wird."""
+    nutzen die Kurse davor als Vorlauf, so wie ein Bot, der an diesem Tag eingeschaltet wird.
+    `fees`: Gebührenstufe, siehe FEES."""
+    if fees not in FEES:
+        raise ValueError(f"Unbekanntes Gebührenmodell «{fees}» (erlaubt: {', '.join(FEES)})")
     hz = cfg.horizon_list()
     base_tf = min((h.timeframe for h in hz), key=TF_MS.get)
-    broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
-    broker.leverage = cfg.risk.leverage
+    broker = paper_broker(cfg)             # gerechnet wird in USD: quote_usd bleibt 1
+    if fees == "alt":
+        broker.tiers, broker.fee_rate = None, OLD_FEE
     trader = Trader(broker, RiskManager(cfg.risk, cfg.starting_capital), allow_short=cfg.allow_short)
     if cfg.horizons:
         trader.horizons, trader.adaptive_shares = {h.name: h for h in hz}, cfg.adaptive_shares
         trader.priority = cfg.horizon_priority
     trader.short_probation = cfg.short_probation
     if cfg.phase_gate:      # ohne Vorwissen: der Bot lernt in der Simulation Trade für Trade (kein Blick in die Zukunft)
-        trader.phase_book = PhaseBook(probation=cfg.phase_probation)
+        trader.phase_book = PhaseBook(probation=cfg.phase_probation, loser=cfg.phase_loser)
     trader.phase_exit = cfg.phase_exit
     use_phase = cfg.phase_gate or cfg.phase_exit
     phases = {s: _cached(("phase", s, _fingerprint(df)), lambda: _phase_series(df)) for s, df in coins.items()} \
@@ -237,6 +251,7 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
     for i, t in enumerate(idx):
         if start is not None and t < start:
             continue
+        broker.now = t                      # für den 30-Tage-Umsatz (Gebührenstufe)
         bar = {s: c[i] for s, c in cols.items() if not np.isnan(c[i][0])}
         px.update({s: b[0] for s, b in bar.items()})
         for name, s, g, a, trend, phase, ema in events.get(t, ()):
@@ -256,6 +271,8 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
             trader.close_all(px, "Liquidation", t)
             liqs += 1
         eq = trader.equity(px)
+        if fees == "normiert":              # Stufe der nächsten Orders wie bei einem Konto mit Startkapital
+            broker.volume_scale = min(1.0, cfg.starting_capital / eq) if eq > 0 else 1.0
         was_halted = trader.risk.halted
         trader.risk.update(eq, t.date())
         if trader.risk.halted:
@@ -280,17 +297,20 @@ def segment(run: BotRun, start, end) -> dict:
         t = t[(closed >= start) & (closed < end)]
     if len(eq) < 2:
         return {"Rendite %": None, "pro Jahr %": None, "Max. DD %": None, "Calmar": None, "Trades": 0,
-                "Treffer %": None, "Profit Factor": None}
+                "Treffer %": None, "Profit Factor": None, "Kosten % pro Jahr": None}
     years = max((eq.index[-1] - eq.index[0]).days / 365.25, 1e-9)
     ret = eq.iloc[-1] / eq.iloc[0] - 1
     cagr = (1 + ret) ** (1 / years) - 1 if ret > -1 else -1.0
     dd = (eq / eq.cummax() - 1).min()
     pnl = t["pnl"] if len(t) else pd.Series(dtype=float)
     loss = -pnl[pnl < 0].sum()
+    # Gebühren und Zinsen der in diesem Abschnitt geschlossenen Trades, im Verhältnis zum Ø Kapital
+    costs = sum(t[c].fillna(0).sum() for c in ("fees", "interest") if c in t) if len(t) else 0.0
     return {"Rendite %": round(ret * 100, 1), "pro Jahr %": round(cagr * 100, 1), "Max. DD %": round(dd * 100, 1),
             "Calmar": round(cagr / abs(dd), 2) if dd < 0 else 0.0, "Trades": len(pnl),
             "Treffer %": round((pnl > 0).mean() * 100, 1) if len(pnl) else 0.0,
-            "Profit Factor": round(pnl[pnl > 0].sum() / loss, 2) if loss else 0.0}
+            "Profit Factor": round(pnl[pnl > 0].sum() / loss, 2) if loss else 0.0,
+            "Kosten % pro Jahr": round(costs / eq.mean() / years * 100, 1)}
 
 
 def simulate_chef(runs: dict[str, BotRun], btc_daily: pd.DataFrame, path: Path) -> pd.Series:
@@ -340,13 +360,20 @@ def yearly(equity: pd.Series, trades: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows).T
 
 
-def report(runs: dict[str, BotRun], chef: pd.Series | None, btc: pd.Series) -> str:
+FEE_TEXT = {"normiert": "Kraken-Gebührenstaffel wie für ein Konto mit 1'000 (ab 0,80 % je Order; ein über die Jahre "
+                        "gewachsenes Simulationskonto bekommt keinen Mengenrabatt)",
+            "staffel": "Kraken-Gebührenstaffel nach dem Umsatz des Simulationskontos (mit Mengenrabatt, wenn es wächst)",
+            "alt": "fest 0,26 % je Order wie in den früheren Berichten (zu billig, nur zum Vergleich)"}
+
+
+def report(runs: dict[str, BotRun], chef: pd.Series | None, btc: pd.Series, fees: str = "normiert") -> str:
     """Bericht für lernen/HISTORIE.md."""
     first = min(r.equity.index[0] for r in runs.values())
     out = ["# 🕰️ Geschichts-Simulation: alle Bots über die ganze Krypto-Geschichte", "",
            f"Zeitraum: **{first:%d.%m.%Y} bis {btc.index[-1]:%d.%m.%Y}**, Startkapital je Bot 1'000 (USD). "
            "Jeder Bot handelt mit allen Zeithorizonten, allen Coins (sobald es sie gibt), seinen Risikoregeln, "
            "Hebel und Zinsen. Ohne historische News. Vergangene Ergebnisse sind keine Garantie.", "",
+           f"Gebühren: {FEE_TEXT[fees]}. Dazu Slippage je Order, Margin-Kosten und Liquidationsgebühr.", "",
            "## Gesamtergebnis", ""]
     table = {r.cfg.title or r.cfg.name: r.stats(btc) for r in runs.values()}
     if chef is not None and len(chef):
@@ -362,14 +389,15 @@ def report(runs: dict[str, BotRun], chef: pd.Series | None, btc: pd.Series) -> s
             s = segment(r, a, b)
             split.setdefault(r.cfg.title or r.cfg.name, {}).update(
                 {f"{label}: pro Jahr %": s["pro Jahr %"], f"{label}: Max. DD %": s["Max. DD %"],
-                 f"{label}: Treffer %": s["Treffer %"]})
+                 f"{label}: Treffer %": s["Treffer %"], f"{label}: Kosten %/Jahr": s["Kosten % pro Jahr"]})
         p = btc[(btc.index >= pd.Timestamp(a, tz="UTC")) & (btc.index < pd.Timestamp(b, tz="UTC"))]
         if len(p) < 2:
             continue
         years = (p.index[-1] - p.index[0]).days / 365.25
         split.setdefault("Bitcoin halten", {}).update(
             {f"{label}: pro Jahr %": round(((p.iloc[-1] / p.iloc[0]) ** (1 / years) - 1) * 100, 1),
-             f"{label}: Max. DD %": round((p / p.cummax() - 1).min() * 100, 1), f"{label}: Treffer %": None})
+             f"{label}: Max. DD %": round((p / p.cummax() - 1).min() * 100, 1), f"{label}: Treffer %": None,
+             f"{label}: Kosten %/Jahr": None})
     out += ["## Entwicklung und Prüfung", "",
             "Die Einstellungen der Bots wurden nur mit den Jahren **bis 2022** gewählt. Die Jahre **ab 2023** waren dabei "
             "weggesperrt und zeigen, wie die Bots auf unbekannten Kursen abschneiden.", "",
@@ -386,8 +414,8 @@ def report(runs: dict[str, BotRun], chef: pd.Series | None, btc: pd.Series) -> s
     return "\n".join(out)
 
 
-def run_all(config_paths: list[str], coins: list[str],
-            start: pd.Timestamp | None = None) -> tuple[dict[str, BotRun], pd.Series, pd.Series]:
+def run_all(config_paths: list[str], coins: list[str], start: pd.Timestamp | None = None,
+            fees: str = "normiert") -> tuple[dict[str, BotRun], pd.Series, pd.Series]:
     """Lädt die Geschichte, simuliert alle Bots und den Chef. Gibt Läufe, Chef-Kurve und BTC-Tageskurs zurück."""
     exchanges: dict = {}
     cfgs = [Config.load(p) for p in config_paths]
@@ -400,7 +428,7 @@ def run_all(config_paths: list[str], coins: list[str],
                 data[c, base_tf] = load_coin(c, base_tf, exchanges)
         frames = {f"{c}/USD": data[c, base_tf] for c in coins if data[c, base_tf] is not None}
         log.warning("Simuliere %s ...", cfg.name)
-        runs[cfg.name] = simulate(cfg, frames, start)
+        runs[cfg.name] = simulate(cfg, frames, start, fees)
     btc = data["BTC", "1h"] if ("BTC", "1h") in data else next(v for (c, _), v in data.items() if c == "BTC")
     btc_daily = resample(btc, "1d")
     # Der Chef verteilt auf die drei Stil-Bots (die ersten drei); weitere Bots laufen nur zum Vergleich mit

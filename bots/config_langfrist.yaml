@@ -13,7 +13,8 @@ timeframe: 1d
 history_exchange: bitstamp
 history_symbol: BTC/USD
 starting_capital: 1000
-fee_rate: 0.0026
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
 slippage: 0.0005
 
 # Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln.

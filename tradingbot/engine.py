@@ -5,7 +5,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from .broker import Broker
+from .broker import KRAKEN_TIERS, LIQUIDATION_FEE, Broker
 from .news import MarketContext
 from .phase import PhaseBook, stretch_ok, trend_of
 from .risk import RiskManager
@@ -31,7 +31,9 @@ class OpenTrade:
     sold: float = 0.0         # schon verkaufte Menge (Teilgewinn)
     sold_value: float = 0.0   # Erlös daraus (Menge × Kurs)
     realized: float = 0.0     # Ergebnis der schon verkauften Teile nach Gebühren
-    interest: float = 0.0     # bisher bezahlte Zinsen (Short oder Hebel), werden vom Ergebnis abgezogen
+    interest: float = 0.0     # Margin-Kosten bisher (Eröffnungsgebühr, Zinsen), werden vom Ergebnis abgezogen
+    fees_done: float = 0.0    # Verkaufsgebühren der schon verkauften Teile
+    margin_value: float = 0.0  # geliehener Teil beim Eröffnen (Margin-Position): Longs mit Hebel, Shorts ganz
 
 
 MIN_SHARE, MAX_SHARE = 0.0, 1.0        # Grenzen für den Kapitalanteil eines Horizonts bei adaptive_shares
@@ -57,6 +59,10 @@ class Trader:
     phase_book: PhaseBook | None = None    # Marktphasen: welcher Horizont verdient in welcher Phase
     phase_exit: bool = False                # Position schliessen, wenn die Phase gegen sie kippt
     phases: dict = field(default_factory=dict)   # Coin -> aktuelle Marktphase
+    altlasten: float = 0.0      # Kosten vor dem 28.10.2026, die zu keinem Trade gehören (buchhaltung.py)
+    buchhaltung: dict = field(default_factory=dict)   # Angaben zur einmaligen Nachbuchung (buchhaltung.py)
+    zaehler: dict = field(default_factory=dict)       # laufende Zähler im Stand (z.B. Stop-Treffer nur in Minutenkerzen)
+    kurse: dict = field(default_factory=dict)         # letzter Kurs je Coin (Symbol -> [Kurs, Zeit]), für Ausfälle
 
     def shorts_proven(self) -> bool:
         """Haben sich Shorts bewährt? Mindestens 10 Shorts, die letzten 20 zusammen im Gewinn."""
@@ -64,20 +70,19 @@ class Trader:
         return len(shorts) >= 10 and sum(shorts) > 0
 
     def charge_interest(self, prices: dict[str, float], hours: float, rate_per_day: float) -> None:
-        """Zinsen auf Geliehenes (Shorts, Käufe mit Hebel) abbuchen und anteilig den offenen Trades zuordnen,
-        damit deren Ergebnis wirklich alle Kosten enthält."""
+        """Rollover-Zinsen wie bei Kraken (alle 4 Std., hier anteilig nach Stunden), nur auf Geliehenes: bei Longs
+        der geliehene Teil (margin_value, nach Teilverkäufen anteilig), bei Shorts der aktuelle Wert der geliehenen
+        Coins. Jeder Trade trägt seine eigenen Zinsen, damit sein Ergebnis wirklich alle Kosten enthält."""
         b = self.broker
-        if not hasattr(b, "charge_interest") or rate_per_day <= 0:
+        if not hasattr(b, "book_interest") or rate_per_day <= 0 or hours <= 0:
             return
-        longs = {s: t.qty * prices[s] for s, t in self.open_trades.items() if t.side > 0 and s in prices}
-        cash_debt = max(0.0, -b.cash())
-        weights = {s: (t.qty * prices[s] if t.side < 0 else cash_debt * longs[s] / sum(longs.values()))
-                   for s, t in self.open_trades.items() if s in prices and (t.side < 0 or cash_debt > 0)}
-        fee = b.charge_interest(prices, hours, rate_per_day)
-        total = sum(weights.values())
-        if fee > 0 and total > 0:
-            for s, w in weights.items():
-                self.open_trades[s].interest += fee * w / total
+        for s, t in self.open_trades.items():
+            base = (t.qty * prices.get(s, t.entry) if t.side < 0
+                    else t.margin_value * t.qty / (t.qty + t.sold))
+            fee = base * rate_per_day * hours / 24
+            if fee > 0:
+                b.book_interest(fee)
+                t.interest += fee
 
     def shares(self) -> dict[str, float]:
         """Anteil jedes Horizonts am investierbaren Kapital. Mit adaptive_shares bekommt der Horizont mehr,
@@ -110,9 +115,26 @@ class Trader:
     def equity(self, prices: dict[str, float]) -> float:
         return self.broker.cash() + sum(self.broker.position(s) * p for s, p in prices.items())
 
+    def abgleich(self, prices: dict[str, float], start: float) -> dict:
+        """Buchhaltung prüfen: Kapital = Startkapital + Ergebnisse aller Trades (offene zum aktuellen Kurs, alle
+        nach Gebühren und Zinsen) - Altlasten. Die Kurse heben sich dabei auf: eine Differenz ist eine echte Lücke.
+        Coins ohne Kurs zählen zum Einstiegskurs."""
+        px = {s: t.entry for s, t in self.open_trades.items()} | prices
+        kapital = self.equity(px)
+        offen = sum(t.side * (px[s] - t.entry) * t.qty - t.fee * t.qty / (t.qty + t.sold) - t.interest + t.realized
+                    for s, t in self.open_trades.items())
+        erwartet = start + sum(c["pnl"] for c in self.closed) + offen - self.altlasten
+        return {"kapital": kapital, "erwartet": erwartet, "differenz": kapital - erwartet}
+
+    def gebuehren_bisher(self) -> float:
+        """Alle bisher bezahlten Gebühren: abgeschlossene Trades und offene Positionen (Kauf und Teilverkäufe)."""
+        return (sum(c.get("fees", 0.0) for c in self.closed)
+                + sum(t.fee + t.fees_done for t in self.open_trades.values()))
+
     def costs(self, symbol: str) -> float:
-        """Kosten für Kauf und Verkauf zusammen (Gebühren + Slippage) als Anteil am Kurs."""
-        fee = self.broker.fee(symbol) if hasattr(self.broker, "fee") else 0.0026
+        """Kosten für Kauf und Verkauf zusammen (Gebühren + Slippage) als Anteil am Kurs. Ein Broker ohne Satz
+        rechnet vorsichtig mit der kleinsten Kraken-Stufe."""
+        fee = self.broker.fee(symbol) if hasattr(self.broker, "fee") else KRAKEN_TIERS[0][2]
         return 2 * (fee + getattr(self.broker, "slippage", 0.0))
 
     def open_risk(self, equity: float) -> float:
@@ -123,11 +145,13 @@ class Trader:
 
     def on_signal(self, symbol: str, signal: int, price: float, atr: float, equity: float, when,
                   size_factor: float = 1.0, can_open_new: bool = True, horizon: str = "",
-                  trend: int | None = None, phase: str | None = None, anchor: float | None = None) -> None:
+                  trend: int | None = None, phase: str | None = None, anchor: float | None = None,
+                  extra: dict | None = None) -> None:
         """+1: long gehen (Short vorher schliessen), -1: Long schliessen und, falls erlaubt, short gehen.
         Pro Coin gibt es eine Position. Hält sie ein anderer Horizont, bleibt sie unberührt.
         trend: langfristige Richtung des Coins (Trendfilter); neue Positionen nur in diese Richtung.
-        phase: Marktphase des Coins (phase.py); anchor: 20er-Linie des Horizonts für den besten Einstieg."""
+        phase: Marktphase des Coins (phase.py); anchor: 20er-Linie des Horizonts für den besten Einstieg.
+        extra: weitere Angaben zum Einstieg für das Trade-Protokoll (z.B. delay_min aus bot.py)."""
         if phase:
             self.phases[symbol] = phase
         if signal == 0:
@@ -140,12 +164,11 @@ class Trader:
             if t.side == signal:                       # gleiche Richtung: längerer Horizont übernimmt
                 self._take_over(symbol, t, horizon, price, atr, equity)
                 return
-            self.exit(symbol, price, f"Vorrang {horizon}", when)     # Gegenrichtung: schliessen, dann neu
-            equity = self.equity({symbol: price})
+            # Gegenrichtung: schliessen, dann neu
+            equity = self._exit_equity(symbol, price, f"Vorrang {horizon}", when, equity)
             t = None
         if t and t.side != signal:
-            self.exit(symbol, price, "Signal", when)
-            equity = self.equity({symbol: price})
+            equity = self._exit_equity(symbol, price, "Signal", when, equity)
             t = None
         if t:
             self.note = f"{symbol}: Position offen, Signal bestätigt"
@@ -187,25 +210,45 @@ class Trader:
         if signal < 0 and self.short_probation and not self.shorts_proven():
             factor *= PROBATION
         exposure = sum(abs(t.qty) * t.entry for t in self.open_trades.values() if not h or t.horizon == horizon)
+        total = sum(abs(t.qty) * t.entry for t in self.open_trades.values())
         plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor,
-                              exposure=exposure, risk_pct=risk_pct,
+                              exposure=exposure, exposure_total=total, risk_pct=risk_pct,
                               stop_atr=h.stop_loss_atr if h else None, target_atr=h.take_profit_atr if h else None,
                               budget_share=self.shares().get(horizon, 1.0))
         if not plan:
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             return
-        fill = (self.broker.buy(symbol, plan.qty, price) if signal > 0
-                else self.broker.sell(symbol, plan.qty, price, short=True))
+        leveraged = getattr(self.broker, "leverage", 1.0) > 1
+        # freies Cash vor dem Kauf (Margin-Anteil): Kredite offener Hebel-Longs laufen bis zu deren Schliessen weiter;
+        # das Cash ist um sie schon gekürzt, und sie tragen ihre Zinsen selbst
+        cash = (self.broker.cash() + sum(o.margin_value * o.qty / (o.qty + o.sold)
+                                         for o in self.open_trades.values() if o.side > 0)
+                if signal > 0 and leveraged else 0.0)
+        fill = (self.broker.buy(symbol, plan.qty, price, market=True) if signal > 0
+                else self.broker.sell(symbol, plan.qty, price, short=True, market=True))
         if fill:
             info = self.context.summary() if self.context else {}
             info["session"] = session(when)
             if self.phases.get(symbol):
                 info["phase"] = self.phases[symbol]
-            self.open_trades[symbol] = OpenTrade(
+            quote = getattr(self.broker, "quotes", {}).get(symbol)
+            if quote:
+                bid, ask = quote
+                info["spread"] = round((ask - bid) / ((ask + bid) / 2), 5)
+            info.update(extra or {})
+            # Geliehener Teil (bei Kraken eine Margin-Position bis zum Schliessen): Shorts ganz, Longs mit Hebel nur,
+            # was das freie Cash vor dem Kauf nicht deckte
+            margin = (fill.qty * fill.price if signal < 0
+                      else max(0.0, fill.qty * fill.price + fill.fee - max(cash, 0.0)) if leveraged else 0.0)
+            t = self.open_trades[symbol] = OpenTrade(
                 signal, fill.price, fill.qty, plan.stop, plan.target, when, info, horizon, fee=fill.fee,
                 partial=fill.price + signal * h.partial_atr * atr if h and h.partial_atr else 0.0,
                 partial_pct=h.partial_pct if h else 0.0,
-                trail=h.trail_atr * atr if h and h.trail_atr else 0.0, best=fill.price)
+                trail=h.trail_atr * atr if h and h.trail_atr else 0.0, best=fill.price, margin_value=margin)
+            opening = self.risk.cfg.margin_open_fee * margin
+            if opening > 0 and hasattr(self.broker, "book_interest"):
+                self.broker.book_interest(opening)       # Margin-Eröffnungsgebühr, zählt zu den Zinsen des Trades
+                t.interest += opening
             self.risk.record_open()
             self.note = (f"{symbol}: {'gekauft' if signal > 0 else 'short eröffnet'} {fill.qty:.6f} @ {fill.price:.2f}"
                          + (f" ({phase_why})" if phase_why else ""))
@@ -219,11 +262,13 @@ class Trader:
         t = self.open_trades.get(symbol)
         h = self.horizons.get(t.horizon) if t else None
         if self.phase_exit and t and t.side == -trend_of(phase) and (h is None or h.phase_exit):
-            self.exit(symbol, price, "Phase gekippt", when)
+            self.exit(symbol, price, "Phase gekippt", when, market=True)
 
-    def check_stops(self, symbol: str, open_: float, high: float, low: float, when) -> None:
+    def check_stops(self, symbol: str, open_: float, high: float, low: float, when, gap_label: str = "Gap") -> None:
         """Prüft Stop-Loss/Take-Profit innerhalb einer Kerze (konservativ: Stop zuerst), danach Teilgewinn und
-        Nachlauf-Stop. Ein nachgezogener Stop gilt erst ab der nächsten Kerze (kein Blick in die Zukunft)."""
+        Nachlauf-Stop. Ein nachgezogener Stop gilt erst ab der nächsten Kerze (kein Blick in die Zukunft).
+        Eröffnet die Kerze schon jenseits des Stops, wird zu diesem Kurs geschlossen, im Grund mit gap_label:
+        «Gap» = echter Kurssprung, «Ticker» = nur mit dem Kurs beim Durchlauf geprüft (open = high = low)."""
         t = self.open_trades.get(symbol)
         if not t:
             return
@@ -235,7 +280,7 @@ class Trader:
         reason = ("Stop-Loss" if s * (t.stop - t.entry) < 0
                   else "Nachlauf-Stop" if t.trail else "Stop auf Einstand")
         if gap:
-            self.exit(symbol, open_, f"{reason} (Gap)", when)
+            self.exit(symbol, open_, f"{reason} ({gap_label})", when)
         elif stop_hit:
             self.exit(symbol, t.stop, reason, when)
         elif target_hit:
@@ -248,14 +293,16 @@ class Trader:
                 trail_stop = t.best - s * t.trail
                 t.stop = max(t.stop, trail_stop) if s > 0 else min(t.stop, trail_stop)
 
-    def _reduce(self, symbol: str, t: OpenTrade, qty: float, price: float) -> bool:
+    def _reduce(self, symbol: str, t: OpenTrade, qty: float, price: float, market: bool = False) -> bool:
         """Einen Teil der Position schliessen; das Ergebnis zählt später zum ganzen Trade."""
         if qty <= 0 or qty * price < self.risk.cfg.min_order_value:
             return False
-        fill = self.broker.sell(symbol, qty, price) if t.side > 0 else self.broker.buy(symbol, qty, price)
+        fill = (self.broker.sell(symbol, qty, price, market=market) if t.side > 0
+                else self.broker.buy(symbol, qty, price, market=market))
         if not fill:
             return False
         t.realized += t.side * (fill.price - t.entry) * fill.qty - fill.fee - t.fee * fill.qty / (t.qty + t.sold)
+        t.fees_done += fill.fee
         t.qty -= fill.qty
         t.sold += fill.qty
         t.sold_value += fill.qty * fill.price
@@ -281,24 +328,37 @@ class Trader:
         Stops und seine Grösse (höchstens die vorhandene Menge, ein Überschuss wird verkauft)."""
         h = self.horizons[horizon]
         others = sum(abs(o.qty) * o.entry for s, o in self.open_trades.items() if o.horizon == horizon and s != symbol)
+        total = sum(abs(o.qty) * o.entry for s, o in self.open_trades.items() if s != symbol)
         cash = self.broker.cash() + (t.qty * price if t.side > 0 else 0.0)
-        plan = self.risk.plan(equity, cash, price, atr, side=t.side, exposure=others, risk_pct=h.risk_per_trade,
-                              stop_atr=h.stop_loss_atr, target_atr=h.take_profit_atr,
+        plan = self.risk.plan(equity, cash, price, atr, side=t.side, exposure=others, exposure_total=total,
+                              risk_pct=h.risk_per_trade, stop_atr=h.stop_loss_atr, target_atr=h.take_profit_atr,
                               budget_share=self.shares().get(horizon, 1.0))
         if not plan:
             self.note = f"{symbol}: Position gehört zum Horizont «{t.horizon}» ({self.risk.last_block})"
             return
         if plan.qty < t.qty:
-            self._reduce(symbol, t, t.qty - plan.qty, price)
+            self._reduce(symbol, t, t.qty - plan.qty, price, market=True)
         t.horizon, t.stop, t.target, t.best = horizon, plan.stop, plan.target, price
         t.partial = price + t.side * h.partial_atr * atr if h.partial_atr else 0.0
         t.partial_pct = h.partial_pct
         t.trail = h.trail_atr * atr if h.trail_atr else 0.0
         self.note = f"{symbol}: Position vom Horizont «{horizon}» übernommen"
 
-    def exit(self, symbol: str, price: float, reason: str, when) -> None:
+    def _exit_equity(self, symbol: str, price: float, reason: str, when, equity: float) -> float:
+        """Position schliessen und das Kapital danach zurückgeben. `equity` bewertet schon alle Positionen zum
+        aktuellen Kurs; der Ausstieg ändert es nur um seine Kosten (Gebühr, Slippage). Nicht aus Cash plus diesem
+        Coin neu rechnen: dann fehlen die anderen Coins, und mit Shorts oder Hebel steckt geliehenes Geld im Cash."""
+        t, cash = self.open_trades[symbol], self.broker.cash()
+        side, qty = t.side, t.qty
+        self.exit(symbol, price, reason, when, market=True)
+        return equity + self.broker.cash() - cash - side * qty * price
+
+    def exit(self, symbol: str, price: float, reason: str, when, market: bool = False) -> None:
+        """Position schliessen. market=True: Market-Order (zum Geld- bzw. Briefkurs), sonst zum Kurs `price`
+        (Stop, Ziel) plus/minus Slippage."""
         t = self.open_trades.pop(symbol)
-        fill = self.broker.sell(symbol, t.qty, price) if t.side > 0 else self.broker.buy(symbol, t.qty, price)
+        fill = (self.broker.sell(symbol, t.qty, price, market=market) if t.side > 0
+                else self.broker.buy(symbol, t.qty, price, market=market))
         if not fill:
             return
         total = t.qty + t.sold
@@ -306,15 +366,34 @@ class Trader:
         pnl = (t.side * (fill.price - t.entry) * fill.qty - fill.fee - t.fee * fill.qty / total + t.realized
                - t.interest)
         exit_price = (fill.price * fill.qty + t.sold_value) / (fill.qty + t.sold)
+        # fees: ganze Kaufgebühr + alle Verkaufsgebühren, interest: Zinsen; pnl = Kursgewinn - fees - interest
         self.closed.append(dict(symbol=symbol, side="long" if t.side > 0 else "short", opened=t.opened,
                                 closed=when, entry=t.entry, exit=exit_price, qty=fill.qty + t.sold, pnl=pnl,
+                                fees=t.fee + t.fees_done + fill.fee, interest=t.interest,
                                 reason=reason, horizon=t.horizon, partial=t.sold > 0, **t.context))
         self.risk.record_close(pnl, when)
         log.info("%s SCHLIESSEN %s @ %.2f (%s) PnL %.2f", when, symbol, fill.price, reason, pnl)
 
     def close_all(self, prices: dict[str, float], reason: str, when) -> None:
+        """Alles mit Market-Orders schliessen (Not-Aus, Zwangsschliessung). Bei der Zwangsschliessung verlangt die
+        Börse statt der Handelsgebühr die Liquidationsgebühr (Kraken: 2 % des Positionswerts), aber nur für
+        Margin-Positionen: Shorts ganz, Longs für den geliehenen Teil (margin_value); was mit eigenem Cash gekauft ist,
+        zahlt beim Verkauf die normale Gebühr. Ein Coin ohne Kurs (Ticker ausgefallen) bleibt offen, bis der nächste
+        Lauf einen Kurs hat: keine Order zu einem alten Kurs."""
+        liquidation = reason == "Liquidation" and hasattr(self.broker, "fee_override")
         for s in list(self.open_trades):
-            self.exit(s, prices[s], reason, when)
+            if s not in prices:
+                log.warning("%s: kein Kurs, %s erst im nächsten Lauf", s, reason)
+                continue
+            if liquidation:     # Anteil der Margin-Position; fee(s) noch ohne Override: Stufe plus Zusatzkosten
+                t = self.open_trades[s]
+                w = 1.0 if t.side < 0 else min(1.0, t.margin_value / ((t.qty + t.sold) * t.entry))
+                self.broker.fee_override = w * LIQUIDATION_FEE + (1 - w) * self.broker.fee(s)
+            try:
+                self.exit(s, prices[s], reason, when, market=True)
+            finally:
+                if liquidation:
+                    self.broker.fee_override = None
 
 
 def session(when) -> str:

@@ -5,9 +5,10 @@ Der Bot bestimmt für jeden Coin aus den Tageskerzen die Marktphase: Aufwärtstr
 
 Danach entscheidet er selbst, welcher Horizont (kurz, mittel, lang) in dieser Phase handeln darf: Er schaut,
 was die Trades jedes Horizonts in genau dieser Phase gebracht haben (Vorwissen aus der Geschichte plus eigene
-Trades). Ein Horizont, der in der Phase bewiesen Geld verdient, handelt mit voller Grösse. Einer, der verliert
-oder noch zu wenig Erfahrung hat, handelt nur klein weiter (Probezeit), damit der Bot weiter lernt, ob sich das
-ändert. Alles nur aus der Vergangenheit (kein Blick in die Zukunft).
+Trades). Ein Horizont, der in der Phase bewiesen Geld verdient, handelt mit voller Grösse. Einer, der noch zu
+wenig Erfahrung hat, handelt klein (Probezeit). Einer, der in der Phase bewiesen verliert, handelt nur noch winzig
+(praktisch aus), damit der Bot merkt, falls sich das ändert. Alles nur aus der Vergangenheit (kein Blick in die
+Zukunft).
 """
 from __future__ import annotations
 
@@ -55,15 +56,16 @@ def trade_return(t: dict) -> float:
 class PhaseBook:
     """Was hat jeder Horizont in jeder Phase gebracht? Vorwissen (aus der Geschichts-Simulation) plus eigene Trades."""
 
-    def __init__(self, prior: dict | None = None, probation: float = 0.25):
+    def __init__(self, prior: dict | None = None, probation: float = 0.25, loser: float = 0.05):
         self.prior = prior or {}            # "Phase|Horizont" -> [Summe der Trade-Renditen, Anzahl]
-        self.probation = probation
+        self.probation = probation          # Grösse, solange die Erfahrung in der Phase fehlt
+        self.loser = loser                  # Grösse, wenn der Horizont in der Phase bewiesen verliert
 
     @classmethod
-    def load(cls, path: str | Path | None, probation: float = 0.25) -> "PhaseBook":
+    def load(cls, path: str | Path | None, probation: float = 0.25, loser: float = 0.05) -> "PhaseBook":
         p = Path(path) if path else None
         prior = json.loads(p.read_text()).get("stats", {}) if p and p.exists() else {}
-        return cls(prior, probation)
+        return cls(prior, probation, loser)
 
     @staticmethod
     def summarize(trades: list[dict]) -> dict:
@@ -92,7 +94,7 @@ class PhaseBook:
         if n < MIN_TRADES:
             return self.probation, f"Probezeit, erst {n:.0f} Trades in der Phase «{phase}»"
         if avg <= 0:
-            return self.probation, f"klein, verliert in der Phase «{phase}» ({avg * 100:+.2f} % pro Trade)"
+            return self.loser, f"winzig, verliert in der Phase «{phase}» ({avg * 100:+.2f} % pro Trade)"
         return 1.0, f"voll, verdient in der Phase «{phase}» ({avg * 100:+.2f} % pro Trade)"
 
     def table(self, closed: list[dict], horizons: list[str]) -> dict[str, dict[str, str]]:

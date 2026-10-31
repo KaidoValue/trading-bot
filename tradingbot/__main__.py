@@ -12,9 +12,11 @@
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
-  python -m tradingbot schliessen --config bots/config_daytrading.yaml --symbols TRX/CHF   # Position von Hand schliessen
+  python -m tradingbot schliessen --config bots/config_daytrading.yaml --symbols TRX/CHF   # Auftrag zum Schliessen
+  python -m tradingbot schliessen --config ... --symbols TRX/CHF --sofort   # direkt (nur lokal, kein Bot-Lauf aktiv)
   python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
   python -m tradingbot historie --bots ... --start 2022-01-01 # wie oben, aber erst ab diesem Tag handeln
+  python -m tradingbot historie --bots ... --gebuehren alt     # Vergleich: fest 0,26 % statt Kraken-Staffel
 """
 from __future__ import annotations
 
@@ -43,29 +45,52 @@ def _load_df(cfg: Config, args) -> pd.DataFrame:
     return df
 
 
-def schliessen(cfg: Config, symbols: list[str]) -> None:
-    """Schliesst offene Positionen des Paper-Kontos von Hand zum aktuellen Kurs (z.B. alte Shorts nach einer
-    Regeländerung). Der Stand und das Trade-Protokoll werden wie nach einem Bot-Durchlauf gespeichert."""
+def schliessen(cfg: Config, symbols: list[str], sofort: bool = False) -> Path | None:
+    """Offene Positionen eines Demo-Bots von Hand schliessen (z.B. alte Shorts nach einer Regeländerung). Standard: nur
+    ein Auftrag in daten/auftraege/, der nächste Bot-Durchlauf schliesst zum dann aktuellen Kurs (bot.auftraege). So
+    schreibt nur der Bot in seinen Stand, auch wenn gerade ein Durchlauf läuft. sofort=True schliesst direkt zum
+    aktuellen Kurs und speichert Stand und Trade-Protokoll wie ein Bot-Durchlauf: nur lokal, wenn kein Bot-Lauf
+    läuft."""
+    if not symbols:
+        raise SystemExit("Welche Coins? z.B. --symbols TRX/CHF HYPE/CHF")
+    if not sofort:
+        path = bot.auftrag_ablegen(cfg.name, "schliessen " + " ".join(symbols))
+        print(f"Auftrag gespeichert: {path}\nDer nächste Bot-Durchlauf schliesst {', '.join(symbols)} zum dann "
+              "aktuellen Kurs (Bots auf GitHub: Datei hochladen, das macht der Workflow «Position schliessen»).")
+        return path
     from datetime import datetime, timezone
-    from . import state
-    from .bot import _write_trades, make_trader
+    from . import buchhaltung, state
+    from .bot import _write_trades, make_trader, sync_paper
     cfg.mode = "paper"
     ex = data.make_exchange(cfg.exchange, convert_to=cfg.symbols[0].split("/")[1])
     trader = make_trader(cfg, ex)
     last_bar = state.load(cfg.state_path, trader)
     if not last_bar:
         raise SystemExit(f"Kein gespeicherter Stand ({cfg.state_path}).")
+    buchhaltung.nachbuchen(trader, cfg.state_path, cfg.starting_capital)     # wie im Bot: alte Trades zuerst
     now = datetime.now(timezone.utc)
+    tickers = {s: ex.fetch_ticker(s) for s in symbols if s in trader.open_trades}
+    sync_paper(trader.broker, ex, tickers, now)          # Market-Order zum Geldkurs (Long) bzw. Briefkurs (Short)
     for s in symbols:
         if s not in trader.open_trades:
             print(f"{s}: keine offene Position")
             continue
-        price = float(ex.fetch_ticker(s)["last"])
-        trader.exit(s, price, "Von Hand geschlossen", now)
-        print(f"{s}: geschlossen @ {price:.4f}, Ergebnis {trader.closed[-1]['pnl']:+.2f}")
+        trader.exit(s, float(tickers[s]["last"]), "Von Hand geschlossen", now, market=True)
+        print(f"{s}: geschlossen @ {trader.closed[-1]['exit']:.4f}, Ergebnis {trader.closed[-1]['pnl']:+.2f}")
     cfg.trades_path.parent.mkdir(parents=True, exist_ok=True)
     _write_trades(cfg.trades_path, trader.closed)
     state.save(cfg.state_path, trader, last_bar)
+
+
+def run_bot(cfg: Config, once: bool) -> None:
+    """Bot laufen lassen. Fehler im Durchlauf fängt bot.run selbst ab; ein Fehler schon beim Start (z.B. Tippfehler in
+    der Config, kaputter Stand) kommt genauso ins Fehler-Protokoll des Bots, damit die Übersicht davor warnt."""
+    from . import waechter
+    try:
+        bot.run(cfg, max_iterations=1 if once else None)
+    except Exception as e:
+        waechter.melden(cfg.fehler_path, e, "Start: ")
+        raise
 
 
 def report(trades: pd.DataFrame) -> None:
@@ -74,7 +99,10 @@ def report(trades: pd.DataFrame) -> None:
         g = trades.groupby(by)["pnl"]
         return pd.DataFrame({"Trades": g.size(), "Gewinn": g.sum().round(2),
                              "Trefferquote %": (g.apply(lambda s: (s > 0).mean()) * 100).round(1)})
-    print(f"Trades: {len(trades)}, Gesamtergebnis: {trades['pnl'].sum():.2f}\n")
+    # ältere Protokolle haben keine Spalten für Gebühren und Zinsen: fehlende Werte zählen als 0
+    kosten = {c: trades[c].fillna(0).sum() if c in trades else 0.0 for c in ("fees", "interest")}
+    print(f"Trades: {len(trades)}, Gesamtergebnis: {trades['pnl'].sum():.2f}")
+    print(f"Gebühren gesamt: {kosten['fees']:.2f}, Zinsen gesamt: {kosten['interest']:.2f}\n")
     print("Nach Richtung:\n", table("side"), "\n")
     print("Nach Ausstiegsgrund:\n", table("reason"), "\n")
     if "session" in trades:
@@ -89,13 +117,12 @@ def report(trades: pd.DataFrame) -> None:
 
 def status(cfg: Config) -> None:
     """Zeigt Kapital, offene Positionen und das heutige Signal des Paper-Kontos."""
-    from .broker import PaperBroker
+    from .broker import paper_broker
     from .engine import Trader
     from .risk import RiskManager
     from . import state
     cfg.mode = "paper"
-    trader = Trader(PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage),
-                    RiskManager(cfg.risk, cfg.starting_capital))
+    trader = Trader(paper_broker(cfg), RiskManager(cfg.risk, cfg.starting_capital))
     if not state.load(cfg.state_path, trader):
         print(f"Noch kein gespeicherter Stand ({cfg.state_path}). Zuerst 'paper' laufen lassen.")
         return
@@ -140,8 +167,14 @@ def main() -> None:
     p.add_argument("--timeframe", help="z.B. 1h, 4h, 1d")
     p.add_argument("--short", action="store_true", help="auch auf fallende Kurse setzen")
     p.add_argument("--once", action="store_true", help="nur ein Durchlauf, dann beenden")
-    p.add_argument("--symbols", nargs="+", help="schliessen: diese Positionen des Paper-Kontos schliessen")
+    p.add_argument("--symbols", nargs="+", help="schliessen: diese Positionen eines Demo-Bots schliessen (als Auftrag "
+                   "in daten/auftraege/, den der nächste Bot-Durchlauf zum dann aktuellen Kurs ausführt)")
+    p.add_argument("--sofort", action="store_true", help="schliessen: direkt statt als Auftrag (nur lokal und nur, "
+                   "wenn gerade kein Bot-Durchlauf läuft)")
     p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf)")
+    p.add_argument("--gebuehren", choices=["normiert", "staffel", "alt"], default="normiert",
+                   help="historie: Gebührenstufe wie für ein Konto mit Startkapital (normiert, Standard), nach dem "
+                   "Umsatz des wachsenden Simulationskontos (staffel) oder fest 0,26 %% wie früher (alt)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
 
@@ -196,9 +229,9 @@ def main() -> None:
         # Reihenfolge wie im laufenden Bot: bei gleichzeitigen Signalen bekommt der erste Coin zuerst Kapital
         coins = list(dict.fromkeys(s.split("/")[0] for p in (args.bots or [args.config]) for s in Config.load(p).symbols))
         start = pd.Timestamp(args.start, tz="UTC") if args.start else None
-        runs, chef, btc = historie.run_all(args.bots or [args.config], coins, start)
+        runs, chef, btc = historie.run_all(args.bots or [args.config], coins, start, args.gebuehren)
         btc = btc[btc.index >= start] if start is not None else btc
-        text = historie.report(runs, chef, btc)
+        text = historie.report(runs, chef, btc, args.gebuehren)
         Path("lernen").mkdir(exist_ok=True)
         Path("lernen/HISTORIE.md").write_text(text, encoding="utf-8")
         curves = pd.DataFrame({n: r.equity for n, r in runs.items()} | ({"chef": chef} if chef is not None else {})
@@ -223,7 +256,9 @@ def main() -> None:
     elif args.command == "status":
         status(cfg)
     elif args.command == "schliessen":
-        schliessen(cfg, args.symbols or [])
+        if not Path(args.config).exists():          # sonst ein Auftrag, den kein Bot je liest
+            raise SystemExit(f"Bot-Datei {args.config} nicht gefunden.")
+        schliessen(cfg, args.symbols or [], args.sofort)
     elif args.command == "news":
         from .news import briefing
         cfg.mode = "paper"
@@ -231,12 +266,12 @@ def main() -> None:
         print(briefing(st["news"]) if st.get("news") else "## Nachrichtenlage\n\nNoch keine Daten.")
     elif args.command == "paper":
         cfg.mode = "paper"
-        bot.run(cfg, max_iterations=1 if args.once else None)
+        run_bot(cfg, args.once)
     elif args.command == "live":
         cfg.mode = "live"
         if os.getenv("CONFIRM_LIVE") != "JA":
             raise SystemExit("Live-Handel mit echtem Geld. Zum Bestätigen: CONFIRM_LIVE=JA setzen.")
-        bot.run(cfg, max_iterations=1 if args.once else None)
+        run_bot(cfg, args.once)
 
 
 if __name__ == "__main__":

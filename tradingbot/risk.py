@@ -73,11 +73,13 @@ class RiskManager:
     def plan(self, equity: float, cash: float, price: float, atr: float, side: int = 1,
              size_factor: float = 1.0, exposure: float | None = None, stop_atr: float | None = None,
              target_atr: float | None = None, risk_pct: float | None = None,
-             budget_share: float = 1.0) -> TradePlan | None:
+             budget_share: float = 1.0, exposure_total: float | None = None) -> TradePlan | None:
         """side = +1 long (auf steigende Kurse), -1 short (auf fallende Kurse).
         Chance-Risiko-Verhältnis (CRV) = take_profit_atr / stop_loss_atr, standardmässig 2:1.
         stop_atr/target_atr/risk_pct überschreiben die Werte aus der Config (je Zeithorizont), budget_share
-        ist der Anteil des Horizonts an max_invested_pct (exposure dann nur die Positionen dieses Horizonts)."""
+        ist der Anteil des Horizonts an max_invested_pct (exposure dann nur die Positionen dieses Horizonts).
+        exposure_total: alle offenen Positionen aller Horizonte; zusammen nie mehr als max_invested_pct × Hebel,
+        auch wenn ein Horizont mehr hält, als sein Anteil heute erlaubt (Anteile wandern, Übernahmen)."""
         if atr <= 0 or price <= 0:
             return None
         stop_dist = (self.cfg.stop_loss_atr if stop_atr is None else stop_atr) * atr
@@ -92,8 +94,11 @@ class RiskManager:
         if exposure is None:
             exposure = max(equity - cash, 0.0)
         room = equity * self.cfg.max_invested_pct * lev * budget_share - exposure
+        if exposure_total is not None:
+            room = min(room, equity * self.cfg.max_invested_pct * lev - exposure_total)
         qty = min(qty, max(room, 0.0) / price)
         if qty * price < self.cfg.min_order_value:
-            self.last_block = "Order kleiner als Mindestgrösse"
+            self.last_block = ("Obergrenze für investiertes Kapital erreicht" if room < self.cfg.min_order_value
+                               else "Order kleiner als Mindestgrösse")
             return None
         return TradePlan(qty=qty, stop=price - side * stop_dist, target=price + side * target_dist)

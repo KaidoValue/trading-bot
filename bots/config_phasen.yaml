@@ -3,7 +3,9 @@
 #
 # 1. Marktphase je Coin (Tageskerzen): Aufwärtstrend / Abwärtstrend / Seitwärts, jeweils ruhig oder wild.
 # 2. Horizont wählen (phase_gate): Ein Horizont handelt nur mit voller Grösse in Phasen, in denen seine Trades
-#    bewiesen Geld gebracht haben (mind. 8 Trades). Sonst nur klein (phase_probation), damit er weiter lernt.
+#    bewiesen Geld gebracht haben (mind. 8 Trades). Fehlt die Erfahrung: klein (phase_probation). Verliert er dort
+#    bewiesen: winzig (phase_loser, praktisch aus). 2. Simulation: mit halber Grösse für Verlierer verlor «mittel»
+#    in fast allen Phasen weiter, «lang» im wilden Aufwärtstrend ebenso; darum jetzt 5 %.
 #    Vorwissen aus der Geschichts-Simulation steht in phase_prior, eigene Trades kommen laufend dazu.
 # 3. Bester Einstieg: Pullback statt Ausbruch; mit max_stretch_atr kein Einstieg, wenn der Kurs der 20er-Linie
 #    davongelaufen ist (Rücksetzer abwarten).
@@ -19,7 +21,8 @@ timeframe: 1d
 history_exchange: bitstamp
 history_symbol: BTC/USD
 starting_capital: 1000
-fee_rate: 0.0026
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
 slippage: 0.0005
 
 horizons:
@@ -27,7 +30,7 @@ horizons:
     timeframe: 1d
     strategy: regime
     strategy_params: {period: 200}
-    share: 0.4
+    share: 0.5
     trend_filter: true
     phase_exit: false         # steigt über die 200-Tage-Linie aus (1. Simulation: Phasen-Ausstieg schadete hier)
   mittel:                     # Trendfolge auf 4-Stunden-Kerzen, Tage bis Wochen
@@ -44,7 +47,7 @@ horizons:
   kurz:                       # Rücksetzer im Trend auf 1-Stunden-Kerzen (Stunden bis Tage)
     timeframe: 1h
     strategy: pullback
-    share: 0.3
+    share: 0.2
     stop_loss_atr: 1.5
     take_profit_atr: 3.0
     risk_per_trade: 0.01
@@ -54,7 +57,8 @@ horizons:
 adaptive_shares: true
 horizon_priority: true
 phase_gate: true
-phase_probation: 0.5      # ungeprüfte Horizonte mit halber Grösse
+phase_probation: 0.25     # ohne Erfahrung in der Phase: Viertel
+phase_loser: 0.05         # bewiesener Verlierer in der Phase: 5 % (praktisch aus)
 phase_exit: true
 phase_prior: daten/state/phasen_wissen.json
 allow_short: false

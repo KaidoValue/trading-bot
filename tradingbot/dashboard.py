@@ -15,10 +15,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import data, state
-from .broker import PaperBroker
+from . import data, state, waechter
+from .broker import paper_broker
+from .buchhaltung import TOLERANZ
 from .config import Config
-from .engine import Trader
+from .engine import MINUTES, Trader
 from .risk import RiskManager
 from .strategies import build
 
@@ -67,18 +68,60 @@ class Bot:
     trader: Trader
     equity: float
     invested: float
+    abgleich: dict | None = None    # Buchhaltung, mit den Kursen von jetzt geprüft (Trader.abgleich)
+    updated: datetime | None = None  # wann der Bot zuletzt seinen Stand gespeichert hat (state «updated»)
+    warnung: str = ""               # Hinweis, wenn der Bot hängt oder Fehler hatte (waechter.py)
 
 
 def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
     cfg = Config.load(path)
     cfg.mode = "paper"
-    trader = Trader(PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage),
-                    RiskManager(cfg.risk, cfg.starting_capital))
+    trader = Trader(paper_broker(cfg), RiskManager(cfg.risk, cfg.starting_capital))
+    trader.broker.now = datetime.now(timezone.utc)       # Umsatz der letzten 30 Tage ab jetzt (Gebührenstufe)
     if not state.load(cfg.state_path, trader):
         return None
-    value = sum(trader.broker.position(s) * prices[s] for s in prices)          # Shorts zählen negativ
-    invested = sum(abs(trader.broker.position(s)) * prices[s] for s in prices)
-    return Bot(cfg, trader, trader.broker.cash() + value, invested)
+    px = {s: t.entry for s, t in trader.open_trades.items()} | prices          # Coin ganz ohne Kurs: Einstiegskurs
+    value = sum(trader.broker.position(s) * p for s, p in px.items())          # Shorts zählen negativ
+    invested = sum(abs(trader.broker.position(s)) * p for s, p in px.items())
+    return Bot(cfg, trader, trader.broker.cash() + value, invested, trader.abgleich(prices, cfg.starting_capital),
+               state.read(cfg.state_path).get("updated"))
+
+
+def _dauer(d) -> str:
+    """Zeitspanne kurz, für «vor …» und «seit …»: «12 Min.», «3 Std.», «2 Tagen»."""
+    m = max(int(d.total_seconds() // 60), 0)
+    return f"{m} Min." if m < 120 else f"{m // 60} Std." if m < 2880 else f"{m // 1440} Tagen"
+
+
+def _durchlauf_text(b: Bot, now) -> str:
+    """Wann der Bot zuletzt seinen Stand gespeichert hat, mit ⚠️, wenn das länger als 90 Min. her ist."""
+    if b.updated is None:
+        return "–"
+    alter = utc(now) - utc(b.updated)
+    vor = "gerade eben" if alter < pd.Timedelta(minutes=1) else f"vor {_dauer(alter)}"
+    return f"{'⚠️ ' if alter > waechter.ALT else ''}{local(b.updated)} ({vor})"
+
+
+def warnung(b: Bot, now) -> str:
+    """Hängt der Bot still? Stand älter als 90 Min. oder ein Fehler im Fehler-Protokoll (daten/logs/fehler_<Name>.txt)
+    aus den letzten 2 Std. bzw. seit dem letzten Stand. Leer, wenn alles läuft."""
+    f = waechter.letzter(b.cfg.fehler_path)
+    seit = utc(now) - utc(b.updated) if b.updated is not None else None
+    neu = f is not None and (utc(now) - utc(f[0]) <= waechter.FENSTER
+                             or seit is not None and utc(f[0]) >= utc(b.updated).floor("min"))
+    fehler = f"letzter Fehler {local(f[0])}: {f[1]}: {f[2]}" if neu else ""
+    if seit is not None and seit > waechter.ALT:
+        return f"seit {_dauer(seit)} kein neuer Stand gespeichert" + (f" ({fehler})" if fehler else "")
+    return fehler
+
+
+def banner(bots: list[Bot], now) -> list[str]:
+    """Warnungen oben in STATUS.md: je Bot (warnung) und für den ganzen Lauf (daten/logs/fehler_zyklus.txt)."""
+    out = [f"> ⚠️ **{b.cfg.title or b.cfg.name}:** {b.warnung}" for b in bots if b.warnung]
+    z = waechter.letzter(waechter.ZYKLUS)
+    if z and utc(now) - utc(z[0]) <= waechter.FENSTER:
+        out.append(f"> ⚠️ **Bot-Lauf {local(z[0])}:** {z[1]}: {z[2]}")
+    return [x for line in out for x in (line, "")]          # mit Leerzeile, sonst verschmelzen die Zitate
 
 
 def _shares_text(b: Bot) -> str:
@@ -89,7 +132,32 @@ def _shares_text(b: Bot) -> str:
     return " · ".join(f"{n} {v * 100:.0f} %" for n, v in b.trader.shares().items())
 
 
-def overview(bots: list[Bot]) -> list[str]:
+def _leverage_text(b: Bot) -> str:
+    """Tatsächlicher Hebel: Wert aller Positionen (auch Shorts) geteilt durch das Kapital."""
+    if b.cfg.risk.leverage <= 1 or b.equity <= 0:
+        return "–"
+    return f"{b.invested / b.equity:.2f}× (erlaubt {b.cfg.risk.leverage:g}×)"
+
+
+def _fee_text(b: Bot) -> str:
+    """Gebührenstufe nach dem Umsatz der letzten 30 Tage (Kraken-Staffel) bzw. fester Satz."""
+    stufe, _, taker, umsatz = b.trader.broker.tier()
+    umsatz = f"30-Tage-Umsatz {umsatz:,.0f} CHF".replace(",", "'")
+    return (f"Stufe {stufe}: {taker * 100:.2f} % je Market-Order ({umsatz})" if stufe
+            else f"fest {taker * 100:.2f} % je Order ({umsatz})")
+
+
+def _buchhaltung_text(b: Bot) -> str:
+    """Stimmt das Kapital mit den Ergebnissen aller Trades (nach Gebühren und Zinsen) überein?"""
+    d = (b.abgleich or b.trader.abgleich({}, b.cfg.starting_capital))["differenz"]
+    text = f"✅ stimmt (Abweichung {chf(abs(d))} CHF)" if abs(d) <= TOLERANZ else f"⚠️ Abweichung {chf(d)} CHF"
+    if round(b.trader.altlasten, 2):
+        text += f" · Altlasten vor 28.10.: {chf(b.trader.altlasten)} CHF"
+    return text
+
+
+def overview(bots: list[Bot], now=None) -> list[str]:
+    now = now or datetime.now(timezone.utc)
     head = "| | " + " | ".join(f"**{b.cfg.title or b.cfg.name}**" for b in bots) + " |"
     rows = [
         ("Startkapital", lambda b: f"{chf(b.cfg.starting_capital)} CHF"),
@@ -100,12 +168,18 @@ def overview(bots: list[Bot]) -> list[str]:
         ("Cash (nicht investiert)", lambda b: f"{chf(b.trader.broker.cash())} CHF"),
         ("Offene Positionen", lambda b: str(len(b.trader.open_trades))),
         ("Abgeschlossene Trades", lambda b: str(len(b.trader.closed))),
+        ("Gebühren bisher", lambda b: f"{chf(b.trader.gebuehren_bisher())} CHF"),
+        ("Gebührenstufe", _fee_text),
         ("Horizonte (Strategie, Kerzen)", lambda b: b.cfg.horizon_text()),
         ("Kapitalanteil je Horizont", lambda b: _shares_text(b)),
         ("Short erlaubt", lambda b: "ja" if b.cfg.allow_short else "nein"),
         ("Hebel", lambda b: (f"{b.cfg.risk.leverage:g}× (Zinsen bisher {chf(b.trader.broker.interest_paid)} CHF)"
                              if b.cfg.risk.leverage > 1 else "ohne")),
     ]
+    if any(b.cfg.risk.leverage > 1 for b in bots):
+        rows.append(("Hebel aktuell", _leverage_text))
+    rows.append(("Buchhaltung", _buchhaltung_text))
+    rows.append(("Letzter Durchlauf", lambda b: _durchlauf_text(b, now)))
     out = [head, "|---" * (len(bots) + 1) + "|"]
     out += [f"| {label} | " + " | ".join(fn(b) for b in bots) + " |" for label, fn in rows]
     if any(b.trader.risk.halted for b in bots):
@@ -115,12 +189,15 @@ def overview(bots: list[Bot]) -> list[str]:
     return out
 
 
-def prices_table(tickers: dict[str, dict], ex=None) -> list[str]:
+def prices_table(tickers: dict[str, dict], ex=None, missing=()) -> list[str]:
+    """Kurse aller Coins; ohne Ticker mit dem letzten bekannten Kurs («Kurs vom …»), `missing`: ganz ohne Kurs."""
     out = ["| Coin | Kurs jetzt | 24 Std. | Live-Chart |", "|---|---|---|---|"]
     for s, t in tickers.items():
         ch = t.get("percentage")
         ch = f"{'🟢' if ch >= 0 else '🔴'} {ch:+.2f} %" if ch is not None else "–"
-        out.append(f"| **{s.split('/')[0]}** | {chf(t['last'])} CHF | {ch} | [öffnen]({live_chart(s, ex)}) |")
+        alt = f" (Kurs vom {local(t['kurs_vom'])})" if t.get("kurs_vom") is not None else ""      # Ticker fehlte
+        out.append(f"| **{s.split('/')[0]}** | {chf(t['last'])} CHF{alt} | {ch} | [öffnen]({live_chart(s, ex)}) |")
+    out += [f"| **{s.split('/')[0]}** | kein Kurs abrufbar | – | [öffnen]({live_chart(s, ex)}) |" for s in missing]
     return out
 
 
@@ -133,12 +210,13 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
                 "| Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |",
                 "|---|---|---|---|---|---|---|---|---|"]
         for s, t in b.trader.open_trades.items():
-            p = prices[s]
+            p = prices.get(s, t.entry)
             stake, value = t.entry * t.qty, p * t.qty
             pnl = t.side * (p - t.entry) * t.qty
             hz = f" ({t.horizon})" if t.horizon else ""
+            kurs = chf(p) if s in prices else "kein Kurs"
             out.append(f"| **{s.split('/')[0]}** {'long' if t.side > 0 else 'short'}{hz} | {local(t.opened)} | "
-                       f"{chf(t.entry)} | {chf(p)} | {t.qty:.6f} | {chf(stake)} CHF | {chf(value)} CHF | "
+                       f"{chf(t.entry)} | {kurs} | {t.qty:.6f} | {chf(stake)} CHF | {chf(value)} CHF | "
                        f"{pnl_text(pnl, pnl / stake * 100)} | {chf(t.stop)} ({(t.stop / p - 1) * 100:+.0f} %) |")
     else:
         out.append("Keine offene Position, alles in Cash.")
@@ -243,6 +321,26 @@ def chef_section(chef, phase: str) -> list[str]:
     return out
 
 
+def _stored_prices(cfgs: list[Config]) -> dict:
+    """Letzter Kurs je Coin aus den Ständen der Bots (state «prices»: Symbol -> [Kurs, Zeit]), der neuste zählt."""
+    out = {}
+    for c in cfgs:
+        c.mode = "paper"
+        for s, (price, when) in (state.read(c.state_path).get("prices") or {}).items():
+            if s not in out or utc(when) > out[s][1]:
+                out[s] = (float(price), utc(when))
+    return out
+
+
+def _fallback(s: str, stored: dict, frames: dict):
+    """Kurs eines Coins ohne Ticker: der neuere aus dem Stand der Bots und dem Schluss der letzten Stunden- bzw.
+    Tageskerze, als (Kurs, Zeit). None, wenn es keinen gibt."""
+    options = [stored[s]] if s in stored else []
+    options += [(float(frames[s, tf]["close"].iloc[-1]), frames[s, tf].index[-1] + pd.Timedelta(minutes=MINUTES[tf]))
+                for tf in ("1h", "1d") if len(frames.get((s, tf), ())) > 0]
+    return max(options, key=lambda o: o[1], default=None)
+
+
 def chart_url(name: str) -> str:
     """Auf GitHub liegen die Bilder im Branch «charts», der immer nur die neueste Version enthält
     (sonst würde jede alte Version gespeichert und das Repository mit der Zeit riesig)."""
@@ -253,12 +351,15 @@ def chart_url(name: str) -> str:
 def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_path: str | None = None) -> str:
     first = Config.load(config_paths[0])
     ex = exchange or data.make_exchange(first.exchange, convert_to=first.symbols[0].split("/")[1])
-    from .bot import available_symbols
+    from .bot import available_symbols, ticker
     cfgs = [Config.load(p) for p in config_paths]
     symbols = available_symbols(ex, list(dict.fromkeys(s for c in cfgs for s in c.symbols)))
-    tickers = {s: _retry(lambda: ex.fetch_ticker(s)) for s in symbols}
-    prices = {s: float(t["last"]) for s, t in tickers.items()}
-    bots = [b for p in config_paths if (b := load_bot(p, prices))]
+    tickers = {}
+    for s in symbols:
+        try:
+            tickers[s] = _retry(lambda: ticker(ex, s))
+        except Exception as e:      # ein Coin ohne Kurs soll nicht die ganze Übersicht verhindern
+            log.warning("Kurs %s nicht abrufbar: %s", s, e)
     frames = {}
     wanted = [(s, tf, bars) for s in symbols for tf, bars in (("1d", 400), ("1h", 300))]
     wanted += [(s, h.timeframe, 300) for c in cfgs for h in c.horizon_list() for s in symbols
@@ -268,12 +369,23 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
             frames[s, tf] = _retry(lambda: data.fetch_recent(ex, s, tf, bars))
         except Exception as e:      # ein Coin ohne Daten soll nicht die ganze Übersicht verhindern
             log.warning("Kerzen %s %s nicht abrufbar: %s", s, tf, e)
+    if len(tickers) < len(symbols):     # ohne Ticker: letzter bekannter Kurs, in der Tabelle «Kurs vom …»
+        stored = _stored_prices(cfgs)
+        for s in symbols:
+            if s not in tickers and (alt := _fallback(s, stored, frames)):
+                tickers[s] = {"last": alt[0], "percentage": None, "kurs_vom": alt[1]}
+        tickers = {s: tickers[s] for s in symbols if s in tickers}         # Reihenfolge wie in den Configs
+    prices = {s: float(t["last"]) for s, t in tickers.items()}
+    bots = [b for p in config_paths if (b := load_bot(p, prices))]
 
     now = datetime.now(timezone.utc)
+    for b in bots:
+        b.warnung = warnung(b, now)
     lines = ["# 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)", "",
-             f"Stand: **{local(now)}** Schweizer Zeit · wird jede Stunde automatisch aktualisiert", "",
-             "> 🖥️ **[Zur Trading-Oberfläche](https://kaidovalue.github.io/trading-bot/)** (übersichtlich, mit Live-Chart)", "",
-             "## Auf einen Blick", ""]
+             f"Stand: **{local(now)}** Schweizer Zeit · wird jede Stunde automatisch aktualisiert", ""]
+    lines += banner(bots, now)
+    lines += ["> 🖥️ **[Zur Trading-Oberfläche](https://kaidovalue.github.io/trading-bot/)** (übersichtlich, mit Live-Chart)",
+              "", "## Auf einen Blick", ""]
     lines += [f"- **{b.cfg.title or b.cfg.name}:** {b.cfg.description}" for b in bots if b.cfg.description]
     chef_lines = []
     if chef_path and bots and (symbols[0], "1d") in frames:
@@ -288,9 +400,9 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
         lines.append("- **4️⃣ Chef-Bot:** verteilt eigene 1'000 CHF selbstständig auf die drei Stile oben, "
                      "je nachdem, was in der aktuellen Marktphase am besten läuft.")
         chef_lines = chef_section(chef, phase)
-    lines += [""] + (overview(bots) if bots else ["Noch kein Bot gelaufen."])
+    lines += [""] + (overview(bots, now) if bots else ["Noch kein Bot gelaufen."])
     lines += [""] + chef_lines
-    lines += ["", "## Kurse", ""] + prices_table(tickers, ex) + [""]
+    lines += ["", "## Kurse", ""] + prices_table(tickers, ex, [s for s in symbols if s not in tickers]) + [""]
     for b in bots:
         lines += bot_section(b, prices, frames)
     lines += ["## Charts", "",
