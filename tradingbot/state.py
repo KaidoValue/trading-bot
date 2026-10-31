@@ -4,7 +4,9 @@ So kann der Bot beendet und später fortgesetzt werden, z.B. einmal täglich per
 """
 from __future__ import annotations
 
+import dataclasses
 import json
+import logging
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -12,6 +14,9 @@ import pandas as pd
 
 from .broker import WINDOW, PaperBroker
 from .engine import OpenTrade, Trader
+
+log = logging.getLogger(__name__)
+FIELDS = {f.name for f in dataclasses.fields(OpenTrade)}     # Felder einer offenen Position, die dieser Code kennt
 
 
 def _enc(v):
@@ -79,7 +84,7 @@ def load(path: Path, trader: Trader) -> dict:
     state = read(path)
     if not state:
         return {}
-    trader.open_trades = {s: OpenTrade(**t) for s, t in state["open_trades"].items()}
+    trader.open_trades = {s: _trade(s, t) for s, t in state["open_trades"].items()}
     trader.closed = state["closed"]
     trader.note = state.get("note", "")
     trader.buchhaltung = state.get("buchhaltung") or {}
@@ -99,6 +104,15 @@ def load(path: Path, trader: Trader) -> dict:
         b.load_volume(p["volume"] if "volume" in p else _volume_from_trades(trader, now))
         _margin_alt(trader, state["open_trades"])
     return {s: pd.Timestamp(v) for s, v in state["last_bar"].items()}
+
+
+def _trade(symbol: str, t: dict) -> OpenTrade:
+    """Offene Position aus dem Stand. Felder, die dieser Code nicht kennt (z.B. ein Stand einer neueren Version nach
+    einem Zurücksetzen des Codes), werden mit Warnung übergangen, statt jeden Lauf abzubrechen."""
+    fremd = sorted(set(t) - FIELDS)
+    if fremd:
+        log.warning("%s: unbekannte Felder im Stand ignoriert: %s", symbol, ", ".join(fremd))
+    return OpenTrade(**{k: v for k, v in t.items() if k in FIELDS})
 
 
 def _utc(x) -> datetime | None:

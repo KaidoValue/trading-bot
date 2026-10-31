@@ -76,6 +76,9 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
         lev = f"Hebel {b.cfg.risk.leverage:g}×" if b.cfg.risk.leverage > 1 else "ohne Hebel"
         halt = '<div class="halt">⛔ Not-Aus aktiv</div>' if b.trader.risk.halted else ""
         warn = f'<div class="warn">⚠️ {escape(b.warnung)}</div>' if b.warnung else ""     # hängt er? (waechter.py)
+        stufe, _, taker, _ = b.trader.broker.tier()                 # Gebührenstufe nach dem 30-Tage-Umsatz
+        fees = f"{_chf(b.trader.gebuehren_bisher())} CHF · " + (f"Stufe {stufe}: {taker * 100:.2f} %" if stufe
+                                                                 else f"fest {taker * 100:.2f} %")
         cards.append(f"""<div class="card" style="--c:{COLORS[i % 4]}">
   <div class="card-title">{escape(titles[b.cfg.name])}</div>{halt}{warn}
   <div class="big">{_chf(eq)} <small>CHF</small></div>
@@ -84,6 +87,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
   <div class="kv"><span>Cash</span><b>{_chf(b.trader.broker.cash(), 0)} CHF</b></div>
   <div class="kv"><span>Offen / Abgeschlossen</span><b>{len(b.trader.open_trades)} / {len(closed)}</b></div>
   <div class="kv"><span>Trefferquote</span><b>{rate}</b></div>
+  <div class="kv"><span>Gebühren bisher · Stufe</span><b>{fees}</b></div>
   <div class="kv"><span>Horizonte</span><b>{escape(b.cfg.horizon_text())}</b></div>
   <div class="kv"><span>Short / Hebel</span><b>{'Short erlaubt' if b.cfg.allow_short else 'nur long'} · {lev}</b></div>
 </div>""")

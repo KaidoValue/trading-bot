@@ -14,7 +14,7 @@ KRAKEN_TIERS = [(0, 0.0040, 0.0080), (2_500, 0.0030, 0.0060), (10_000, 0.0022, 0
                 (50_000, 0.0015, 0.0030), (100_000, 0.0012, 0.0025), (250_000, 0.0010, 0.0022),
                 (500_000, 0.0008, 0.0020), (1_000_000, 0.0006, 0.0018), (2_500_000, 0.0004, 0.0015),
                 (5_000_000, 0.0002, 0.0012), (10_000_000, 0.0, 0.0010)]
-LIQUIDATION_FEE = 0.02          # Zwangsschliessung: 2 % des Positionswerts statt der Handelsgebühr (Kraken)
+LIQUIDATION_FEE = 0.02          # Zwangsschliessung: 2 % der Margin-Position statt der Handelsgebühr (Kraken)
 WINDOW = timedelta(days=30)     # die Gebührenstufe richtet sich nach dem Umsatz der letzten 30 Tage
 
 
@@ -150,11 +150,28 @@ def paper_broker(cfg) -> PaperBroker:
 
 
 class CCXTBroker(Broker):
-    """Echter Handel über ccxt (Kraken, Bitstamp, Binance, ...). Nur Spot, nur Market-Orders."""
+    """Echter Handel über ccxt (Kraken, Bitstamp, Binance, ...). Nur Spot, nur Market-Orders.
+    fee() und slippage schätzen die Kosten für den Gebührenfilter und den Stop auf Einstand (Trader.costs) wie im
+    Demo-Betrieb; die echte Gebühr jeder Order kommt aus dem Fill."""
 
-    def __init__(self, exchange, quote_currency: str):
+    def __init__(self, exchange, quote_currency: str, fee_rate: float = KRAKEN_TIERS[0][2], slippage: float = 0.0):
         self.ex = exchange
         self.quote = quote_currency
+        self.fee_rate = fee_rate                  # Satz, wenn die Börse den des Kontos nicht liefert
+        self.slippage = slippage
+        self._fees: dict[str, float] = {}
+
+    def fee(self, symbol):
+        """Taker-Satz des Kontos laut Börse (einmal je Coin abgefragt), sonst fee_rate. Nie der Standardsatz von ccxt:
+        Der ist bei Kraken noch der alte (0,26 %)."""
+        if symbol not in self._fees:
+            try:
+                self._fees[symbol] = float(self.ex.fetch_trading_fee(symbol)["taker"])
+            except Exception as e:
+                log.warning("%s: Gebührensatz des Kontos nicht abrufbar, gerechnet mit %.2f %%: %s",
+                            symbol, self.fee_rate * 100, e)
+                self._fees[symbol] = self.fee_rate
+        return self._fees[symbol]
 
     def _balance(self):
         return self.ex.fetch_balance()["free"]

@@ -5,7 +5,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from .broker import LIQUIDATION_FEE, Broker
+from .broker import KRAKEN_TIERS, LIQUIDATION_FEE, Broker
 from .news import MarketContext
 from .phase import PhaseBook, stretch_ok, trend_of
 from .risk import RiskManager
@@ -132,8 +132,9 @@ class Trader:
                 + sum(t.fee + t.fees_done for t in self.open_trades.values()))
 
     def costs(self, symbol: str) -> float:
-        """Kosten für Kauf und Verkauf zusammen (Gebühren + Slippage) als Anteil am Kurs."""
-        fee = self.broker.fee(symbol) if hasattr(self.broker, "fee") else 0.0026
+        """Kosten für Kauf und Verkauf zusammen (Gebühren + Slippage) als Anteil am Kurs. Ein Broker ohne Satz
+        rechnet vorsichtig mit der kleinsten Kraken-Stufe."""
+        fee = self.broker.fee(symbol) if hasattr(self.broker, "fee") else KRAKEN_TIERS[0][2]
         return 2 * (fee + getattr(self.broker, "slippage", 0.0))
 
     def open_risk(self, equity: float) -> float:
@@ -218,7 +219,11 @@ class Trader:
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             return
         leveraged = getattr(self.broker, "leverage", 1.0) > 1
-        cash = self.broker.cash() if signal > 0 and leveraged else 0.0         # Cash vor dem Kauf (Margin-Anteil)
+        # freies Cash vor dem Kauf (Margin-Anteil): Kredite offener Hebel-Longs laufen bis zu deren Schliessen weiter;
+        # das Cash ist um sie schon gekürzt, und sie tragen ihre Zinsen selbst
+        cash = (self.broker.cash() + sum(o.margin_value * o.qty / (o.qty + o.sold)
+                                         for o in self.open_trades.values() if o.side > 0)
+                if signal > 0 and leveraged else 0.0)
         fill = (self.broker.buy(symbol, plan.qty, price, market=True) if signal > 0
                 else self.broker.sell(symbol, plan.qty, price, short=True, market=True))
         if fill:
@@ -232,7 +237,7 @@ class Trader:
                 info["spread"] = round((ask - bid) / ((ask + bid) / 2), 5)
             info.update(extra or {})
             # Geliehener Teil (bei Kraken eine Margin-Position bis zum Schliessen): Shorts ganz, Longs mit Hebel nur,
-            # was das Cash vor dem Kauf nicht deckte
+            # was das freie Cash vor dem Kauf nicht deckte
             margin = (fill.qty * fill.price if signal < 0
                       else max(0.0, fill.qty * fill.price + fill.fee - max(cash, 0.0)) if leveraged else 0.0)
             t = self.open_trades[symbol] = OpenTrade(
@@ -371,20 +376,24 @@ class Trader:
 
     def close_all(self, prices: dict[str, float], reason: str, when) -> None:
         """Alles mit Market-Orders schliessen (Not-Aus, Zwangsschliessung). Bei der Zwangsschliessung verlangt die
-        Börse statt der Handelsgebühr die Liquidationsgebühr (Kraken: 2 % des Positionswerts). Ein Coin ohne Kurs
-        (Ticker ausgefallen) bleibt offen, bis der nächste Lauf einen Kurs hat: keine Order zu einem alten Kurs."""
+        Börse statt der Handelsgebühr die Liquidationsgebühr (Kraken: 2 % des Positionswerts), aber nur für
+        Margin-Positionen: Shorts ganz, Longs für den geliehenen Teil (margin_value); was mit eigenem Cash gekauft ist,
+        zahlt beim Verkauf die normale Gebühr. Ein Coin ohne Kurs (Ticker ausgefallen) bleibt offen, bis der nächste
+        Lauf einen Kurs hat: keine Order zu einem alten Kurs."""
         liquidation = reason == "Liquidation" and hasattr(self.broker, "fee_override")
-        if liquidation:
-            self.broker.fee_override = LIQUIDATION_FEE
-        try:
-            for s in list(self.open_trades):
-                if s not in prices:
-                    log.warning("%s: kein Kurs, %s erst im nächsten Lauf", s, reason)
-                    continue
+        for s in list(self.open_trades):
+            if s not in prices:
+                log.warning("%s: kein Kurs, %s erst im nächsten Lauf", s, reason)
+                continue
+            if liquidation:     # Anteil der Margin-Position; fee(s) noch ohne Override: Stufe plus Zusatzkosten
+                t = self.open_trades[s]
+                w = 1.0 if t.side < 0 else min(1.0, t.margin_value / ((t.qty + t.sold) * t.entry))
+                self.broker.fee_override = w * LIQUIDATION_FEE + (1 - w) * self.broker.fee(s)
+            try:
                 self.exit(s, prices[s], reason, when, market=True)
-        finally:
-            if liquidation:
-                self.broker.fee_override = None
+            finally:
+                if liquidation:
+                    self.broker.fee_override = None
 
 
 def session(when) -> str:

@@ -33,10 +33,10 @@ LESSON = {
                  "halten ist wichtiger als jeder einzelne Gewinn.",
     "Stop-Loss (Gap)": "Der Kurs ist über den Stop hinweg gesprungen (Gap): Ausgeführt wurde zum ersten Kurs danach, "
                        "schlechter als der Stop. Stops schützen gut, aber nicht immer exakt auf den Rappen.",
-    "Stop-Loss (Ticker)": "Der Stop wurde nur mit dem Kurs beim Durchlauf geprüft (die Minutenkerzen waren nicht "
-                          "abrufbar oder die Minute lief noch) und zu diesem Kurs ausgeführt, jenseits des Stops: Der "
-                          "Verlust ist grösser als geplant. Eine Stop-Order an der Börse hätte schon beim Erreichen "
-                          "des Stops gegriffen.",
+    "Stop-Loss (Ticker)": "Der Stop wurde nur mit dem Kurs beim Durchlauf geprüft (live immer; im Demo, wenn die "
+                          "Minutenkerzen nicht abrufbar waren oder die Minute noch lief) und zu diesem Kurs "
+                          "ausgeführt, jenseits des Stops: Der Verlust ist grösser als geplant. Eine Stop-Order an der "
+                          "Börse hätte schon beim Erreichen des Stops gegriffen.",
     "Take-Profit": "Das Gewinnziel wurde erreicht: Der Plan mit festem Chance-Risiko-Verhältnis ist aufgegangen.",
     "Stop auf Einstand": "Nach dem Teilgewinn lag der Stop auf dem Einstiegskurs: Der Rest wurde ohne Verlust "
                          "geschlossen, der Teilgewinn bleibt. So wird aus einem Wackler kein Verlust.",
@@ -52,8 +52,8 @@ LESSON = {
 }
 # Zusatz für andere Stops, die nicht an ihrer Marke ausgeführt wurden, z.B. «Nachlauf-Stop (Gap)»
 FILL = {"Gap": "Ausgeführt wurde nach einem Kurssprung über die Marke hinweg (Gap), nicht genau an der Marke.",
-        "Ticker": "Nur mit dem Kurs beim Durchlauf geprüft (Minutenkerzen nicht abrufbar oder die Minute lief noch), "
-                  "darum zu diesem Kurs ausgeführt, nicht genau an der Marke."}
+        "Ticker": "Nur mit dem Kurs beim Durchlauf geprüft (live immer; im Demo, wenn die Minutenkerzen nicht abrufbar "
+                  "waren oder die Minute noch lief), darum zu diesem Kurs ausgeführt, nicht genau an der Marke."}
 
 
 def lesson(reason: str, pnl: float) -> str:

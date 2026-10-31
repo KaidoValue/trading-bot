@@ -14,6 +14,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from . import waechter
+
 log = logging.getLogger(__name__)
 
 CUTOFF = pd.Timestamp("2026-10-28T21:26:00+00:00")    # erster Bot-Lauf mit der Kaufgebühr im Trade-Ergebnis
@@ -128,10 +130,18 @@ def nachbuchen(trader, state_path: Path, start: float) -> dict | None:
     return trader.buchhaltung
 
 
-def pruefen(trader, prices: dict[str, float], start: float) -> dict:
-    """Abgleich für jeden Lauf (gerundet für den Stand). Eine Lücke über TOLERANZ kommt als Fehler ins Protokoll."""
+class Buchhaltungsfehler(Exception):
+    """Kapital und Trade-Ergebnisse passen nicht zusammen (Fehlerart im Fehler-Protokoll)."""
+
+
+def pruefen(trader, prices: dict[str, float], start: float, fehler_path: Path | None = None) -> dict:
+    """Abgleich für jeden Lauf (gerundet für den Stand). Eine Lücke über TOLERANZ kommt als Fehler ins Job-Protokoll
+    und ins Fehler-Protokoll des Bots (fehler_path, waechter.py), damit die Übersicht oben warnt."""
     ab = {k: round(v, 2) + 0.0 for k, v in trader.abgleich(prices, start).items()}     # + 0.0: kein «-0.0»
     if abs(ab["differenz"]) > TOLERANZ:
-        log.error("BUCHHALTUNG: Kapital %.2f CHF, aus den Trades erwartet %.2f CHF, Differenz %.2f CHF",
-                  ab["kapital"], ab["erwartet"], ab["differenz"])
+        text = (f"Kapital {ab['kapital']:.2f} CHF, aus den Trades erwartet {ab['erwartet']:.2f} CHF, "
+                f"Differenz {ab['differenz']:.2f} CHF")
+        log.error("BUCHHALTUNG: %s", text)
+        if fehler_path is not None:
+            waechter.melden(fehler_path, Buchhaltungsfehler(text))
     return ab

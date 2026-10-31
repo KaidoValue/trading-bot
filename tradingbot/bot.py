@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import data, indicators as ind
-from .broker import CCXTBroker, PaperBroker, paper_broker
+from .broker import KRAKEN_TIERS, CCXTBroker, PaperBroker, paper_broker
 from .config import Config
 from .engine import MINUTES, Trader
 from .news import NewsMonitor
@@ -29,11 +29,13 @@ def make_trader(cfg: Config, exchange) -> Trader:
     if cfg.mode == "live":
         if cfg.risk.leverage > 1:
             raise SystemExit("Hebel ist nur im Demo-Modus verfügbar.")
-        if cfg.allow_short:
+        if cfg.allow_short or any(h.allow_short for h in cfg.horizon_list()):
             raise SystemExit("Short-Handel ist nur im Backtest und Paper-Modus verfügbar.")
         if not cfg.api_key:
             raise SystemExit("Live-Modus braucht EXCHANGE_API_KEY und EXCHANGE_API_SECRET.")
-        broker = CCXTBroker(exchange, cfg.symbols[0].split("/")[1])
+        # Kosten-Schätzung ohne Satz des Kontos wie das Demo bei leerem Umsatz: kleinste Kraken-Stufe bzw. fee_rate
+        broker = CCXTBroker(exchange, cfg.symbols[0].split("/")[1],
+                            KRAKEN_TIERS[0][2] if cfg.fee_model == "kraken" else cfg.fee_rate, cfg.slippage)
         start = broker.cash()
     else:
         broker = paper_broker(cfg)
@@ -68,6 +70,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             hinweis = trader.note
     except Exception as e:      # die Nachbuchung darf den Handel nicht stoppen; die Übersicht zeigt die Lücke
         log.exception("Nachbuchung der Buchhaltung fehlgeschlagen: %s", e)
+        waechter.melden(cfg.fehler_path, e, "Nachbuchung: ")
     for t in trader.open_trades.values():      # Positionen aus der Zeit vor den Horizonten: Haupthorizont
         t.horizon = t.horizon if t.horizon in trader.horizons else horizons[0].name
     if last_bar:
@@ -92,13 +95,14 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             px, ohne = _bewertung(trader, prices, cfg.symbols)    # Kapital: Coins ohne Kurs zum letzten Kurs
             if paper:
                 sync_paper(trader.broker, exchange, tickers, now)
-            fertig, auftrag = auftraege(trader, cfg, prices, now) if paper else ([], [])    # von Hand, vor den Stops
             for s in prices:    # ohne Kurs keine Stop-Prüfung: der nächste Lauf spielt die Minuten nach
                 if paper:       # Demo: Minutenkerzen seit dem letzten Lauf, wie eine Stop-Order an der Börse
-                    replay_stops(trader, exchange, s, prices[s], now, last_bar)
+                    replay_stops(trader, exchange, s, prices[s], now, last_bar, cfg.fehler_path)
                 else:           # live: eine echte Order kann nicht rückwirkend laufen, also zum Kurs von jetzt
                     p = prices[s]
-                    trader.check_stops(s, p, p, p, now)
+                    trader.check_stops(s, p, p, p, now, gap_label="Ticker")
+            # von Hand, nach den Stops: hat eine Minute seit dem letzten Lauf den Stop berührt, galt er wie an der Börse
+            fertig, auftrag = auftraege(trader, cfg, prices, now) if paper else ([], [])
             if paper:
                 b = trader.broker
                 if b.interest_at is not None:
@@ -160,7 +164,11 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             if notes:
                 trader.note = " | ".join(notes)
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
-            abgleich = buchhaltung.pruefen(trader, px, cfg.starting_capital) if paper else None
+            abgleich = buchhaltung.pruefen(trader, px, cfg.starting_capital, cfg.fehler_path) if paper else None
+            if paper:   # neue Positionen, Coins ohne Kurs oder ohne Minutenkerzen: der nächste Lauf spielt ab hier nach
+                for s, t in trader.open_trades.items():
+                    opened = state._utc(t.opened)
+                    last_bar.setdefault(f"stop:{s}", max(now - STOP_BACK, opened) if opened else now - STOP_BACK)
             _write_trades(log_path, trader.closed)
             state.save(cfg.state_path, trader, last_bar, abgleich)
             _erledigt(fertig)               # erst jetzt: bricht der Lauf vorher ab, führt der nächste sie nochmals aus
@@ -285,13 +293,15 @@ def _erledigt(files: list[Path]) -> None:
             log.warning("Auftrag %s nicht nach erledigt/ verschoben: %s", f.name, e)
 
 
-def replay_stops(trader: Trader, exchange, symbol: str, price: float, now, last_bar: dict) -> None:
+def replay_stops(trader: Trader, exchange, symbol: str, price: float, now, last_bar: dict,
+                 fehler_path: Path | None = None) -> None:
     """Stops wie eine Stop-Order, die an der Börse liegt (Demo): die 1-Minuten-Kerzen seit der letzten Prüfung (über
     12 Std. her: 5-Minuten-Kerzen) der Reihe nach durch check_stops, geschlossen zur Schlusszeit der Kerze, an der Marke
     minus Slippage; ein Gap nur, wenn eine Kerze schon jenseits des Stops eröffnet. Danach die laufende Minute mit dem
     Ticker. Ohne Kerzen (nicht abrufbar, letzte Prüfung über 60 Std. her) zählt nur der Ticker: «Stop-Loss (Ticker)».
-    Die letzte Prüfung steht in last_bar["stop:<Coin>"]; Treffer, die der Ticker allein verpasst hätte, zählt
-    trader.zaehler["minutenkerze_getroffen"]."""
+    Die letzte Prüfung steht in last_bar["stop:<Coin>"] (ohne Kerzen bleibt sie stehen; fehlt sie, setzt run sie beim
+    Speichern); ein Abruffehler kommt ins Fehler-Protokoll (fehler_path). Treffer, die der Ticker allein verpasst
+    hätte, zählt trader.zaehler["minutenkerze_getroffen"]."""
     t = trader.open_trades.get(symbol)
     if t is None:
         return
@@ -314,6 +324,8 @@ def replay_stops(trader: Trader, exchange, symbol: str, price: float, now, last_
             rows = list(df[["open", "high", "low"]].set_axis(close)[(close > start) & (close <= now)].itertuples())
         except Exception as e:  # wie früher nur mit dem Ticker; der nächste Lauf spielt die Kerzen nach
             log.warning("%s: Kerzen für die Stops nicht abrufbar, nur der Kurs beim Durchlauf: %s", symbol, e)
+            if fehler_path is not None:     # sonst schaltete eine Dauerstörung «Stops minutengenau» unbemerkt ab
+                waechter.melden(fehler_path, e, f"Minutenkerzen {symbol}: ")
     for when, o, h, l in rows:
         stop, target, partial, n = t.stop, t.target, t.partial, len(trader.closed)
         trader.check_stops(symbol, o, h, l, when.to_pydatetime())

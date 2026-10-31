@@ -326,6 +326,25 @@ def test_state_survives_restart(df, monkeypatch, tmp_path):
     assert len(t2.closed) >= n_closed
 
 
+def test_state_load_ignores_unknown_trade_fields(tmp_path, caplog):
+    """Ein Stand mit Feldern, die dieser Code nicht kennt (z.B. nach dem Zurücksetzen auf eine ältere Version), lässt
+    sich trotzdem laden: Die Felder werden mit Warnung übergangen, statt jeden Lauf abzubrechen."""
+    import json
+    from tradingbot import state
+    t = Trader(PaperBroker(1000, 0.0026, 0), RiskManager(RiskConfig(), 1000))
+    t.on_signal("BTC/CHF", 1, 100, atr=2, equity=1000, when=datetime(2026, 10, 30, tzinfo=timezone.utc))
+    path = tmp_path / "paper_neu.json"
+    state.save(path, t, {})
+    raw = json.loads(path.read_text())
+    raw["open_trades"]["BTC/CHF"]["feld_aus_der_zukunft"] = 1.5
+    path.write_text(json.dumps(raw))
+    again = Trader(PaperBroker(1000, 0.0026, 0), RiskManager(RiskConfig(), 1000))
+    with caplog.at_level("WARNING"):
+        state.load(path, again)
+    assert vars(again.open_trades["BTC/CHF"]) == vars(t.open_trades["BTC/CHF"])
+    assert "BTC/CHF: unbekannte Felder im Stand ignoriert: feld_aus_der_zukunft" in caplog.text
+
+
 def test_news_briefing_lists_sources_and_links():
     hs = [Headline("coindesk", "SEC sues crypto exchange over listings", NOW - timedelta(hours=2), "https://x/1"),
           Headline("decrypt", "Crypto exchange faces SEC lawsuit", NOW - timedelta(hours=1), "https://x/2")]
@@ -453,8 +472,40 @@ def test_leverage_sizing_interest_and_liquidation():
 
 def test_leverage_refused_in_live_mode():
     cfg = Config(mode="live", risk=RiskConfig(leverage=2.0))
-    with pytest.raises(SystemExit):
+    cfg.api_key = "x"                               # sonst greift schon die Sperre ohne API-Schlüssel
+    with pytest.raises(SystemExit, match="Hebel"):
         bot.make_trader(cfg, None)
+
+
+def test_live_guards(monkeypatch):
+    """Live (echtes Geld) nur ohne Shorts, auch nicht in einem einzelnen Horizont, nur mit API-Schlüssel und nur mit
+    CONFIRM_LIVE=JA; der CCXTBroker leerverkauft nie."""
+    import sys
+    from tradingbot import __main__ as cli
+    from tradingbot.broker import CCXTBroker
+
+    class Bal:
+        def fetch_balance(self):
+            return {"free": {"CHF": 1000.0}}
+
+    def live(**kw):
+        cfg = Config(mode="live", **kw)
+        cfg.api_key = "x"
+        return cfg
+    with pytest.raises(SystemExit, match="Short"):
+        bot.make_trader(live(allow_short=True), Bal())
+    with pytest.raises(SystemExit, match="Short"):
+        bot.make_trader(live(horizons={"kurz": {"timeframe": "1h", "strategy": "trend", "allow_short": True}}), Bal())
+    with pytest.raises(SystemExit, match="API"):
+        bot.make_trader(Config(mode="live"), Bal())
+    assert isinstance(bot.make_trader(live(), Bal()).broker, CCXTBroker)
+    with pytest.raises(NotImplementedError):
+        CCXTBroker(Bal(), "CHF").sell("BTC/CHF", 1, 100, short=True)
+    monkeypatch.delenv("CONFIRM_LIVE", raising=False)
+    monkeypatch.setattr(cli, "run_bot", lambda *a: pytest.fail("Live ohne CONFIRM_LIVE gestartet"))
+    monkeypatch.setattr(sys, "argv", ["tradingbot", "live", "--config", "bots/config.yaml"])
+    with pytest.raises(SystemExit, match="CONFIRM_LIVE"):
+        cli.main()
 
 
 def test_leverage_caps_total_exposure_including_shorts():
@@ -1202,6 +1253,26 @@ def test_dashboard_and_report_show_fees_and_bookkeeping(capsys):
     assert "Gebühren gesamt: 0.50, Zinsen gesamt: 0.10" in capsys.readouterr().out
 
 
+def test_bookkeeping_gap_goes_to_fehler_protokoll(df, monkeypatch, tmp_path):
+    """Eine Lücke über 1 CHF kommt auch ins Fehler-Protokoll des Bots (daten/logs/fehler_<Config>.txt), damit die
+    Übersicht oben in STATUS.md und auf der Kachel warnt. Stimmt die Buchhaltung, gibt es keinen Eintrag."""
+    import json
+    from tradingbot import waechter
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="luecke", poll_seconds=0)
+    bot.run(cfg, max_iterations=1)
+    assert cfg.state_path.exists() and not cfg.fehler_path.exists()
+    st = json.loads(cfg.state_path.read_text())
+    st["paper"]["cash"] -= 12.34                                    # Geld fehlt, das kein Trade erklärt
+    cfg.state_path.write_text(json.dumps(st))
+    bot.run(cfg, max_iterations=1)
+    assert json.loads(cfg.state_path.read_text())["abgleich"]["differenz"] == pytest.approx(-12.34)
+    assert waechter.letzter(cfg.fehler_path)[1:] == (
+        "Buchhaltungsfehler", "Kapital 987.66 CHF, aus den Trades erwartet 1000.00 CHF, Differenz -12.34 CHF")
+
+
 # --- Echte Kraken-Kosten: Gebührenstaffel, Kauf zum Brief-/Verkauf zum Geldkurs, Margin-Kosten
 
 def test_kraken_fee_tiers_follow_30_day_volume():
@@ -1364,6 +1435,66 @@ def test_margin_costs_only_on_the_borrowed_part():
     assert abs(t.abgleich(px, 1000)["differenz"]) < 1e-9
 
 
+def test_freed_cash_is_not_borrowed_again():
+    """Wird A (ganz mit Cash bezahlt) verkauft, ist sein Erlös wieder freies Cash, auch wenn das Cash des Demo-Kontos
+    um den laufenden Kredit von B kleiner ist: C (500 CHF) ist ganz damit bezahlt, ohne Eröffnungsgebühr und Zinsen.
+    Rollover zahlt danach nur der Kredit von B (400 CHF), nicht derselbe Kredit ein zweites Mal."""
+    t, px = _margin_trader()
+    t.exit("A", 100, "Signal", 1, market=True)
+    eq = t.equity(px)
+    t.on_signal("C", 1, 50, atr=eq * 0.12 / 20, equity=eq, when=2)          # 10 Stück = 500 CHF
+    c, paid = t.open_trades["C"], t.broker.interest_paid
+    assert c.qty * c.entry == pytest.approx(500) and c.margin_value == 0 and c.interest == 0
+    t.charge_interest(px, 24, 0.0018)
+    assert t.broker.interest_paid - paid == pytest.approx(400 * 0.0018) and c.interest == 0
+    assert abs(t.abgleich(px, 1000)["differenz"]) < 1e-9
+
+
+def test_new_long_at_negative_cash_is_borrowed_completely():
+    """Wie meist beim Risiko-Bot: Alles eigene Geld steckt schon in Positionen, das Cash ist negativ (Kredit und
+    Zinsen). Ein neuer Long ist dann ganz geliehen, samt Kaufgebühr, aber das negative Cash nicht ein zweites Mal."""
+    rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=0.12, max_total_risk_pct=1, max_open_positions=8)
+    b = PaperBroker(1000, 0.0026, 0.0)
+    b.leverage = 3.0
+    t, px = Trader(b, RiskManager(rc, 1000)), {"A": 100.0, "B": 10.0}
+    t.on_signal("A", 1, 100, atr=5, equity=1000, when=0)                # 12 Stück = 1'200 CHF, gut 200 geliehen
+    t.charge_interest(px, 24 * 10, 0.0018)                              # 10 Tage Rollover
+    assert t.open_trades["A"].margin_value == pytest.approx(1200 * 1.0026 - 1000) and b.cash() < -205
+    t.on_signal("B", 1, 10, atr=0.5, equity=t.equity(px), when=0)
+    tr = t.open_trades["B"]
+    assert tr.qty * tr.entry > 1000 and tr.margin_value == pytest.approx(tr.qty * tr.entry + tr.fee)
+    assert tr.interest == pytest.approx(0.0003 * tr.margin_value) and abs(t.abgleich(px, 1000)["differenz"]) < 1e-9
+
+
+def test_paper_loop_charges_rollover_on_leveraged_longs(df, monkeypatch, tmp_path):
+    """Im Bot-Lauf: Das Demo-Konto mit Hebel (paper_broker) kauft geliehen, jeder Lauf merkt sich die Zeit der
+    Zinsabrechnung (interest_at), und der nächste bucht den Rollover für die Zeit dazwischen auf den geliehenen Teil."""
+    import json
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    ex = FakeExchange(df)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="hebel", poll_seconds=0, fee_rate=0.0,
+                 risk=RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, max_total_risk_pct=1,
+                                 max_drawdown_pct=0.99))
+    t = bot.make_trader(cfg, None)
+    price = df["close"].iloc[ex.i + 1]                                  # Kurs beim nächsten Lauf
+    t.on_signal("BTC/CHF", 1, price, atr=price * 0.1, equity=1000.0, when=datetime.now(timezone.utc))   # Stop −20 %
+    margin = t.open_trades["BTC/CHF"].margin_value
+    assert margin > 1000
+    state.save(cfg.state_path, t, {})
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    assert st["paper"]["interest_at"] is not None and list(st["open_trades"]) == ["BTC/CHF"]
+    vorher = datetime.fromisoformat(st["paper"]["interest_at"]["__dt__"]) - timedelta(hours=4)
+    st["paper"]["interest_at"] = {"__dt__": vorher.isoformat()}           # letzte Abrechnung vor 4 Std.
+    cfg.state_path.write_text(json.dumps(st))
+    bot.run(cfg, max_iterations=1)
+    zins = json.loads(cfg.state_path.read_text())["open_trades"]["BTC/CHF"]["interest"]
+    assert zins - st["open_trades"]["BTC/CHF"]["interest"] == pytest.approx(margin * 0.0018 * 4 / 24, rel=0.01)
+
+
 def test_old_positions_share_the_borrowed_cash(tmp_path):
     """Stände von vor der Margin-Rechnung (ohne margin_value): Longs teilen sich das geliehene Cash nach ihrem Wert,
     Shorts sind ganz geliehen; so zahlen alte Hebel-Positionen weiter Zinsen."""
@@ -1388,6 +1519,8 @@ def test_old_positions_share_the_borrowed_cash(tmp_path):
 
 
 def test_liquidation_pays_two_percent_instead_of_the_trading_fee():
+    """Zwangsschliessung: 2 % statt der Handelsgebühr nur auf Margin-Positionen (Shorts ganz, Longs der geliehene Teil);
+    was mit eigenem Cash gekauft ist, zahlt die normale Taker-Gebühr. Ein Not-Aus zahlt die normale Gebühr."""
     from tradingbot.broker import KRAKEN_TIERS
     rc = RiskConfig(leverage=3.0, max_position_pct=1.0, risk_per_trade=1.0, max_total_risk_pct=1, max_daily_loss_pct=1)
     b = PaperBroker(1000, 0.0026, 0.0, tiers=KRAKEN_TIERS)
@@ -1396,10 +1529,16 @@ def test_liquidation_pays_two_percent_instead_of_the_trading_fee():
     t.on_signal("X", 1, 100, atr=1, equity=1000, when=0)
     tr = t.open_trades["X"]
     assert tr.fee == pytest.approx(tr.qty * 100 * 0.008)                       # Kauf: Taker der kleinsten Stufe
-    assert bot.liquidation(t, {"X": 79}, rc)
+    w = tr.margin_value / (tr.qty * 100)                                       # geliehen, der Rest ist eigenes Cash
+    assert 0.6 < w < 0.7 and bot.liquidation(t, {"X": 79}, rc)
     t.close_all({"X": 79}, "Liquidation", 1)
     c = t.closed[-1]
-    assert c["fees"] == pytest.approx(tr.fee + 0.02 * tr.qty * 79) and b.fee_override is None
+    assert c["fees"] == pytest.approx(tr.fee + tr.qty * 79 * (w * 0.02 + (1 - w) * 0.006)) and b.fee_override is None
+    m, px = _margin_trader()                        # ohne Handelsgebühr: A ganz mit Cash, B zur Hälfte geliehen
+    m.on_signal("C", -1, 50, atr=6, equity=m.equity(px), when=0)              # Short: ganz geliehen
+    qc = m.open_trades["C"].qty
+    m.close_all(px, "Liquidation", 1)
+    assert {c["symbol"]: c["fees"] for c in m.closed} == pytest.approx({"A": 0.0, "B": 0.01 * 800, "C": 0.02 * qc * 50})
     assert t.equity({}) == pytest.approx(1000 + c["pnl"])
     t.on_signal("X", 1, 100, atr=1, equity=t.equity({}), when=2)
     tr = t.open_trades["X"]
@@ -1425,9 +1564,10 @@ def test_history_simulation_with_kraken_fees_costs_more(df):
 
 def test_history_fee_tier_as_for_account_with_starting_capital(df, monkeypatch):
     """normiert (Standard): Die Stufe zählt den Umsatz im Verhältnis zum Kapital wie bei einem Konto mit Startkapital,
-    ein gewachsenes Simulationskonto bekommt also keinen Mengenrabatt; staffel: echter Umsatz; alt: fest 0,26 %."""
+    ein gewachsenes Simulationskonto (hier mit 10-mal so viel Kapital) bekommt also keinen Mengenrabatt; staffel: echter
+    Umsatz; alt: fest 0,26 %. Die Uhr des Brokers läuft mit der Simulation, älterer Umsatz fällt aus den 30 Tagen."""
     from tradingbot import historie
-    from tradingbot.broker import KRAKEN_TIERS
+    from tradingbot.broker import KRAKEN_TIERS, WINDOW
     t0 = datetime(2026, 10, 1, tzinfo=timezone.utc)
     b = PaperBroker(100_000, 0.006, 0.0, tiers=KRAKEN_TIERS)
     b.now = t0
@@ -1436,7 +1576,12 @@ def test_history_fee_tier_as_for_account_with_starting_capital(df, monkeypatch):
     b.volume_scale = 0.01                                          # 100'000er-Konto, gerechnet wie 1'000
     assert b.tier()[0] == 2 and b.fee("BTC/USD") == 0.006
     brokers, build_broker = {}, historie.paper_broker
-    monkeypatch.setattr(historie, "paper_broker", lambda cfg: brokers.setdefault(cfg.name, build_broker(cfg)))
+
+    def grown(cfg):                                 # wie ein Konto, das auf das 10-fache gewachsen ist
+        b = brokers[cfg.name] = build_broker(cfg)
+        b._cash = 10 * cfg.starting_capital
+        return b
+    monkeypatch.setattr(historie, "paper_broker", grown)
     btc = df.set_axis(pd.date_range("2020-01-01", periods=len(df), freq="1h", tz="UTC"))
     runs = {}
     for fees in historie.FEES:
@@ -1445,10 +1590,14 @@ def test_history_fee_tier_as_for_account_with_starting_capital(df, monkeypatch):
         runs[fees] = historie.simulate(cfg, {"BTC/USD": btc}, fees=fees)
     last = brokers["normiert"]
     eq = last.cash() + last.position("BTC/USD") * btc["close"].iloc[-1]
-    assert last.volume_scale == pytest.approx(min(1.0, 1000 / eq)) and brokers["staffel"].volume_scale == 1.0
+    assert last.volume_scale == pytest.approx(1000 / eq) and last.volume_scale < 0.2
+    assert brokers["staffel"].volume_scale == 1.0 and last.now == btc.index[-1]
+    last.tier()                                                    # Umsatz der letzten 30 Tage bis zur letzten Kerze
+    assert last.volume_log and all(z >= last.now - WINDOW for z, _ in last.volume_log)
+    assert last.volume == pytest.approx(sum(v for _, v in last.volume_log))
     rate = lambda tr: tr["fees"].sum() / (tr["qty"] * (tr["entry"] + tr["exit"])).sum()      # Gebühr je Umsatz
     assert rate(runs["alt"].trades) == pytest.approx(0.0026) and rate(runs["normiert"].trades) > 0.0059
-    assert rate(runs["normiert"].trades) >= rate(runs["staffel"].trades) - 1e-12
+    assert rate(runs["normiert"].trades) > rate(runs["staffel"].trades) + 0.001
     with pytest.raises(ValueError):
         historie.simulate(cfg, {"BTC/USD": btc}, fees="billig")
 
@@ -1494,16 +1643,21 @@ def test_bot_run_buys_at_ask_with_kraken_fee_and_keeps_the_volume(df, monkeypatc
 
 
 def test_dashboard_shows_fee_tier():
-    from tradingbot import dashboard
+    """STATUS.md zeigt die Gebührenstufe, die Kachel der Trading-Oberfläche Gebühren bisher und Stufe."""
+    from tradingbot import dashboard, web
     from tradingbot.broker import KRAKEN_TIERS
     b = PaperBroker(1000, 0.006, 0, tiers=KRAKEN_TIERS)
     b.quote_usd = 1.25
     b.load_volume([(datetime.now(timezone.utc), 3420.0)])                     # 4'275 USD: Stufe 2
-    kraken = dashboard.Bot(Config(title="K"), Trader(b, RiskManager(RiskConfig(), 1000)), 1000.0, 0.0)
-    fix = dashboard.Bot(Config(title="F"), Trader(PaperBroker(1000, 0.0026, 0), RiskManager(RiskConfig(), 1000)),
-                        1000.0, 0.0)
+    kraken = dashboard.Bot(Config(name="k", title="K"), Trader(b, RiskManager(RiskConfig(), 1000)), 1000.0, 0.0)
+    fix = dashboard.Bot(Config(name="f", title="F"),
+                        Trader(PaperBroker(1000, 0.0026, 0), RiskManager(RiskConfig(), 1000)), 1000.0, 0.0)
+    fix.trader.on_signal("X", 1, 100, atr=2, equity=1000, when=0)              # Kaufgebühr 2.5 × 100 × 0,26 %
     assert ("| Gebührenstufe | Stufe 2: 0.60 % je Market-Order (30-Tage-Umsatz 3'420 CHF) "
-            "| fest 0.26 % je Order (30-Tage-Umsatz 0 CHF) |") in dashboard.overview([kraken, fix])
+            "| fest 0.26 % je Order (30-Tage-Umsatz 250 CHF) |") in dashboard.overview([kraken, fix])
+    html = web.page([kraken, fix], None, {}, {}, pd.DataFrame(columns=["zeit"]), datetime.now(timezone.utc))
+    assert "<span>Gebühren bisher · Stufe</span><b>0.00 CHF · Stufe 2: 0.60 %</b>" in html
+    assert "<span>Gebühren bisher · Stufe</span><b>0.65 CHF · fest 0.26 %</b>" in html
 
 
 def test_bot_configs_use_kraken_costs():
@@ -1514,6 +1668,7 @@ def test_bot_configs_use_kraken_costs():
         assert cfg.fee_model == "kraken" and cfg.fee_rate == 0.006 and paper_broker(cfg).tiers is KRAKEN_TIERS
     risk = Config.load("bots/config_risiko.yaml").risk
     assert (risk.margin_interest_per_day, risk.margin_open_fee, paper_broker(Config()).tiers) == (0.0018, 0.0003, None)
+    assert paper_broker(Config.load("bots/config_risiko.yaml")).leverage == 3.0         # darf geliehen kaufen
     assert FEE == 0.008
     with pytest.raises(ValueError):
         paper_broker(Config(fee_model="Kraken"))
@@ -1530,6 +1685,36 @@ def test_bot_configs_use_kraken_costs():
     live = CCXTBroker(Live(), "CHF")
     assert live.buy("BTC/CHF", 0.5, 99.0, market=True).price == 100.0
     assert live.sell("BTC/CHF", 2.0, 99.0, market=True).qty == 1.0
+
+
+def test_live_costs_use_the_account_taker_fee():
+    """Live schätzt die Kosten für den Gebührenfilter (min_edge) und den Stop auf Einstand wie das Demo: Taker-Satz des
+    Kontos (einmal je Coin bei der Börse abgefragt) plus Slippage. Liefert die Börse keinen, wie das Demo bei leerem
+    Umsatz: kleinste Kraken-Stufe (0,80 %) bzw. mit fee_model «fix» fee_rate, nie mehr die alten 0,26 %."""
+    from tradingbot.broker import KRAKEN_TIERS, CCXTBroker
+
+    class Bal:                                      # Börse ohne Abfrage des Gebührensatzes
+        def fetch_balance(self):
+            return {"free": {"CHF": 1000.0}}
+
+    class Live(Bal):
+        calls = 0
+
+        def fetch_trading_fee(self, symbol):
+            self.calls += 1
+            return {"symbol": symbol, "maker": 0.0022, "taker": 0.0038}
+    ex = Live()
+    t = Trader(CCXTBroker(ex, "CHF", slippage=0.0005), RiskManager(RiskConfig(), 1000))
+    assert t.costs("BTC/CHF") == pytest.approx(2 * (0.0038 + 0.0005)) and t.costs("BTC/CHF") and ex.calls == 1
+    cfg = Config.load("bots/config_daytrading.yaml")
+    demo = bot.make_trader(cfg, None)
+    cfg.mode, cfg.api_key = "live", "x"
+    live = bot.make_trader(cfg, Bal())
+    assert live.costs("BTC/CHF") == pytest.approx(demo.costs("BTC/CHF"))
+    assert live.costs("BTC/CHF") == pytest.approx(2 * (KRAKEN_TIERS[0][2] + cfg.slippage))
+    fix = Config(mode="live", fee_rate=0.001)
+    fix.api_key = "x"
+    assert bot.make_trader(fix, Bal()).costs("BTC/CHF") == pytest.approx(2 * (0.001 + fix.slippage))
 
 
 # --- Stops minutengenau: Minutenkerzen seit dem letzten Lauf wie eine Stop-Order an der Börse
@@ -1604,14 +1789,17 @@ def test_minutes_before_the_entry_or_the_last_check_are_ignored(df):
 
 def test_without_minute_candles_only_the_ticker_counts(df, caplog):
     """Sind die Minutenkerzen nicht abrufbar, prüft der Bot wie früher nur mit dem Kurs beim Durchlauf und sagt das
-    im Grund: «Stop-Loss (Ticker)» zum Kurs von jetzt, nicht «Gap». Die letzte Prüfung bleibt stehen, damit der
-    nächste Lauf die Kerzen nachspielt."""
+    im Grund: «Stop-Loss (Ticker)» zum Kurs von jetzt, nicht «Gap». replay_stops schreibt dann keine neue Prüfung: Eine
+    gespeicherte bleibt stehen (fehlt sie, setzt bot.run sie beim Speichern), damit der nächste Lauf nachspielt."""
     t, last_bar = _stop_trader(T0), {}
     with caplog.at_level("WARNING"):
         bot.replay_stops(t, MinuteExchange(df, [], last=97.5, fail=True), "X", 97.5, LAUF, last_bar)
     c = t.closed[-1]
     assert c["reason"] == "Stop-Loss (Ticker)" and c["exit"] == pytest.approx(97.5 * 0.999) and c["closed"] == LAUF
     assert "stop:X" not in last_bar and "nicht abrufbar" in caplog.text
+    t, last_bar = _stop_trader(T0), {"stop:X": pd.Timestamp(T0 + timedelta(minutes=5))}
+    bot.replay_stops(t, MinuteExchange(df, [], last=99.5, fail=True), "X", 99.5, LAUF, last_bar)
+    assert "X" in t.open_trades and last_bar == {"stop:X": pd.Timestamp(T0 + timedelta(minutes=5))}
 
 
 def test_take_profit_touched_inside_a_minute_fills_at_the_target(df):
@@ -1673,7 +1861,8 @@ def test_long_pause_uses_5_minute_candles_or_only_the_ticker(df):
 
 def test_paper_loop_replays_minutes_and_keeps_the_counter(df, monkeypatch, tmp_path):
     """Im Paper-Loop: Stop in einer Minutenkerze zur echten Zeit geschlossen, Zähler und letzte Prüfung im Stand,
-    Lehre im Tagebuch. Ohne Minutenkerzen läuft der Durchlauf weiter, Grund «Stop-Loss (Ticker)»."""
+    Lehre im Tagebuch. Ohne Minutenkerzen läuft der Durchlauf weiter, Grund «Stop-Loss (Ticker)», und der Abruffehler
+    steht im Fehler-Protokoll (sonst wären die Stops unbemerkt nicht mehr minutengenau)."""
     import json
     from tradingbot import state
     monkeypatch.chdir(tmp_path)
@@ -1701,6 +1890,8 @@ def test_paper_loop_replays_minutes_and_keeps_the_counter(df, monkeypatch, tmp_p
     state.load(cfgs["minute"].state_path, again)
     assert again.zaehler == {"minutenkerze_getroffen": 1}           # bleibt über den Neustart erhalten
     assert st["ohne"]["closed"][-1]["reason"] == "Stop-Loss (Ticker)"
+    assert "| OSError | Minutenkerzen BTC/CHF: Börse nicht erreichbar" in cfgs["ohne"].fehler_path.read_text()
+    assert not cfgs["minute"].fehler_path.exists()
     assert list(pd.read_csv("daten/logs/trades_ohne.csv")["reason"]) == ["Stop-Loss (Ticker)"]
     text = "".join(p.read_text() for p in Path("lernen/tagebuch").glob("*.md"))
     assert "Stop-Loss hat den Verlust" in text and "nur mit dem Kurs beim Durchlauf geprüft" in text
@@ -1719,7 +1910,7 @@ def test_journal_lessons_for_gap_and_ticker():
 
 def test_live_mode_checks_stops_only_with_the_ticker(df, monkeypatch, tmp_path):
     """Live (echte Orders) bleibt wie bisher beim Kurs von jetzt: keine Minutenkerzen, denn eine echte Order kann nicht
-    rückwirkend ausgeführt werden."""
+    rückwirkend ausgeführt werden. Der Grund sagt das: «Stop-Loss (Ticker)», kein Gap (der Kurs sprang nicht)."""
     from tradingbot.broker import CCXTBroker
     from tradingbot.engine import OpenTrade
 
@@ -1741,7 +1932,7 @@ def test_live_mode_checks_stops_only_with_the_ticker(df, monkeypatch, tmp_path):
     t.open_trades["BTC/CHF"] = OpenTrade(1, 100.0, 1.0, 98.0, 104.0, T0)
     monkeypatch.setattr(bot, "make_trader", lambda *a: t)
     bot.run(cfg, max_iterations=1)
-    assert not ex.calls and t.closed[-1]["reason"] == "Stop-Loss (Gap)" and t.closed[-1]["exit"] == 97.5
+    assert not ex.calls and t.closed[-1]["reason"] == "Stop-Loss (Ticker)" and t.closed[-1]["exit"] == 97.5
 
 
 # --- Wächter für stille Fehler: ein Coin ohne Kurs stoppt nicht alle, Fehler-Protokoll, Exit-Code, Warnung oben
@@ -1782,7 +1973,7 @@ def test_one_failing_ticker_does_not_stop_the_other_coins(df, monkeypatch, tmp_p
     bot.run(cfg, max_iterations=1)                  # kein Exit-Code 1: der Durchlauf hat geklappt
     st = json.loads(cfg.state_path.read_text())
     assert [(c["symbol"], c["reason"]) for c in st["closed"]] == [("BTC/CHF", "Stop-Loss")]
-    assert list(st["open_trades"]) == ["ETH/CHF"] and "stop:ETH/CHF" not in st["last_bar"]
+    assert list(st["open_trades"]) == ["ETH/CHF"] and st["last_bar"]["stop:ETH/CHF"]["__dt__"] == start.isoformat()
     qty = st["open_trades"]["ETH/CHF"]["qty"]
     assert st["abgleich"]["kapital"] == pytest.approx(st["paper"]["cash"] + qty * 101.0, abs=0.01)
     assert st["prices"]["ETH/CHF"] == [101.0, "2026-10-30T11:30:00+00:00"] and st["prices"]["BTC/CHF"][0] == 99.5
@@ -1802,6 +1993,54 @@ def test_one_failing_ticker_does_not_stop_the_other_coins(df, monkeypatch, tmp_p
         two.on_signal(s, 1, 100, atr=1, equity=1000, when=0)
     two.close_all({"A": 100.0}, "Not-Aus", 1)
     assert [c["symbol"] for c in two.closed] == ["A"] and list(two.open_trades) == ["B"]
+
+
+class Uhr(datetime):
+    """Feste Uhr für bot.run (Läufe im Abstand von 30 Minuten wie auf GitHub)."""
+    t = None
+
+    @classmethod
+    def now(cls, tz=None):
+        return cls.t.astimezone(tz) if tz else cls.t
+
+
+@pytest.mark.parametrize("r1", ["kerzen", "kurs", "ausgefallen"])
+def test_failed_or_missing_run_after_entry_still_replays_from_the_entry(monkeypatch, tmp_path, r1):
+    """Einstieg im Lauf R0 (05:01:40). Im Lauf R1 30 Min. später fehlen die Minutenkerzen, der Kurs von ETH fehlt oder
+    der ganze Lauf fällt aus. Der Lauf R2 spielt trotzdem alle Minuten seit dem Einstieg nach, denn der Stand merkt
+    sich schon beim Einstieg, ab wann geprüft werden muss: Stop von ETH in der Minute 05:11-05:12."""
+    import json
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "datetime", Uhr)
+    hourly = data.synthetic(bars=1500, seed=1, start_price=100.0)
+    r0 = datetime(2026, 10, 30, 5, 1, 40, tzinfo=timezone.utc)
+    begin = datetime(2026, 10, 30, 4, 56, tzinfo=timezone.utc)
+    cfg = Config(symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="luecke", poll_seconds=0, fee_rate=0.0,
+                 risk=RiskConfig(max_total_risk_pct=1))
+
+    def lauf(when, ex):
+        Uhr.t = when
+        monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+        bot.run(cfg, max_iterations=1)
+        return json.loads(cfg.state_path.read_text())
+
+    def boerse(when, special=None, flat=100.0, down=(), **kw):     # Minutenkerzen ab 04:56 bis zur laufenden Minute
+        n = int((when - begin).total_seconds() // 60)
+        ex = OneTickerDown(hourly, _minutes(begin, n, special, flat), flat, **kw)
+        ex.down = set(down)
+        return ex
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(1))
+    stop = lauf(r0, boerse(r0))["open_trades"]["ETH/CHF"]["stop"]
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    touch, flat = {15: (stop + 0.5, stop + 0.6, stop - 0.3, stop + 0.4)}, stop + 1.0     # Minute 05:11-05:12
+    r1_at = r0 + timedelta(minutes=30)
+    if r1 == "kerzen":
+        lauf(r1_at, boerse(r1_at, touch, flat, fail=True))
+    elif r1 == "kurs":
+        lauf(r1_at, boerse(r1_at, touch, flat, down={"ETH/CHF"}))
+    st = lauf(r0 + timedelta(minutes=60), boerse(r0 + timedelta(minutes=60), touch, flat))
+    eth = [c for c in st["closed"] if c["symbol"] == "ETH/CHF"]
+    assert [(c["reason"], c["closed"]["__dt__"]) for c in eth] == [("Stop-Loss", "2026-10-30T05:12:00+00:00")]
 
 
 def test_failed_cycle_exits_with_code_1_and_is_logged(df, monkeypatch, tmp_path):
@@ -1999,10 +2238,11 @@ def test_order_waits_for_a_price_and_skips_unknown_commands(df, monkeypatch, tmp
     assert not order.exists() and (bot.AUFTRAEGE / "erledigt" / order.name).exists() and other.exists()
 
 
-def test_order_comes_before_the_stops_and_moves_only_after_saving(df, monkeypatch, tmp_path):
+def test_order_comes_after_the_stops_and_moves_only_after_saving(df, monkeypatch, tmp_path):
     """Bricht ein Lauf nach dem Ausführen, aber vor dem Speichern ab, bleibt der Auftrag liegen: Der nächste Lauf lädt
-    den alten Stand (Position noch offen) und führt ihn nochmals aus. Der Auftrag kommt vor den Stops: geschlossen
-    wird zum Kurs beim Lauf, auch wenn eine Minutenkerze seit dem letzten Lauf den Stop berührt hat."""
+    den alten Stand (Position noch offen) und führt ihn nochmals aus. Der Auftrag kommt nach den Stops: Hat eine
+    Minutenkerze seit dem letzten Lauf den Stop berührt (vor dem Auftrag), gilt der Stop wie an der Börse und die
+    Position ist schon zu; sonst wird zum Kurs beim Lauf geschlossen."""
     import json
     from tradingbot import state
     monkeypatch.chdir(tmp_path)
@@ -2028,9 +2268,20 @@ def test_order_comes_before_the_stops_and_moves_only_after_saving(df, monkeypatc
     assert order.exists() and "BTC/CHF" in json.loads(cfg.state_path.read_text())["open_trades"]
     bot.run(cfg, max_iterations=1)
     st = json.loads(cfg.state_path.read_text())
+    assert [(c["reason"], c["exit"]) for c in st["closed"]] == [("Stop-Loss", pytest.approx(98 * (1 - cfg.slippage)))]
+    assert st["closed"][0]["closed"]["__dt__"] == (start + timedelta(minutes=15)).isoformat()
+    assert "BTC/CHF ohne offene Position" in st["note"]
+    assert not order.exists() and (bot.AUFTRAEGE / "erledigt" / order.name).exists()
+    ex.minutes = _minutes(start, 30)                # ohne Berührung: von Hand zum Kurs beim Lauf
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="ohne_stop", poll_seconds=0, fee_rate=0.0)
+    t = bot.make_trader(cfg, None)
+    t.on_signal("BTC/CHF", 1, 100, atr=1, equity=1000.0, when=start)
+    state.save(cfg.state_path, t, {})
+    bot.auftrag_ablegen(cfg.name, "schliessen BTC/CHF")
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
     assert [(c["reason"], c["exit"]) for c in st["closed"]] == [("Von Hand geschlossen",
                                                                  pytest.approx(99.5 * (1 - cfg.slippage)))]
-    assert not order.exists() and (bot.AUFTRAEGE / "erledigt" / order.name).exists()
 
 
 def test_broken_order_does_not_stop_the_cycle(monkeypatch, tmp_path):
@@ -2045,6 +2296,36 @@ def test_broken_order_does_not_stop_the_cycle(monkeypatch, tmp_path):
     assert bot.auftraege(t, cfg, {"X": 100.0}, datetime.now(timezone.utc)) == ([], [])
     assert order.exists() and "X" in t.open_trades
     assert " UTC | ZeroDivisionError | Auftrag " in cfg.fehler_path.read_text()
+
+
+def test_live_bot_leaves_orders_alone(df, monkeypatch, tmp_path):
+    """Aufträge von Hand gelten nur für Demo-Bots: Ein Live-Bot mit dem Namen eines Demo-Bots führt dessen
+    «schliessen» nicht als echte Order aus, der Auftrag bleibt liegen."""
+    from tradingbot.broker import CCXTBroker
+    from tradingbot.engine import OpenTrade
+
+    class Live(MinuteExchange):
+        def fetch_balance(self):
+            return {"free": {"CHF": 1000.0, "BTC": 1.0}}
+
+        def amount_to_precision(self, s, q):
+            return q
+
+        def create_order(self, s, kind, side, qty):
+            self.orders.append((s, side, qty))
+            return {"average": self.last, "filled": qty, "fee": {"cost": 0.0}}
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    ex = Live(df, [], 99.5)                         # Kurs über dem Stop (98): kein Grund zum Schliessen
+    ex.orders = []
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    cfg = Config(mode="live", symbols=["BTC/CHF"], use_news=False, name="config_daytrading", poll_seconds=0)
+    t = Trader(CCXTBroker(ex, "CHF"), RiskManager(cfg.risk, 1000))
+    t.open_trades["BTC/CHF"] = OpenTrade(1, 100.0, 1.0, 98.0, 104.0, T0)
+    monkeypatch.setattr(bot, "make_trader", lambda *a: t)
+    order = bot.auftrag_ablegen(cfg.name, "schliessen BTC/CHF")
+    bot.run(cfg, max_iterations=1)
+    assert not ex.orders and order.exists() and "BTC/CHF" in t.open_trades
 
 
 def test_cli_schliessen_writes_an_order_by_default(df, monkeypatch, tmp_path):
@@ -2114,3 +2395,15 @@ def test_paper_loop_stores_the_delay_after_candle_close(df, monkeypatch, tmp_pat
     assert pd.Timestamp(st["last_bar"]["mittel:BTC/CHF"]["__dt__"]) == offen - pd.Timedelta(hours=4)
     delay = tr["context"]["delay_min"]
     assert tr["horizon"] == "mittel" and delay == round((lauf - offen).total_seconds() / 60, 1) and delay >= 0
+
+
+def test_cycle_waits_until_shortly_after_candle_close():
+    """bot.yml wartet vor jedem Durchlauf bis :01:30 bzw. :31:30 UTC. Ein Start in den 90 Sekunden nach :00/:30 wartet
+    nur bis zu diesem Termin (früher bis zum übernächsten: ein Durchlauf fiel weg, die Signale kamen 30 Min. später)."""
+    import re
+    yml = Path(".github/workflows/bot.yml").read_text(encoding="utf-8")
+    line = next(z for z in yml.splitlines() if "sleep $((" in z)
+    expr = re.search(r"sleep \$\(\((.*)\)\)", line).group(1)
+    assert re.fullmatch(r"[\s\d()+\-*%]+", expr.replace("now", ""))    # Ganzzahlen ohne «/»: in Python wie in bash
+    for r, wait in [(0, 90), (30, 60), (89, 1), (90, 0), (91, 1799), (1799, 91)]:      # Sekunden nach :00 bzw. :30
+        assert eval(expr, {}, {"now": 10**6 * 1800 + r}) == wait, r

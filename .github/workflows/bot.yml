@@ -39,9 +39,10 @@ jobs:
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
           for i in $(seq 1 9); do
-            # Signale entstehen beim Kerzenschluss um :00 und :30 UTC: vor jedem Durchlauf (auch dem ersten) bis zur
-            # nächsten vollen oder halben Stunde plus 90 Sekunden warten, damit die Börse die Kerze abgeschlossen hat
-            now=$(date +%s); sleep $(( 1800 - now % 1800 + 90 ))
+            # Signale entstehen beim Kerzenschluss um :00 und :30 UTC: vor jedem Durchlauf (auch dem ersten) bis
+            # :01:30 bzw. :31:30 UTC warten (90 Sekunden nach Kerzenschluss, damit die Börse die Kerze abgeschlossen
+            # hat); ein Start bis 90 Sekunden nach :00/:30 wartet nur bis zu diesem Termin, nicht bis zum übernächsten
+            now=$(date +%s); sleep $(( (1890 - now % 1800) % 1800 ))
             echo "=== Durchlauf $i um $(date -u '+%H:%M:%S') UTC ==="
             git rebase --abort 2>/dev/null || true      # falls ein früherer Durchlauf hängen geblieben ist
             git pull -q --rebase -X theirs origin main || true

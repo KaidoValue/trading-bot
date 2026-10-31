@@ -77,7 +77,7 @@ Werkzeuge je Horizont (alle optional):
 | `min_edge: 5` | **Gebührenfilter:** kein Einstieg, wenn das erste Ziel weniger als 5× die Kosten (Gebühren + Slippage für Kauf und Verkauf) bringt. |
 | `partial_atr: 0.75`, `partial_pct: 0.5` | **Teilgewinn:** die Hälfte bei +0,75 × ATR verkaufen, danach Stop auf den Einstand (plus Kosten). Hebt die Trefferquote stark. |
 | `trail_atr: 3` | Nachlauf-Stop im Abstand 3 × ATR zum besten Kurs (in der Simulation ohne Vorteil, daher aus). |
-| `allow_short: false` | Shorts nur in diesem Horizont aus- oder einschalten (leer = Einstellung des Bots). |
+| `allow_short: false` | Shorts nur in diesem Horizont aus- oder einschalten (leer = Einstellung des Bots; live immer gesperrt). |
 
 Für den ganzen Bot: `short_probation: true` (Short-Probezeit) lässt Shorts nur mit einem Viertel der Grösse zu, bis
 die letzten 20 eigenen Shorts zusammen Gewinn gebracht haben (mindestens 10 Shorts). Trade-Ergebnisse enthalten
@@ -87,7 +87,8 @@ Hebel (siehe [Realistische Kosten](#realistische-kosten-wie-bei-kraken)).
 **Buchhaltung** (`tradingbot/buchhaltung.py`): Jeder abgeschlossene Trade speichert `fees` (Kaufgebühr und alle
 Verkaufsgebühren, auch von Teilverkäufen) und `interest` (Zinsen); das Ergebnis `pnl` ist der Kursgewinn minus beides.
 Bei jedem Lauf prüft der Bot: Kapital = Startkapital + Ergebnisse aller Trades (offene zum aktuellen Kurs) − Altlasten.
-Mehr als 1 CHF Abweichung kommt als Fehler ins Protokoll; die Übersicht zeigt «Gebühren bisher» und «Buchhaltung»
+Mehr als 1 CHF Abweichung kommt als «Buchhaltungsfehler» ins Fehler-Protokoll des Bots (siehe
+[Wächter](#wächter-für-stille-fehler)), dann warnt die Übersicht oben; sie zeigt «Gebühren bisher» und «Buchhaltung»
 (✅ stimmt oder ⚠️ Abweichung). Bis zum 28.10.2026 21:26 UTC fehlte in den Ergebnissen die Kaufgebühr (das Cash
 stimmte). Der erste Lauf danach bucht einmal nach: alte Ergebnisse um die Kaufgebühr korrigiert (alter Wert in
 `pnl_alt`, Spalte `nachgebucht`), alte offene Positionen bekommen ihre Kaufgebühr, der alte Stand liegt in
@@ -101,7 +102,8 @@ Bot-Configs, `tradingbot/broker.py`):
 
 - **Gebührenstaffel** (gültig seit 9.7.2026): Der Satz hängt vom Handelsvolumen der letzten 30 Tage in USD ab (beim
   CHF-Konto mit dem USD/CHF-Kurs umgerechnet). Der Bot sendet nur Market-Orders und zahlt deshalb immer die
-  Taker-Gebühr. Die aktuelle Stufe jedes Bots steht in der Übersicht («Gebührenstufe»).
+  Taker-Gebühr. Die aktuelle Stufe jedes Bots steht in der Übersicht («Gebührenstufe») und mit den Gebühren bisher
+  auf seiner Kachel der Trading-Oberfläche.
 
   | 30-Tage-Umsatz | Maker | Taker |
   |---|---|---|
@@ -119,11 +121,16 @@ Bot-Configs, `tradingbot/broker.py`):
   Einstieg zeigt das Trade-Protokoll (Spalte `spread`); bewertet wird weiterhin zum letzten Kurs.
 - **Hebel und Shorts (Margin):** Eröffnungsgebühr `margin_open_fee` (0,03 %) und Rollover `margin_interest_per_day`
   (0,18 % pro Tag, also 0,03 % alle 4 Std., Mitte von Krakens 0,02-0,04 %; BTC kostet dort 0,01-0,02 %, vereinfacht
-  ein Satz für alle) nur auf den geliehenen Teil: bei Longs, was das Cash beim Kauf nicht deckte (bleibt bis zum
-  Schliessen gleich, nach Teilverkäufen anteilig), bei Shorts der Wert der geliehenen Coins. Beides zählt zu den
-  Zinsen des Trades. Offene Positionen von vor dieser Rechnung teilen sich das geliehene Cash nach ihrem Wert.
-- **Zwangsschliessung:** 2 % des Positionswerts statt der Handelsgebühr.
+  ein Satz für alle) nur auf den geliehenen Teil: bei Longs, was das freie Cash beim Kauf nicht deckte (bleibt bis zum
+  Schliessen gleich, nach Teilverkäufen anteilig; die Kredite offener Hebel-Longs zählen dabei nicht als verbraucht,
+  sie laufen bis zu deren Schliessen), bei Shorts der Wert der geliehenen Coins. Beides zählt zu den Zinsen des Trades.
+  Offene Positionen von vor dieser Rechnung teilen sich das geliehene Cash nach ihrem Wert.
+- **Zwangsschliessung:** 2 % statt der Handelsgebühr auf Margin-Positionen (Shorts ganz, Longs der geliehene Teil);
+  was mit eigenem Cash gekauft ist, zahlt beim Verkauf die normale Taker-Gebühr.
 - **Chef-Bot:** Umschichten kostet 0,8 % (Taker der kleinsten Stufe).
+- **Live (echtes Geld):** Die Gebühr jeder Order verlangt die Börse selbst. Für den Gebührenfilter (`min_edge`) und den
+  Stop auf Einstand schätzt der Bot die Kosten wie im Demo-Betrieb: Taker-Satz des Kontos (bei der Börse abgefragt)
+  plus Slippage; liefert die Börse keinen, 0,80 % (kleinste Kraken-Stufe; mit `fee_model: fix` der `fee_rate`).
 
 Vereinfachungen: Coins ohne CHF-Paar (z.B. SOL) handelt ein echtes Konto über ein USD-Guthaben; den einmaligen Umtausch
 CHF → USD rechnet der Bot nicht ein. Maker-Gebühren nutzt er nicht, weil er nur Market-Orders sendet. Die
@@ -148,9 +155,10 @@ handelt dagegen zum Eröffnungskurs der nächsten Kerze, also gleich beim Kerzen
 einer Minute reagiert.
 
 Jetzt wartet `.github/workflows/bot.yml` vor jedem Durchlauf (auch vor dem ersten, z.B. nach einem Start von Hand)
-bis zur nächsten vollen oder halben Stunde plus 90 Sekunden, damit die Börse die Kerze sicher abgeschlossen hat: Die
-Bots laufen um ca. **:01:30 und :31:30 UTC**, nacheinander (Langfrist-, KI-, Risiko-Bot). Ein Block hat 9 Durchläufe
-(ca. 4½ Stunden) und startet dann den nächsten.
+bis :01:30 bzw. :31:30 UTC, also 90 Sekunden nach Kerzenschluss, damit die Börse die Kerze sicher abgeschlossen hat
+(ein Start kurz nach :00 oder :30 wartet nur bis zu diesem Termin): Die Bots laufen um ca. **:01:30 und :31:30 UTC**,
+nacheinander (Langfrist-, KI-, Risiko-Bot). Ein Block hat 9 Durchläufe (ca. 4½ Stunden) und startet dann den
+nächsten.
 
 Jeder Einstieg speichert **`delay_min`**: die Minuten vom Schluss der Signalkerze (Beginn der letzten abgeschlossenen
 Kerze plus ihre Länge) bis zum Durchlauf, zu dessen Kurs der Bot einsteigt. Der Wert steht im Trade-Protokoll (Spalte
@@ -171,7 +179,9 @@ dem letzten Lauf** der Reihe nach durch, so als läge der Stop als Stop-Order an
   ausgeführt zu ihrem Eröffnungskurs.
 - Danach prüft er die laufende Minute mit dem aktuellen Kurs. Liegt dieser schon jenseits des Stops, schliesst er zu
   diesem Kurs und schreibt das in den Grund: **«Stop-Loss (Ticker)»**. Gleich, wenn die Minutenkerzen nicht abrufbar
-  sind (dann wie früher nur mit dem Kurs beim Lauf); der nächste Lauf spielt die fehlenden Minuten nach.
+  sind (dann wie früher nur mit dem Kurs beim Lauf, der Fehler kommt ins Fehler-Protokoll); der nächste Lauf spielt
+  die fehlenden Minuten nach. Der Stand merkt sich dafür je Coin, bis wann geprüft ist (`last_bar`, `stop:<Coin>`),
+  auch für eine eben eröffnete Position: Fällt ein Lauf aus, prüft der nächste ab dem Einstieg.
 - Liegt die letzte Prüfung mehr als 12 Stunden zurück, nimmt er 5-Minuten-Kerzen (mehr als 720 Kerzen liefert Kraken
   nicht), nach mehr als 60 Stunden nur den aktuellen Kurs.
 - Wie oft die alte Prüfung nur mit dem Kurs beim Lauf einen Treffer verpasst hätte, zählt der Stand unter `zaehler`
@@ -181,7 +191,8 @@ Bis zum 30.10.2026 prüfte der Bot nur den Kurs beim Lauf: Jeder Stop-Treffer wu
 gebucht (z.B. «Stop-Loss (Gap)», schlechter als der Stop), und Stops oder Ziele, die zwischen zwei Läufen berührt
 wurden, während der Kurs danach wieder zurückkam, wurden gar nicht ausgelöst. Trefferquote, Ergebnis je
 Ausstiegsgrund und Stop-Verluste vor und nach dem 30.10.2026 sind deshalb nicht direkt vergleichbar. Live (echtes
-Geld) prüft der Bot weiterhin nur zum Kurs beim Lauf, weil eine echte Order nicht rückwirkend ausgeführt werden kann.
+Geld) prüft der Bot weiterhin nur zum Kurs beim Lauf, weil eine echte Order nicht rückwirkend ausgeführt werden kann;
+ein Treffer heisst dort «Stop-Loss (Ticker)».
 
 ## Wächter für stille Fehler
 
@@ -215,7 +226,8 @@ Auf GitHub: Actions → «Position schliessen» → Run workflow, Bot-Datei (z.B
 (z.B. `TRX/CHF HYPE/CHF`) angeben. Das geht jederzeit: Der Workflow legt nur einen **Auftrag** in `daten/auftraege/` ab
 (z.B. `20261030T201500_config_daytrading.txt` mit der Zeile `schliessen TRX/CHF HYPE/CHF`, Format in
 [daten/auftraege/README.md](daten/auftraege/README.md)). Der nächste Durchlauf dieses Bots (normalerweise innert 30
-Minuten) führt ihn vor den Stops aus:
+Minuten) führt ihn nach den Stops aus: Hat eine Minutenkerze seit dem letzten Lauf den Stop schon berührt, gilt der
+Stop wie an der Börse, und der Coin hat keine offene Position mehr.
 
 - Jede offene Position dieser Coins wird zum dann aktuellen Kurs geschlossen (Market-Order zum Geld- bzw. Briefkurs,
   Grund «Von Hand geschlossen»), mit Eintrag im Trade-Protokoll und im Lern-Tagebuch. Ein Coin ohne Position wird
@@ -445,7 +457,7 @@ Der Paper-Modus braucht gar kein Geld. Für echten Handel gilt: Börsen haben Mi
 - Kein Einstieg, wenn der Spread im Orderbuch grösser als 0,3 % ist.
 - Stark korrelierte Positionen (z.B. BTC und ETH in gleicher Richtung) nur halb so gross; verglichen wird mit allen
   offenen Positionen, egal in welcher Reihenfolge die Coins geprüft werden.
-- Mit Hebel (nur Demo): Zwangsschliessung wie an der Börse (Gebühr 2 % des Positionswerts), wenn das Kapital unter
+- Mit Hebel (nur Demo): Zwangsschliessung wie an der Börse (Gebühr 2 % auf den geliehenen Teil), wenn das Kapital unter
   `liquidation_margin` der hinterlegten Sicherheit fällt, geprüft vor und nach den neuen Signalen. Den tatsächlichen
   Hebel (Wert aller Positionen geteilt durch das Kapital) zeigt die Übersicht als «Hebel aktuell».
 
