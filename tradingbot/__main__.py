@@ -12,7 +12,8 @@
   python -m tradingbot walkforward              # Walk-Forward-Analyse (Schutz vor Overfitting)
   python -m tradingbot paper --once             # ein Durchlauf, Stand wird gespeichert (für tägliche Ausführung)
   python -m tradingbot status                   # aktueller Stand des Paper-Kontos
-  python -m tradingbot schliessen --config bots/config_daytrading.yaml --symbols TRX/CHF   # Position von Hand schliessen
+  python -m tradingbot schliessen --config bots/config_daytrading.yaml --symbols TRX/CHF   # Auftrag zum Schliessen
+  python -m tradingbot schliessen --config ... --symbols TRX/CHF --sofort   # direkt (nur lokal, kein Bot-Lauf aktiv)
   python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
   python -m tradingbot historie --bots ... --start 2022-01-01 # wie oben, aber erst ab diesem Tag handeln
 """
@@ -43,9 +44,19 @@ def _load_df(cfg: Config, args) -> pd.DataFrame:
     return df
 
 
-def schliessen(cfg: Config, symbols: list[str]) -> None:
-    """Schliesst offene Positionen des Paper-Kontos von Hand zum aktuellen Kurs (z.B. alte Shorts nach einer
-    Regeländerung). Der Stand und das Trade-Protokoll werden wie nach einem Bot-Durchlauf gespeichert."""
+def schliessen(cfg: Config, symbols: list[str], sofort: bool = False) -> Path | None:
+    """Offene Positionen eines Demo-Bots von Hand schliessen (z.B. alte Shorts nach einer Regeländerung). Standard: nur
+    ein Auftrag in daten/auftraege/, der nächste Bot-Durchlauf schliesst zum dann aktuellen Kurs (bot.auftraege). So
+    schreibt nur der Bot in seinen Stand, auch wenn gerade ein Durchlauf läuft. sofort=True schliesst direkt zum
+    aktuellen Kurs und speichert Stand und Trade-Protokoll wie ein Bot-Durchlauf: nur lokal, wenn kein Bot-Lauf
+    läuft."""
+    if not symbols:
+        raise SystemExit("Welche Coins? z.B. --symbols TRX/CHF HYPE/CHF")
+    if not sofort:
+        path = bot.auftrag_ablegen(cfg.name, "schliessen " + " ".join(symbols))
+        print(f"Auftrag gespeichert: {path}\nDer nächste Bot-Durchlauf schliesst {', '.join(symbols)} zum dann "
+              "aktuellen Kurs (Bots auf GitHub: Datei hochladen, das macht der Workflow «Position schliessen»).")
+        return path
     from datetime import datetime, timezone
     from . import buchhaltung, state
     from .bot import _write_trades, make_trader, sync_paper
@@ -155,7 +166,10 @@ def main() -> None:
     p.add_argument("--timeframe", help="z.B. 1h, 4h, 1d")
     p.add_argument("--short", action="store_true", help="auch auf fallende Kurse setzen")
     p.add_argument("--once", action="store_true", help="nur ein Durchlauf, dann beenden")
-    p.add_argument("--symbols", nargs="+", help="schliessen: diese Positionen des Paper-Kontos schliessen")
+    p.add_argument("--symbols", nargs="+", help="schliessen: diese Positionen eines Demo-Bots schliessen (als Auftrag "
+                   "in daten/auftraege/, den der nächste Bot-Durchlauf zum dann aktuellen Kurs ausführt)")
+    p.add_argument("--sofort", action="store_true", help="schliessen: direkt statt als Auftrag (nur lokal und nur, "
+                   "wenn gerade kein Bot-Durchlauf läuft)")
     p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf)")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
@@ -238,7 +252,9 @@ def main() -> None:
     elif args.command == "status":
         status(cfg)
     elif args.command == "schliessen":
-        schliessen(cfg, args.symbols or [])
+        if not Path(args.config).exists():          # sonst ein Auftrag, den kein Bot je liest
+            raise SystemExit(f"Bot-Datei {args.config} nicht gefunden.")
+        schliessen(cfg, args.symbols or [], args.sofort)
     elif args.command == "news":
         from .news import briefing
         cfg.mode = "paper"

@@ -22,6 +22,7 @@ log = logging.getLogger(__name__)
 
 STOP_BACK = timedelta(minutes=35)   # erste Stop-Prüfung ohne gespeicherte Zeit: so weit zurück (alle 30 Min. ein Lauf)
 MAX_CANDLES = 720                   # mehr Kerzen liefert Kraken nicht: 1m reicht 12 Std. zurück, 5m 60 Std.
+AUFTRAEGE = Path("daten/auftraege")  # Aufträge von Hand an die Demo-Bots (Format: README.md dort)
 
 
 def make_trader(cfg: Config, exchange) -> Trader:
@@ -91,6 +92,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             px, ohne = _bewertung(trader, prices, cfg.symbols)    # Kapital: Coins ohne Kurs zum letzten Kurs
             if paper:
                 sync_paper(trader.broker, exchange, tickers, now)
+            fertig, auftrag = auftraege(trader, cfg, prices, now) if paper else ([], [])    # von Hand, vor den Stops
             for s in prices:    # ohne Kurs keine Stop-Prüfung: der nächste Lauf spielt die Minuten nach
                 if paper:       # Demo: Minutenkerzen seit dem letzten Lauf, wie eine Stop-Order an der Börse
                     replay_stops(trader, exchange, s, prices[s], now, last_bar)
@@ -111,7 +113,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     log.error("NOT-AUS: %s. Bot stoppt.", trader.risk.halt_reason)
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
-            notes, spreads, trends = ([hinweis] if hinweis and n == 1 else []) + ohne, {}, {}
+            notes, spreads, trends = ([hinweis] if hinweis and n == 1 else []) + auftrag + ohne, {}, {}
             if (cfg.phase_gate or cfg.phase_exit) and not trader.risk.halted:
                 for s in prices:
                     phase = _phase(exchange, s)
@@ -160,6 +162,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             abgleich = buchhaltung.pruefen(trader, px, cfg.starting_capital) if paper else None
             _write_trades(log_path, trader.closed)
             state.save(cfg.state_path, trader, last_bar, abgleich)
+            _erledigt(fertig)               # erst jetzt: bricht der Lauf vorher ab, führt der nächste sie nochmals aus
             journal.write(cfg, before_open, before_closed, trader, now)
         except KeyboardInterrupt:
             raise
@@ -201,6 +204,84 @@ def sync_paper(broker: PaperBroker, exchange, tickers: dict, now) -> None:
             broker.quote_usd = exchange.usd_value()
         except Exception as e:                  # Kurs nicht abrufbar: mit dem letzten bekannten weiterrechnen
             log.warning("USD-Kurs der Kontowährung nicht abrufbar, Gebührenstufe mit dem letzten Kurs: %s", e)
+
+
+def auftrag_ablegen(name: str, befehl: str, now: datetime | None = None) -> Path:
+    """Auftrag für den nächsten Durchlauf des Demo-Bots `name` ablegen (Workflow «Position schliessen», Befehl
+    «schliessen»): daten/auftraege/<Zeit UTC>_<name>.txt, z.B. 20261030T201500_config_daytrading.txt, je Zeile ein
+    Befehl. Ein zweiter Auftrag in derselben Sekunde kommt als weitere Zeile dazu."""
+    path = AUFTRAEGE / f"{now or datetime.now(timezone.utc):%Y%m%dT%H%M%S}_{name}.txt"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(befehl + "\n")
+    return path
+
+
+def auftraege(trader: Trader, cfg: Config, prices: dict[str, float], now) -> tuple[list[Path], list[str]]:
+    """Aufträge von Hand für diesen Demo-Bot ausführen, ältester zuerst. So schreibt nur der Bot selbst in seinen
+    Stand. «schliessen <Coins>»: jede offene Position davon per Market-Order zum aktuellen Kurs schliessen (Grund «Von
+    Hand geschlossen»), ein Coin ohne Position wird übersprungen. Hat ein Coin mit Position keinen Kurs, wartet der
+    ganze Auftrag auf den nächsten Lauf. Unbekannte Befehle: Warnung, der Auftrag gilt trotzdem als erledigt.
+    Gibt die erledigten Dateien (run verschiebt sie nach dem Speichern) und je Auftrag eine Notiz zurück."""
+    fertig, notes = [], []
+    for f in sorted(AUFTRAEGE.glob(f"*_{cfg.name}.txt")):
+        if f.name.partition("_")[2] != f"{cfg.name}.txt":         # z.B. «…_x_config.txt» gehört einem anderen Bot
+            continue
+        try:
+            wer = _auftrag_zeit(f)
+            zeilen = [z.replace(",", " ").split() for z in f.read_text(encoding="utf-8-sig", errors="replace")
+                      .splitlines() if z.strip() and not z.lstrip().startswith("#")]
+            coins = [c.upper() for befehl, *args in zeilen if befehl.lower() == "schliessen" for c in args]
+            warten = [s for s in dict.fromkeys(coins) if s in trader.open_trades and s not in prices]
+            if warten:
+                log.warning("%s (%s) wartet auf den nächsten Lauf, kein aktueller Kurs für %s", wer, f.name,
+                            ", ".join(warten))
+                notes.append(f"{wer} wartet: kein aktueller Kurs für {', '.join(warten)}")
+                continue
+            teile = []
+            for befehl, *args in zeilen:
+                if befehl.lower() != "schliessen":
+                    log.warning("%s (%s): unbekannter Befehl «%s», übersprungen", wer, f.name,
+                                " ".join([befehl, *args]))
+                    teile.append(f"unbekannter Befehl «{befehl}»")
+                    continue
+                for s in dict.fromkeys(c.upper() for c in args):
+                    n = len(trader.closed)
+                    if s in trader.open_trades:
+                        trader.exit(s, prices[s], "Von Hand geschlossen", now, market=True)
+                    if len(trader.closed) == n:
+                        log.info("%s (%s): %s hat keine offene Position, übersprungen", wer, f.name, s)
+                        teile.append(f"{s} ohne offene Position")
+                        continue
+                    c = trader.closed[-1]
+                    teile.append(f"{s} geschlossen @ {c['exit']:.4f} (Ergebnis {c['pnl']:+.2f})")
+            if not teile:
+                log.warning("%s (%s) ist leer", wer, f.name)
+            fertig.append(f)
+            notes.append(f"{wer}: {', '.join(teile) or 'leer, nichts ausgeführt'}")
+        except Exception as e:      # ein kaputter Auftrag stoppt den Lauf nicht: er bleibt liegen, Fehler-Protokoll
+            log.exception("Auftrag %s nicht ausführbar: %s", f.name, e)
+            waechter.melden(cfg.fehler_path, e, f"Auftrag {f.name}: ")
+    return fertig, notes
+
+
+def _auftrag_zeit(f: Path) -> str:
+    """«Auftrag vom 30.10. 20:15 UTC» aus dem Dateinamen, sonst «Auftrag <Dateiname>»."""
+    try:
+        return f"Auftrag vom {datetime.strptime(f.name.partition('_')[0], '%Y%m%dT%H%M%S'):%d.%m. %H:%M} UTC"
+    except ValueError:
+        return f"Auftrag {f.name}"
+
+
+def _erledigt(files: list[Path]) -> None:
+    """Ausgeführte Aufträge nach daten/auftraege/erledigt/ (gleicher Name), erst nach dem Speichern des Stands. Bleibt
+    einer liegen, führt ihn der nächste Lauf nochmals aus: Coins ohne Position werden dann übersprungen."""
+    for f in files:
+        try:
+            (f.parent / "erledigt").mkdir(exist_ok=True)
+            f.replace(f.parent / "erledigt" / f.name)
+        except OSError as e:
+            log.warning("Auftrag %s nicht nach erledigt/ verschoben: %s", f.name, e)
 
 
 def replay_stops(trader: Trader, exchange, symbol: str, price: float, now, last_bar: dict) -> None:

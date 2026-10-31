@@ -14,7 +14,7 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 | **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI, Auswertung von YouTube-Videos (`YOUTUBE.md`) und Trading-Büchern (`BUECHER.md`) |
 | **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Langfrist-Bot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-/Hebel-Bot), `config.yaml` (Vorlage). Jeder Bot handelt kurz-, mittel- und langfristig, long und short (siehe [Zeithorizonte](#zeithorizonte-gleiche-bedingungen-für-alle-bots)) |
 | **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 20 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
-| **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel und Fehler-Protokolle (`logs/`), Chart-Bilder (`charts/`) |
+| **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel und Fehler-Protokolle (`logs/`), Chart-Bilder (`charts/`); Aufträge von Hand an die Bots (`auftraege/`, siehe [Positionen von Hand schliessen](#positionen-von-hand-schliessen)) |
 | `tradingbot/` | 🧠 Der Programmcode |
 | `tests/` | ✅ Automatische Tests |
 | `scripts/` | ▶️ Startskripte (GitHub und Windows) |
@@ -182,6 +182,34 @@ UTC Kraken «EGeneral:No data») brach den ganzen Durchlauf ab, auch die Stops a
   Trading-Oberfläche. Ohne Ticker zeigt die Übersicht den letzten bekannten Kurs (gespeicherter Kurs der Bots oder
   Schluss der letzten Kerze) mit «Kurs vom …», ein Coin ganz ohne Kurs steht als «kein Kurs abrufbar» da. Die
   Nachrichtenlage kommt nur noch an eine neu geschriebene STATUS.md (früher stand sie nach einem Absturz doppelt da).
+
+## Positionen von Hand schliessen
+
+Auf GitHub: Actions → «Position schliessen» → Run workflow, Bot-Datei (z.B. `bots/config_daytrading.yaml`) und Coins
+(z.B. `TRX/CHF HYPE/CHF`) angeben. Das geht jederzeit: Der Workflow legt nur einen **Auftrag** in `daten/auftraege/` ab
+(z.B. `20261030T201500_config_daytrading.txt` mit der Zeile `schliessen TRX/CHF HYPE/CHF`, Format in
+[daten/auftraege/README.md](daten/auftraege/README.md)). Der nächste Durchlauf dieses Bots (normalerweise innert 30
+Minuten) führt ihn vor den Stops aus:
+
+- Jede offene Position dieser Coins wird zum dann aktuellen Kurs geschlossen (Market-Order zum Geld- bzw. Briefkurs,
+  Grund «Von Hand geschlossen»), mit Eintrag im Trade-Protokoll und im Lern-Tagebuch. Ein Coin ohne Position wird
+  übersprungen.
+- Hat ein Coin mit Position gerade keinen Kurs, wartet der ganze Auftrag auf den nächsten Lauf.
+- Danach liegt der Auftrag in `daten/auftraege/erledigt/`, und STATUS.md zeigt unter «Letzte Entscheidung», was
+  passiert ist (z.B. «Auftrag vom 30.10. 20:15 UTC: TRX/CHF geschlossen @ 0.2712 (Ergebnis -1.38)»).
+
+Warum ein Auftrag: Die Bots speichern ihren Stand nach jedem Durchlauf mit `git pull --rebase -X theirs`. Schrieb der
+Workflow früher selbst in `daten/state/`, während ein Bot-Durchlauf lief (4-5 Minuten), mischte git die beiden
+Fassungen Zeile für Zeile: Eine geschlossene Position konnte wieder auftauchen, Cash und Positionen aus verschiedenen
+Ständen stammen oder die Datei kaputt sein. Jetzt schreibt nur noch der Bot selbst in seinen Stand.
+
+Lokal legt `python -m tradingbot schliessen --config bots/config_daytrading.yaml --symbols TRX/CHF` denselben Auftrag
+ab (für die Bots auf GitHub die Datei hochladen: `git add`, `git commit`, `git push`). Mit `--sofort` schliesst der
+Befehl direkt wie früher, nur für einen Bot auf dem eigenen PC und nur, wenn er gerade nicht läuft.
+
+> **Regel:** Dateien unter `daten/state/` nie von Hand ändern, solange die Bots laufen. Für eine Änderung zuerst den
+> Workflow «Trading-Bot stündlich» abschalten (Disable workflow) und den laufenden Lauf abbrechen (Cancel workflow
+> run), dann ändern, hochladen und den Workflow wieder einschalten.
 
 ## Geschichts-Simulation (2011-2026)
 

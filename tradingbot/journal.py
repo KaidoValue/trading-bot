@@ -46,6 +46,9 @@ LESSON = {
                    "geschlossen. Hebel vervielfacht Verluste genauso wie Gewinne.",
     "Not-Aus": "Das Verlustlimit des ganzen Kontos wurde erreicht. Der Not-Aus verhindert, dass aus einem "
                "schlechten Lauf ein Totalverlust wird.",
+    "Von Hand geschlossen": "Auf Auftrag von Hand geschlossen (daten/auftraege), zum Kurs beim nächsten Durchlauf "
+                            "und nicht nach den Regeln des Bots. Ob der Eingriff richtig war, zeigt erst der weitere "
+                            "Kursverlauf.",
 }
 # Zusatz für andere Stops, die nicht an ihrer Marke ausgeführt wurden, z.B. «Nachlauf-Stop (Gap)»
 FILL = {"Gap": "Ausgeführt wurde nach einem Kurssprung über die Marke hinweg (Gap), nicht genau an der Marke.",

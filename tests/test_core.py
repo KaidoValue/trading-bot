@@ -907,7 +907,8 @@ def test_close_positions_by_hand(df, monkeypatch, tmp_path):
     t.on_signal("ETH/CHF", -1, price, atr=price * 0.02, equity=1000.0, when=0)        # ein alter Short
     assert t.open_trades["ETH/CHF"].side == -1
     state.save(cfg.state_path, t, {"ETH/CHF": pd.Timestamp("2026-01-01", tz="UTC")})
-    schliessen(cfg, ["ETH/CHF", "DOGE/CHF"])
+    schliessen(cfg, ["ETH/CHF", "DOGE/CHF"], sofort=True)       # direkt, ohne Auftrag (nur lokal, kein Bot-Lauf)
+    assert not bot.AUFTRAEGE.exists()
     after = json.loads(cfg.state_path.read_text())
     assert "ETH/CHF" not in after["open_trades"] and after["closed"][-1]["reason"] == "Von Hand geschlossen"
     assert after["paper"]["positions"]["ETH/CHF"] == pytest.approx(0.0, abs=1e-12)
@@ -1885,3 +1886,157 @@ def test_dashboard_warns_on_top_and_survives_a_failing_ticker(df, monkeypatch, t
     assert dashboard._fallback("X", {"X": (1.5, noon - pd.Timedelta(hours=3))}, hourly) == (2.0, noon)
     assert dashboard._fallback("X", {"X": (1.5, noon + pd.Timedelta(hours=1))}, hourly)[0] == 1.5   # der neuere
     assert dashboard._fallback("Y", {}, hourly) is None
+
+
+# --- Ein Schreiber je Stand-Datei: Aufträge von Hand statt direkter Änderungen am Stand
+
+def test_order_closes_the_position_at_the_next_cycle(df, monkeypatch, tmp_path):
+    """«Position schliessen» legt nur einen Auftrag ab und rührt den Stand nicht an. Der nächste Bot-Lauf schliesst
+    zum dann aktuellen Kurs (Market-Order zum Geldkurs), speichert Stand und Trade-Protokoll, schreibt ins Tagebuch
+    und legt den Auftrag unter erledigt/ ab. Ein zweiter Lauf führt ihn nicht nochmals aus."""
+    import json
+    import re
+    from tradingbot import journal, state
+    from tradingbot.__main__ import schliessen
+    monkeypatch.chdir(tmp_path)
+    ex = QuoteExchange(df)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    cfg = Config(symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="hand", poll_seconds=0,
+                 risk=RiskConfig(max_total_risk_pct=1))
+    t = bot.make_trader(cfg, None)
+    price = ex.fetch_ticker("ETH/CHF")["last"]
+    t.on_signal("ETH/CHF", 1, price, atr=price * 0.02, equity=1000.0,
+                when=datetime.now(timezone.utc) - timedelta(hours=2))
+    state.save(cfg.state_path, t, {})
+    before = cfg.state_path.read_text()
+    order = schliessen(cfg, ["eth/chf", "DOGE/CHF"])
+    assert order.parent == bot.AUFTRAEGE and re.fullmatch(r"\d{8}T\d{6}_hand\.txt", order.name)
+    order_text = order.read_text()
+    assert order_text == "schliessen eth/chf DOGE/CHF\n" and cfg.state_path.read_text() == before
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    c = st["closed"][-1]
+    assert not st["open_trades"] and (c["symbol"], c["reason"]) == ("ETH/CHF", "Von Hand geschlossen")
+    assert c["exit"] == pytest.approx(df["close"].iloc[ex.i] * 0.05 * 0.999)            # zum Geldkurs von jetzt
+    assert st["paper"]["positions"]["ETH/CHF"] == pytest.approx(0.0, abs=1e-12)
+    assert abs(st["abgleich"]["differenz"]) < 0.01
+    wann = f"Auftrag vom {datetime.strptime(order.name[:15], '%Y%m%dT%H%M%S'):%d.%m. %H:%M} UTC"
+    assert st["note"].startswith(f"{wann}: ETH/CHF geschlossen @ {c['exit']:.4f} (Ergebnis {c['pnl']:+.2f}), "
+                                 "DOGE/CHF ohne offene Position | ")
+    assert not order.exists() and (bot.AUFTRAEGE / "erledigt" / order.name).read_text() == order_text
+    assert list(pd.read_csv("daten/logs/trades_hand.csv")["reason"]) == ["Von Hand geschlossen"]
+    diary = "".join(p.read_text() for p in Path("lernen/tagebuch").glob("*.md"))
+    assert "**Grund:** Von Hand geschlossen" in diary and journal.LESSON["Von Hand geschlossen"] in diary
+    bot.run(cfg, max_iterations=1)                  # erledigt: kein zweites Mal
+    again = json.loads(cfg.state_path.read_text())
+    assert len(again["closed"]) == 1 and "Auftrag" not in again["note"]
+
+
+def test_order_waits_for_a_price_and_skips_unknown_commands(df, monkeypatch, tmp_path, caplog):
+    """Hat ein Coin mit Position keinen Kurs, wartet der ganze Auftrag (auch die anderen Coins darin) auf den nächsten
+    Lauf. Ein Auftrag mit unbekanntem Befehl oder ohne passende Position kommt mit Warnung nach erledigt/. Aufträge
+    anderer Bots bleiben liegen, auch bei ähnlichem Namen."""
+    import json
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    start = datetime.now(timezone.utc).replace(second=0, microsecond=0) - timedelta(minutes=30)
+    ex = OneTickerDown(df, _minutes(start, 30), 99.5)                     # ETH ohne Kurs
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    cfg = Config(symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="warten", poll_seconds=0, fee_rate=0.0)
+    t = bot.make_trader(cfg, None)
+    for s in cfg.symbols:
+        t.on_signal(s, 1, 100, atr=1, equity=1000.0, when=start)
+    state.save(cfg.state_path, t, {})
+    order = bot.auftrag_ablegen(cfg.name, "schliessen BTC/CHF ETH/CHF")
+    other = bot.auftrag_ablegen("x_warten", "schliessen BTC/CHF")           # gehört einem anderen Bot
+    odd = bot.AUFTRAEGE / "20200101T000000_warten.txt"                   # älter: kommt zuerst dran
+    odd.write_text("\ufeff# von Hand geschrieben\n\nkaufen BTC/CHF\nschliessen SOL/CHF\n", encoding="utf-8")
+    with caplog.at_level("WARNING"):
+        bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    assert set(st["open_trades"]) == {"BTC/CHF", "ETH/CHF"} and not st["closed"]      # BTC wartet mit
+    assert order.exists() and other.exists() and (bot.AUFTRAEGE / "erledigt" / odd.name).exists()
+    assert not odd.exists() and "unbekannter Befehl «kaufen BTC/CHF»" in caplog.text
+    assert st["note"].startswith("Auftrag vom 01.01. 00:00 UTC: unbekannter Befehl «kaufen», SOL/CHF ohne offene "
+                                 "Position | Auftrag vom ")
+    assert "wartet: kein aktueller Kurs für ETH/CHF | ETH/CHF: kein aktueller Kurs" in st["note"]
+    ex.down = set()                                 # nächster Lauf mit Kurs: der ganze Auftrag wird ausgeführt
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    assert not st["open_trades"] and [c["reason"] for c in st["closed"]] == ["Von Hand geschlossen"] * 2
+    assert not order.exists() and (bot.AUFTRAEGE / "erledigt" / order.name).exists() and other.exists()
+
+
+def test_order_comes_before_the_stops_and_moves_only_after_saving(df, monkeypatch, tmp_path):
+    """Bricht ein Lauf nach dem Ausführen, aber vor dem Speichern ab, bleibt der Auftrag liegen: Der nächste Lauf lädt
+    den alten Stand (Position noch offen) und führt ihn nochmals aus. Der Auftrag kommt vor den Stops: geschlossen
+    wird zum Kurs beim Lauf, auch wenn eine Minutenkerze seit dem letzten Lauf den Stop berührt hat."""
+    import json
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    start = datetime.now(timezone.utc).replace(second=0, microsecond=0) - timedelta(minutes=30)
+    ex = MinuteExchange(df, _minutes(start, 30, {14: TIEF}), 99.5)        # Minute 14 berührt den Stop (98)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    cfg = Config(symbols=["BTC/CHF"], use_news=False, name="vorher", poll_seconds=0, fee_rate=0.0)
+    t = bot.make_trader(cfg, None)
+    t.on_signal("BTC/CHF", 1, 100, atr=1, equity=1000.0, when=start)
+    state.save(cfg.state_path, t, {})
+    order = bot.auftrag_ablegen(cfg.name, "schliessen BTC/CHF")
+    save, calls = state.save, []
+
+    def flaky(*a):                                  # erster Lauf: Speichern schlägt fehl, danach wieder normal
+        calls.append(1)
+        if len(calls) == 1:
+            raise OSError("Platte voll")
+        save(*a)
+    monkeypatch.setattr(state, "save", flaky)
+    with pytest.raises(SystemExit):
+        bot.run(cfg, max_iterations=1)
+    assert order.exists() and "BTC/CHF" in json.loads(cfg.state_path.read_text())["open_trades"]
+    bot.run(cfg, max_iterations=1)
+    st = json.loads(cfg.state_path.read_text())
+    assert [(c["reason"], c["exit"]) for c in st["closed"]] == [("Von Hand geschlossen",
+                                                                 pytest.approx(99.5 * (1 - cfg.slippage)))]
+    assert not order.exists() and (bot.AUFTRAEGE / "erledigt" / order.name).exists()
+
+
+def test_broken_order_does_not_stop_the_cycle(monkeypatch, tmp_path):
+    """Geht beim Ausführen etwas schief, bleibt der Auftrag liegen (der nächste Lauf versucht es nochmals) und der
+    Fehler kommt ins Fehler-Protokoll; der Durchlauf läuft weiter."""
+    monkeypatch.chdir(tmp_path)
+    t = Trader(PaperBroker(1000, 0, 0), RiskManager(RiskConfig(), 1000))
+    t.on_signal("X", 1, 100, atr=1, equity=1000, when=0)
+    monkeypatch.setattr(t, "exit", lambda *a, **k: 1 / 0)
+    order = bot.auftrag_ablegen("kaputt", "schliessen X")
+    cfg = Config(name="kaputt")
+    assert bot.auftraege(t, cfg, {"X": 100.0}, datetime.now(timezone.utc)) == ([], [])
+    assert order.exists() and "X" in t.open_trades
+    assert " UTC | ZeroDivisionError | Auftrag " in cfg.fehler_path.read_text()
+
+
+def test_cli_schliessen_writes_an_order_by_default(df, monkeypatch, tmp_path):
+    """Die Kommandozeile legt standardmässig nur einen Auftrag ab (wie der Workflow) und braucht dafür keinen Stand;
+    --sofort schliesst direkt (dafür braucht es einen Stand). Eine falsche Bot-Datei bricht ab, statt einen Auftrag
+    abzulegen, den kein Bot je liest."""
+    import sys
+    from tradingbot import __main__ as cli
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: MultiExchange(df))
+    Path("b.yaml").write_text("symbols: [BTC/CHF]\nuse_news: false\n")
+
+    def run(*args):
+        monkeypatch.setattr(sys, "argv", ["tradingbot", "schliessen", *args])
+        cli.main()
+    run("--config", "b.yaml", "--symbols", "TRX/CHF", "HYPE/CHF")
+    (order,) = bot.AUFTRAEGE.glob("*_b.txt")
+    assert order.read_text() == "schliessen TRX/CHF HYPE/CHF\n" and not Path("daten/state").exists()
+    with pytest.raises(SystemExit, match="Kein gespeicherter Stand"):
+        run("--config", "b.yaml", "--symbols", "TRX/CHF", "--sofort")
+    with pytest.raises(SystemExit, match="tippfehler.yaml nicht gefunden"):
+        run("--config", "tippfehler.yaml", "--symbols", "TRX/CHF")
+    with pytest.raises(SystemExit, match="Welche Coins"):
+        run("--config", "b.yaml")
+    assert list(bot.AUFTRAEGE.glob("*.txt")) == [order]
