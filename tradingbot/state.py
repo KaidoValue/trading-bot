@@ -53,6 +53,8 @@ def save(path: Path, trader: Trader, last_bar: dict, abgleich: dict | None = Non
         state["buchhaltung"] = trader.buchhaltung | {"altlasten": trader.altlasten}
     if trader.zaehler:
         state["zaehler"] = trader.zaehler
+    if trader.kurse:
+        state["prices"] = trader.kurse          # letzter Kurs je Coin mit Zeit (fällt ein Ticker aus)
     if abgleich:
         state["abgleich"] = abgleich
     if isinstance(trader.broker, PaperBroker):
@@ -67,17 +69,23 @@ def save(path: Path, trader: Trader, last_bar: dict, abgleich: dict | None = Non
     tmp.replace(path)
 
 
+def read(path: Path) -> dict:
+    """Gespeicherter Stand als dict (Zeiten als datetime), leer ohne Datei. Die Übersicht liest so z.B. «updated»."""
+    return _walk(json.loads(path.read_text()), _dec) if path.exists() else {}
+
+
 def load(path: Path, trader: Trader) -> dict:
     """Lädt einen gespeicherten Stand in `trader`. Gibt last_bar zurück (leer, wenn kein Stand existiert)."""
-    if not path.exists():
+    state = read(path)
+    if not state:
         return {}
-    state = _walk(json.loads(path.read_text()), _dec)
     trader.open_trades = {s: OpenTrade(**t) for s, t in state["open_trades"].items()}
     trader.closed = state["closed"]
     trader.note = state.get("note", "")
     trader.buchhaltung = state.get("buchhaltung") or {}
     trader.altlasten = trader.buchhaltung.get("altlasten", 0.0)
     trader.zaehler = state.get("zaehler") or {}
+    trader.kurse = state.get("prices") or {}
     for k, v in state["risk"].items():
         setattr(trader.risk, k, v)
     if "paper" in state and isinstance(trader.broker, PaperBroker):

@@ -62,6 +62,7 @@ class Trader:
     altlasten: float = 0.0      # Kosten vor dem 28.10.2026, die zu keinem Trade gehören (buchhaltung.py)
     buchhaltung: dict = field(default_factory=dict)   # Angaben zur einmaligen Nachbuchung (buchhaltung.py)
     zaehler: dict = field(default_factory=dict)       # laufende Zähler im Stand (z.B. Stop-Treffer nur in Minutenkerzen)
+    kurse: dict = field(default_factory=dict)         # letzter Kurs je Coin (Symbol -> [Kurs, Zeit]), für Ausfälle
 
     def shorts_proven(self) -> bool:
         """Haben sich Shorts bewährt? Mindestens 10 Shorts, die letzten 20 zusammen im Gewinn."""
@@ -367,12 +368,16 @@ class Trader:
 
     def close_all(self, prices: dict[str, float], reason: str, when) -> None:
         """Alles mit Market-Orders schliessen (Not-Aus, Zwangsschliessung). Bei der Zwangsschliessung verlangt die
-        Börse statt der Handelsgebühr die Liquidationsgebühr (Kraken: 2 % des Positionswerts)."""
+        Börse statt der Handelsgebühr die Liquidationsgebühr (Kraken: 2 % des Positionswerts). Ein Coin ohne Kurs
+        (Ticker ausgefallen) bleibt offen, bis der nächste Lauf einen Kurs hat: keine Order zu einem alten Kurs."""
         liquidation = reason == "Liquidation" and hasattr(self.broker, "fee_override")
         if liquidation:
             self.broker.fee_override = LIQUIDATION_FEE
         try:
             for s in list(self.open_trades):
+                if s not in prices:
+                    log.warning("%s: kein Kurs, %s erst im nächsten Lauf", s, reason)
+                    continue
                 self.exit(s, prices[s], reason, when, market=True)
         finally:
             if liquidation:

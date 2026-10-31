@@ -1711,3 +1711,177 @@ def test_live_mode_checks_stops_only_with_the_ticker(df, monkeypatch, tmp_path):
     monkeypatch.setattr(bot, "make_trader", lambda *a: t)
     bot.run(cfg, max_iterations=1)
     assert not ex.calls and t.closed[-1]["reason"] == "Stop-Loss (Gap)" and t.closed[-1]["exit"] == 97.5
+
+
+# --- Wächter für stille Fehler: ein Coin ohne Kurs stoppt nicht alle, Fehler-Protokoll, Exit-Code, Warnung oben
+
+class ExchangeError(Exception):
+    """Wie ccxt.ExchangeError: der Name der Klasse steht als Fehlerart im Fehler-Protokoll."""
+
+
+class OneTickerDown(MinuteExchange):
+    """MinuteExchange mit BTC/CHF und ETH/CHF (dieselben Minutenkerzen), der Ticker der Coins in `down` fällt aus."""
+    down = {"ETH/CHF"}
+
+    def fetch_ticker(self, symbol):
+        if symbol in self.down:
+            raise ExchangeError('kraken {"error":["EGeneral:No data"],"result":{}}')
+        return super().fetch_ticker(symbol)
+
+
+def test_one_failing_ticker_does_not_stop_the_other_coins(df, monkeypatch, tmp_path):
+    """Fällt der Ticker eines Coins aus (Kraken «EGeneral:No data» am 29.10.), prüft der Bot die anderen trotzdem: Der
+    Stop von BTC greift in der Minutenkerze. ETH wird weder geprüft noch gehandelt, sein Kapital zählt zum letzten
+    gespeicherten Kurs (Notiz), der Fehler steht im Fehler-Protokoll und der Stand wird gespeichert. Im nächsten Lauf
+    mit Kurs spielt der Bot die Minuten von ETH nach."""
+    import json
+    import re
+    from tradingbot import state
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(bot, "build", lambda *a, **k: ConstStrategy(0))
+    start = datetime.now(timezone.utc).replace(second=0, microsecond=0) - timedelta(minutes=30)
+    ex = OneTickerDown(df, _minutes(start, 30, {14: TIEF}), 99.5)          # Minute 14 berührt beide Stops (98)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    cfg = Config(symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="ausfall", poll_seconds=0, fee_rate=0.0)
+    t = bot.make_trader(cfg, None)
+    for s in cfg.symbols:
+        t.on_signal(s, 1, 100, atr=1, equity=1000.0, when=start)
+    t.kurse = {"ETH/CHF": [101.0, "2026-10-30T11:30:00+00:00"]}           # letzter Kurs aus dem Lauf davor
+    state.save(cfg.state_path, t, {})
+    bot.run(cfg, max_iterations=1)                  # kein Exit-Code 1: der Durchlauf hat geklappt
+    st = json.loads(cfg.state_path.read_text())
+    assert [(c["symbol"], c["reason"]) for c in st["closed"]] == [("BTC/CHF", "Stop-Loss")]
+    assert list(st["open_trades"]) == ["ETH/CHF"] and "stop:ETH/CHF" not in st["last_bar"]
+    qty = st["open_trades"]["ETH/CHF"]["qty"]
+    assert st["abgleich"]["kapital"] == pytest.approx(st["paper"]["cash"] + qty * 101.0, abs=0.01)
+    assert st["prices"]["ETH/CHF"] == [101.0, "2026-10-30T11:30:00+00:00"] and st["prices"]["BTC/CHF"][0] == 99.5
+    assert st["note"].startswith("ETH/CHF: kein aktueller Kurs, Position zum letzten Kurs vom 30.10. 11:30 UTC "
+                                 "bewertet, Stops und Signale ausgesetzt | ")
+    lines = cfg.fehler_path.read_text().splitlines()
+    assert cfg.fehler_path == Path("daten/logs/fehler_ausfall.txt") and len(lines) == 1
+    assert re.fullmatch(r"\d{4}-\d\d-\d\d \d\d:\d\d UTC \| ExchangeError \| Kurs ETH/CHF: kraken .*EGeneral:No data.*",
+                        lines[0])
+    ex.down = set()                                 # nächster Lauf mit Kurs: Minuten nachspielen, zur echten Zeit
+    bot.run(cfg, max_iterations=1)
+    c = json.loads(cfg.state_path.read_text())["closed"][-1]
+    assert (c["symbol"], c["reason"], c["closed"]["__dt__"]) == ("ETH/CHF", "Stop-Loss",
+                                                                 (start + timedelta(minutes=15)).isoformat())
+    two = Trader(PaperBroker(1000, 0, 0), RiskManager(RiskConfig(), 1000))     # Not-Aus: ohne Kurs keine Order
+    for s in ("A", "B"):
+        two.on_signal(s, 1, 100, atr=1, equity=1000, when=0)
+    two.close_all({"A": 100.0}, "Not-Aus", 1)
+    assert [c["symbol"] for c in two.closed] == ["A"] and list(two.open_trades) == ["B"]
+
+
+def test_failed_cycle_exits_with_code_1_and_is_logged(df, monkeypatch, tmp_path):
+    """Schlägt ein Durchlauf fehl (hier: kein einziger Kurs abrufbar), endet --once mit Exit-Code 1, damit zyklus.sh es
+    merkt; der Fehler steht im Fehler-Protokoll, der Stand bleibt unverändert. Im Dauerbetrieb läuft der Bot weiter.
+    Ein Fehler schon beim Start (kaputter Stand) kommt ebenfalls ins Protokoll."""
+    from tradingbot.__main__ import run_bot
+
+    class Down(MultiExchange):
+        def fetch_ticker(self, symbol):
+            raise ExchangeError("kraken EGeneral:Temporary lockout")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: Down(df))
+    cfg = Config(strategy="trend", symbols=["BTC/CHF", "ETH/CHF"], use_news=False, name="kaputt", poll_seconds=0)
+    with pytest.raises(SystemExit) as e:
+        bot.run(cfg, max_iterations=1)
+    assert e.value.code == 1 and not cfg.state_path.exists()
+    lines = cfg.fehler_path.read_text().splitlines()
+    assert len(lines) == 1 and lines[0].endswith(" UTC | ExchangeError | kraken EGeneral:Temporary lockout")
+    bot.run(cfg, max_iterations=3)                  # Dauerbetrieb (hier 3 Läufe): kein Abbruch, je Lauf eine Zeile
+    assert len(cfg.fehler_path.read_text().splitlines()) == 4
+    cfg.state_path.parent.mkdir(parents=True)
+    cfg.state_path.write_text("{kaputt")
+    with pytest.raises(ValueError):
+        run_bot(cfg, once=True)
+    assert " UTC | JSONDecodeError | Start: " in cfg.fehler_path.read_text().splitlines()[-1]
+
+
+def test_warning_for_stale_state_or_recent_errors(monkeypatch, tmp_path):
+    """Warnung nur, wenn der Stand älter als 90 Min. ist (mit dem Fehler seit dem letzten Stand) oder ein Fehler in den
+    letzten 2 Std. kam; dazu «Letzter Durchlauf» in der Übersicht. Das Fehler-Protokoll behält 100 Zeilen."""
+    from tradingbot import dashboard, waechter
+    monkeypatch.chdir(tmp_path)
+    saved = datetime(2026, 10, 30, 11, 20, tzinfo=timezone.utc)            # 12:20 Schweizer Zeit
+    trader = Trader(PaperBroker(1000, 0, 0), RiskManager(RiskConfig(), 1000))
+    b = dashboard.Bot(Config(name="w", title="W-Bot"), trader, 1000.0, 0.0, updated=saved)
+    soon, late = saved + timedelta(minutes=40), saved + timedelta(hours=2, minutes=40)
+    assert dashboard.warnung(b, soon) == "" and dashboard.banner([b], soon) == []
+    b.cfg.fehler_path.parent.mkdir(parents=True)
+    b.cfg.fehler_path.write_text("2026-10-30 09:00 UTC | ExchangeError | vor dem letzten Stand\n")
+    assert dashboard.warnung(b, soon) == ""                                  # alter Fehler, danach lief alles
+    assert dashboard.warnung(b, late) == "seit 2 Std. kein neuer Stand gespeichert"
+    with b.cfg.fehler_path.open("a") as f:
+        f.write("2026-10-30 11:31 UTC | ExchangeError | Kurs X: weg\n")
+    assert dashboard.warnung(b, soon) == "letzter Fehler 30.10.2026 12:31: ExchangeError: Kurs X: weg"
+    assert dashboard.warnung(b, late) == ("seit 2 Std. kein neuer Stand gespeichert "
+                                          "(letzter Fehler 30.10.2026 12:31: ExchangeError: Kurs X: weg)")
+    b.warnung = dashboard.warnung(b, late)
+    waechter.ZYKLUS.write_text("2026-10-30 13:50 UTC | Risiko-Bot | Durchlauf fehlgeschlagen\n")
+    assert dashboard.banner([b], late) == [f"> ⚠️ **W-Bot:** {b.warnung}", "",
+                                           "> ⚠️ **Bot-Lauf 30.10.2026 14:50:** Risiko-Bot: Durchlauf fehlgeschlagen",
+                                           ""]
+    assert "| Letzter Durchlauf | 30.10.2026 12:20 (vor 40 Min.) |" in dashboard.overview([b], soon)
+    assert "| Letzter Durchlauf | 30.10.2026 12:20 (gerade eben) |" in dashboard.overview([b], saved)
+    assert "| Letzter Durchlauf | ⚠️ 30.10.2026 12:20 (vor 2 Std.) |" in dashboard.overview([b], late)
+    for i in range(105):
+        waechter.melden(b.cfg.fehler_path, ExchangeError(f"Nummer {i}\nzweite Zeile"))
+    lines = b.cfg.fehler_path.read_text().splitlines()
+    assert len(lines) == 100 and lines[-1].endswith(" UTC | ExchangeError | Nummer 104 zweite Zeile")
+    assert waechter.letzter(b.cfg.fehler_path)[1:] == ("ExchangeError", "Nummer 104 zweite Zeile")
+
+
+def test_dashboard_warns_on_top_and_survives_a_failing_ticker(df, monkeypatch, tmp_path):
+    """Am 29.10. 08:01 stürzte die Übersicht an einem Ticker-Fehler ab. Jetzt: ETH ohne Ticker bekommt den letzten
+    gespeicherten Kurs («Kurs vom …»), SOL ganz ohne Kurs steht als «kein Kurs abrufbar» da. Die Warnung steht oben in
+    STATUS.md und auf der Kachel der Trading-Oberfläche."""
+    import json
+    from tradingbot import dashboard, state, waechter
+
+    class EthDown(MultiExchange):
+        """ETH ohne Ticker (Kerzen gehen), SOL ganz ohne Daten."""
+        def fetch_ticker(self, symbol):
+            if symbol in ("ETH/CHF", "SOL/CHF"):
+                raise ExchangeError('kraken {"error":["EGeneral:No data"],"result":{}}')
+            return super().fetch_ticker(symbol)
+
+        def fetch_ohlcv(self, symbol, timeframe, limit=300, since=None):
+            if symbol == "SOL/CHF":
+                raise ExchangeError("kraken EGeneral:No data")
+            return super().fetch_ohlcv(symbol, timeframe, limit, since)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(dashboard.time, "sleep", lambda s: None)            # ohne Wartezeit beim Wiederholen
+    ex = EthDown(df)
+    ex.i = 800                                      # genug Kerzen davor für 400 Tageskerzen
+    monkeypatch.setattr(data, "make_exchange", lambda *a, **k: ex)
+    Path("bot.yaml").write_text('strategy: trend\ntitle: "Test-Bot"\nsymbols: ["BTC/CHF", "ETH/CHF", "SOL/CHF"]\n'
+                                'use_news: false\npoll_seconds: 0\ntimeframe: 1h\n')
+    cfg = Config.load("bot.yaml")
+    t = bot.make_trader(cfg, None)
+    t.on_signal("ETH/CHF", 1, 50.0, atr=1.0, equity=1000.0, when=datetime(2026, 10, 30, tzinfo=timezone.utc))
+    vor3h = (datetime.now(timezone.utc) - timedelta(hours=3, minutes=5)).replace(microsecond=0)
+    t.kurse = {"ETH/CHF": [55.5, vor3h.isoformat()]}
+    state.save(cfg.state_path, t, {"ETH/CHF": pd.Timestamp("2026-10-30", tz="UTC")})
+    st = json.loads(cfg.state_path.read_text())
+    st["updated"] = {"__dt__": vor3h.isoformat()}                           # seit 3 Std. kein neuer Stand
+    cfg.state_path.write_text(json.dumps(st))
+    waechter.melden(cfg.fehler_path, ExchangeError("kraken EGeneral:No data"), "Kurs ETH/CHF: ")
+    text = dashboard.render(["bot.yaml"], exchange=ex, chef_path="daten/state/chef.json")
+    top = text.index("## Auf einen Blick")
+    assert 0 < text.index("> ⚠️ **Test-Bot:** seit 3 Std. kein neuer Stand gespeichert (letzter Fehler ") < top
+    assert "ExchangeError: Kurs ETH/CHF: kraken EGeneral:No data)" in text[:top]
+    assert f"| **ETH** | 55.50 CHF (Kurs vom {dashboard.local(vor3h)}) | – |" in text
+    assert "| **SOL** | kein Kurs abrufbar | – |" in text
+    assert "| Letzter Durchlauf | ⚠️ " in text and Path("STATUS.md").read_text() == text
+    html = (tmp_path / "daten" / "charts" / "index.html").read_text()
+    assert '<div class="warn">⚠️ seit 3 Std. kein neuer Stand gespeichert' in html and "Kurs vom " in html
+    eq = dashboard.load_bot("bot.yaml", {"ETH/CHF": 55.5}).equity           # bewertet zum gespeicherten Kurs
+    assert eq == pytest.approx(t.broker.cash() + t.open_trades["ETH/CHF"].qty * 55.5)
+    hourly = {("X", "1h"): pd.DataFrame({"close": [1.0, 2.0]},           # letzte Stunde schliesst um 12:00 UTC
+                                        index=pd.date_range("2026-10-30 10:00", periods=2, freq="h", tz="UTC"))}
+    noon = pd.Timestamp("2026-10-30 12:00", tz="UTC")
+    assert dashboard._fallback("X", {"X": (1.5, noon - pd.Timedelta(hours=3))}, hourly) == (2.0, noon)
+    assert dashboard._fallback("X", {"X": (1.5, noon + pd.Timedelta(hours=1))}, hourly)[0] == 1.5   # der neuere
+    assert dashboard._fallback("Y", {}, hourly) is None

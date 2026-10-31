@@ -130,3 +130,8 @@ class Config:
         """Trade-Protokoll, pro Bot getrennt (bots/config.yaml schreibt nach daten/logs/trades.csv)."""
         suffix = ("" if self.name == "config" else f"_{self.name}") + ("_live" if self.mode == "live" else "")
         return Path("daten/logs") / f"trades{suffix}.csv"
+
+    @property
+    def fehler_path(self) -> Path:
+        """Fehler-Protokoll des Bots (waechter.py), z.B. daten/logs/fehler_config_risiko.txt."""
+        return Path("daten/logs") / f"fehler_{self.name}{'_live' if self.mode == 'live' else ''}.txt"

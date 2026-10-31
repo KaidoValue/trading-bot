@@ -16,7 +16,7 @@ from .news import NewsMonitor
 from .phase import PhaseBook, coin_phases
 from .risk import RiskManager
 from .strategies import build, trend_direction
-from . import buchhaltung, journal, state
+from . import buchhaltung, journal, state, waechter
 
 log = logging.getLogger(__name__)
 
@@ -76,20 +76,22 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     log_path.parent.mkdir(parents=True, exist_ok=True)
     log.info("Bot gestartet: Modus=%s, Börse=%s, Symbole=%s, Horizonte=%s",
              cfg.mode, cfg.exchange, cfg.symbols, cfg.horizon_text())
-    n = 0
+    n, failed = 0, False
     while max_iterations is None or n < max_iterations:
-        n += 1
+        n, failed = n + 1, False
         before_open = {(s, str(t.opened)) for s, t in trader.open_trades.items()}
         before_closed = len(trader.closed)
         try:
-            tickers = {s: exchange.fetch_ticker(s) for s in cfg.symbols}
+            tickers = _tickers(exchange, cfg.symbols, cfg.fehler_path)      # ein Coin ohne Kurs stoppt nicht alle
             prices = {s: float(t["last"]) for s, t in tickers.items()}       # bewertet wird zum letzten Kurs
             if news:
                 trader.context = news.current()
             now = datetime.now(timezone.utc)
+            trader.kurse |= {s: [p, now.isoformat(timespec="seconds")] for s, p in prices.items()}
+            px, ohne = _bewertung(trader, prices, cfg.symbols)    # Kapital: Coins ohne Kurs zum letzten Kurs
             if paper:
                 sync_paper(trader.broker, exchange, tickers, now)
-            for s in cfg.symbols:
+            for s in prices:    # ohne Kurs keine Stop-Prüfung: der nächste Lauf spielt die Minuten nach
                 if paper:       # Demo: Minutenkerzen seit dem letzten Lauf, wie eine Stop-Order an der Börse
                     replay_stops(trader, exchange, s, prices[s], now, last_bar)
                 else:           # live: eine echte Order kann nicht rückwirkend laufen, also zum Kurs von jetzt
@@ -98,10 +100,10 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             if paper:
                 b = trader.broker
                 if b.interest_at is not None:
-                    trader.charge_interest(prices, (now - b.interest_at).total_seconds() / 3600,
+                    trader.charge_interest(px, (now - b.interest_at).total_seconds() / 3600,
                                            cfg.risk.margin_interest_per_day)
                 b.interest_at = now
-            eq = _liquidate(trader, prices, cfg.risk, now)
+            eq = _liquidate(trader, px, prices, cfg.risk, now)
             trader.risk.update(eq, now.date())
             if trader.risk.halted:
                 trader.close_all(prices, "Not-Aus", now)
@@ -109,18 +111,22 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     log.error("NOT-AUS: %s. Bot stoppt.", trader.risk.halt_reason)
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
-            notes, spreads, trends = [hinweis] if hinweis and n == 1 else [], {}, {}
+            notes, spreads, trends = ([hinweis] if hinweis and n == 1 else []) + ohne, {}, {}
             if (cfg.phase_gate or cfg.phase_exit) and not trader.risk.halted:
-                for s in cfg.symbols:
+                for s in prices:
                     phase = _phase(exchange, s)
                     if phase:
                         trader.check_phase(s, phase, prices[s], now)
             for h in ([] if trader.risk.halted else horizons):
                 strategy = strategies[h.name]
-                # zuerst alle Kerzen holen: die Korrelations-Sperre braucht auch die Coins, die später drankommen
-                frames = {s: data.fetch_recent(exchange, s, h.timeframe) for s in cfg.symbols}
                 prefix = f"[{h.name}] " if h.name else ""
-                for s in cfg.symbols:
+                # zuerst alle Kerzen holen: die Korrelations-Sperre braucht auch die Coins, die später drankommen
+                frames = _frames(exchange, [s for s in cfg.symbols if s in prices or s in trader.open_trades],
+                                 h.timeframe, cfg.fehler_path)
+                for s in prices:
+                    if s not in frames:
+                        notes.append(f"{prefix}{s}: keine Kerzen, Signal ausgesetzt")
+                        continue
                     key = f"{h.name}:{s}" if h.name else s
                     df = frames[s]
                     if last_bar.get(key) == df.index[-1] and not cfg.reevaluate:
@@ -145,22 +151,26 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                                      size_factor=factor, can_open_new=liquid, horizon=h.name,
                                      trend=trends[s] if h.trend_filter else None,
                                      anchor=float(ind.ema(df["close"], 20).iloc[-1]))
-                    eq = trader.equity(prices)
+                    eq = trader.equity(px)
                     notes.append(prefix + trader.note)
-            eq = _liquidate(trader, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
+            eq = _liquidate(trader, px, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
             if notes:
                 trader.note = " | ".join(notes)
             log.info("Kapital %.2f | offen: %s", eq, list(trader.open_trades) or "-")
-            abgleich = buchhaltung.pruefen(trader, prices, cfg.starting_capital) if paper else None
+            abgleich = buchhaltung.pruefen(trader, px, cfg.starting_capital) if paper else None
             _write_trades(log_path, trader.closed)
             state.save(cfg.state_path, trader, last_bar, abgleich)
             journal.write(cfg, before_open, before_closed, trader, now)
         except KeyboardInterrupt:
             raise
-        except Exception as e:  # Netzwerkfehler etc.: protokollieren und weiterlaufen
+        except Exception as e:  # Netzwerkfehler etc.: ins Fehler-Protokoll (die Übersicht warnt) und weiterlaufen
             log.exception("Fehler im Durchlauf: %s", e)
+            waechter.melden(cfg.fehler_path, e)
+            failed = True
         if max_iterations is None or n < max_iterations:
             time.sleep(cfg.poll_seconds)
+    if failed and max_iterations == 1:      # --once (zyklus.sh): Exit-Code 1, sonst bliebe der Fehler unsichtbar
+        raise SystemExit(1)
 
 
 def _pretrain(strategy, cfg: Config, timeframe: str | None = None) -> None:
@@ -255,12 +265,70 @@ def liquidation(trader: Trader, prices: dict[str, float], risk) -> bool:
     return notional > 0 and trader.equity(prices) < notional / risk.leverage * risk.liquidation_margin
 
 
-def _liquidate(trader: Trader, prices: dict[str, float], risk, now) -> float:
-    """Zwangsschliessung prüfen und ausführen (vor und nach den Signalen). Gibt das Kapital danach zurück."""
-    if liquidation(trader, prices, risk):
+def _liquidate(trader: Trader, px: dict[str, float], prices: dict[str, float], risk, now) -> float:
+    """Zwangsschliessung prüfen (Bewertungskurse px) und ausführen (vor und nach den Signalen; geschlossen wird zum
+    aktuellen Kurs, ein Coin ohne Kurs im nächsten Lauf). Gibt das Kapital danach zurück."""
+    if liquidation(trader, px, risk):
         log.error("LIQUIDATION: Sicherheit aufgebraucht, alle Positionen zwangsweise geschlossen")
         trader.close_all(prices, "Liquidation", now)
-    return trader.equity(prices)
+    return trader.equity(px)
+
+
+def ticker(exchange, symbol: str) -> dict:
+    """Ticker eines Coins; ohne gültigen letzten Kurs ein Fehler wie jeder andere (auch für die Übersicht)."""
+    t = exchange.fetch_ticker(symbol)
+    if not float(t.get("last") or 0) > 0:
+        raise ValueError(f"kein gültiger Kurs ({t.get('last')!r})")
+    return t
+
+
+def _tickers(exchange, symbols: list[str], fehler_path: Path) -> dict:
+    """Ticker je Coin. Fällt einer aus (z.B. Kraken «EGeneral:No data»), fehlt nur dieser Coin und der Fehler kommt
+    ins Fehler-Protokoll. Fehlen alle Kurse, ist der Durchlauf fehlgeschlagen."""
+    tickers, fehler = {}, {}
+    for s in symbols:
+        try:
+            tickers[s] = ticker(exchange, s)
+        except Exception as e:
+            fehler[s] = e
+    if fehler and not tickers:
+        raise next(iter(fehler.values()))
+    for s, e in fehler.items():
+        log.warning("%s: Kurs nicht abrufbar, Signale und Stops ausgesetzt: %s", s, e)
+        waechter.melden(fehler_path, e, f"Kurs {s}: ")
+    return tickers
+
+
+def _bewertung(trader: Trader, prices: dict[str, float], symbols: list[str]) -> tuple[dict[str, float], list[str]]:
+    """Kurse für Kapital, Drawdown, Hebel und Zinsen: die aktuellen, für offene Positionen ohne aktuellen Kurs der
+    letzte gespeicherte (ohne einen der Einstiegskurs). Nur zum Bewerten: Orders gibt es nur zum aktuellen Kurs.
+    Dazu je Coin ohne Kurs ein Hinweis für die Notiz."""
+    px, notes = dict(prices), []
+    for s in dict.fromkeys([*symbols, *trader.open_trades]):
+        if s in prices:
+            continue
+        t, kurs = trader.open_trades.get(s), trader.kurse.get(s)
+        if t is None:
+            notes.append(f"{s}: kein aktueller Kurs, Signale ausgesetzt")
+            continue
+        px[s] = float(kurs[0]) if kurs else t.entry
+        wie = (f"zum letzten Kurs vom {datetime.fromisoformat(kurs[1]).astimezone(timezone.utc):%d.%m. %H:%M} UTC"
+               if kurs else "zum Einstiegskurs")
+        notes.append(f"{s}: kein aktueller Kurs, Position {wie} bewertet, Stops und Signale ausgesetzt")
+    return px, notes
+
+
+def _frames(exchange, symbols: list[str], timeframe: str, fehler_path: Path) -> dict:
+    """Kerzen je Coin für die Signale. Ohne Kerzen fehlt der Coin (Fehler-Protokoll), sein Signal kommt im nächsten
+    Lauf; die anderen Coins handeln weiter."""
+    frames = {}
+    for s in symbols:
+        try:
+            frames[s] = data.fetch_recent(exchange, s, timeframe)
+        except Exception as e:
+            log.warning("%s: %s-Kerzen nicht abrufbar, Signal ausgesetzt: %s", s, timeframe, e)
+            waechter.melden(fehler_path, e, f"Kerzen {s} {timeframe}: ")
+    return frames
 
 
 def available_symbols(exchange, symbols: list[str]) -> list[str]:

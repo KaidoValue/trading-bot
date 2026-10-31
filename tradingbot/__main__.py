@@ -70,6 +70,17 @@ def schliessen(cfg: Config, symbols: list[str]) -> None:
     state.save(cfg.state_path, trader, last_bar)
 
 
+def run_bot(cfg: Config, once: bool) -> None:
+    """Bot laufen lassen. Fehler im Durchlauf fängt bot.run selbst ab; ein Fehler schon beim Start (z.B. Tippfehler in
+    der Config, kaputter Stand) kommt genauso ins Fehler-Protokoll des Bots, damit die Übersicht davor warnt."""
+    from . import waechter
+    try:
+        bot.run(cfg, max_iterations=1 if once else None)
+    except Exception as e:
+        waechter.melden(cfg.fehler_path, e, "Start: ")
+        raise
+
+
 def report(trades: pd.DataFrame) -> None:
     """Wertet die bisherigen Trades aus: In welcher Marktlage verdient der Bot, in welcher verliert er?"""
     def table(by):
@@ -235,12 +246,12 @@ def main() -> None:
         print(briefing(st["news"]) if st.get("news") else "## Nachrichtenlage\n\nNoch keine Daten.")
     elif args.command == "paper":
         cfg.mode = "paper"
-        bot.run(cfg, max_iterations=1 if args.once else None)
+        run_bot(cfg, args.once)
     elif args.command == "live":
         cfg.mode = "live"
         if os.getenv("CONFIRM_LIVE") != "JA":
             raise SystemExit("Live-Handel mit echtem Geld. Zum Bestätigen: CONFIRM_LIVE=JA setzen.")
-        bot.run(cfg, max_iterations=1 if args.once else None)
+        run_bot(cfg, args.once)
 
 
 if __name__ == "__main__":

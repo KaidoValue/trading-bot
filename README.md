@@ -14,7 +14,7 @@ Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, w
 | **[lernen/](lernen)** | 📚 Alles zum Lernen: Lern-Tagebuch jedes Trades, Trading-Wissen, Strategie-Vergleich, Strategie-Labor der KI, Auswertung von YouTube-Videos (`YOUTUBE.md`) und Trading-Büchern (`BUECHER.md`) |
 | **[bots/](bots)** | ⚙️ Einstellungen der Bots: `config_langfrist.yaml` (1️⃣ Langfrist-Bot), `config_daytrading.yaml` (2️⃣ KI-Bot), `config_risiko.yaml` (3️⃣ Risiko-/Hebel-Bot), `config.yaml` (Vorlage). Jeder Bot handelt kurz-, mittel- und langfristig, long und short (siehe [Zeithorizonte](#zeithorizonte-gleiche-bedingungen-für-alle-bots)) |
 | **[tradingbot/chef.py](tradingbot/chef.py)** | 4️⃣ Chef-Bot: verteilt eigene 1'000 CHF auf die drei Bots, alle starten mit gleichem Anteil; er bewertet sie kurz- (1 Tag), mittel- (7 Tage) und langfristig (30 Tage) (höchstens 20 % Hebel-Stil, Notbremse bei −3 % in 3 Stunden). Stand in `daten/state/chef.json`, Gedächtnis in `daten/state/chef_gedaechtnis.json` |
-| **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel (`logs/`), Chart-Bilder (`charts/`) |
+| **[daten/](daten)** | 🗂️ Automatisch gespeichert: Stand der Bots (`state/`), Trade-Tabellen für Excel und Fehler-Protokolle (`logs/`), Chart-Bilder (`charts/`) |
 | `tradingbot/` | 🧠 Der Programmcode |
 | `tests/` | ✅ Automatische Tests |
 | `scripts/` | ▶️ Startskripte (GitHub und Windows) |
@@ -156,6 +156,32 @@ gebucht (z.B. «Stop-Loss (Gap)», schlechter als der Stop), und Stops oder Ziel
 wurden, während der Kurs danach wieder zurückkam, wurden gar nicht ausgelöst. Trefferquote, Ergebnis je
 Ausstiegsgrund und Stop-Verluste vor und nach dem 30.10.2026 sind deshalb nicht direkt vergleichbar. Live (echtes
 Geld) prüft der Bot weiterhin nur zum Kurs beim Lauf, weil eine echte Order nicht rückwirkend ausgeführt werden kann.
+
+## Wächter für stille Fehler
+
+Vorher blieb ein fehlgeschlagener Durchlauf unsichtbar: Der Bot fing den Fehler ab und endete normal, der Stand wurde
+nicht gespeichert, und STATUS.md zeigte trotzdem eine frische Zeit. Ein einziger fehlender Kurs (am 29.10.2026 08:01
+UTC Kraken «EGeneral:No data») brach den ganzen Durchlauf ab, auch die Stops aller anderen Coins, und liess die
+Übersicht abstürzen. Jetzt (`tradingbot/waechter.py`):
+
+- **Kurse je Coin:** Fällt der Ticker eines Coins aus, laufen die anderen normal weiter. Für diesen Coin setzt der Bot
+  Signale und Stops aus; der nächste Lauf mit Kurs spielt die Minutenkerzen nach. Eine offene Position zählt für
+  Kapital, Drawdown und Hebel zum letzten gespeicherten Kurs (im Stand unter `prices`: Coin → [Kurs, Zeit]; ohne einen
+  zum Einstiegskurs), die Notiz sagt es. Orders gibt es nur zum aktuellen Kurs: Auch Not-Aus und Zwangsschliessung
+  schliessen diesen Coin erst im nächsten Lauf. Fehlen nur die Kerzen eines Coins, setzt nur sein Signal aus. Fehlen
+  alle Kurse, gilt der Durchlauf als fehlgeschlagen.
+- **Fehler-Protokoll:** Jeder Fehler kommt als Zeile «Zeit UTC | Fehlerart | Meldung» nach
+  `daten/logs/fehler_<Config>.txt` (z.B. `fehler_config_risiko.txt`, die letzten 100 Zeilen), auch ein Fehler schon
+  beim Start. `scripts/zyklus.sh` schreibt Fehler des ganzen Laufs (Bot mit Fehler beendet, Übersicht, Charts,
+  Speichern) nach `daten/logs/fehler_zyklus.txt`.
+- **Exit-Code:** `paper --once` endet nach einem fehlgeschlagenen Durchlauf mit Exit-Code 1, damit `zyklus.sh` es
+  merkt. Im Dauerbetrieb (ohne `--once`) läuft der Bot weiter.
+- **Übersicht:** Die Zeile «Letzter Durchlauf» zeigt, wann jeder Bot zuletzt gespeichert hat. Ist ein Stand älter als
+  90 Minuten oder kam in den letzten 2 Stunden ein Fehler, steht oben in STATUS.md eine Warnung, z.B. «⚠️ **3️⃣
+  Risiko-Bot:** seit 3 Std. kein neuer Stand gespeichert (letzter Fehler …)», und dieselbe auf der Kachel der
+  Trading-Oberfläche. Ohne Ticker zeigt die Übersicht den letzten bekannten Kurs (gespeicherter Kurs der Bots oder
+  Schluss der letzten Kerze) mit «Kurs vom …», ein Coin ganz ohne Kurs steht als «kein Kurs abrufbar» da. Die
+  Nachrichtenlage kommt nur noch an eine neu geschriebene STATUS.md (früher stand sie nach einem Absturz doppelt da).
 
 ## Geschichts-Simulation (2011-2026)
 

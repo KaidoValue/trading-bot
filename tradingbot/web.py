@@ -75,8 +75,9 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
         rate = f"{wins / len(closed) * 100:.0f} %" if closed else "–"
         lev = f"Hebel {b.cfg.risk.leverage:g}×" if b.cfg.risk.leverage > 1 else "ohne Hebel"
         halt = '<div class="halt">⛔ Not-Aus aktiv</div>' if b.trader.risk.halted else ""
+        warn = f'<div class="warn">⚠️ {escape(b.warnung)}</div>' if b.warnung else ""     # hängt er? (waechter.py)
         cards.append(f"""<div class="card" style="--c:{COLORS[i % 4]}">
-  <div class="card-title">{escape(titles[b.cfg.name])}</div>{halt}
+  <div class="card-title">{escape(titles[b.cfg.name])}</div>{halt}{warn}
   <div class="big">{_chf(eq)} <small>CHF</small></div>
   <div class="pnl">{_signed(eq - start, (eq / start - 1) * 100)}</div>
   <div class="kv"><span>Investiert</span><b>{_chf(b.invested, 0)} CHF ({b.invested / eq * 100:.0f} %)</b></div>
@@ -135,6 +136,8 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
     for s, tk in tickers.items():
         ch = tk.get("percentage")
         chtxt = _signed(ch, unit=" %") if ch is not None else "–"
+        if tk.get("kurs_vom") is not None:          # Ticker fehlte: letzter bekannter Kurs
+            chtxt = f"<span class='muted'>Kurs vom {_local(tk['kurs_vom'])}</span>"
         market.append(f"<tr class='sym' data-tv='{tv_symbol(s, exchange)}'><td><b>{s.split('/')[0]}</b>"
                       f"<span class='muted'>/CHF</span></td><td class='r'>{_price(tk['last'])}</td><td class='r'>{chtxt}</td></tr>")
 
@@ -176,6 +179,7 @@ main{{padding:16px 20px;max-width:1500px;margin:0 auto}}
 .pnl{{margin:2px 0 10px;font-weight:600}}.kv{{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid #1f242a;font-size:13px}}
 .kv span{{color:var(--muted)}}.kv b{{font-weight:500;text-align:right}}.small{{font-size:12px;margin:6px 0}}.muted{{color:var(--muted)}}
 .up{{color:var(--up)}}.down{{color:var(--down)}}.halt{{color:var(--down);font-weight:600}}
+.warn{{color:var(--accent);font-size:13px;margin-bottom:6px}}
 .alloc{{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0}}
 .panel{{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin-top:12px}}
 .panel h2{{font-size:14px;margin:0;padding:12px 14px;border-bottom:1px solid var(--line)}}
