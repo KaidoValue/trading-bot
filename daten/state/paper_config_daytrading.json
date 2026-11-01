@@ -615,28 +615,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-01T12:00:00+00:00"
+      "__dt__": "2026-11-01T13:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-01T08:00:00+00:00"
@@ -687,7 +687,7 @@
       "__dt__": "2026-10-31T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ETH/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "[kurz] BTC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 34,
     "news_score": -1.0,
@@ -746,7 +746,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-01T13:33:26.762710+00:00"
+    "__dt__": "2026-11-01T14:03:47.369379+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -776,36 +776,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      64252.4,
-      "2026-11-01T13:32:54+00:00"
+      64250.0,
+      "2026-11-01T14:02:55+00:00"
     ],
     "ETH/CHF": [
       1866.14,
-      "2026-11-01T13:32:54+00:00"
+      "2026-11-01T14:02:55+00:00"
     ],
     "BNB/CHF": [
-      588.0120114,
-      "2026-11-01T13:32:54+00:00"
+      589.1711884,
+      "2026-11-01T14:02:55+00:00"
     ],
     "XRP/CHF": [
-      1.0319932986,
-      "2026-11-01T13:32:54+00:00"
+      1.0323020028,
+      "2026-11-01T14:02:55+00:00"
     ],
     "SOL/CHF": [
-      78.32294580000001,
-      "2026-11-01T13:32:54+00:00"
+      78.19907,
+      "2026-11-01T14:02:55+00:00"
     ],
     "TRX/CHF": [
-      0.25606397148000004,
-      "2026-11-01T13:32:54+00:00"
+      0.25615539372,
+      "2026-11-01T14:02:55+00:00"
     ],
     "ZEC/CHF": [
-      1026.2426304,
-      "2026-11-01T13:32:54+00:00"
+      1020.6237248000001,
+      "2026-11-01T14:02:55+00:00"
     ],
     "HYPE/CHF": [
-      72.5557764,
-      "2026-11-01T13:32:54+00:00"
+      72.46309600000001,
+      "2026-11-01T14:02:55+00:00"
     ]
   },
   "abgleich": {
@@ -826,9 +826,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-01T13:32:54.728583+00:00"
+      "__dt__": "2026-11-01T14:02:55.052362+00:00"
     },
-    "quote_usd": 1.212033064261993,
+    "quote_usd": 1.2116512383075655,
     "volume": [
       [
         {
