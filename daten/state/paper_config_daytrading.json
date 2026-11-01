@@ -703,6 +703,13 @@
       {
         "theme": "hack",
         "source": "coindesk",
+        "title": "FBI confirms North Korea's role in $6 billion Binance hack, asks DeFi community to block BTC, ETH, SOL addresses",
+        "link": "https://www.coindesk.com/policy/2026/10/31/fbi-confirms-north-korea-s-role-in-usd6-billion-binance-hack-asks-defi-community-to-block-btc-eth-sol-addresses",
+        "published": "2026-11-01T01:10:05+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
         "title": "A stolen iPhone, $14,000 in losses and London's crypto theft problem",
         "link": "https://www.coindesk.com/business/2026/11/01/a-stolen-iphone-usd14-000-in-losses-and-london-s-crypto-theft-problem",
         "published": "2026-10-31T16:09:30+00:00"
@@ -746,7 +753,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-01T01:03:44.128732+00:00"
+    "__dt__": "2026-11-01T01:33:25.887281+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -776,36 +783,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      64060.7,
-      "2026-11-01T01:02:54+00:00"
+      64047.9,
+      "2026-11-01T01:32:54+00:00"
     ],
     "ETH/CHF": [
-      1866.5,
-      "2026-11-01T01:02:54+00:00"
+      1869.14,
+      "2026-11-01T01:32:54+00:00"
     ],
     "BNB/CHF": [
-      581.911884,
-      "2026-11-01T01:02:54+00:00"
+      580.9472256,
+      "2026-11-01T01:32:54+00:00"
     ],
     "XRP/CHF": [
-      1.0362228174,
-      "2026-11-01T01:02:54+00:00"
+      1.0346057556000001,
+      "2026-11-01T01:32:54+00:00"
     ],
     "SOL/CHF": [
-      78.9678549,
-      "2026-11-01T01:02:54+00:00"
+      78.961776,
+      "2026-11-01T01:32:54+00:00"
     ],
     "TRX/CHF": [
-      0.25272191898,
-      "2026-11-01T01:02:54+00:00"
+      0.25429078308,
+      "2026-11-01T01:32:54+00:00"
     ],
     "ZEC/CHF": [
-      1037.6189433,
-      "2026-11-01T01:02:54+00:00"
+      1038.1573836,
+      "2026-11-01T01:32:54+00:00"
     ],
     "HYPE/CHF": [
-      72.7968132,
-      "2026-11-01T01:02:54+00:00"
+      72.69273960000001,
+      "2026-11-01T01:32:54+00:00"
     ]
   },
   "abgleich": {
@@ -826,9 +833,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-01T01:02:54.705333+00:00"
+      "__dt__": "2026-11-01T01:32:54.381655+00:00"
     },
-    "quote_usd": 1.2104925494183583,
+    "quote_usd": 1.210712383166255,
     "volume": [
       [
         {
