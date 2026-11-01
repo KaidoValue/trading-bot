@@ -2,16 +2,16 @@
  "stats": {
   "Aufw\u00e4rtstrend, wild": {
    "config_langfrist": [
-    -0.02478525384971897,
-    255
+    -0.025064228354669926,
+    256
    ],
    "config_daytrading": [
     -0.04426861581004016,
-    255
+    256
    ],
    "config_risiko": [
-    -0.37576466097274897,
-    255
+    -0.376198622479023,
+    256
    ]
   },
   "Aufw\u00e4rtstrend, ruhig": {
