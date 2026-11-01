@@ -690,55 +690,14 @@
   "note": "[kurz] BTC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 34,
-    "news_score": -1.0,
-    "themes": {
-      "hack": [
-        "coindesk",
-        "cointelegraph"
-      ]
-    },
+    "news_score": 0.0,
+    "themes": {},
     "blackout": null,
-    "evidence": [
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Binance opens crypto withdrawals in phases starting with bitcoin following $6.3 billion hack",
-        "link": "https://www.coindesk.com/markets/2026/11/01/binance-opens-crypto-withdrawals-in-phases-starting-with-bitcoin-following-usd6-3-billion-hack",
-        "published": "2026-11-01T10:35:42+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "FBI confirms North Korea's role in $6 billion Binance hack, asks DeFi community to block BTC, ETH, SOL addresses",
-        "link": "https://www.coindesk.com/policy/2026/10/31/fbi-confirms-north-korea-s-role-in-usd6-billion-binance-hack-asks-defi-community-to-block-btc-eth-sol-addresses",
-        "published": "2026-11-01T01:10:05+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "A stolen iPhone, $14,000 in losses and London's crypto theft problem",
-        "link": "https://www.coindesk.com/business/2026/11/01/a-stolen-iphone-usd14-000-in-losses-and-london-s-crypto-theft-problem",
-        "published": "2026-10-31T16:09:30+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Bitcoin held up better than expected after Binance hack, Strive CEO says",
-        "link": "https://cointelegraph.com/markets/bitcoin-binance-hack-strive-ceo?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-10-31T15:26:46+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Binance says it has replaced 90% of stolen crypto after massive $6.3 billion breach",
-        "link": "https://www.coindesk.com/business/2026/10/31/binance-says-it-has-replaced-90-of-stolen-crypto-after-massive-usd6-3-billion-breach",
-        "published": "2026-10-31T15:24:10+00:00"
-      }
-    ],
+    "evidence": [],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-01T15:03:47.101293+00:00"
+    "__dt__": "2026-11-01T15:33:28.807779+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -768,36 +727,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      64352.8,
-      "2026-11-01T15:02:54+00:00"
+      64346.6,
+      "2026-11-01T15:32:57+00:00"
     ],
     "ETH/CHF": [
       1873.35,
-      "2026-11-01T15:02:54+00:00"
+      "2026-11-01T15:32:57+00:00"
     ],
     "BNB/CHF": [
-      591.4724620000001,
-      "2026-11-01T15:02:54+00:00"
+      588.56011,
+      "2026-11-01T15:32:57+00:00"
     ],
     "XRP/CHF": [
-      1.0336176311999998,
-      "2026-11-01T15:02:54+00:00"
+      1.0312679257,
+      "2026-11-01T15:32:57+00:00"
     ],
     "SOL/CHF": [
-      78.3951776,
-      "2026-11-01T15:02:54+00:00"
+      78.2050278,
+      "2026-11-01T15:32:57+00:00"
     ],
     "TRX/CHF": [
-      0.25658074576,
-      "2026-11-01T15:02:54+00:00"
+      0.25786362048,
+      "2026-11-01T15:32:57+00:00"
     ],
     "ZEC/CHF": [
-      1025.717022,
-      "2026-11-01T15:02:54+00:00"
+      1020.28092,
+      "2026-11-01T15:32:57+00:00"
     ],
     "HYPE/CHF": [
-      72.6245132,
-      "2026-11-01T15:02:54+00:00"
+      72.4597566,
+      "2026-11-01T15:32:57+00:00"
     ]
   },
   "abgleich": {
@@ -818,9 +777,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-01T15:02:54.895177+00:00"
+      "__dt__": "2026-11-01T15:32:57.441746+00:00"
     },
-    "quote_usd": 1.2112989970444306,
+    "quote_usd": 1.2114310635153307,
     "volume": [
       [
         {
