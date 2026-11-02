@@ -78,8 +78,9 @@ def load_bot(path: str, prices: dict[str, float]) -> Bot | None:
     cfg.mode = "paper"
     trader = Trader(paper_broker(cfg), RiskManager(cfg.risk, cfg.starting_capital))
     trader.broker.now = datetime.now(timezone.utc)       # Umsatz der letzten 30 Tage ab jetzt (Gebührenstufe)
-    if not state.load(cfg.state_path, trader):
+    if not cfg.state_path.exists():
         return None
+    state.load(cfg.state_path, trader)  # a newly reset account legitimately has no last_bar yet
     px = {s: t.entry for s, t in trader.open_trades.items()} | prices          # Coin ganz ohne Kurs: Einstiegskurs
     value = sum(trader.broker.position(s) * p for s, p in px.items())          # Shorts zählen negativ
     invested = sum(abs(trader.broker.position(s)) * p for s, p in px.items())
