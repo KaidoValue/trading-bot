@@ -3,15 +3,15 @@
   "Aufw\u00e4rtstrend, ruhig": {
    "config_langfrist": [
     0.0,
-    5
+    6
    ],
    "config_daytrading": [
     0.0,
-    5
+    6
    ],
    "config_risiko": [
-    -0.010404645701386994,
-    5
+    -0.0059409343376807255,
+    6
    ]
   }
  },
