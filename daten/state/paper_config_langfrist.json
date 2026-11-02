@@ -353,25 +353,25 @@
       "__dt__": "2026-11-01T23:00:00+00:00"
     },
     "stop:BTC/CHF": {
-      "__dt__": "2026-11-02T00:01:00+00:00"
+      "__dt__": "2026-11-02T00:31:00+00:00"
     },
     "stop:ETH/CHF": {
-      "__dt__": "2026-11-02T00:01:00+00:00"
+      "__dt__": "2026-11-02T00:31:00+00:00"
     },
     "stop:BNB/CHF": {
-      "__dt__": "2026-11-02T00:01:00+00:00"
+      "__dt__": "2026-11-02T00:31:00+00:00"
     },
     "stop:XRP/CHF": {
-      "__dt__": "2026-11-02T00:01:00+00:00"
+      "__dt__": "2026-11-02T00:31:00+00:00"
     },
     "stop:SOL/CHF": {
-      "__dt__": "2026-11-02T00:01:00+00:00"
+      "__dt__": "2026-11-02T00:31:00+00:00"
     },
     "stop:TRX/CHF": {
       "__dt__": "2026-10-31T22:28:00+00:00"
     },
     "stop:ZEC/CHF": {
-      "__dt__": "2026-11-02T00:01:00+00:00"
+      "__dt__": "2026-11-02T00:31:00+00:00"
     }
   },
   "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: Position offen, Signal best\u00e4tigt | [lang] BNB/CHF: Position offen, Signal best\u00e4tigt | [lang] XRP/CHF: kein Signal | [lang] SOL/CHF: Position offen, Signal best\u00e4tigt | [lang] TRX/CHF: Signal 'raus', bleibe in Cash | [lang] ZEC/CHF: Position offen, Signal best\u00e4tigt | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] HYPE/CHF: kein Signal | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] XRP/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
@@ -411,7 +411,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-02T00:02:44.545112+00:00"
+    "__dt__": "2026-11-02T00:32:45.902509+00:00"
   },
   "risk": {
     "peak_equity": 1000,
@@ -442,41 +442,41 @@
   },
   "prices": {
     "BTC/CHF": [
-      64502.7,
-      "2026-11-02T00:01:42+00:00"
+      64305.6,
+      "2026-11-02T00:31:44+00:00"
     ],
     "ETH/CHF": [
       1878.46,
-      "2026-11-02T00:01:42+00:00"
+      "2026-11-02T00:31:44+00:00"
     ],
     "BNB/CHF": [
-      587.169906,
-      "2026-11-02T00:01:42+00:00"
+      585.4132950000001,
+      "2026-11-02T00:31:44+00:00"
     ],
     "XRP/CHF": [
-      1.030973964,
-      "2026-11-02T00:01:42+00:00"
+      1.025110347,
+      "2026-11-02T00:31:44+00:00"
     ],
     "SOL/CHF": [
-      78.000126,
-      "2026-11-02T00:01:42+00:00"
+      77.563035,
+      "2026-11-02T00:31:44+00:00"
     ],
     "TRX/CHF": [
-      0.2580098691,
-      "2026-11-02T00:01:42+00:00"
+      0.2577896742,
+      "2026-11-02T00:31:44+00:00"
     ],
     "ZEC/CHF": [
-      1019.477646,
-      "2026-11-02T00:01:42+00:00"
+      1015.601556,
+      "2026-11-02T00:31:44+00:00"
     ],
     "HYPE/CHF": [
-      72.449895,
-      "2026-11-02T00:01:42+00:00"
+      72.40866,
+      "2026-11-02T00:31:44+00:00"
     ]
   },
   "abgleich": {
-    "kapital": 964.35,
-    "erwartet": 964.35,
+    "kapital": 962.9,
+    "erwartet": 962.9,
     "differenz": 0.0
   },
   "paper": {
@@ -492,7 +492,7 @@
     },
     "interest_paid": 0.012895995134820534,
     "interest_at": {
-      "__dt__": "2026-11-02T00:01:42.766421+00:00"
+      "__dt__": "2026-11-02T00:31:44.373176+00:00"
     },
     "quote_usd": 1.2125621438098704,
     "volume": [
