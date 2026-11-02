@@ -615,52 +615,52 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-02T06:00:00+00:00"
+      "__dt__": "2026-11-02T07:00:00+00:00"
     },
     "mittel:BTC/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:ETH/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:BNB/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:XRP/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:SOL/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:TRX/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:ZEC/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "mittel:HYPE/CHF": {
-      "__dt__": "2026-11-02T00:00:00+00:00"
+      "__dt__": "2026-11-02T04:00:00+00:00"
     },
     "lang:BTC/CHF": {
       "__dt__": "2026-11-01T00:00:00+00:00"
@@ -687,18 +687,26 @@
       "__dt__": "2026-11-01T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] XRP/CHF: kein Signal | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "[kurz] BTC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] ETH/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] BNB/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [kurz] XRP/CHF: kein Signal | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash | [mittel] BTC/CHF: kein Signal | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: kein Signal | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] TRX/CHF: kein Signal | [mittel] ZEC/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren) | [mittel] HYPE/CHF: kein Einstieg (erwartete Bewegung zu klein f\u00fcr die Geb\u00fchren)",
   "news": {
     "fear_greed": 37,
     "news_score": -1.0,
     "themes": {
       "hack": [
         "coindesk",
+        "cointelegraph",
         "decrypt"
       ]
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Bitcoin ETFs sink into October outflows with $643M exit after Binance hack",
+        "link": "https://cointelegraph.com/markets/bitcoin-etfs-october-red-binance-hack-outflows?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-02T07:50:36+00:00"
+      },
       {
         "theme": "hack",
         "source": "coindesk",
@@ -738,7 +746,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-02T07:33:28.177571+00:00"
+    "__dt__": "2026-11-02T08:03:48.203901+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -768,36 +776,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      64184.2,
-      "2026-11-02T07:32:56+00:00"
+      64207.3,
+      "2026-11-02T08:02:56+00:00"
     ],
     "ETH/CHF": [
-      1878.05,
-      "2026-11-02T07:32:56+00:00"
+      1879.15,
+      "2026-11-02T08:02:56+00:00"
     ],
     "BNB/CHF": [
-      581.7752161000001,
-      "2026-11-02T07:32:56+00:00"
+      582.4658625000001,
+      "2026-11-02T08:02:56+00:00"
     ],
     "XRP/CHF": [
-      1.027059137,
-      "2026-11-02T07:32:56+00:00"
+      1.028388135,
+      "2026-11-02T08:02:56+00:00"
     ],
     "SOL/CHF": [
-      77.59526840000001,
-      "2026-11-02T07:32:56+00:00"
+      77.5606425,
+      "2026-11-02T08:02:56+00:00"
     ],
     "TRX/CHF": [
-      0.2594355166,
-      "2026-11-02T07:32:56+00:00"
+      0.25924687949999997,
+      "2026-11-02T08:02:56+00:00"
     ],
     "ZEC/CHF": [
-      1041.1247197,
-      "2026-11-02T07:32:56+00:00"
+      1039.3636199999999,
+      "2026-11-02T08:02:56+00:00"
     ],
     "HYPE/CHF": [
-      70.4842892,
-      "2026-11-02T07:32:56+00:00"
+      70.55904,
+      "2026-11-02T08:02:56+00:00"
     ]
   },
   "abgleich": {
@@ -818,9 +826,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-02T07:32:56.580082+00:00"
+      "__dt__": "2026-11-02T08:02:56.247709+00:00"
     },
-    "quote_usd": 1.2150225386680922,
+    "quote_usd": 1.2154360376785172,
     "volume": [
       [
         {
