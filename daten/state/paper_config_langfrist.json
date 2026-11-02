@@ -98,6 +98,13 @@
     "blackout": null,
     "evidence": [
       {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Mystery $106 Million Crypto Theft Hits EU Entity Days After Binance Hack",
+        "link": "https://decrypt.co/382383/mystery-106-million-crypto-theft-eu-entity-binance-hack",
+        "published": "2026-11-02T21:16:03+00:00"
+      },
+      {
         "theme": "rally",
         "source": "cointelegraph",
         "title": "Bitcoin risks drop below $76K as 7% oil slide fails to spark BTC price rally",
@@ -145,19 +152,12 @@
         "title": "Binance Reopens Withdrawals as Hack Recovery Enters Second Week",
         "link": "https://bitcoinmagazine.com/news/binance-reopens-withdrawals-hack",
         "published": "2026-11-02T14:57:34+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Binance hackers begin swapping stolen Solana tokens for Bitcoin: Chainalysis",
-        "link": "https://cointelegraph.com/news/binance-hackers-solana-new-phase-laundering-chainalysis?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-11-02T12:40:45+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-02T21:02:45.401312+00:00"
+    "__dt__": "2026-11-02T21:32:45.599377+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -174,36 +174,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      62917.5,
-      "2026-11-02T21:01:42+00:00"
+      62788.5,
+      "2026-11-02T21:31:42+00:00"
     ],
     "ETH/CHF": [
-      1839.77,
-      "2026-11-02T21:01:42+00:00"
+      1840.76,
+      "2026-11-02T21:31:42+00:00"
     ],
     "BNB/CHF": [
-      566.1693779999999,
-      "2026-11-02T21:01:42+00:00"
+      570.06081,
+      "2026-11-02T21:31:42+00:00"
     ],
     "XRP/CHF": [
-      1.0143443460000001,
-      "2026-11-02T21:01:42+00:00"
+      1.021696665,
+      "2026-11-02T21:31:42+00:00"
     ],
     "SOL/CHF": [
-      74.4974724,
-      "2026-11-02T21:01:42+00:00"
+      74.935611,
+      "2026-11-02T21:31:42+00:00"
     ],
     "TRX/CHF": [
-      0.25908882408,
-      "2026-11-02T21:01:42+00:00"
+      0.2606970036,
+      "2026-11-02T21:31:42+00:00"
     ],
     "ZEC/CHF": [
-      928.0107504,
-      "2026-11-02T21:01:42+00:00"
+      938.5331189999999,
+      "2026-11-02T21:31:42+00:00"
     ],
     "HYPE/CHF": [
-      67.9109796,
-      "2026-11-02T21:01:42+00:00"
+      68.43513300000001,
+      "2026-11-02T21:31:42+00:00"
     ]
   },
   "abgleich": {
@@ -216,9 +216,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-02T21:01:42.504636+00:00"
+      "__dt__": "2026-11-02T21:31:42.813480+00:00"
     },
-    "quote_usd": 1.2267530300799843,
+    "quote_usd": 1.2214486380847687,
     "volume": []
   }
 }
