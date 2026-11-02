@@ -4,7 +4,7 @@
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
 title: "2️⃣ KI-Bot (lernend, kurz bis lang)"
-description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, und vergisst nichts. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, nur in Trendrichtung. Simulation 2011-2022: +18 %/Jahr, 2023-2026: +14 %/Jahr."
+description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, mit zeitlich abgewerteter Erfahrung. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, nur in Trendrichtung. Neue Lernlogik: noch keine validierte Renditeaussage. Laborstrategien erst nach separater Paper-Probe."
 
 # Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
 exchange: kraken      # oder bitstamp (Vergleich im README)
@@ -37,7 +37,9 @@ horizons:
     timeframe: 1h
     strategy: adaptive_memory
     strategy_params:
-      memory_file: daten/state/ki_gedaechtnis.json          # Gedächtnis, wächst bei jedem Lauf
+      pretrain: false
+      memory_half_life_days: 90
+      memory_file: daten/state/ki_gedaechtnis_v2.json          # Gedächtnis, wächst bei jedem Lauf
       library_file: daten/state/strategie_bibliothek.json   # selbst erfundene Strategien aus dem Labor
     share: 0.2
     trend_filter: true
@@ -47,7 +49,9 @@ horizons:
     timeframe: 4h
     strategy: adaptive_memory
     strategy_params:
-      memory_file: daten/state/ki_gedaechtnis_mittel.json
+      pretrain: false
+      memory_half_life_days: 90
+      memory_file: daten/state/ki_gedaechtnis_mittel_v2.json
     share: 0.3
     stop_loss_atr: 3.0
     take_profit_atr: 6.0
@@ -58,7 +62,9 @@ horizons:
     timeframe: 1d
     strategy: adaptive_memory
     strategy_params:
-      memory_file: daten/state/ki_gedaechtnis_lang.json
+      pretrain: false
+      memory_half_life_days: 90
+      memory_file: daten/state/ki_gedaechtnis_lang_v2.json
     share: 0.5
     stop_loss_atr: 4.0
     take_profit_atr: 10.0
