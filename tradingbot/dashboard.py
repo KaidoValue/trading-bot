@@ -407,7 +407,7 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
         change = chef.update({b.cfg.name: b.equity for b in bots}, phase, now)
         if change:
             journal.write_chef(chef, change, now)
-        lines.append("- **4️⃣ Chef-Bot:** verteilt eigene 1'000 CHF selbstständig auf die drei Stile oben, "
+        lines.append(f"- **4️⃣ Chef-Bot:** verteilt eigene {chf(chef.start)} CHF Startkapital selbstständig auf die drei Stile oben, "
                      "je nachdem, was in der aktuellen Marktphase am besten läuft.")
         chef_lines = chef_section(chef, phase)
     lines += [""] + (overview(bots, now) if bots else ["Noch kein Bot gelaufen."])
