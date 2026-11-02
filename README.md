@@ -1,5 +1,72 @@
 # Krypto-Trading-Bot
 
+## Überarbeitete Lernlogik (Version 2)
+
+Diese lokale Fassung verändert die Handelsentscheidungen. Alte Renditeberichte,
+STATUS.md und gespeicherte Laborergebnisse gehören zur vorherigen Version und
+belegen keine Rendite der neuen Fassung. Die technische Prüfung erfolgte mit
+automatisierten Tests und synthetischen Kursen.
+
+- Adaptive Strategien bewerten jedes Mitglied auf einem isolierten virtuellen
+  Konto mit denselben Klassen `Trader`, `RiskManager` und `PaperBroker`:
+  Gebührenmodell aus der Konfiguration, Slippage, Stops, Teilverkäufe,
+  Nachlauf-Stops, Margin-Kosten und Risikolimits. Signale werden frühestens zum
+  nächsten Kerzenbeginn ausgeführt. Trendfilter verwenden nur geschlossene Tage.
+- Das Gedächtnis wertet alte Erfahrungen mit 90 Tagen Halbwertszeit ab;
+  `memory_half_life_days` stellt diesen Wert ein. Kerzen werden pro Coin nur
+  einmal aufgenommen. Ergebnisse werden der vor der Bewegung bekannten Phase
+  zugeordnet. Die Erfahrungszahl ist eine gewichtete Kerzenzahl, keine Anzahl
+  unabhängiger Trades.
+- Der KI-Bot beginnt mit neuen `ki_gedaechtnis*_v2.json` Dateien. Die alten
+  Lernstände und alle Kontostände bleiben erhalten. Fremde USD-Kursgeschichte
+  wird nicht mehr automatisch in das CHF-Gedächtnis vortrainiert.
+- Backtests ignorieren gespeichertes Gedächtnis und nachträglich entdeckte
+  Laborregeln. Walk-Forward-Testkonten starten erst an der Testgrenze; Gewinne,
+  Positionen und Gebühren aus dem Training fliessen nicht ins Testkonto ein.
+- Das Labor sucht standardmässig auf den ersten 50 % der Kurse und prüft eine
+  feste Shortlist auf drei späteren, getrennten Fenstern. Jedes Fenster muss
+  nach Ausführungskosten positiv sein, einen Profit Factor von mindestens 1,2
+  und maximal 15 % Drawdown haben. Insgesamt sind mindestens 30 abgeschlossene
+  Trades und eine bessere Rendite als kostenbereinigtes Halten erforderlich.
+- Bestandene Regeln haben zunächst Status `probation`. Der wöchentliche
+  Laborlauf prüft zuerst die eingefrorenen Regeln auf Kursen **nach ihrem Fund**.
+  Mindestens 14 Tage und 20 regulär geschlossene Trades, positive Nettorendite,
+  Profit Factor mindestens 1,2 und maximal 15 % Drawdown sind zur Freigabe nötig.
+  Nach 90 Tagen ohne ausreichende Probe wird eine Regel verworfen. Änderungen
+  der Ausführungsparameter beenden die Probe. Nur `active` stimmt im Bot mit;
+  alte Bibliothekseinträge ohne neue Prüfung bleiben gesperrt.
+
+### Grenzen der Bewertung
+
+Das Lernsignal bleibt ein hypothetisches Ergebnis pro Einzelstrategie, nicht
+der realisierte Gewinnbeitrag im gemeinsamen Portfolio. Die virtuellen Konten
+konkurrieren nicht um dasselbe Kapital. Historische News, echte Orderbücher,
+Korrelationsbeschränkungen und Horizontübernahmen werden dort nicht nachgebildet.
+Die Auswertung wird je verfügbarem Kursfenster neu gespielt; dadurch können
+lange Positionen und Risikopausen vom fortlaufenden Konto abweichen. Die
+Paper-Probe ist eine Simulation auf später hinzugekommenen Kursen, keine echte
+Orderausführung. Wiederholte Forschung auf ähnlichen Zeiträumen kann weiterhin
+überanpassen. Diese Änderungen versprechen keine höhere Rendite.
+
+### Verwenden und prüfen
+
+Die vollständige überarbeitete Kopie kann separat verwendet werden. Für ein
+bestehendes Repository die geänderten Code- und Konfigurationsdateien übernehmen;
+aktuelle Dateien unter `daten/state/` und `daten/logs/` nicht durch alte Snapshots
+überschreiben. Vor Änderungen am laufenden Repository dessen Stand sichern.
+
+```powershell
+python -X utf8 -m pip install -r requirements.txt
+python -X utf8 -m pytest -q
+python -X utf8 -m tradingbot backtest --config bots/config_daytrading.yaml --synthetic
+```
+
+Der letzte Befehl nutzt synthetische Kurse und erzeugt keinen Profitabilitätsnachweis.
+Nach Übernahme auf `main` verwendet der eingerichtete Workflow die neuen Regeln
+ab einem folgenden Durchlauf. Der KI-Bot bleibt im konfigurierten Paper-Modus;
+es wurde kein Live-Handel aktiviert.
+
+
 ## 🖥️ [Zur Trading-Oberfläche: kaidovalue.github.io/trading-bot](https://kaidovalue.github.io/trading-bot/)
 
 Modularer, automatischer Krypto-Trading-Bot in Python. Er lädt laufend Kurse, wertet sie mit mehreren Strategien aus, eröffnet und schliesst Positionen und überwacht dabei strenge Risikoregeln.
