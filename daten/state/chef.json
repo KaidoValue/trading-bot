@@ -1,18 +1,28 @@
 {
-  "start": 100.0,
-  "equity": 100.0,
-  "peak": 100.0,
-  "weights": {
-    "config_langfrist": 0.3,
-    "config_daytrading": 0.3,
-    "config_risiko": 0.2
-  },
-  "last": {
-    "config_langfrist": 100.0,
-    "config_daytrading": 100.0,
-    "config_risiko": 100.0
-  },
-  "history": [],
-  "fees": 0.0,
-  "reason": "Paper-Neustart mit 100.00 CHF am 2026-11-02T19:34:15.843911+00:00"
+ "start": 100.0,
+ "equity": 100.0,
+ "peak": 100.0,
+ "weights": {
+  "config_langfrist": 0.3,
+  "config_daytrading": 0.3,
+  "config_risiko": 0.2
+ },
+ "last": {
+  "config_langfrist": 100.0,
+  "config_daytrading": 100.0,
+  "config_risiko": 100.0
+ },
+ "history": [
+  {
+   "t": "2026-11-02T19:39:58.550922+00:00",
+   "r": {
+    "config_langfrist": 0.0,
+    "config_daytrading": 0.0,
+    "config_risiko": 0.0
+   },
+   "equity": 100.0
+  }
+ ],
+ "fees": 0.0,
+ "reason": "Paper-Neustart mit 100.00 CHF am 2026-11-02T19:38:40.499488+00:00"
 }

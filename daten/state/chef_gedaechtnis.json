@@ -1,1 +1,23 @@
-{"stats": {}, "seen": {}, "pretrained": false}
+{
+ "stats": {
+  "Aufw\u00e4rtstrend, ruhig": {
+   "config_langfrist": [
+    0.0,
+    1
+   ],
+   "config_daytrading": [
+    0.0,
+    1
+   ],
+   "config_risiko": [
+    0.0,
+    1
+   ]
+  }
+ },
+ "seen": {},
+ "pretrained": false,
+ "schema": 2,
+ "half_life_days": null,
+ "as_of": null
+}

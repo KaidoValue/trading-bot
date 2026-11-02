@@ -1,0 +1,26 @@
+{
+  "reset_at": "2026-11-02T19:38:40.499488+00:00",
+  "starting_capital": 100.0,
+  "mode": "paper",
+  "strategy_memory_preserved": true,
+  "files": {
+    "bots/config.yaml": "bb31642045db7d6a5b79798ea5d4ed659934dca3e3d6f29f75afcb161eff4746",
+    "bots/config_daytrading.yaml": "08b5dead3dd8ae7c8693da131124f952fac5d9933ab9686c1223cb2961c76def",
+    "bots/config_langfrist.yaml": "2ae3dde09009f6c1c93a89141b8c0fd1fd8d37da133122a2fc4e4b711165b3a8",
+    "bots/config_phasen.yaml": "7527afeddb4aea67f53717f9b58b581bbba895b6877271eb01efd3ed2e08d716",
+    "bots/config_risiko.yaml": "712a385b667aac0c169d14802fd450a137c99836f7f2c1953ce41cb740fc3ca0",
+    "daten/state/paper_config.json": "c9328c90128c31a050b6a60f9da391ac7c59d667b66f6bda832438b13c730971",
+    "daten/state/paper_config_daytrading.json": "bab8ca619666a0f21577ef1f78069ef066fd495400a7d5bfd5f720e0f194747b",
+    "daten/state/paper_config_langfrist.json": "86e86b17fd2963adbd30af850a734b57743b383c7668e4cd08c773c03a29a19a",
+    "daten/state/paper_config_phasen.json": "47955339af1a597b821d889888ea0ca3824e3f7e1166964fd5382646f24ad8b3",
+    "daten/state/paper_config_risiko.json": "051d3efa015bf82434f5694782b65002c944a5dcaa19dc38d016a93d5378f4db",
+    "daten/state/chef.json": "e0443e50e3bd357e7a4d34c06db1a2107506cababca48a6d9065af84345f8b72",
+    "daten/state/chef_gedaechtnis.json": "5418c15fd0f68a958a154ef62e10086cf26eaec08bf619e2051c6b05345b1681",
+    "daten/state/verlauf.csv": "674782cab1be5ff2251e3f1e86c65192461594aff6ec8da95401247088f41411",
+    "STATUS.md": "421e9d39071b7e7a8f2738d7c094721aedf5f434815e4f8b55336a1552941638",
+    "daten/logs/trades_config_langfrist.csv": "d1a2a34a02ce8538de9c0a914e28f94b3c887996e3743ebc444b8c1cd47d6e5e",
+    "daten/logs/trades_config_daytrading.csv": "d1a2a34a02ce8538de9c0a914e28f94b3c887996e3743ebc444b8c1cd47d6e5e",
+    "daten/logs/trades_config_risiko.csv": "d1a2a34a02ce8538de9c0a914e28f94b3c887996e3743ebc444b8c1cd47d6e5e",
+    "daten/logs/uebersicht_fehler.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
