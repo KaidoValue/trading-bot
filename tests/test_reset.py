@@ -55,6 +55,16 @@ def test_reset_refuses_live_config_before_touching_accounts(tmp_path):
     assert not (tmp_path / 'daten/archiv').exists()
 
 
+def test_dashboard_shows_newly_reset_account_before_first_candle(tmp_path, monkeypatch):
+    from tradingbot.dashboard import load_bot
+    prepare(tmp_path)
+    reset(100, tmp_path)
+    monkeypatch.chdir(tmp_path)
+    bot = load_bot('bots/config_daytrading.yaml', {})
+    assert bot is not None
+    assert bot.equity == 100 and bot.invested == 0
+
+
 @pytest.mark.parametrize('amount', [0, -1, float('nan'), float('inf')])
 def test_reset_rejects_invalid_capital(tmp_path, amount):
     old, _ = prepare(tmp_path)
