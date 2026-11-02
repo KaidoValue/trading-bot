@@ -615,28 +615,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-02T17:00:00+00:00"
+      "__dt__": "2026-11-02T18:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-02T12:00:00+00:00"
@@ -708,6 +708,13 @@
       {
         "theme": "hack",
         "source": "decrypt",
+        "title": "North Korea Is Laundering Binance Hack Loot at One New Wallet Every 25 Seconds",
+        "link": "https://decrypt.co/382355/north-korea-laundering-binance-hack-loot-new-wallet-every-25-seconds",
+        "published": "2026-11-02T18:46:03+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "decrypt",
         "title": "Brazil's Largest Exchange Mercado Bitcoin Halts Withdrawals After $40 Million Hack",
         "link": "https://decrypt.co/382341/mercado-bitcoin-halts-withdrawals-40-million-hack",
         "published": "2026-11-02T16:46:03+00:00"
@@ -753,19 +760,12 @@
         "title": "Binance hack fallout, U.S. midterms and jobs report: Crypto Week Ahead",
         "link": "https://www.coindesk.com/markets/2026/11/02/binance-hack-fallout-u-s-midterms-and-jobs-report-crypto-week-ahead",
         "published": "2026-11-02T09:04:49+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Bitcoin ETFs sink into October outflows with $643M exit after Binance hack",
-        "link": "https://cointelegraph.com/markets/bitcoin-etfs-october-red-binance-hack-outflows?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-11-02T07:50:36+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-02T18:33:28.978748+00:00"
+    "__dt__": "2026-11-02T19:03:47.854444+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -795,36 +795,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      62989.1,
-      "2026-11-02T18:32:57+00:00"
+      62956.3,
+      "2026-11-02T19:02:56+00:00"
     ],
     "ETH/CHF": [
       1846.76,
-      "2026-11-02T18:32:57+00:00"
+      "2026-11-02T19:02:56+00:00"
     ],
     "BNB/CHF": [
-      571.2658008,
-      "2026-11-02T18:32:57+00:00"
+      570.7483827,
+      "2026-11-02T19:02:56+00:00"
     ],
     "XRP/CHF": [
-      1.0118510068,
-      "2026-11-02T18:32:57+00:00"
+      1.0163909082,
+      "2026-11-02T19:02:56+00:00"
     ],
     "SOL/CHF": [
-      75.10058880000001,
-      "2026-11-02T18:32:57+00:00"
+      75.3616194,
+      "2026-11-02T19:02:56+00:00"
     ],
     "TRX/CHF": [
-      0.2596614326,
-      "2026-11-02T18:32:57+00:00"
+      0.25972323198,
+      "2026-11-02T19:02:56+00:00"
     ],
     "ZEC/CHF": [
-      955.0258776,
-      "2026-11-02T18:32:57+00:00"
+      950.2836497999999,
+      "2026-11-02T19:02:56+00:00"
     ],
     "HYPE/CHF": [
-      68.30156079999999,
-      "2026-11-02T18:32:57+00:00"
+      68.4331332,
+      "2026-11-02T19:02:56+00:00"
     ]
   },
   "abgleich": {
@@ -845,9 +845,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-02T18:32:57.496606+00:00"
+      "__dt__": "2026-11-02T19:02:56.083241+00:00"
     },
-    "quote_usd": 1.2207627325553005,
+    "quote_usd": 1.2210459479590217,
     "volume": [
       [
         {
