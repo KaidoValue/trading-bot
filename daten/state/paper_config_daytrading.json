@@ -702,6 +702,13 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "cointelegraph",
+        "title": "From Uptober to Hacktober: Are Bitcoin\u2019s seasonal patterns becoming obsolete?",
+        "link": "https://cointelegraph.com/markets/uptober-hacktober-bitcoin-seasonal-pattern?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-02T11:19:18+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "decrypt",
         "title": "FBI Blames North Korea for $6B Binance Hack as Exchange Reopens Withdrawals",
         "link": "https://decrypt.co/382316/fbi-blames-north-korea-for-6b-binance-hack-as-exchange-reopens-withdrawals",
@@ -753,7 +760,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-02T11:03:46.527252+00:00"
+    "__dt__": "2026-11-02T11:33:28.895252+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -783,36 +790,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63954.3,
-      "2026-11-02T11:02:57+00:00"
+      63826.2,
+      "2026-11-02T11:32:57+00:00"
     ],
     "ETH/CHF": [
-      1878.8,
-      "2026-11-02T11:02:57+00:00"
+      1872.93,
+      "2026-11-02T11:32:57+00:00"
     ],
     "BNB/CHF": [
-      579.089448,
-      "2026-11-02T11:02:57+00:00"
+      577.1936099999999,
+      "2026-11-02T11:32:57+00:00"
     ],
     "XRP/CHF": [
-      1.0248297696,
-      "2026-11-02T11:02:57+00:00"
+      1.0245166066,
+      "2026-11-02T11:32:57+00:00"
     ],
     "SOL/CHF": [
-      77.305032,
-      "2026-11-02T11:02:57+00:00"
+      76.959148,
+      "2026-11-02T11:32:57+00:00"
     ],
     "TRX/CHF": [
-      0.25958717568,
-      "2026-11-02T11:02:57+00:00"
+      0.25950903661999997,
+      "2026-11-02T11:32:57+00:00"
     ],
     "ZEC/CHF": [
-      1023.6057048,
-      "2026-11-02T11:02:57+00:00"
+      1021.3250171999999,
+      "2026-11-02T11:32:57+00:00"
     ],
     "HYPE/CHF": [
-      70.404264,
-      "2026-11-02T11:02:57+00:00"
+      70.28060359999999,
+      "2026-11-02T11:32:57+00:00"
     ]
   },
   "abgleich": {
@@ -833,9 +840,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-02T11:02:57.151604+00:00"
+      "__dt__": "2026-11-02T11:32:57.531878+00:00"
     },
-    "quote_usd": 1.2172558184828124,
+    "quote_usd": 1.2188284620822465,
     "volume": [
       [
         {
