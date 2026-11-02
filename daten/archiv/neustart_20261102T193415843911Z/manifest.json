@@ -1,0 +1,24 @@
+{
+  "reset_at": "2026-11-02T19:34:15.843911+00:00",
+  "starting_capital": 100.0,
+  "mode": "paper",
+  "strategy_memory_preserved": true,
+  "files": {
+    "bots/config.yaml": "db46e228d18017bc56018bfd055f0e859f12787658082db8f0dc68b78675259f",
+    "bots/config_daytrading.yaml": "a7c9b385b81aa3778ceaa3539e8eb3a01d3f6423afc8e79c464106dad20f5fd3",
+    "bots/config_langfrist.yaml": "a9041dd3e3faa41f8668b95619d2bc7e1107dd93a9907e2ddc30cc5784a1705e",
+    "bots/config_phasen.yaml": "09d79fdd66f6c25b6d1e100c271f3d79ea1734628c430e41cf6781567cdecece",
+    "bots/config_risiko.yaml": "1d8ae9b649889950755b096d067f4237f42a45b24d8fef635cb41b42236a950a",
+    "daten/state/paper_config_daytrading.json": "708d614396f64e838ac4e0177487f31f7218137009015c72ce927217db21112a",
+    "daten/state/paper_config_langfrist.json": "9f4c7fb762aac73aa24b36197f76e0eb11dc7487f9d49beab011d4388ba41f90",
+    "daten/state/paper_config_risiko.json": "1c36ea901172847337c86574502650a4e946673bf0104e4cf8bc9179f6269883",
+    "daten/state/chef.json": "37b0c22010bdb6be3f219432dc6bbfc90352be58a5d15a8603a7890763287bbb",
+    "daten/state/chef_gedaechtnis.json": "e8d4bbc650ef4b93b858978f92d42c480c38b7c97c674df1c2556502e2ee4c98",
+    "daten/state/verlauf.csv": "08144310fee327f40fce91280b0c1d01e39f9056b6d9896588c9f6b8e23af1e0",
+    "STATUS.md": "6d4c3a7f6bd8f2290417fa60678f2b0d7588d62087c9923ee6f3ae0e46bc6972",
+    "daten/logs/trades_config_langfrist.csv": "440f947b0d08e9a905ccdbebf934807ac6c58e04e1532787877abefc353b0e12",
+    "daten/logs/trades_config_daytrading.csv": "0362085b6b64aae46e80047893e588b29ca4a98ede95a4715030f303633923d9",
+    "daten/logs/trades_config_risiko.csv": "134435a0593259059c9300a988acb598be7ab5ef2137cd24aab5baf36a659337",
+    "daten/logs/uebersicht_fehler.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

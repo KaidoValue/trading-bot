@@ -1,0 +1,110 @@
+# Vergleichs-Bot: Daytrading auf 1-Stunden-Kerzen mit der lernenden Strategie (adaptive), nur Demo.
+# Läuft parallel zur Langfrist-Variante, damit wir beide mit Live-Kursen vergleichen können.
+
+# Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
+mode: paper
+title: "2️⃣ KI-Bot (lernend, kurz bis lang)"
+description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, mit zeitlich abgewerteter Erfahrung. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, nur in Trendrichtung. Neue Lernlogik: noch keine validierte Renditeaussage. Laborstrategien erst nach separater Paper-Probe."
+
+# Krypto-Börse (ccxt-Name): kraken, bitstamp, binance, coinbase, ...
+exchange: kraken      # oder bitstamp (Vergleich im README)
+symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
+timeframe: 1h
+
+# Kursdaten für Backtests (Kraken liefert nur ca. 30 Tage, Bitstamp mehrere Jahre)
+history_exchange: bitstamp
+history_symbol: BTC/USD
+
+# Startkapital für Backtest und Paper-Trading (in Quote-Währung, hier CHF)
+starting_capital: 1000
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
+slippage: 0.0005
+
+# trend | mean_reversion | breakout | pullback | momentum | price_action | smc | reversal | range
+# | ensemble | adaptive (lernend, gewichtet alle 9 nach ihrem aktuellen Erfolg)
+# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln.
+# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position; mit horizon_priority darf ein längerer
+# Horizont die Position eines kürzeren übernehmen. share = Startanteil am investierbaren Kapital; mit adaptive_shares
+# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (ein Verlierer schrumpft bis auf 5 % seines Anteils). Der erste Horizont gilt für backtest/status.
+#
+# Eingestellt nach der Geschichts-Simulation 2011-2026 (lernen/HISTORIE.md): gewählt nur nach 2011-2022, geprüft
+# auf 2023-2026. trend_filter = nur in Richtung der 200-Tage-Linie, min_edge = Gebührenfilter,
+# partial_atr = Teilgewinn mit Stop auf Einstand. Shorts lohnten sich in keiner Variante (Leihzinsen, Krypto steigt
+# langfristig): allow_short ist aus, kann aber jederzeit eingeschaltet werden (dann mit short_probation: true).
+horizons:
+  kurz:                       # Daytrading auf 1-Stunden-Kerzen (Hauptstil)
+    timeframe: 1h
+    strategy: adaptive_memory
+    strategy_params:
+      pretrain: false
+      memory_half_life_days: 90
+      memory_file: daten/state/ki_gedaechtnis_v2.json          # Gedächtnis, wächst bei jedem Lauf
+      library_file: daten/state/strategie_bibliothek.json   # selbst erfundene Strategien aus dem Labor
+    share: 0.2
+    trend_filter: true
+    partial_atr: 0.75         # Hälfte bei +0,75 ATR verkaufen, Rest mit Stop auf Einstand
+    min_edge: 5               # nur wenn das erste Ziel mindestens 5x die Gebühren bringt
+  mittel:                     # 4-Stunden-Kerzen, Tage bis Wochen, eigenes Gedächtnis
+    timeframe: 4h
+    strategy: adaptive_memory
+    strategy_params:
+      pretrain: false
+      memory_half_life_days: 90
+      memory_file: daten/state/ki_gedaechtnis_mittel_v2.json
+    share: 0.3
+    stop_loss_atr: 3.0
+    take_profit_atr: 6.0
+    trend_filter: true
+    partial_atr: 0.75
+    min_edge: 5
+  lang:                       # Tageskerzen, Wochen bis Monate, eigenes Gedächtnis
+    timeframe: 1d
+    strategy: adaptive_memory
+    strategy_params:
+      pretrain: false
+      memory_half_life_days: 90
+      memory_file: daten/state/ki_gedaechtnis_lang_v2.json
+    share: 0.5
+    stop_loss_atr: 4.0
+    take_profit_atr: 10.0
+    risk_per_trade: 0.02
+    trend_filter: true
+adaptive_shares: true
+horizon_priority: true
+
+# Auch auf fallende Kurse setzen (Short). Verloren in der Simulation Geld, daher aus. Nur Backtest und Paper-Modus.
+allow_short: false
+short_probation: true        # falls eingeschaltet: Shorts erst klein, bis sie sich bewährt haben
+
+poll_seconds: 60
+
+# Infos aus dem Netz (nur Paper/Live): Fear & Greed Index + News von mehreren Portalen
+use_news: true
+news_refresh_minutes: 15
+news_min_sources: 2   # ein Thema zählt erst, wenn so viele Portale darüber berichten
+
+# Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender (Zinsentscheide, Inflation)
+use_events: true
+event_pause_minutes: 30
+# Eigene Quellen als RSS-Feed, z.B. von einem RSS-Dienst für Truth-Social- oder X-Konten:
+event_feeds: {}
+#  trump_truthsocial: "https://<dein-rss-dienst>/truthsocial/realDonaldTrump.xml"
+#  elon_x: "https://<dein-rss-dienst>/x/elonmusk.xml"
+
+risk:
+  risk_per_trade: 0.02       # 2 % pro Trade: in der Simulation mehr Gewinn als 1 %
+  stop_loss_atr: 2.0
+  take_profit_atr: 4.0
+  max_position_pct: 0.25
+  max_daily_loss_pct: 0.03
+  max_drawdown_pct: 0.15
+  halt_days: 14              # nach Not-Aus 14 Tage Pause, dann geht es weiter (sonst für immer gestoppt)
+  min_order_value: 10
+  max_total_risk_pct: 0.20   # Gesamtrisiko aller offenen Positionen (alle Horizonte)
+  max_open_positions: 6
+  max_trades_per_day: 10     # gegen Overtrading
+  loss_streak_pause: 3       # nach 3 Verlusten in Folge ...
+  pause_hours: 12            # ... 12 Stunden Pause
+  max_spread_pct: 0.003      # kein Einstieg bei Spread > 0,3 %
+  correlation_limit: 0.8     # korrelierte Positionen halbe Grösse

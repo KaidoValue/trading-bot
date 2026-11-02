@@ -12,7 +12,7 @@ symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC
 timeframe: 1d
 history_exchange: bitstamp
 history_symbol: BTC/USD
-starting_capital: 1000
+starting_capital: 100
 fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
 fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
 slippage: 0.0005

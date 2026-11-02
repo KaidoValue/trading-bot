@@ -1,0 +1,87 @@
+# Risiko-Bot: sehr risikofreudig, viele Trades, auch auf fallende Kurse (Short). NUR DEMO mit Spielgeld.
+# Dient als Vergleich: Zeigt, was passiert, wenn man aggressiv handelt. Für echtes Geld nicht geeignet.
+
+mode: paper
+title: "3️⃣ Risiko-Bot (aggressiv, Hebel 3×)"
+description: "Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang) und Trendfolge (4h), nur in Trendrichtung; Daytrading (30-Min.-Ausbrüche) seit 29.10. pausiert, weil es 64 % verlor. Simulation 2011-2022: +66 %/Jahr, 2023-2026: +59 %/Jahr, Rückgänge bis −62 %, 5 % Risiko pro Trade, Hebel 3× mit Zinsen und Zwangsschliessung wie an der Börse, ignoriert Nachrichten."
+exchange: kraken
+symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]
+timeframe: 4h            # Haupthorizont «mittel» (kurz pausiert)
+history_exchange: bitstamp
+history_symbol: BTC/USD
+starting_capital: 1000
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
+slippage: 0.0005
+
+# Kurzer Donchian-Ausbruch: long nach einem 10-Kerzen-Hoch, short nach einem 5-Kerzen-Tief.
+# hold: die Richtung bleibt bis zum Gegensignal bestehen -> der Bot ist praktisch immer im Markt
+# Zeithorizonte: Jeder Bot darf kurzfristig (Daytrading), mittelfristig und langfristig handeln.
+# Alle Horizonte teilen sich ein Konto. Pro Coin gibt es eine Position; mit horizon_priority darf ein längerer
+# Horizont die Position eines kürzeren übernehmen. share = Startanteil am investierbaren Kapital; mit adaptive_shares
+# wandert Kapital zum Horizont, der zuletzt mehr verdient hat (ein Verlierer schrumpft bis auf 5 % seines Anteils). Der erste Horizont gilt für backtest/status.
+#
+# Eingestellt nach der Geschichts-Simulation 2011-2026 (lernen/HISTORIE.md): gewählt nur nach 2011-2022, geprüft
+# auf 2023-2026. trend_filter = nur in Richtung der 200-Tage-Linie, min_edge = Gebührenfilter,
+# partial_atr = Teilgewinn mit Stop auf Einstand. Shorts lohnten sich in keiner Variante (Leihzinsen, Krypto steigt
+# langfristig): allow_short ist aus, kann aber jederzeit eingeschaltet werden (dann mit short_probation: true).
+horizons:
+  # kurz (Daytrading, 10/5-Kerzen-Ausbruch auf 30-Minuten-Kerzen) ist seit 29.10.2026 PAUSIERT: im Demo-Betrieb
+  # verlor der Bot damit 64 % in 6 Tagen (181 Trades, 25 % Treffer, viele Stop-Loss-Lücken), und in der
+  # Geschichts-Simulation hat «kurz» einen Profit Factor von 0,2. Wieder einschalten: Kommentare entfernen.
+  # kurz:
+  #   timeframe: 30m
+  #   strategy: breakout
+  #   strategy_params: {entry: 10, exit: 5, hold: true}
+  #   share: 0.4
+  #   trend_filter: true
+  #   partial_atr: 0.75
+  #   min_edge: 5
+  mittel:                     # Trendfolge auf 4-Stunden-Kerzen
+    timeframe: 4h
+    strategy: trend
+    share: 0.3
+    stop_loss_atr: 2.0
+    take_profit_atr: 4.0
+    trend_filter: true
+    partial_atr: 0.75
+    min_edge: 5
+  lang:                       # 200-Tage-Linie mit Hebel
+    timeframe: 1d
+    strategy: regime
+    strategy_params: {period: 200}
+    share: 0.3
+    stop_loss_atr: 6.0
+    take_profit_atr: 1000     # kein festes Ziel: Ausstieg über das Signal
+    trend_filter: true          # ohne Teilgewinn: grosse Trends voll mitnehmen (Treffer-Modus: partial_atr: 0.75)
+adaptive_shares: true
+horizon_priority: true
+allow_short: false       # Shorts führten in der Simulation zum Totalverlust; einschalten: true (nur Demo)
+short_probation: true    # falls eingeschaltet: Shorts erst klein, bis sie sich bewährt haben
+poll_seconds: 60
+
+use_news: false          # ignoriert Nachrichten und Ereignisse bewusst
+use_events: false
+
+risk:
+  risk_per_trade: 0.05        # 5 % Risiko pro Trade (normal: 1 %)
+  stop_loss_atr: 1.5          # enger Stop
+  take_profit_atr: 3.0
+  max_position_pct: 0.17      # pro Coin; mit Hebel 3 ca. halbes Kapital als Position, 6 Coins = volle 3x
+  max_invested_pct: 1.0       # alles darf investiert sein
+  max_daily_loss_pct: 0.50
+  max_drawdown_pct: 0.90      # Not-Aus erst bei 90 % Verlust
+  halt_days: 1
+  min_order_value: 10
+  max_total_risk_pct: 0.50
+  max_open_positions: 8       # verteilt auf alle Horizonte
+  max_trades_per_day: 100
+  loss_streak_pause: 99       # keine Pause nach Verlusten
+  pause_hours: 0
+  max_spread_pct: 0.01
+  correlation_limit: 1.01     # keine Verkleinerung bei ähnlichen Coins
+  leverage: 3.0               # Hebel 3x, NUR Demo (live gesperrt): Positionen bis zum 3-fachen des Kapitals
+  margin_open_fee: 0.0003     # Margin-Eröffnungsgebühr auf den geliehenen Teil (Kraken 0,02-0,04 %)
+  margin_interest_per_day: 0.0018   # Rollover 0,03 % alle 4 Std. auf geliehenes Geld bzw. geliehene Coins
+                                    # (Kraken 0,02-0,04 %, BTC 0,01-0,02 %: vereinfacht ein Satz)
+  liquidation_margin: 0.5     # Zwangsschliessung, wenn das Kapital unter 50 % der Sicherheit fällt
