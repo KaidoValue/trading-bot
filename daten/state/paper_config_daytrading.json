@@ -615,28 +615,28 @@
       "__dt__": "2026-10-28T17:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-02T13:00:00+00:00"
+      "__dt__": "2026-11-02T14:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-02T08:00:00+00:00"
@@ -693,6 +693,7 @@
     "news_score": -1.0,
     "themes": {
       "hack": [
+        "bitcoinmagazine",
         "coindesk",
         "cointelegraph",
         "decrypt"
@@ -700,6 +701,13 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "Binance Reopens Withdrawals as Hack Recovery Enters Second Week",
+        "link": "https://bitcoinmagazine.com/news/binance-reopens-withdrawals-hack",
+        "published": "2026-11-02T14:57:34+00:00"
+      },
       {
         "theme": "hack",
         "source": "cointelegraph",
@@ -748,19 +756,12 @@
         "title": "Bitcoin claws back toward $79,000 as markets shake off crypto's biggest hack",
         "link": "https://www.coindesk.com/markets/2026/11/02/bitcoin-claws-back-toward-usd79-000-as-markets-shake-off-crypto-s-biggest-hack",
         "published": "2026-11-02T04:42:22+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "BTCPay, a bitcoin payment tool, tells users to switch off their servers after reports of drained wallets",
-        "link": "https://www.coindesk.com/tech/2026/11/02/btcpay-a-bitcoin-payment-tool-tells-users-to-switch-off-their-servers-after-reports-of-drained-wallets",
-        "published": "2026-11-02T04:41:16+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-02T14:33:27.642917+00:00"
+    "__dt__": "2026-11-02T15:03:43.660178+00:00"
   },
   "risk": {
     "peak_equity": 1000.9272983309263,
@@ -790,36 +791,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63824.5,
-      "2026-11-02T14:32:56+00:00"
+      63718.3,
+      "2026-11-02T15:02:56+00:00"
     ],
     "ETH/CHF": [
-      1875.0,
-      "2026-11-02T14:32:56+00:00"
+      1873.24,
+      "2026-11-02T15:02:56+00:00"
     ],
     "BNB/CHF": [
-      576.9234789999999,
-      "2026-11-02T14:32:56+00:00"
+      576.0160224,
+      "2026-11-02T15:02:56+00:00"
     ],
     "XRP/CHF": [
-      1.0295531015000001,
-      "2026-11-02T14:32:56+00:00"
+      1.0242606816,
+      "2026-11-02T15:02:56+00:00"
     ],
     "SOL/CHF": [
-      77.4203606,
-      "2026-11-02T14:32:56+00:00"
+      77.116832,
+      "2026-11-02T15:02:56+00:00"
     ],
     "TRX/CHF": [
-      0.26020322591999995,
-      "2026-11-02T14:32:56+00:00"
+      0.2610007296,
+      "2026-11-02T15:02:56+00:00"
     ],
     "ZEC/CHF": [
-      1040.5440715999998,
-      "2026-11-02T14:32:56+00:00"
+      1033.3819392,
+      "2026-11-02T15:02:56+00:00"
     ],
     "HYPE/CHF": [
-      70.57661709999999,
-      "2026-11-02T14:32:56+00:00"
+      70.4049632,
+      "2026-11-02T15:02:56+00:00"
     ]
   },
   "abgleich": {
@@ -840,9 +841,9 @@
     },
     "interest_paid": 0.38391770772689665,
     "interest_at": {
-      "__dt__": "2026-11-02T14:32:56.293185+00:00"
+      "__dt__": "2026-11-02T15:02:56.578186+00:00"
     },
-    "quote_usd": 1.2200924830102122,
+    "quote_usd": 1.2202264740335806,
     "volume": [
       [
         {
