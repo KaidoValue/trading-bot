@@ -1,5 +1,1 @@
-2026-11-01 12:00:26,167 WARNING Abschrift WaCFjvP8-gI nicht abrufbar: RequestBlocked
-2026-11-01 12:00:27,182 WARNING Abschrift wL3ypdqGqtQ nicht abrufbar: RequestBlocked
-2026-11-01 12:00:28,941 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: VideoUnplayable
-2026-11-01 12:00:29,635 WARNING Abschrift gSenVll2GTQ nicht abrufbar: RequestBlocked
-2026-11-01 12:00:31,264 WARNING Abschrift Yh8ziyKaFIY nicht abrufbar: RequestBlocked
+2026-11-02 13:48:58,016 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: VideoUnplayable
