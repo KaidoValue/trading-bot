@@ -11,6 +11,7 @@ Alles wird nur aus vergangenen Kursen gelernt (kein Blick in die Zukunft).
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -34,7 +35,11 @@ def phases(df: pd.DataFrame, trend_period: int = 100) -> pd.Series:
 class Memory:
     """Summe der Rendite pro Kerze und Anzahl Kerzen, je Marktphase und Strategie. Wird als JSON gespeichert."""
 
-    def __init__(self, path: str | Path | None = None):
+    def __init__(self, path: str | Path | None = None, half_life_days: float | None = None):
+        if half_life_days is not None and half_life_days <= 0:
+            raise ValueError("half_life_days must be positive")
+        self.half_life_days = half_life_days
+        self.as_of = None
         self.path = Path(path) if path else None
         self.stats: dict[str, dict[str, list[float]]] = {}     # phase -> strategie -> [summe, anzahl]
         self.seen: dict[str, str] = {}                          # symbol -> letzte gelernte Kerze
@@ -43,13 +48,24 @@ class Memory:
             raw = json.loads(self.path.read_text())
             self.stats, self.seen = raw.get("stats", {}), raw.get("seen", {})
             self.pretrained = raw.get("pretrained", False)
+            self.as_of = pd.Timestamp(raw["as_of"]) if raw.get("as_of") else None
+            if half_life_days is not None and raw.get("schema") != 2:
+                # Legacy hypothetical returns are incompatible with execution replay.
+                # Preserve the file as evidence, then start a clean learning epoch.
+                legacy = self.path.with_suffix(self.path.suffix + ".legacy")
+                if not legacy.exists():
+                    legacy.write_bytes(self.path.read_bytes())
+                self.stats, self.seen, self.pretrained = {}, {}, False
 
     def save(self) -> None:
         if not self.path:
             return
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps({"stats": self.stats, "seen": self.seen, "pretrained": self.pretrained},
-                                        indent=1))
+        tmp = self.path.with_suffix(self.path.suffix + ".tmp")
+        tmp.write_text(json.dumps({"stats": self.stats, "seen": self.seen, "pretrained": self.pretrained,
+                                   "schema": 2, "half_life_days": self.half_life_days,
+                                   "as_of": self.as_of.isoformat() if self.as_of is not None else None}, indent=1))
+        tmp.replace(self.path)
 
     def learn(self, pnl: pd.DataFrame, phase: pd.Series, key: str | None = None) -> int:
         """Nimmt neue Kerzen ins Gedächtnis auf. Mit `key` (z.B. dem Coin) wird jede Kerze nur einmal gelernt."""
@@ -58,6 +74,30 @@ class Memory:
             pnl, phase = pnl[new], phase[new]
         if pnl.empty:
             return 0
+        if not pnl.index.is_monotonic_increasing or not pnl.index.is_unique:
+            raise ValueError("Learning candles must be sorted and unique")
+        if self.half_life_days is not None:
+            latest = max(pnl.index[-1], self.as_of) if self.as_of is not None else pnl.index[-1]
+            if self.as_of is not None:
+                decay = 0.5 ** ((latest - self.as_of).total_seconds() / (86400 * self.half_life_days))
+                for bucket in self.stats.values():
+                    for values in bucket.values():
+                        values[0] *= decay
+                        values[1] *= decay
+            weights = pd.Series([0.5 ** ((latest - t).total_seconds() / (86400 * self.half_life_days))
+                                 for t in pnl.index], index=pnl.index)
+            for p, rows in pnl.groupby(phase):
+                bucket = self.stats.setdefault(p, {})
+                for s in rows:
+                    valid = rows[s].map(math.isfinite)
+                    w = weights.loc[rows.index][valid]
+                    b = bucket.setdefault(s, [0.0, 0.0])
+                    b[0] += float((rows.loc[valid, s] * w).sum())
+                    b[1] += float(w.sum())
+            self.as_of = latest
+            if key:
+                self.seen[key] = pnl.index[-1].isoformat()
+            return len(pnl)
         for p, rows in pnl.groupby(phase):
             bucket = self.stats.setdefault(p, {})
             for s in pnl.columns:
@@ -73,7 +113,7 @@ class Memory:
 
     def experience(self) -> int:
         """Anzahl gelernter Kerzen (Stunden bei 1-Stunden-Kerzen)."""
-        return sum(max(v[1] for v in b.values()) for b in self.stats.values() if b)
+        return int(sum(max(v[1] for v in b.values()) for b in self.stats.values() if b))
 
     def best(self, phase: str, top: int = 3) -> list[tuple[str, float]]:
         """Die Strategien mit dem besten Durchschnitt in dieser Phase (Rendite pro Kerze in %)."""

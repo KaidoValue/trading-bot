@@ -218,14 +218,22 @@ class Adaptive(Strategy):
 
     def member_pnl(self, df) -> pd.DataFrame:
         """Rendite pro Kerze, die jede Teilstrategie gebracht hätte (abzüglich Gebühren bei jedem Wechsel)."""
-        fee = self.params.get("fee", 0.0026)
-        allow_short = self.params.get("allow_short", False)
-        ret = df["close"].pct_change().fillna(0)
-        cols = {}
-        for m in self.members:
-            pos = _holding(m.signals(df), allow_short)
-            cols[m.name] = pos.shift().fillna(0) * ret - pos.diff().abs().fillna(0) * fee
-        return pd.DataFrame(cols)
+        from .config import Config
+        from .evaluation import replay
+        cfg = self.params.get("execution_config") or Config(
+            fee_rate=self.params.get("fee", 0.0026),
+            slippage=self.params.get("slippage", 0.0005),
+            allow_short=self.params.get("allow_short", False))
+        # signals() and learn() use the identical frame within a bot iteration.
+        cached = getattr(self, "_pnl_cache", None)
+        if cached is not None and cached[0] is df:
+            return cached[1]
+        cols = {m.name: replay(df, m.signals(df), cfg,
+                              self.params.get("execution_horizon"),
+                              daily_history=self.params.get("daily_history")).returns for m in self.members}
+        result = pd.DataFrame(cols)
+        self._pnl_cache = (df, result)
+        return result
 
     def weights(self, df) -> pd.DataFrame:
         lookback = self.params.get("lookback", 200)
@@ -264,42 +272,62 @@ class AdaptiveMemory(Adaptive):
             from .labor import library_strategies
             self.members += library_strategies(Path(params["library_file"]))
         from .memory import Memory
-        self.memory = Memory(params["memory_file"]) if params.get("memory_file") else None
+        self.memory = Memory(params["memory_file"], half_life_days=params.get("memory_half_life_days", 90)) if params.get("memory_file") else None
 
     def _memory_scores(self, df, pnl: pd.DataFrame, lookback: int):
+        import numpy as np
         from .memory import phases
-        ph = phases(df)
-        mem = pd.DataFrame(0.0, index=df.index, columns=pnl.columns)
-        n = pd.Series(0.0, index=df.index)
-        for p in ph.unique():
-            mask = ph == p
-            if self.memory is None:
-                # Backtest: Gedächtnis wächst Kerze für Kerze (nur vergangene Kerzen derselben Phase zählen)
-                cnt = mask.astype(float).cumsum().shift(fill_value=0.0)
-                sums = pnl.where(mask, 0.0).cumsum().shift(fill_value=0.0)
-            else:
-                # Laufender Bot: gespeichertes Gedächtnis (enthält alle bisher gesehenen Kerzen)
-                cnt = pd.Series(float(self.memory.prior(p, pnl.columns[0])[1]), index=df.index)
-                sums = pd.DataFrame({s: self.memory.prior(p, s)[0] for s in pnl.columns}, index=df.index)
-            avg = sums.div(cnt.replace(0, float("nan")), axis=0)
-            mem[mask] = (avg * lookback)[mask].fillna(0)
-            n[mask] = cnt[mask]
+        ph = phases(df).to_numpy()
+        half_life = self.params.get("memory_half_life_days", 90)
+        if half_life <= 0:
+            raise ValueError("memory_half_life_days must be positive")
+        mem = np.zeros((len(df), len(pnl.columns)))
+        counts = np.zeros(len(df))
+        if self.memory is not None:
+            # Persisted priors are used only by online callers, never backtests.
+            for i, p in enumerate(ph):
+                for j, name in enumerate(pnl.columns):
+                    total, n = self.memory.prior(p, name)
+                    mem[i, j] = total / n * lookback if n else 0.0
+                counts[i] = self.memory.prior(p, pnl.columns[0])[1]
+        else:
+            totals = {p: np.zeros(len(pnl.columns)) for p in set(ph)}
+            count = dict.fromkeys(totals, 0.0)
+            values = pnl.to_numpy()
+            for i, stamp in enumerate(df.index):
+                decay = 0.5 ** ((stamp - df.index[i - 1]).total_seconds() / (86400 * half_life)) if i else 1.0
+                for p in totals:
+                    totals[p] *= decay
+                    count[p] *= decay
+                # The regime at t is observable at t's close. Evidence uses
+                # only earlier outcomes; outcome t belongs to regime t-1.
+                p = ph[i]
+                counts[i] = count[p]
+                if count[p]:
+                    mem[i] = totals[p] / count[p] * lookback
+                if i >= 250:
+                    source = ph[i - 1]
+                    totals[source] += values[i]
+                    count[source] += 1
+        n = pd.Series(counts, index=df.index)
         trust = n / (n + self.params.get("memory_trust", 2000))
-        return mem, trust
+        return pd.DataFrame(mem, index=df.index, columns=pnl.columns), trust
 
     def learn(self, key: str, df) -> int:
         """Nach jedem Lauf: neue Kerzen ins Gedächtnis aufnehmen und speichern."""
         if self.memory is None:
             return 0
         from .memory import phases
-        added = self.memory.learn(self.member_pnl(df).iloc[1:], phases(df).iloc[1:], key=key)
+        added = self.memory.learn(self.member_pnl(df).iloc[250:],
+                                  phases(df).shift().iloc[250:], key=key)
         self.memory.save()
         return added
 
     def pretrain(self, frames: list) -> int:
         """Vorwissen aus mehreren Jahren Kursgeschichte, bevor der Bot zum ersten Mal handelt."""
         from .memory import phases
-        added = sum(self.memory.learn(self.member_pnl(df).iloc[1:], phases(df).iloc[1:]) for df in frames)
+        added = sum(self.memory.learn(self.member_pnl(df).iloc[250:], phases(df).shift().iloc[250:],
+                                     key=f"pretrain:{i}") for i, df in enumerate(frames))
         self.memory.pretrained = True
         self.memory.save()
         return added

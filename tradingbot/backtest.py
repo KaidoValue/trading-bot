@@ -53,37 +53,26 @@ class Result:
         }
 
 
-def run(df: pd.DataFrame, strategy: Strategy, cfg: Config, symbol: str = "SYM") -> Result:
+def run(df: pd.DataFrame, strategy: Strategy, cfg: Config, symbol: str = "SYM", start=None) -> Result:
+    from copy import copy
+    from .evaluation import evaluation_params
+    # Never import a persisted state that may already know this test period.
+    strategy = copy(strategy)
+    strategy.params = {**strategy.params, **evaluation_params(cfg)}
+    if hasattr(strategy, "memory"):
+        strategy.memory = None
+    if hasattr(strategy, "members"):
+        strategy.members = [m for m in strategy.members if not m.name.startswith("labor_")]
+    strategy._pnl_cache = None
+    from .evaluation import replay
     signals = strategy.signals(df)
-    atr = ind.atr(df)
-    broker = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage)
-    broker.leverage = cfg.risk.leverage
-    trader = Trader(broker, RiskManager(cfg.risk, cfg.starting_capital), allow_short=cfg.allow_short)
-    curve = []
-    in_market = 0
-    pending = 0
-    for i in range(WARMUP, len(df)):
-        bar, when = df.iloc[i], df.index[i]
-        # 1) Signal der Vorkerze zum Eröffnungskurs ausführen (kein Blick in die Zukunft)
-        if pending:
-            eq = trader.equity({symbol: bar["open"]})
-            trader.on_signal(symbol, pending, bar["open"], atr.iloc[i - 1], eq, when)
-        # 2) Stops innerhalb der Kerze
-        trader.check_stops(symbol, bar["open"], bar["high"], bar["low"], when)
-        # 3) Risiko-Status aktualisieren, Not-Aus schliesst alles
-        eq = trader.equity({symbol: bar["close"]})
-        trader.risk.update(eq, when.date())
-        if trader.risk.halted and trader.open_trades:
-            trader.close_all({symbol: bar["close"]}, "Not-Aus", when)
-            eq = trader.equity({symbol: bar["close"]})
-        curve.append((when, eq))
-        in_market += bool(trader.open_trades)
-        pending = int(signals.iloc[i])
-    equity = pd.Series(dict(curve))
-    bh = df["close"].iloc[-1] / df["close"].iloc[WARMUP] - 1
-    px = df["close"].iloc[WARMUP:]
+    replayed = replay(df, signals, cfg, symbol=symbol, warmup=WARMUP, start=start, liquidate=start is not None)
+    first = max(WARMUP, int(df.index.searchsorted(start)) if start is not None else WARMUP)
+    equity = replayed.equity.iloc[first:]
+    bh = df["close"].iloc[-1] / df["close"].iloc[first] - 1
+    px = df["close"].iloc[first:]
     bh_dd = (px / px.cummax() - 1).min()
-    return Result(equity, pd.DataFrame(trader.closed), bh, in_market / max(len(curve), 1), bh_dd)
+    return Result(equity, pd.DataFrame(replayed.trades), bh, replayed.exposure, bh_dd)
 
 
 def walk_forward(df: pd.DataFrame, cfg: Config, strategies: dict, train_bars: int = 2000, test_bars: int = 500,
@@ -101,14 +90,16 @@ def walk_forward(df: pd.DataFrame, cfg: Config, strategies: dict, train_bars: in
         scores = {name: run(train, factory(), cfg, symbol).stats()["Sharpe"] for name, factory in strategies.items()}
         best = max(scores, key=scores.get)
         # Testlauf mit Vorlauf aus den Trainingsdaten (für Indikatoren), gewertet wird nur der Testteil
-        warm = 300
-        seg = df.iloc[start + train_bars - warm:start + train_bars + test_bars]
-        res = run(seg, strategies[best](), cfg, symbol)
-        eq = res.equity.iloc[warm - WARMUP:]
+        # Retain all available indicator/learning history, but fund a fresh
+        # account only at the first test bar. No training positions carry over.
+        boundary = start + train_bars
+        seg = df.iloc[:boundary + test_bars]
+        res = run(seg, strategies[best](), cfg, symbol, start=seg.index[boundary])
+        eq = res.equity
         rows.append({
-            "Test ab": seg.index[warm].date(), "Gewählt": best, "Sharpe Training": scores[best],
-            "Rendite Test %": round((eq.iloc[-1] / eq.iloc[0] - 1) * 100, 2),
-            "Buy & Hold Test %": round((seg["close"].iloc[-1] / seg["close"].iloc[warm] - 1) * 100, 2),
+            "Test ab": seg.index[boundary].date(), "Gewählt": best, "Sharpe Training": scores[best],
+            "Rendite Test %": round((eq.iloc[-1] / cfg.starting_capital - 1) * 100, 2),
+            "Buy & Hold Test %": round((seg["close"].iloc[-1] / seg["close"].iloc[boundary] - 1) * 100, 2),
         })
         start += test_bars
     return pd.DataFrame(rows)

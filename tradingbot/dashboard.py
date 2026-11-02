@@ -221,20 +221,28 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
     else:
         out.append("Keine offene Position, alles in Cash.")
     hz = b.cfg.horizon_list()
-    strats = {h.name: build(h.strategy, allow_short=b.cfg.allow_short, **h.strategy_params) for h in hz}
+    from .evaluation import evaluation_params
+    strats = {h.name: build(h.strategy, allow_short=b.cfg.allow_short,
+                            **{**h.strategy_params, **evaluation_params(b.cfg, h)}) for h in hz}
     strat = strats[hz[0].name]
     names = [f"{h.name} ({h.timeframe})" if h.name else "Signal" for h in hz]
     out += ["", "**Signale jetzt**", "", "| Coin | " + " | ".join(names) + " |", "|---" * (len(hz) + 1) + "|"]
     for s in b.cfg.symbols:
-        cells = [SIGNALS[int(strats[h.name].signals(frames[s, h.timeframe]).iloc[-1])]
-                 if (s, h.timeframe) in frames else "–" for h in hz]
+        cells = []
+        for h in hz:
+            strategy = strats[h.name]
+            if hasattr(strategy, "member_pnl"):
+                strategy.params["daily_history"] = frames.get((s, "1d"))
+            frame = frames.get((s, h.timeframe))
+            bars = 600 if hasattr(strategy, "member_pnl") else 300
+            cells.append(SIGNALS[int(strategy.signals(frame.tail(bars)).iloc[-1])] if frame is not None else "–")
         if any(c != "–" for c in cells):
             out.append(f"| {s.split('/')[0]} | " + " | ".join(cells) + " |")
     memory = getattr(strat, "memory", None)
     if memory is not None and memory.stats:
         from .memory import phases
         out += ["", f"**🧠 KI-Gedächtnis:** {memory.experience():,} Kerzen Erfahrung".replace(",", "'")
-                + " (wächst bei jedem Lauf)", "", "| Coin | Marktphase jetzt | Hier vertraut die KI am meisten |",
+                + " (zeitlich gewichtete Kerzen; ältere Erfahrung zählt weniger)", "", "| Coin | Marktphase jetzt | Hier vertraut die KI am meisten |",
                 "|---|---|---|"]
         for s in b.cfg.symbols:
             if (s, b.cfg.timeframe) in frames:
@@ -364,6 +372,8 @@ def render(config_paths: list[str], out: str = "STATUS.md", exchange=None, chef_
     wanted = [(s, tf, bars) for s in symbols for tf, bars in (("1d", 400), ("1h", 300))]
     wanted += [(s, h.timeframe, 300) for c in cfgs for h in c.horizon_list() for s in symbols
                if h.timeframe not in ("1d", "1h")]
+    wanted += [(s, h.timeframe, 600) for c in cfgs for h in c.horizon_list() for s in symbols
+               if h.strategy in ("adaptive", "adaptive_memory")]
     for s, tf, bars in dict.fromkeys(wanted):
         try:
             frames[s, tf] = _retry(lambda: data.fetch_recent(ex, s, tf, bars))

@@ -144,9 +144,13 @@ def status(cfg: Config) -> None:
     for t in trader.closed[-10:]:
         print(f"  {str(t['opened'])[:16]} bis {str(t['closed'])[:16]}: {t['side']} {t['symbol']} "
               f"{t['entry']:.2f} -> {t['exit']:.2f}, Ergebnis {t['pnl']:+.2f} ({t['reason']})")
-    strat = build(cfg.strategy, allow_short=cfg.allow_short, **cfg.strategy_params)
+    from .evaluation import evaluation_params
+    strat = build(cfg.strategy, allow_short=cfg.allow_short, **{**cfg.strategy_params, **evaluation_params(cfg)})
     for s in cfg.symbols:
-        sig = int(strat.signals(data.fetch_recent(ex, s, cfg.timeframe)).iloc[-1])
+        if hasattr(strat, "member_pnl"):
+            strat.params["daily_history"] = data.fetch_recent(ex, s, "1d", 400)
+        sig = int(strat.signals(data.fetch_recent(ex, s, cfg.timeframe,
+                                                 600 if hasattr(strat, "member_pnl") else 300)).iloc[-1])
         print(f"Aktuelles Signal {s}: {({1: 'investiert sein', -1: 'raus / Cash', 0: 'neutral'})[sig]}")
     if trader.note:
         print(f"Letzte Entscheidung des Bots: {trader.note}")
@@ -218,11 +222,12 @@ def main() -> None:
     elif args.command == "labor":
         from . import labor
         df = _load_df(cfg, args)
-        found = labor.evolve(df, fee=cfg.fee_rate, seed=args.seed if args.synthetic else None)
-        lib = labor.update_library(found, df)
+        labor.review_probation(df, cfg)
+        found = labor.evolve(df, fee=cfg.fee_rate, seed=args.seed if args.synthetic else None, cfg=cfg)
+        lib = labor.update_library(found, df, cfg=cfg)
         text = labor.report(found, lib, df, cfg.history_symbol or cfg.symbols[0], cfg.timeframe)
         Path("lernen").mkdir(exist_ok=True)
-        Path("lernen/LABOR.md").write_text(text)
+        Path("lernen/LABOR.md").write_text(text, encoding="utf-8")
         print(text)
     elif args.command == "historie":
         from . import historie

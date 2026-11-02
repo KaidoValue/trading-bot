@@ -100,7 +100,7 @@ class Config:
 
     @classmethod
     def load(cls, path: str | Path = "bots/config.yaml") -> "Config":
-        raw = yaml.safe_load(Path(path).read_text()) if Path(path).exists() else {}
+        raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) if Path(path).exists() else {}
         risk = RiskConfig(**(raw.pop("risk", None) or {}))
         cfg = cls(**raw, risk=risk, name=Path(path).stem)
         cfg.api_key = os.getenv("EXCHANGE_API_KEY")

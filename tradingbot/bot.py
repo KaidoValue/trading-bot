@@ -48,7 +48,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     exchange = data.make_exchange(cfg.exchange, cfg.api_key, cfg.api_secret,
                                   convert_to=None if cfg.mode == "live" else quote)
     horizons = cfg.horizon_list()
-    strategies = {h.name: build(h.strategy, allow_short=cfg.allow_short, **h.strategy_params) for h in horizons}
+    from .evaluation import evaluation_params
+    strategies = {h.name: build(h.strategy, allow_short=cfg.allow_short,
+                                **{**h.strategy_params, **evaluation_params(cfg, h)}) for h in horizons}
     for h in horizons:
         _pretrain(strategies[h.name], cfg, h.timeframe)
     trader = make_trader(cfg, exchange)
@@ -118,6 +120,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
             notes, spreads, trends = ([hinweis] if hinweis and n == 1 else []) + auftrag + ohne, {}, {}
+            learning_daily = {}
             if (cfg.phase_gate or cfg.phase_exit) and not trader.risk.halted:
                 for s in prices:
                     phase = _phase(exchange, s)
@@ -128,7 +131,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                 prefix = f"[{h.name}] " if h.name else ""
                 # zuerst alle Kerzen holen: die Korrelations-Sperre braucht auch die Coins, die später drankommen
                 frames = _frames(exchange, [s for s in cfg.symbols if s in prices or s in trader.open_trades],
-                                 h.timeframe, cfg.fehler_path)
+                                 h.timeframe, cfg.fehler_path, bars=600 if hasattr(strategy, "member_pnl") else 300)
                 for s in prices:
                     if s not in frames:
                         notes.append(f"{prefix}{s}: keine Kerzen, Signal ausgesetzt")
@@ -137,10 +140,19 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     df = frames[s]
                     if last_bar.get(key) == df.index[-1] and not cfg.reevaluate:
                         continue  # keine neue abgeschlossene Kerze
-                    last_bar[key] = df.index[-1]
+                    if hasattr(strategy, "member_pnl") and h.trend_filter:
+                        try:
+                            if s not in learning_daily:
+                                learning_daily[s] = data.fetch_recent(exchange, s, "1d", 400)
+                        except Exception as e:
+                            waechter.melden(cfg.fehler_path, e, f"Lern-Tageskerzen {s}: ")
+                            notes.append(f"{prefix}{s}: Lern-Tageskerzen fehlen, Signal ausgesetzt")
+                            continue
+                        strategy.params["daily_history"] = learning_daily[s]
                     sig = int(strategy.signals(df).iloc[-1])
                     if hasattr(strategy, "learn"):
                         strategy.learn(s, df)        # KI-Gedächtnis: neue Kerzen merken
+                    last_bar[key] = df.index[-1]
                     if sig == 0:
                         notes.append(f"{prefix}{s}: kein Signal")
                         continue
@@ -188,6 +200,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
 def _pretrain(strategy, cfg: Config, timeframe: str | None = None) -> None:
     """Füllt ein leeres KI-Gedächtnis einmalig mit Kursgeschichte (BTC und ETH): ein Jahr bei kurzen Kerzen,
     mehr bei 4h- und Tageskerzen, damit genug Kerzen zusammenkommen."""
+    # History from another exchange/currency is not silently mixed into online evidence.
+    if not getattr(strategy, "params", {}).get("pretrain", False):
+        return
     memory = getattr(strategy, "memory", None)
     if memory is None or memory.pretrained:
         return
@@ -412,13 +427,13 @@ def _bewertung(trader: Trader, prices: dict[str, float], symbols: list[str]) -> 
     return px, notes
 
 
-def _frames(exchange, symbols: list[str], timeframe: str, fehler_path: Path) -> dict:
+def _frames(exchange, symbols: list[str], timeframe: str, fehler_path: Path, bars: int = 300) -> dict:
     """Kerzen je Coin für die Signale. Ohne Kerzen fehlt der Coin (Fehler-Protokoll), sein Signal kommt im nächsten
     Lauf; die anderen Coins handeln weiter."""
     frames = {}
     for s in symbols:
         try:
-            frames[s] = data.fetch_recent(exchange, s, timeframe)
+            frames[s] = data.fetch_recent(exchange, s, timeframe, bars)
         except Exception as e:
             log.warning("%s: %s-Kerzen nicht abrufbar, Signal ausgesetzt: %s", s, timeframe, e)
             waechter.melden(fehler_path, e, f"Kerzen {s} {timeframe}: ")

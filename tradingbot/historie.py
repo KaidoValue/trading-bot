@@ -155,12 +155,14 @@ def _fingerprint(df: pd.DataFrame) -> tuple:
     return len(df), df.index[0], df.index[-1], float(df["close"].iloc[-1]), float(df["close"].sum())
 
 
-def _signals(h, params: dict, allow_short: bool, df: pd.DataFrame, base_tf: str):
+def _signals(h, params: dict, allow_short: bool, df: pd.DataFrame, base_tf: str, cfg=None):
     """Schlusszeit, Signal, ATR und 20er-Linie jeder Horizont-Kerze (nach der Vorlaufzeit)."""
     hdf = df if h.timeframe == base_tf else resample(df, h.timeframe)
     if len(hdf) <= WARMUP:
         return df.index[:0], np.array([]), np.array([]), np.array([])
-    strat = build(h.strategy, allow_short=allow_short, **params)
+    from .evaluation import evaluation_params
+    bound = evaluation_params(cfg, h) if cfg is not None else {}
+    strat = build(h.strategy, allow_short=allow_short, **{**params, **bound})
     sig, atr = strat.signals(hdf).to_numpy(), ind.atr(hdf).to_numpy()
     ema = ind.ema(hdf["close"], 20).to_numpy()
     closes = hdf.index + pd.Timedelta(milliseconds=TF_MS[h.timeframe])
@@ -217,8 +219,9 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
     for h in hz:
         params = {k: v for k, v in h.strategy_params.items() if k not in ("memory_file", "library_file")}
         for s, df in coins.items():
-            key = (h.strategy, repr(sorted(params.items())), cfg.allow_short, h.timeframe, base_tf, s, _fingerprint(df))
-            closes, sig, atr, ema = _cached(key, lambda: _signals(h, params, cfg.allow_short, df, base_tf))
+            key = (h.strategy, repr(sorted(params.items())), repr(cfg.risk), cfg.fee_model,
+                   cfg.fee_rate, cfg.slippage, repr(h), cfg.allow_short, h.timeframe, base_tf, s, _fingerprint(df))
+            closes, sig, atr, ema = _cached(key, lambda: _signals(h, params, cfg.allow_short, df, base_tf, cfg))
             if h.trend_filter:
                 p = trends[s][0].searchsorted(closes, side="right") - 1
                 trend = np.where(p >= 0, trends[s][1][np.clip(p, 0, None)], 0)
