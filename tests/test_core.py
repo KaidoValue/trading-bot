@@ -536,7 +536,7 @@ def test_labor_invents_rules_without_lookahead(df, tmp_path):
     lib = labor.update_library([{**found[0], "accepted": True}], df, path)
     assert lib[0]["name"] == "labor_1" and "Kaufen, wenn" in lib[0]["text"]
     ki = build("adaptive_memory", library_file=str(path))
-    assert "labor_1" in [m.name for m in ki.members]
+    assert "labor_1" not in [m.name for m in ki.members]  # backtest success alone never authorises trading
 
 
 def test_chef_follows_winner_with_limits(tmp_path):
