@@ -17,15 +17,15 @@
   "Seitw\u00e4rts, wild": {
    "config_langfrist": [
     0.0,
-    6
+    7
    ],
    "config_daytrading": [
     0.0,
-    6
+    7
    ],
    "config_risiko": [
-    0.002862706826387451,
-    6
+    -0.0024049760751256866,
+    7
    ]
   }
  },
