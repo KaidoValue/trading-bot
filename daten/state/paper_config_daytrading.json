@@ -3,28 +3,28 @@
   "closed": [],
   "last_bar": {
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-03T00:00:00+00:00"
+      "__dt__": "2026-11-03T01:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-02T20:00:00+00:00"
@@ -99,6 +99,13 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "cointelegraph",
+        "title": "South Korea urges exchanges to boost cold storage after Binance hack",
+        "link": "https://cointelegraph.com/news/south-korea-urges-exchanges-to-boost-cold-storage-after-binance-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-03T01:32:39+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "decrypt",
         "title": "Mystery $106 Million Crypto Theft Hits EU Entity Days After Binance Hack",
         "link": "https://decrypt.co/382383/mystery-106-million-crypto-theft-eu-entity-binance-hack",
@@ -145,19 +152,12 @@
         "title": "Brazil\u2019s Mercado Bitcoin halts withdrawals after $40 million drained across 10 chains",
         "link": "https://www.coindesk.com/business/2026/11/02/brazil-s-mercado-bitcoin-halts-withdrawals-after-usd40-million-drained-across-10-chains",
         "published": "2026-11-02T15:53:29+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "Binance Reopens Withdrawals as Hack Recovery Enters Second Week",
-        "link": "https://bitcoinmagazine.com/news/binance-reopens-withdrawals-hack",
-        "published": "2026-11-02T14:57:34+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-03T01:33:30.044547+00:00"
+    "__dt__": "2026-11-03T02:04:00.844838+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -174,36 +174,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63217.0,
-      "2026-11-03T01:32:58+00:00"
+      63125.5,
+      "2026-11-03T02:02:58+00:00"
     ],
     "ETH/CHF": [
       1845.0,
-      "2026-11-03T01:32:58+00:00"
+      "2026-11-03T02:02:58+00:00"
     ],
     "BNB/CHF": [
-      572.509686,
-      "2026-11-03T01:32:58+00:00"
+      571.3415768000001,
+      "2026-11-03T02:02:58+00:00"
     ],
     "XRP/CHF": [
-      1.0230189182999998,
-      "2026-11-03T01:32:58+00:00"
+      1.0232020412,
+      "2026-11-03T02:02:58+00:00"
     ],
     "SOL/CHF": [
-      75.6079926,
-      "2026-11-03T01:32:58+00:00"
+      75.50274920000001,
+      "2026-11-03T02:02:58+00:00"
     ],
     "TRX/CHF": [
-      0.26216370752999996,
-      "2026-11-03T01:32:58+00:00"
+      0.26243866872,
+      "2026-11-03T02:02:58+00:00"
     ],
     "ZEC/CHF": [
-      945.0507369,
-      "2026-11-03T01:32:58+00:00"
+      933.6301512000001,
+      "2026-11-03T02:02:58+00:00"
     ],
     "HYPE/CHF": [
-      69.0437175,
-      "2026-11-03T01:32:58+00:00"
+      68.77973320000001,
+      "2026-11-03T02:02:58+00:00"
     ]
   },
   "abgleich": {
@@ -216,9 +216,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-03T01:32:58.650303+00:00"
+      "__dt__": "2026-11-03T02:02:58.465648+00:00"
     },
-    "quote_usd": 1.2202413637417482,
+    "quote_usd": 1.2196906864419184,
     "volume": []
   }
 }
