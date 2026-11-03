@@ -13,6 +13,20 @@
     -0.008736799095844239,
     9
    ]
+  },
+  "Seitw\u00e4rts, wild": {
+   "config_langfrist": [
+    0.0,
+    1
+   ],
+   "config_daytrading": [
+    0.0,
+    1
+   ],
+   "config_risiko": [
+    0.0010281242059113627,
+    1
+   ]
   }
  },
  "seen": {},
