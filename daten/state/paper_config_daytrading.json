@@ -99,13 +99,6 @@
       {
         "theme": "hack",
         "source": "coindesk",
-        "title": "Binance's $6.3 billion hack began with a fake job interview, exchange says",
-        "link": "https://www.coindesk.com/business/2026/11/03/binance-s-usd6-3-billion-hack-began-with-a-fake-job-interview-exchange-says",
-        "published": "2026-11-03T14:53:19+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
         "title": "South Korea asks its biggest banks how a major crypto hack would hit them",
         "link": "https://www.coindesk.com/business/2026/11/03/south-korea-asks-its-biggest-banks-how-a-major-crypto-hack-would-hit-them",
         "published": "2026-11-03T14:42:30+00:00"
@@ -151,12 +144,19 @@
         "title": "Mystery $106 Million Crypto Theft Hits EU Entity Days After Binance Hack",
         "link": "https://decrypt.co/382383/mystery-106-million-crypto-theft-eu-entity-binance-hack",
         "published": "2026-11-02T21:16:03+00:00"
+      },
+      {
+        "theme": "crash",
+        "source": "decrypt",
+        "title": "Tom Lee Calls Bottom on AI Stock Selloff, Citing Tight Supply and Crypto Resilience",
+        "link": "https://decrypt.co/382357/tom-lee-calls-bottom-ai-stock-selloff-crypto",
+        "published": "2026-11-02T19:46:02+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-03T16:04:01.663808+00:00"
+    "__dt__": "2026-11-03T16:33:29.827514+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -173,36 +173,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63708.7,
-      "2026-11-03T16:02:57+00:00"
+      63472.1,
+      "2026-11-03T16:32:58+00:00"
     ],
     "ETH/CHF": [
-      1887.41,
-      "2026-11-03T16:02:57+00:00"
+      1879.12,
+      "2026-11-03T16:32:58+00:00"
     ],
     "BNB/CHF": [
-      574.6636100000001,
-      "2026-11-03T16:02:57+00:00"
+      572.3720743,
+      "2026-11-03T16:32:58+00:00"
     ],
     "XRP/CHF": [
-      1.048816526,
-      "2026-11-03T16:02:57+00:00"
+      1.0465397172,
+      "2026-11-03T16:32:58+00:00"
     ],
     "SOL/CHF": [
-      76.734059,
-      "2026-11-03T16:02:57+00:00"
+      76.514404,
+      "2026-11-03T16:32:58+00:00"
     ],
     "TRX/CHF": [
-      0.2647945117,
-      "2026-11-03T16:02:57+00:00"
+      0.26480058961999997,
+      "2026-11-03T16:32:58+00:00"
     ],
     "ZEC/CHF": [
-      985.839242,
-      "2026-11-03T16:02:57+00:00"
+      981.5681513999999,
+      "2026-11-03T16:32:58+00:00"
     ],
     "HYPE/CHF": [
-      71.39560900000001,
-      "2026-11-03T16:02:57+00:00"
+      70.61983939999999,
+      "2026-11-03T16:32:58+00:00"
     ]
   },
   "abgleich": {
@@ -215,9 +215,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-03T16:02:57.399800+00:00"
+      "__dt__": "2026-11-03T16:32:58.570667+00:00"
     },
-    "quote_usd": 1.21758188238159,
+    "quote_usd": 1.2180713058942472,
     "volume": []
   }
 }

@@ -1,0 +1,5 @@
+2026-11-03 16:35:28,051 WARNING Kerzen BNB/CHF 4h nicht abrufbar: kraken GET https://api.kraken.com/0/public/OHLC?pair=USDCHF&interval=240
+2026-11-03 16:36:10,685 WARNING Kerzen XRP/CHF 4h nicht abrufbar: kraken GET https://api.kraken.com/0/public/OHLC?pair=USDCHF&interval=240
+2026-11-03 16:36:53,305 WARNING Kerzen SOL/CHF 4h nicht abrufbar: kraken GET https://api.kraken.com/0/public/OHLC?pair=USDCHF&interval=240
+2026-11-03 16:37:35,937 WARNING Kerzen TRX/CHF 4h nicht abrufbar: kraken GET https://api.kraken.com/0/public/OHLC?pair=USDCHF&interval=240
+2026-11-03 16:38:18,572 WARNING Kerzen ZEC/CHF 4h nicht abrufbar: kraken GET https://api.kraken.com/0/public/OHLC?pair=USDCHF&interval=240
