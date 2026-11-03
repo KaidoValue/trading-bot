@@ -51,44 +51,48 @@
       "__dt__": "2026-11-03T04:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-03T07:00:00+00:00"
+      "__dt__": "2026-11-03T08:00:00+00:00"
     }
   },
-  "note": "[lang] BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,insolvenz,rally, Wert -1.0) | [lang] ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,insolvenz,rally, Wert -1.0) | [lang] BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,insolvenz,rally, Wert -1.0) | [lang] XRP/CHF: kein Signal | [lang] SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,insolvenz,rally, Wert -1.0) | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,insolvenz,rally, Wert -1.0) | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack,insolvenz,rally, Wert -1.0) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Signal 'raus', bleibe in Cash | [kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "[lang] BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: crash,hack,insolvenz,rally, Wert -1.0) | [lang] ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: crash,hack,insolvenz,rally, Wert -1.0) | [lang] BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: crash,hack,insolvenz,rally, Wert -1.0) | [lang] XRP/CHF: kein Signal | [lang] SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: crash,hack,insolvenz,rally, Wert -1.0) | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: crash,hack,insolvenz,rally, Wert -1.0) | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: crash,hack,insolvenz,rally, Wert -1.0) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Signal 'raus', bleibe in Cash | [kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "news": {
     "fear_greed": 26,
     "news_score": -1.0,
     "themes": {
-      "rally": [
-        "coindesk",
-        "cointelegraph"
-      ],
       "hack": [
         "bitcoinmagazine",
         "coindesk",
         "cointelegraph",
         "decrypt"
+      ],
+      "crash": [
+        "coindesk",
+        "decrypt"
+      ],
+      "rally": [
+        "coindesk",
+        "cointelegraph"
       ],
       "insolvenz": [
         "coindesk",
@@ -97,6 +101,20 @@
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Mercado Bitcoin pledges to cover all user losses after near $40 million hack",
+        "link": "https://www.coindesk.com/business/2026/11/03/mercado-bitcoin-pledges-to-cover-all-user-losses-after-near-usd40-million-hack",
+        "published": "2026-11-03T08:56:48+00:00"
+      },
+      {
+        "theme": "crash",
+        "source": "coindesk",
+        "title": "Bitcoin\u2019s latest chart pattern looks a lot like the ones before its big crashes",
+        "link": "https://www.coindesk.com/markets/2026/11/03/bitcoin-s-price-chart-is-flashing-a-red-signal",
+        "published": "2026-11-03T08:50:56+00:00"
+      },
       {
         "theme": "hack",
         "source": "cointelegraph",
@@ -110,6 +128,13 @@
         "title": "Mystery $106 Million Crypto Theft Hits EU Entity Days After Binance Hack",
         "link": "https://decrypt.co/382383/mystery-106-million-crypto-theft-eu-entity-binance-hack",
         "published": "2026-11-02T21:16:03+00:00"
+      },
+      {
+        "theme": "crash",
+        "source": "decrypt",
+        "title": "Tom Lee Calls Bottom on AI Stock Selloff, Citing Tight Supply and Crypto Resilience",
+        "link": "https://decrypt.co/382357/tom-lee-calls-bottom-ai-stock-selloff-crypto",
+        "published": "2026-11-02T19:46:02+00:00"
       },
       {
         "theme": "rally",
@@ -131,33 +156,12 @@
         "title": "North Korea Is Laundering Binance Hack Loot at One New Wallet Every 25 Seconds",
         "link": "https://decrypt.co/382355/north-korea-laundering-binance-hack-loot-new-wallet-every-25-seconds",
         "published": "2026-11-02T18:46:03+00:00"
-      },
-      {
-        "theme": "rally",
-        "source": "coindesk",
-        "title": "Bitcoin traders eye post-election rally as exchange outflows point to supply squeeze",
-        "link": "https://www.coindesk.com/markets/2026/11/02/bitcoin-traders-eye-post-election-rally-as-exchange-outflows-point-to-supply-squeeze",
-        "published": "2026-11-02T18:13:57+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Brazil's Largest Exchange Mercado Bitcoin Halts Withdrawals After $40 Million Hack",
-        "link": "https://decrypt.co/382341/mercado-bitcoin-halts-withdrawals-40-million-hack",
-        "published": "2026-11-02T16:46:03+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Brazil\u2019s Mercado Bitcoin halts withdrawals after $40 million drained across 10 chains",
-        "link": "https://www.coindesk.com/business/2026/11/02/brazil-s-mercado-bitcoin-halts-withdrawals-after-usd40-million-drained-across-10-chains",
-        "published": "2026-11-02T15:53:29+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-03T08:32:45.778963+00:00"
+    "__dt__": "2026-11-03T09:02:45.247746+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -174,36 +178,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      62538.3,
-      "2026-11-03T08:31:42+00:00"
+      62514.9,
+      "2026-11-03T09:01:41+00:00"
     ],
     "ETH/CHF": [
-      1838.21,
-      "2026-11-03T08:31:42+00:00"
+      1837.73,
+      "2026-11-03T09:01:41+00:00"
     ],
     "BNB/CHF": [
-      565.0309275,
-      "2026-11-03T08:31:42+00:00"
+      566.0449411999999,
+      "2026-11-03T09:01:41+00:00"
     ],
     "XRP/CHF": [
-      1.0201931415,
-      "2026-11-03T08:31:42+00:00"
+      1.0224407916,
+      "2026-11-03T09:01:41+00:00"
     ],
     "SOL/CHF": [
-      74.8499505,
-      "2026-11-03T08:31:42+00:00"
+      75.0144596,
+      "2026-11-03T09:01:41+00:00"
     ],
     "TRX/CHF": [
-      0.2622812205,
-      "2026-11-03T08:31:42+00:00"
+      0.2625628672,
+      "2026-11-03T09:01:41+00:00"
     ],
     "ZEC/CHF": [
-      922.1634825000001,
-      "2026-11-03T08:31:42+00:00"
+      920.6698943999999,
+      "2026-11-03T09:01:41+00:00"
     ],
     "HYPE/CHF": [
-      67.7906385,
-      "2026-11-03T08:31:42+00:00"
+      68.3539536,
+      "2026-11-03T09:01:41+00:00"
     ]
   },
   "abgleich": {
@@ -216,9 +220,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-03T08:31:42.289010+00:00"
+      "__dt__": "2026-11-03T09:01:41.701803+00:00"
     },
-    "quote_usd": 1.2239153050608897,
+    "quote_usd": 1.2236307571827125,
     "volume": []
   }
 }
