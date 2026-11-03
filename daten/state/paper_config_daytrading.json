@@ -103,6 +103,20 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "decrypt",
+        "title": "Liquid Network Restores Full Bitcoin Backing Two Months After $320M Exploit",
+        "link": "https://decrypt.co/382397/liquid-network-restores-full-bitcoin-backing-two-months-after-320m-exploit",
+        "published": "2026-11-03T11:22:10+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Liquid\u2019s bitcoin IOUs are fully backed again after a $320 million exploit",
+        "link": "https://www.coindesk.com/markets/2026/11/03/liquid-s-bitcoin-ious-are-fully-backed-again-after-a-usd320-million-exploit",
+        "published": "2026-11-03T11:12:12+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "coindesk",
         "title": "Mercado Bitcoin pledges to cover all user losses after near $40 million hack",
         "link": "https://www.coindesk.com/business/2026/11/03/mercado-bitcoin-pledges-to-cover-all-user-losses-after-near-usd40-million-hack",
@@ -142,26 +156,12 @@
         "title": "Bitcoin risks drop below $76K as 7% oil slide fails to spark BTC price rally",
         "link": "https://cointelegraph.com/markets/bitcoin-risks-sub-76k-drop-as-7-fall-in-oil-fails-to-spark-btc-price-rally?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-11-02T19:27:58+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Mercado Bitcoin wallets show post-hack transfers after $46M theft",
-        "link": "https://cointelegraph.com/news/mercado-bitcoin-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-11-02T19:05:35+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "North Korea Is Laundering Binance Hack Loot at One New Wallet Every 25 Seconds",
-        "link": "https://decrypt.co/382355/north-korea-laundering-binance-hack-loot-new-wallet-every-25-seconds",
-        "published": "2026-11-02T18:46:03+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-03T11:03:59.771007+00:00"
+    "__dt__": "2026-11-03T11:33:29.195134+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -178,36 +178,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      62991.2,
-      "2026-11-03T11:02:56+00:00"
+      63180.0,
+      "2026-11-03T11:32:57+00:00"
     ],
     "ETH/CHF": [
-      1856.73,
-      "2026-11-03T11:02:56+00:00"
+      1858.96,
+      "2026-11-03T11:32:57+00:00"
     ],
     "BNB/CHF": [
-      571.8282156,
-      "2026-11-03T11:02:56+00:00"
+      571.9679928,
+      "2026-11-03T11:32:57+00:00"
     ],
     "XRP/CHF": [
-      1.0282539594,
-      "2026-11-03T11:02:56+00:00"
+      1.029286572,
+      "2026-11-03T11:32:57+00:00"
     ],
     "SOL/CHF": [
-      75.6573724,
-      "2026-11-03T11:02:56+00:00"
+      75.760608,
+      "2026-11-03T11:32:57+00:00"
     ],
     "TRX/CHF": [
-      0.26430859642,
-      "2026-11-03T11:02:56+00:00"
+      0.2642151204,
+      "2026-11-03T11:32:57+00:00"
     ],
     "ZEC/CHF": [
-      955.8069886,
-      "2026-11-03T11:02:56+00:00"
+      964.8162624,
+      "2026-11-03T11:32:57+00:00"
     ],
     "HYPE/CHF": [
-      69.1055324,
-      "2026-11-03T11:02:56+00:00"
+      69.1028576,
+      "2026-11-03T11:32:57+00:00"
     ]
   },
   "abgleich": {
@@ -220,9 +220,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-03T11:02:56.749786+00:00"
+      "__dt__": "2026-11-03T11:32:57.245617+00:00"
     },
-    "quote_usd": 1.2210310386090013,
+    "quote_usd": 1.2196311835301006,
     "volume": []
   }
 }
