@@ -85,7 +85,6 @@
         "cointelegraph"
       ],
       "hack": [
-        "coindesk",
         "cointelegraph",
         "decrypt"
       ]
@@ -133,19 +132,12 @@
         "title": "Five Ways North Korea Breaks Into Crypto Firms\u2014and How Binance Was Hacked",
         "link": "https://decrypt.co/382420/five-ways-north-korea-breaks-into-crypto-firms-and-how-binance-was-hacked",
         "published": "2026-11-03T17:30:54+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "South Korea's president says country needs a \u2018cybersecurity czar\u2019 following $6.3 billion Binance hack",
-        "link": "https://www.coindesk.com/tech/2026/11/03/south-korea-s-president-says-country-needs-a-cybersecurity-czar-following-usd6-3-billion-binance-hack",
-        "published": "2026-11-03T16:49:56+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T16:04:04.416682+00:00"
+    "__dt__": "2026-11-04T16:33:29.311038+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -162,36 +154,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      65446.0,
-      "2026-11-04T16:02:57+00:00"
+      65670.2,
+      "2026-11-04T16:32:57+00:00"
     ],
     "ETH/CHF": [
-      1976.43,
-      "2026-11-04T16:02:57+00:00"
+      1977.9,
+      "2026-11-04T16:32:57+00:00"
     ],
     "BNB/CHF": [
-      583.6795381999999,
-      "2026-11-04T16:02:57+00:00"
+      586.0260304,
+      "2026-11-04T16:32:57+00:00"
     ],
     "XRP/CHF": [
-      1.0704649152999999,
-      "2026-11-04T16:02:57+00:00"
+      1.0694357056000001,
+      "2026-11-04T16:32:57+00:00"
     ],
     "SOL/CHF": [
-      78.8828821,
-      "2026-11-04T16:02:57+00:00"
+      78.72856,
+      "2026-11-04T16:32:57+00:00"
     ],
     "TRX/CHF": [
-      0.26034937049,
-      "2026-11-04T16:02:57+00:00"
+      0.2610728792,
+      "2026-11-04T16:32:57+00:00"
     ],
     "ZEC/CHF": [
-      1063.1789047,
-      "2026-11-04T16:02:57+00:00"
+      1073.4577968,
+      "2026-11-04T16:32:57+00:00"
     ],
     "HYPE/CHF": [
-      69.8690927,
-      "2026-11-04T16:02:57+00:00"
+      69.9419632,
+      "2026-11-04T16:32:57+00:00"
     ]
   },
   "abgleich": {
@@ -204,9 +196,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T16:02:57.920673+00:00"
+      "__dt__": "2026-11-04T16:32:57.943503+00:00"
     },
-    "quote_usd": 1.227008920354851,
+    "quote_usd": 1.225730535399098,
     "volume": []
   }
 }
