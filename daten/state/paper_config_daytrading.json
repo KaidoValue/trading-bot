@@ -82,11 +82,19 @@
     "themes": {
       "hack": [
         "coindesk",
+        "cointelegraph",
         "decrypt"
       ]
     },
     "blackout": null,
     "evidence": [
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Binance hack may be \u2018temporary setback\u2019 for crypto, Grayscale\u2019s Pandl says",
+        "link": "https://cointelegraph.com/markets/crypto-market-recovery-grayscale-binance-hack-temporary-setback?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-04T11:11:57+00:00"
+      },
       {
         "theme": "hack",
         "source": "decrypt",
@@ -121,19 +129,12 @@
         "title": "South Korea asks its biggest banks how a major crypto hack would hit them",
         "link": "https://www.coindesk.com/business/2026/11/03/south-korea-asks-its-biggest-banks-how-a-major-crypto-hack-would-hit-them",
         "published": "2026-11-03T14:42:30+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Liquid Network Restores Full Bitcoin Backing Two Months After $320M Exploit",
-        "link": "https://decrypt.co/382397/liquid-network-restores-full-bitcoin-backing-two-months-after-320m-exploit",
-        "published": "2026-11-03T11:22:10+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T11:04:04.780116+00:00"
+    "__dt__": "2026-11-04T11:33:28.768577+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -150,36 +151,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      64131.1,
-      "2026-11-04T11:03:02+00:00"
+      64241.6,
+      "2026-11-04T11:32:57+00:00"
     ],
     "ETH/CHF": [
-      1902.3,
-      "2026-11-04T11:03:02+00:00"
+      1908.08,
+      "2026-11-04T11:32:57+00:00"
     ],
     "BNB/CHF": [
-      573.5557368,
-      "2026-11-04T11:03:02+00:00"
+      575.2846579999999,
+      "2026-11-04T11:32:57+00:00"
     ],
     "XRP/CHF": [
-      1.0539389172,
-      "2026-11-04T11:03:02+00:00"
+      1.0568772499999999,
+      "2026-11-04T11:32:57+00:00"
     ],
     "SOL/CHF": [
-      76.42013730000001,
-      "2026-11-04T11:03:02+00:00"
+      76.74932199999999,
+      "2026-11-04T11:32:57+00:00"
     ],
     "TRX/CHF": [
-      0.26200489140000005,
-      "2026-11-04T11:03:02+00:00"
+      0.2616648177,
+      "2026-11-04T11:32:57+00:00"
     ],
     "ZEC/CHF": [
-      1070.1190233,
-      "2026-11-04T11:03:02+00:00"
+      1072.25001,
+      "2026-11-04T11:32:57+00:00"
     ],
     "HYPE/CHF": [
-      71.0649228,
-      "2026-11-04T11:03:02+00:00"
+      71.02542199999999,
+      "2026-11-04T11:32:57+00:00"
     ]
   },
   "abgleich": {
@@ -192,9 +193,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T11:03:02.397649+00:00"
+      "__dt__": "2026-11-04T11:32:57.347708+00:00"
     },
-    "quote_usd": 1.2231069362394353,
+    "quote_usd": 1.2229423994129878,
     "volume": []
   }
 }
