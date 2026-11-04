@@ -131,7 +131,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.03277891339683596,
+      "interest": 0.033252667279260885,
       "fees_done": 0.0,
       "margin_value": 12.855257380314663
     },
@@ -158,7 +158,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.009153461304048609,
+      "interest": 0.009903429369213752,
       "fees_done": 0.0,
       "margin_value": 20.35029761733372
     }
@@ -214,28 +214,28 @@
       "__dt__": "2026-11-03T00:00:00+00:00"
     },
     "stop:BTC/CHF": {
-      "__dt__": "2026-11-04T02:04:00+00:00"
+      "__dt__": "2026-11-04T02:33:00+00:00"
     },
     "stop:ETH/CHF": {
-      "__dt__": "2026-11-04T02:04:00+00:00"
+      "__dt__": "2026-11-04T02:33:00+00:00"
     },
     "stop:BNB/CHF": {
-      "__dt__": "2026-11-04T02:04:00+00:00"
+      "__dt__": "2026-11-04T02:33:00+00:00"
     },
     "stop:SOL/CHF": {
-      "__dt__": "2026-11-04T02:04:00+00:00"
+      "__dt__": "2026-11-04T02:33:00+00:00"
     },
     "stop:HYPE/CHF": {
-      "__dt__": "2026-11-04T02:04:00+00:00"
+      "__dt__": "2026-11-04T02:33:00+00:00"
     },
     "stop:XRP/CHF": {
-      "__dt__": "2026-11-04T02:04:00+00:00"
+      "__dt__": "2026-11-04T02:33:00+00:00"
     }
   },
   "note": "[mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: Position offen, Signal best\u00e4tigt | [lang] BNB/CHF: Position offen, Signal best\u00e4tigt | [lang] XRP/CHF: gekauft 19.302774 @ 1.05 | [lang] SOL/CHF: Position offen, Signal best\u00e4tigt | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt",
   "news": null,
   "updated": {
-    "__dt__": "2026-11-04T02:04:40.648190+00:00"
+    "__dt__": "2026-11-04T02:34:09.743272+00:00"
   },
   "risk": {
     "peak_equity": 101.2280193581123,
@@ -252,45 +252,45 @@
   },
   "prices": {
     "BTC/CHF": [
-      62772.8,
-      "2026-11-04T02:04:10+00:00"
+      62446.5,
+      "2026-11-04T02:33:39+00:00"
     ],
     "ETH/CHF": [
-      1844.25,
-      "2026-11-04T02:04:10+00:00"
+      1841.63,
+      "2026-11-04T02:33:39+00:00"
     ],
     "BNB/CHF": [
-      565.3567942000001,
-      "2026-11-04T02:04:10+00:00"
+      562.4051445,
+      "2026-11-04T02:33:39+00:00"
     ],
     "XRP/CHF": [
-      1.0225566736,
-      "2026-11-04T02:04:10+00:00"
+      1.02015441,
+      "2026-11-04T02:33:39+00:00"
     ],
     "SOL/CHF": [
-      75.1193894,
-      "2026-11-04T02:04:10+00:00"
+      74.4619815,
+      "2026-11-04T02:33:39+00:00"
     ],
     "TRX/CHF": [
-      0.2629464068,
-      "2026-11-04T02:04:10+00:00"
+      0.2623731525,
+      "2026-11-04T02:33:39+00:00"
     ],
     "ZEC/CHF": [
-      987.4232104,
-      "2026-11-04T02:04:10+00:00"
+      970.556553,
+      "2026-11-04T02:33:39+00:00"
     ],
     "HYPE/CHF": [
-      67.6571984,
-      "2026-11-04T02:04:10+00:00"
+      66.66291,
+      "2026-11-04T02:33:39+00:00"
     ]
   },
   "abgleich": {
-    "kapital": 98.03,
-    "erwartet": 98.03,
+    "kapital": 97.29,
+    "erwartet": 97.29,
     "differenz": 0.0
   },
   "paper": {
-    "cash": -33.24748737234926,
+    "cash": -33.24871109429685,
     "positions": {
       "BTC/CHF": 0.000522555718492097,
       "ETH/CHF": 0.01264932572271568,
@@ -299,11 +299,11 @@
       "HYPE/CHF": 0.21173287485711234,
       "XRP/CHF": 19.302773817131545
     },
-    "interest_paid": 0.04193237470088457,
+    "interest_paid": 0.04315609664847463,
     "interest_at": {
-      "__dt__": "2026-11-04T02:04:10.633159+00:00"
+      "__dt__": "2026-11-04T02:33:39.573732+00:00"
     },
-    "quote_usd": 1.2261814258037618,
+    "quote_usd": 1.2270691453463403,
     "volume": [
       [
         {
