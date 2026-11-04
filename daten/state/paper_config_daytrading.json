@@ -80,6 +80,10 @@
     "fear_greed": 34,
     "news_score": -1.0,
     "themes": {
+      "rally": [
+        "coindesk",
+        "cointelegraph"
+      ],
       "hack": [
         "coindesk",
         "cointelegraph",
@@ -89,11 +93,25 @@
     "blackout": null,
     "evidence": [
       {
+        "theme": "rally",
+        "source": "cointelegraph",
+        "title": "Bitcoin hits $80.5K as US stocks rally on midterm election results",
+        "link": "https://cointelegraph.com/markets/bitcoin-price-us-stocks-rally-midterm-election-result?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-04T15:29:23+00:00"
+      },
+      {
         "theme": "hack",
         "source": "cointelegraph",
         "title": "Binance hack may be \u2018temporary setback\u2019 for crypto, Grayscale\u2019s Pandl says",
         "link": "https://cointelegraph.com/markets/crypto-market-recovery-grayscale-binance-hack-temporary-setback?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-11-04T11:11:57+00:00"
+      },
+      {
+        "theme": "rally",
+        "source": "coindesk",
+        "title": "Democrats surge toward Senate, House majorities, with crypto braced for new direction",
+        "link": "https://www.coindesk.com/policy/2026/11/03/democrats-surge-toward-senate-house-majorities-with-crypto-braced-for-new-direction",
+        "published": "2026-11-04T04:55:11+00:00"
       },
       {
         "theme": "hack",
@@ -127,7 +145,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T15:04:05.422536+00:00"
+    "__dt__": "2026-11-04T15:33:29.630591+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -144,36 +162,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      64930.9,
-      "2026-11-04T15:03:03+00:00"
+      65815.2,
+      "2026-11-04T15:32:58+00:00"
     ],
     "ETH/CHF": [
-      1963.74,
-      "2026-11-04T15:03:03+00:00"
+      1988.85,
+      "2026-11-04T15:32:58+00:00"
     ],
     "BNB/CHF": [
-      580.975224,
-      "2026-11-04T15:03:03+00:00"
+      584.70628,
+      "2026-11-04T15:32:58+00:00"
     ],
     "XRP/CHF": [
-      1.079654616,
-      "2026-11-04T15:03:03+00:00"
+      1.07678744,
+      "2026-11-04T15:32:58+00:00"
     ],
     "SOL/CHF": [
-      77.963612,
-      "2026-11-04T15:03:03+00:00"
+      78.97639199999999,
+      "2026-11-04T15:32:58+00:00"
     ],
     "TRX/CHF": [
-      0.2607980092,
-      "2026-11-04T15:03:03+00:00"
+      0.2612306096,
+      "2026-11-04T15:32:58+00:00"
     ],
     "ZEC/CHF": [
-      1080.872542,
-      "2026-11-04T15:03:03+00:00"
+      1076.272856,
+      "2026-11-04T15:32:58+00:00"
     ],
     "HYPE/CHF": [
-      70.639708,
-      "2026-11-04T15:03:03+00:00"
+      70.21212799999999,
+      "2026-11-04T15:32:58+00:00"
     ]
   },
   "abgleich": {
@@ -186,9 +204,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T15:03:03.065539+00:00"
+      "__dt__": "2026-11-04T15:32:58.277515+00:00"
     },
-    "quote_usd": 1.223391240518718,
+    "quote_usd": 1.2242899118511263,
     "volume": []
   }
 }
