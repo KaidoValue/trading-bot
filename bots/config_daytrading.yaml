@@ -66,6 +66,9 @@ horizons:
       pretrain: false
       memory_half_life_days: 90
       memory_file: daten/state/ki_gedaechtnis_lang_v2.json
+      # Tagesstrategien einzeln nach Kosten bewerten, einschliesslich vier Buchregeln.
+      observe_members: [regime, buch_turtle, buch_triple_screen, buch_golden_cross, buch_livermore,
+                        trend_recovery, time_series_momentum]
     share: 0.5
     stop_loss_atr: 4.0
     take_profit_atr: 10.0
