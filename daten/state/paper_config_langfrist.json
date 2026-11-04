@@ -51,28 +51,28 @@
       "__dt__": "2026-11-03T20:00:00+00:00"
     },
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-03T23:00:00+00:00"
+      "__dt__": "2026-11-04T00:00:00+00:00"
     }
   },
   "note": "[lang] BTC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] ETH/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] XRP/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] SOL/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [lang] HYPE/CHF: Einstieg pausiert wegen Nachrichtenlage (best\u00e4tigte Themen: hack, Wert -1.0) | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: kein Signal | [kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
@@ -148,7 +148,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T00:32:45.365460+00:00"
+    "__dt__": "2026-11-04T01:02:45.834898+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -165,36 +165,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63100.8,
-      "2026-11-04T00:31:42+00:00"
+      62988.9,
+      "2026-11-04T01:01:42+00:00"
     ],
     "ETH/CHF": [
-      1856.74,
-      "2026-11-04T00:31:42+00:00"
+      1857.32,
+      "2026-11-04T01:01:42+00:00"
     ],
     "BNB/CHF": [
-      569.5135116,
-      "2026-11-04T00:31:42+00:00"
+      569.140929,
+      "2026-11-04T01:01:42+00:00"
     ],
     "XRP/CHF": [
-      1.0322370996,
-      "2026-11-04T00:31:42+00:00"
+      1.0299150015,
+      "2026-11-04T01:01:42+00:00"
     ],
     "SOL/CHF": [
-      75.28673239999999,
-      "2026-11-04T00:31:42+00:00"
+      75.5825049,
+      "2026-11-04T01:01:42+00:00"
     ],
     "TRX/CHF": [
-      0.26346835973000005,
-      "2026-11-04T00:31:42+00:00"
+      0.2637977622,
+      "2026-11-04T01:01:42+00:00"
     ],
     "ZEC/CHF": [
-      989.4523601999999,
-      "2026-11-04T00:31:42+00:00"
+      994.0192479,
+      "2026-11-04T01:01:42+00:00"
     ],
     "HYPE/CHF": [
-      68.29511980000001,
-      "2026-11-04T00:31:42+00:00"
+      68.5982262,
+      "2026-11-04T01:01:42+00:00"
     ]
   },
   "abgleich": {
@@ -207,9 +207,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T00:31:42.344308+00:00"
+      "__dt__": "2026-11-04T01:01:42.803597+00:00"
     },
-    "quote_usd": 1.221463557634758,
+    "quote_usd": 1.2213143785341785,
     "volume": []
   }
 }
