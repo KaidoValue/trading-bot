@@ -1,4 +1,3 @@
-2026-11-03 12:59:35,770 WARNING Abschrift 3H1Yjx1lVMk nicht abrufbar: RequestBlocked
-2026-11-03 12:59:36,531 WARNING Abschrift NDwLIJAFxH0 nicht abrufbar: RequestBlocked
-2026-11-03 12:59:37,585 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: VideoUnplayable
-2026-11-03 12:59:38,396 WARNING Abschrift U_jE97q3bJI nicht abrufbar: RequestBlocked
+2026-11-04 13:15:35,485 WARNING Abschrift Omm_ILU2SSE nicht abrufbar: YouTubeRequestFailed
+2026-11-04 13:15:42,851 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: YouTubeRequestFailed
+2026-11-04 13:15:51,628 WARNING Abschrift SRKWX7918xw nicht abrufbar: YouTubeRequestFailed
