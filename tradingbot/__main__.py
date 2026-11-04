@@ -20,6 +20,13 @@
   python -m tradingbot historie --bots ... --ende 2022-12-31 --cache-fest   # blind bis Ende 2022, nichts nachladen
   python -m tradingbot historie --bots ... --quellen coinbase  # Kursgeschichte nur von Coinbase (eigene Cache-Dateien)
   python -m tradingbot historie --bots ... --abschnitte        # bis 2022 und ab 2023 je als frischer Start
+  python -m tradingbot profi --schritt E0 --cache-fest         # Profi-Bot E0: heutige Bots, K1, P−1, Bitcoin halten
+  python -m tradingbot profi --schritt E1 --config bots/profi/e1_kb3.yaml --varianten bots/profi/varianten/e1_kb5.yaml
+  python -m tradingbot profi --schritt E2 --config ... --sieger ... --varianten ...   # Amtsinhaber = Basis + Sieger
+  python -m tradingbot profi --schritt E6 --config ... --pruefung --cache-fest  # ab 2023: einmal, ins Prüfprotokoll
+  python -m tradingbot profi --schritt E0 --liste              # Jobs als JSON (GitHub-Matrix) ...
+  python -m tradingbot profi --schritt E0 --nur-bot k1 --nur-fenster 2012-2022  # ... und nur einen Job rechnen
+  python -m tradingbot profi --zusammenfassen                  # lernen/PROFI_ERGEBNISSE.md aus lernen/profi/ neu
 """
 from __future__ import annotations
 
@@ -28,6 +35,8 @@ import json
 from pathlib import Path
 import logging
 import os
+import shlex
+import sys
 
 import pandas as pd
 
@@ -163,7 +172,7 @@ def status(cfg: Config) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="tradingbot")
-    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube", "historie", "schliessen"])
+    p.add_argument("command", choices=["backtest", "compare", "walkforward", "paper", "live", "report", "status", "news", "dashboard", "labor", "youtube", "historie", "schliessen", "profi"])
     p.add_argument("--config", default="bots/config.yaml")
     p.add_argument("--bots", nargs="+", help="dashboard: Config-Dateien der Bots")
     p.add_argument("--chef", help="dashboard: Stand-Datei des Chef-Bots")
@@ -178,18 +187,33 @@ def main() -> None:
                    "in daten/auftraege/, den der nächste Bot-Durchlauf zum dann aktuellen Kurs ausführt)")
     p.add_argument("--sofort", action="store_true", help="schliessen: direkt statt als Auftrag (nur lokal und nur, "
                    "wenn gerade kein Bot-Durchlauf läuft)")
-    p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf)")
+    p.add_argument("--start", help="historie: erst ab diesem Tag handeln, z.B. 2022-01-01 (Kurse davor als Vorlauf); "
+                   "profi: mit --ende ein eigenes Fenster statt der Fenster des Schritts")
     p.add_argument("--gebuehren", choices=["normiert", "staffel", "alt"], default="normiert",
-                   help="historie: Gebührenstufe wie für ein Konto mit Startkapital (normiert, Standard), nach dem "
+                   help="historie und profi: Gebührenstufe wie für ein Konto mit Startkapital (normiert, Standard), nach dem "
                    "Umsatz des wachsenden Simulationskontos (staffel) oder fest 0,26 %% wie früher (alt)")
-    p.add_argument("--ende", help="historie: Simulation endet am Ende dieses Tages, z.B. 2022-12-31 (spätere Kurse "
+    p.add_argument("--ende", help="historie und profi: Simulation endet am Ende dieses Tages, z.B. 2022-12-31 (spätere Kurse "
                    "werden vor allen Berechnungen abgeschnitten)")
-    p.add_argument("--cache-fest", action="store_true", help="historie: nur den Kurs-Cache in data/historie benutzen, "
+    p.add_argument("--cache-fest", action="store_true", help="historie und profi: nur den Kurs-Cache in data/historie benutzen, "
                    "nie nachladen oder löschen; fehlt eine Datei, bricht die Simulation ab")
-    p.add_argument("--quellen", nargs="+", help="historie: Börsen für die Kursgeschichte, z.B. coinbase oder "
+    p.add_argument("--quellen", nargs="+", help="historie und profi: Börsen für die Kursgeschichte, z.B. coinbase oder "
                    "bitfinex:USD (Standard: bitstamp, binance, binanceus, kucoin); jede Börse hat eigene Cache-Dateien")
     p.add_argument("--abschnitte", action="store_true", help="historie: jeden Abschnitt (bis 2022, ab 2023) als "
                    "frischen Start mit dem Startkapital rechnen statt als Ausschnitt aus dem langen Lauf")
+    p.add_argument("--schritt", choices=["E0", "E1", "E2", "E3", "E4", "E5", "E6"],
+                   help="profi: Experiment des Profi-Bot-Plans (E0 Messlatte, E1-E4 Leiter, E5 Robustheit, E6 Prüfung)")
+    p.add_argument("--sieger", nargs="+", default=[], help="profi: Überlagerungen früherer Sieger auf --config; "
+                   "zusammen sind sie der Amtsinhaber")
+    p.add_argument("--varianten", nargs="+", default=[], help="profi: Herausforderer, je eine Überlagerung auf den "
+                   "Amtsinhaber (die einfachere zuerst)")
+    p.add_argument("--pruefung", action="store_true", help="profi: Fenster mit Kursen ab 2023 erlauben (Einmal-Prüfung "
+                   "E6); jeder Lauf kommt ins Prüfprotokoll lernen/PROFI_PRUEFPROTOKOLL.md")
+    p.add_argument("--zusammenfassen", action="store_true", help="profi: lernen/PROFI_ERGEBNISSE.md aus den "
+                   "Ergebnisdateien in lernen/profi/ neu bauen, ohne zu rechnen")
+    p.add_argument("--liste", action="store_true", help="profi: die Jobs (Bot und Fenster) als JSON ausgeben, ohne zu "
+                   "rechnen, z.B. für eine GitHub-Matrix")
+    p.add_argument("--nur-bot", nargs="+", help="profi: nur diese Bots rechnen (Namen wie in --liste)")
+    p.add_argument("--nur-fenster", nargs="+", help="profi: nur diese Fenster rechnen, z.B. 2012-2022")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
 
@@ -269,6 +293,28 @@ def main() -> None:
                 Path(r.cfg.phase_prior).write_text(json.dumps({"stats": stats, "bis": str(btc.index[-1].date())},
                                                               indent=1), encoding="utf-8")
         print(text)
+    elif args.command == "profi":
+        from . import auswertung, historie
+        if args.zusammenfassen:
+            print(auswertung.zusammenfassen())
+            return
+        if not args.schritt:
+            raise SystemExit("profi: --schritt E0 bis E6 angeben (oder --zusammenfassen).")
+        basis = args.config if args.config != p.get_default("config") else (
+            auswertung.E1_AMT if args.schritt == "E1" else None)
+        if args.sieger and not basis:
+            raise SystemExit("profi: --sieger braucht --config (die Basis des Amtsinhabers).")
+        amt = [basis, *args.sieger] if basis and args.schritt != "E0" else []
+        eigenes = auswertung.eigenes_fenster(args.start, args.ende) if args.start or args.ende else None
+        if args.liste:
+            print(json.dumps(auswertung.liste(args.schritt, amt, args.varianten, eigenes, args.pruefung,
+                                              args.nur_bot, args.nur_fenster)))
+            return
+        befehl = "python -m tradingbot " + " ".join(map(shlex.quote, sys.argv[1:]))
+        for f in auswertung.rechnen(args.schritt, amt, args.varianten, eigenes, historie.sources(args.quellen),
+                                    args.cache_fest, args.gebuehren, args.pruefung, args.nur_bot, args.nur_fenster,
+                                    befehl):
+            print(f)
     elif args.command == "youtube":
         from .youtube import update
         for f in update():

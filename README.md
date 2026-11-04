@@ -106,6 +106,7 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
 | `tradingbot/bot.py` | Laufender Bot (auf GitHub ein Durchlauf alle 30 Minuten, kurz nach Kerzenschluss): holt Kurse, prüft die Stops mit den Minutenkerzen seit dem letzten Lauf, dazu Orderbuch und Nachrichtenlage, und entscheidet |
 | `tradingbot/historie.py` | Geschichts-Simulation der kompletten Bots über 2011-2026 inkl. Chef, Kursgeschichte mit Cache |
+| `tradingbot/auswertung.py` | Auswertung für den Profi-Bot (`profi`): frische Fenster, Überlagerungen, Sperre ab 2023, Prüfprotokoll, Block-Bootstrap, Regel G und Go-Regeln |
 
 ## Zeithorizonte: gleiche Bedingungen für alle Bots
 
@@ -382,6 +383,33 @@ Grenzen: keine historischen News und Ereignisse, kein Orderbuch-Spread, keine Ko
 Die Jahre 2011-2013 hatten sehr wenig Handel an den Börsen. Kleine Details (z.B. welcher Coin bei gleichzeitigen
 Signalen zuerst Kapital bekommt) verschieben das Ergebnis um einige Prozent pro Jahr: Die Zahlen sind
 Grössenordnungen, keine Vorhersage. Vergangene Ergebnisse sind keine Garantie.
+
+## Profi-Bot auswerten (`profi`)
+
+```bash
+python -m tradingbot profi --schritt E0 --cache-fest
+python -m tradingbot profi --schritt E1 --config bots/profi/e1_kb3.yaml --varianten bots/profi/varianten/e1_kb5.yaml
+python -m tradingbot profi --zusammenfassen
+```
+
+Rechnet die vorab registrierten Experimente E0 bis E6 des Profi-Bot-Plans. Jeder Bot startet in jedem Fenster frisch
+mit seinem Startkapital: 2012-2022 und die Hälften 2012-2019 und 2020-2022, in E5 dazu 2016-2022, 28 gestaffelte
+3-Jahres-Fenster (Start vierteljährlich 2013-2019) und die Crash-Starts 2014 und 2018. Varianten sind Überlagerungen
+auf den Amtsinhaber (`--config` plus `--sieger`, Herausforderer mit `--varianten`): Nur die geänderten Schlüssel stehen
+in der Datei, die volle Config kommt in jedes Ergebnis und geht durch dieselbe Prüfung wie beim Laden einer Config.
+Für Kostenstress multipliziert `fee_factor: 1.5` alle Gebührensätze.
+
+- **Blind bis Ende 2022:** Ohne `--pruefung` werden die Kurse ab 2023 vor allen Berechnungen abgeschnitten, und Fenster
+  mit Tagen ab 2023 (auch ein offenes Ende) werden verweigert. Jeder Lauf mit `--pruefung` kommt vorher mit Datum,
+  Commit, Quellen, Cache-Fingerabdruck und Befehl ins Prüfprotokoll `lernen/PROFI_PRUEFPROTOKOLL.md` (nur angehängt).
+- **Ergebnisse:** je Bot und Fenster eine JSON-Datei unter `lernen/profi/<Schritt>/<Cache>/` (Quellen, Cache, Commit,
+  Fenster, volle Config, Kennzahlen, Kapitalkurve je Tag). Daraus entsteht `lernen/PROFI_ERGEBNISSE.md`; mit
+  `--zusammenfassen` ohne neue Rechnung. Darin stehen die Kennzahlen mit dem Abstand zu «Bitcoin halten nach Kosten»
+  und P−1, L_dev, Regel G mit gepaartem Block-Bootstrap, das Tor nach E1, die E2-Flagge, die E5-Kriterien und die
+  Go-Regeln. Entschieden wird nur mit normierten Gebühren und in jedem Cache der Standardquellen; eine andere Quelle
+  (`--quellen`) zählt nur zur Information. `lernen/HISTORIE.md` bleibt unberührt.
+- **GitHub-Matrix:** `--liste` gibt die Jobs (Bot und Fenster) als JSON aus, `--nur-bot` und `--nur-fenster` rechnen
+  nur einen Teil davon. Der Chef liest die Kurven der drei Stil-Bots aus ihren Ergebnisdateien im selben Fenster.
 
 ## Marktphasen: der Bot wählt kurz, mittel oder lang selbst (Test: `bots/config_phasen.yaml`)
 

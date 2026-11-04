@@ -148,11 +148,15 @@ class PaperBroker(Broker):
 
 def paper_broker(cfg) -> PaperBroker:
     """Demo-Konto nach der Config, überall gleich gebaut (Bot, Simulation, Übersicht, Befehle):
-    fee_model «kraken» = Kraken-Gebührenstaffel nach 30-Tage-Umsatz, «fix» = immer fee_rate."""
+    fee_model «kraken» = Kraken-Gebührenstaffel nach 30-Tage-Umsatz, «fix» = immer fee_rate. fee_factor: alle Sätze
+    × Faktor (Kostenstress)."""
     if cfg.fee_model not in ("fix", "kraken"):
         raise ValueError(f"Unbekanntes fee_model «{cfg.fee_model}» (erlaubt: fix, kraken)")
-    b = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage,
-                    KRAKEN_TIERS if cfg.fee_model == "kraken" else None)
+    f = cfg.fee_factor
+    tiers = KRAKEN_TIERS if cfg.fee_model == "kraken" else None
+    if tiers and f != 1:
+        tiers = [(volume, maker * f, taker * f) for volume, maker, taker in tiers]
+    b = PaperBroker(cfg.starting_capital, cfg.fee_rate * f, cfg.slippage, tiers)
     b.leverage = cfg.risk.leverage
     return b
 

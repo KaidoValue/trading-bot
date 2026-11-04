@@ -289,8 +289,8 @@ def simulate(cfg: Config, coins: dict[str, pd.DataFrame], start: pd.Timestamp | 
         params = {k: v for k, v in h.strategy_params.items() if k not in ("memory_file", "library_file")}
         for s, df in coins.items():
             key = (h.strategy, repr(sorted(params.items())), repr(cfg.risk), cfg.fee_model, cfg.fee_rate,
-                   cfg.slippage, cfg.starting_capital, cfg.short_probation, repr(h), cfg.allow_short, h.timeframe,
-                   base_tf, s, _fingerprint(df))
+                   cfg.fee_factor, cfg.slippage, cfg.starting_capital, cfg.short_probation, repr(h), cfg.allow_short,
+                   h.timeframe, base_tf, s, _fingerprint(df))
             closes, sig, atr, ema = _cached(key, lambda: _signals(h, params, cfg.allow_short, df, base_tf, cfg))
             if h.trend_filter:
                 p = trends[s][0].searchsorted(closes, side="right") - 1
