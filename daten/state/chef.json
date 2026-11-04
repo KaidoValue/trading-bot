@@ -1,16 +1,16 @@
 {
  "start": 100.0,
- "equity": 99.68245088115162,
+ "equity": 99.42121663801905,
  "peak": 100.24745703820012,
  "weights": {
   "config_langfrist": 0.3,
   "config_daytrading": 0.3,
-  "config_risiko": 0.2
+  "config_risiko": 0.03
  },
  "last": {
   "config_langfrist": 100.0,
   "config_daytrading": 100.0,
-  "config_risiko": 98.39227797251709
+  "config_risiko": 97.77123517946056
  },
  "history": [
   {
@@ -552,8 +552,17 @@
     "config_risiko": -0.002121290024983402
    },
    "equity": 99.68245088115162
+  },
+  {
+   "t": "2026-11-04T01:35:26.690392+00:00",
+   "r": {
+    "config_langfrist": 0.0,
+    "config_daytrading": 0.0,
+    "config_risiko": -0.006311905830963749
+   },
+   "equity": 99.55661363255933
   }
  ],
- "fees": 0.0,
- "reason": "Paper-Neustart mit 100.00 CHF am 2026-11-02T19:38:40.499488+00:00"
+ "fees": 0.1353969945402807,
+ "reason": "Marktphase \u00abAufw\u00e4rtstrend, wild\u00bb, Einsch\u00e4tzung: Langfrist +0.0 %, KI +0.0 %, Risiko -5.7 %, \ud83d\udea8 Notbremse Risiko (-3.1 % in 3 Std.)"
 }
