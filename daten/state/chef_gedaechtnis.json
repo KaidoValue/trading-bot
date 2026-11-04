@@ -31,15 +31,15 @@
   "Aufw\u00e4rtstrend, wild": {
    "config_langfrist": [
     0.0,
-    7
+    8
    ],
    "config_daytrading": [
     0.0,
-    7
+    8
    ],
    "config_risiko": [
-    -0.04908622950580799,
-    7
+    -0.03801151647796741,
+    8
    ]
   }
  },
