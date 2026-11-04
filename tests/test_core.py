@@ -149,7 +149,7 @@ def test_single_source_is_not_confirmed():
 
 
 def test_confirmed_negative_news():
-    hs = [_h("a", "Bitcoin exchange hacked, funds stolen"), _h("b", "Major crypto exchange hack drains wallets")]
+    hs = [_h("a", "Acme crypto exchange hacked, funds stolen"), _h("b", "Acme crypto exchange hack drains wallets")]
     score, confirmed = news.score_headlines(hs, "BTC", now=NOW)
     assert score <= -0.8 and confirmed["hack"] == ["a", "b"]
 
