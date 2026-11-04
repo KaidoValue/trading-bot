@@ -118,26 +118,12 @@
         "title": "Crypto Docs Host GitBook Hit by AI Agent Security Breach, Urges Users to Rotate Keys",
         "link": "https://decrypt.co/382465/crypto-docs-gitbook-ai-agent-security-breach",
         "published": "2026-11-03T19:46:03+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Brazil's Biggest Bitcoin Exchange Says It Will Refund Users After a $40 Million Hack",
-        "link": "https://decrypt.co/382459/brazil-mercado-bitcoin-will-refund-users-40-million-hack",
-        "published": "2026-11-03T18:16:03+00:00"
       }
     ],
-    "alerts": [
-      {
-        "who": "trump",
-        "title": "Democrats to Target Trump\u2019s Crypto Ventures After Taking Congress",
-        "source": "bitcoinmagazine",
-        "published": "2026-11-04T17:56:30+00:00"
-      }
-    ]
+    "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T18:04:00.096684+00:00"
+    "__dt__": "2026-11-04T18:33:34.820953+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -154,36 +140,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      65516.0,
-      "2026-11-04T18:02:57+00:00"
+      65707.1,
+      "2026-11-04T18:33:03+00:00"
     ],
     "ETH/CHF": [
-      1976.44,
-      "2026-11-04T18:02:57+00:00"
+      1981.55,
+      "2026-11-04T18:33:03+00:00"
     ],
     "BNB/CHF": [
-      585.0321904,
-      "2026-11-04T18:02:57+00:00"
+      585.666004,
+      "2026-11-04T18:33:03+00:00"
     ],
     "XRP/CHF": [
-      1.0712724715000002,
-      "2026-11-04T18:02:57+00:00"
+      1.0721105700000002,
+      "2026-11-04T18:33:03+00:00"
     ],
     "SOL/CHF": [
-      78.22896130000001,
-      "2026-11-04T18:02:57+00:00"
+      78.108931,
+      "2026-11-04T18:33:03+00:00"
     ],
     "TRX/CHF": [
-      0.26086629107,
-      "2026-11-04T18:02:57+00:00"
+      0.2608769743,
+      "2026-11-04T18:33:03+00:00"
     ],
     "ZEC/CHF": [
-      1065.3239044,
-      "2026-11-04T18:02:57+00:00"
+      1066.055108,
+      "2026-11-04T18:33:03+00:00"
     ],
     "HYPE/CHF": [
-      69.1796322,
-      "2026-11-04T18:02:57+00:00"
+      69.12367,
+      "2026-11-04T18:33:03+00:00"
     ]
   },
   "abgleich": {
@@ -196,9 +182,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T18:02:57.291068+00:00"
+      "__dt__": "2026-11-04T18:33:03.590375+00:00"
     },
-    "quote_usd": 1.2255052145246879,
+    "quote_usd": 1.2253400318588408,
     "volume": []
   }
 }
