@@ -238,16 +238,52 @@
       }
     }
   },
+  "research": {
+    "kurz": {
+      "status": "Sammelt Lernf\u00e4lle",
+      "completed": 0,
+      "pending": 0,
+      "invalid": 0,
+      "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
+      "candidate": null,
+      "active": null,
+      "report": {}
+    },
+    "mittel": {
+      "status": "Sammelt Lernf\u00e4lle",
+      "completed": 0,
+      "pending": 0,
+      "invalid": 0,
+      "journal": "daten/research/config_daytrading_mittel_ef347ba23a624a32.json",
+      "candidate": null,
+      "active": null,
+      "report": {}
+    },
+    "lang": {
+      "status": "Sammelt Lernf\u00e4lle",
+      "completed": 0,
+      "pending": 0,
+      "invalid": 0,
+      "journal": "daten/research/config_daytrading_lang_69d5c552fe4dcd61.json",
+      "candidate": null,
+      "active": null,
+      "report": {}
+    }
+  },
   "news": {
     "fear_greed": 34,
     "news_score": 0.0,
     "themes": {},
+    "analysis": {
+      "status": "Sprachanalyse ausgeschaltet",
+      "items": []
+    },
     "blackout": null,
     "evidence": [],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T22:04:03.993668+00:00"
+    "__dt__": "2026-11-04T22:33:32.626433+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -264,36 +300,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      65474.9,
-      "2026-11-04T22:03:01+00:00"
+      65715.9,
+      "2026-11-04T22:33:01+00:00"
     ],
     "ETH/CHF": [
-      1975.09,
-      "2026-11-04T22:03:01+00:00"
+      1985.0,
+      "2026-11-04T22:33:01+00:00"
     ],
     "BNB/CHF": [
-      585.8569725,
-      "2026-11-04T22:03:01+00:00"
+      587.9242208,
+      "2026-11-04T22:33:01+00:00"
     ],
     "XRP/CHF": [
-      1.0657246794000002,
-      "2026-11-04T22:03:01+00:00"
+      1.0712783274,
+      "2026-11-04T22:33:01+00:00"
     ],
     "SOL/CHF": [
-      77.433588,
-      "2026-11-04T22:03:01+00:00"
+      77.9806176,
+      "2026-11-04T22:33:01+00:00"
     ],
     "TRX/CHF": [
-      0.26111291994,
-      "2026-11-04T22:03:01+00:00"
+      0.26099750238,
+      "2026-11-04T22:33:01+00:00"
     ],
     "ZEC/CHF": [
-      1058.013993,
-      "2026-11-04T22:03:01+00:00"
+      1067.4331776,
+      "2026-11-04T22:33:01+00:00"
     ],
     "HYPE/CHF": [
-      68.0811135,
-      "2026-11-04T22:03:01+00:00"
+      68.3473336,
+      "2026-11-04T22:33:01+00:00"
     ]
   },
   "abgleich": {
@@ -306,9 +342,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T22:03:01.301642+00:00"
+      "__dt__": "2026-11-04T22:33:01.246502+00:00"
     },
-    "quote_usd": 1.2242749231767485,
+    "quote_usd": 1.224919767755212,
     "volume": []
   }
 }
