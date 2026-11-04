@@ -135,19 +135,12 @@
         "title": "Liquid\u2019s bitcoin IOUs are fully backed again after a $320 million exploit",
         "link": "https://www.coindesk.com/markets/2026/11/03/liquid-s-bitcoin-ious-are-fully-backed-again-after-a-usd320-million-exploit",
         "published": "2026-11-03T11:12:12+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "Mercado Bitcoin pledges to cover all user losses after near $40 million hack",
-        "link": "https://www.coindesk.com/business/2026/11/03/mercado-bitcoin-pledges-to-cover-all-user-losses-after-near-usd40-million-hack",
-        "published": "2026-11-03T08:56:48+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-04T05:02:45.372688+00:00"
+    "__dt__": "2026-11-04T05:32:45.229794+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -164,36 +157,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      63228.2,
-      "2026-11-04T05:01:42+00:00"
+      63287.5,
+      "2026-11-04T05:31:42+00:00"
     ],
     "ETH/CHF": [
       1860.57,
-      "2026-11-04T05:01:42+00:00"
+      "2026-11-04T05:31:42+00:00"
     ],
     "BNB/CHF": [
-      566.0426219999999,
-      "2026-11-04T05:01:42+00:00"
+      567.7091826,
+      "2026-11-04T05:31:42+00:00"
     ],
     "XRP/CHF": [
-      1.0358489339999999,
-      "2026-11-04T05:01:42+00:00"
+      1.0370776815,
+      "2026-11-04T05:31:42+00:00"
     ],
     "SOL/CHF": [
-      75.217026,
-      "2026-11-04T05:01:42+00:00"
+      75.3435648,
+      "2026-11-04T05:31:42+00:00"
     ],
     "TRX/CHF": [
-      0.26257038060000004,
-      "2026-11-04T05:01:42+00:00"
+      0.26258327823,
+      "2026-11-04T05:31:42+00:00"
     ],
     "ZEC/CHF": [
-      993.55722,
-      "2026-11-04T05:01:42+00:00"
+      1002.2100270000001,
+      "2026-11-04T05:31:42+00:00"
     ],
     "HYPE/CHF": [
-      68.194266,
-      "2026-11-04T05:01:42+00:00"
+      68.6888706,
+      "2026-11-04T05:31:42+00:00"
     ]
   },
   "abgleich": {
@@ -206,9 +199,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-04T05:01:42.362354+00:00"
+      "__dt__": "2026-11-04T05:31:42.202040+00:00"
     },
-    "quote_usd": 1.224589762429586,
+    "quote_usd": 1.2231967022616907,
     "volume": []
   }
 }

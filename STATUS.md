@@ -1,6 +1,6 @@
 # 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)
 
-Stand: **04.11.2026 06:05** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
+Stand: **04.11.2026 06:35** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
 
 > ⚠️ **2️⃣ KI-Bot (lernend, kurz bis lang):** letzter Fehler 04.11.2026 05:03: RequestTimeout: Kurs ETH/CHF: kraken GET https://api.kraken.com/0/public/Ticker?pair=ETHCHF
 
@@ -16,10 +16,10 @@ Stand: **04.11.2026 06:05** Schweizer Zeit · wird jede Stunde automatisch aktua
 | | **1️⃣ Langfrist-Bot (Hauptbot)** | **2️⃣ KI-Bot (lernend, kurz bis lang)** | **3️⃣ Risiko-Bot (aggressiv, Hebel 3×)** |
 |---|---|---|---|
 | Startkapital | 100.00 CHF | 100.00 CHF | 100.00 CHF |
-| **Kapital jetzt** | **100.00 CHF** | **100.00 CHF** | **98.93 CHF** |
-| Gewinn / Verlust | ⚪ +0.00 CHF (+0.00 %) | ⚪ +0.00 CHF (+0.00 %) | 🔴 -1.07 CHF (-1.07 %) |
-| Im Einsatz (investiert) | 0.00 CHF (0 %) | 0.00 CHF (0 %) | 132.18 CHF (134 %) |
-| Cash (nicht investiert) | 100.00 CHF | 100.00 CHF | -33.25 CHF |
+| **Kapital jetzt** | **100.00 CHF** | **100.00 CHF** | **99.19 CHF** |
+| Gewinn / Verlust | ⚪ +0.00 CHF (+0.00 %) | ⚪ +0.00 CHF (+0.00 %) | 🔴 -0.81 CHF (-0.81 %) |
+| Im Einsatz (investiert) | 0.00 CHF (0 %) | 0.00 CHF (0 %) | 132.45 CHF (134 %) |
+| Cash (nicht investiert) | 100.00 CHF | 100.00 CHF | -33.26 CHF |
 | Offene Positionen | 0 | 0 | 6 |
 | Abgeschlossene Trades | 0 | 0 | 0 |
 | Gebühren bisher | 0.00 CHF | 0.00 CHF | 1.06 CHF |
@@ -30,7 +30,7 @@ Stand: **04.11.2026 06:05** Schweizer Zeit · wird jede Stunde automatisch aktua
 | Hebel | ohne | ohne | 3× (Zinsen bisher 0.05 CHF) |
 | Hebel aktuell | – | – | 1.34× (erlaubt 3×) |
 | Buchhaltung | ✅ stimmt (Abweichung 0.00 CHF) | ✅ stimmt (Abweichung 0.00 CHF) | ✅ stimmt (Abweichung 0.00 CHF) |
-| Letzter Durchlauf | 04.11.2026 06:02 (vor 3 Min.) | 04.11.2026 06:03 (vor 1 Min.) | 04.11.2026 06:04 (vor 1 Min.) |
+| Letzter Durchlauf | 04.11.2026 06:32 (vor 2 Min.) | 04.11.2026 06:33 (vor 1 Min.) | 04.11.2026 06:34 (vor 1 Min.) |
 
 ## 4️⃣ Chef-Bot (verteilt auf die drei Stile)
 
@@ -39,29 +39,29 @@ Er handelt nicht selbst, sondern legt sein eigenes Kapital anteilig in die Stile
 | | |
 |---|---|
 | Startkapital | 100.00 CHF |
-| **Kapital jetzt** | **99.18 CHF** |
-| Gewinn / Verlust | 🔴 -0.82 CHF (-0.82 %) |
+| **Kapital jetzt** | **99.23 CHF** |
+| Gewinn / Verlust | 🔴 -0.77 CHF (-0.77 %) |
 | **Aktuelle Verteilung** | Langfrist 30 % · KI 30 % · Risiko 20 % · Cash 20 % |
 | Marktphase (BTC, Tageskerzen) | Aufwärtstrend, wild |
 | Letzte Begründung | Marktphase «Aufwärtstrend, wild», Einschätzung: Langfrist +0.0 %, KI +0.0 %, Risiko -3.0 % |
 | Umschicht-Gebühren bisher | 0.46 CHF |
-| Erfahrung im Gedächtnis | 68 Läufe |
+| Erfahrung im Gedächtnis | 69 Läufe |
 
-**Was das Gedächtnis in dieser Phase weiss:** Langfrist +0.000 %/Lauf, KI +0.000 %/Lauf, Risiko -0.185 %/Lauf
+**Was das Gedächtnis in dieser Phase weiss:** Langfrist +0.000 %/Lauf, KI +0.000 %/Lauf, Risiko -0.147 %/Lauf
 
 
 ## Kurse
 
 | Coin | Kurs jetzt | 24 Std. | Live-Chart |
 |---|---|---|---|
-| **BTC** | 63'228.20 CHF | 🔴 -0.34 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
+| **BTC** | 63'287.50 CHF | 🔴 -0.24 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
 | **ETH** | 1'860.57 CHF | 🟢 +0.21 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
-| **BNB** | 565.91 CHF | 🔴 -0.65 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
-| **XRP** | 1.04 CHF | 🔴 -0.46 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
-| **SOL** | 75.23 CHF | 🔴 -0.65 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
-| **TRX** | 0.26 CHF | 🟢 +0.09 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
-| **ZEC** | 994.09 CHF | 🔴 -0.05 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
-| **HYPE** | 68.37 CHF | 🔴 -1.60 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
+| **BNB** | 567.70 CHF | 🔴 -0.45 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
+| **XRP** | 1.04 CHF | 🔴 -0.49 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
+| **SOL** | 75.45 CHF | 🔴 -0.46 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
+| **TRX** | 0.26 CHF | 🔴 -0.04 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
+| **ZEC** | 1'006.46 CHF | 🟢 +1.08 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
+| **HYPE** | 68.80 CHF | 🔴 -1.08 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
 
 ## 1️⃣ Langfrist-Bot (Hauptbot)
 
@@ -128,12 +128,12 @@ _Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang) und Trendfolge (4h), nur in 
 
 | Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
 |---|---|---|---|---|---|---|---|---|
-| **BTC** long (lang) | 02.11.2026 21:04 | 62'905.40 | 63'228.20 | 0.000523 | 32.87 CHF | 33.04 CHF | 🟢 +0.17 CHF (+0.51 %) | 53'337.04 (-16 %) |
+| **BTC** long (lang) | 02.11.2026 21:04 | 62'905.40 | 63'287.50 | 0.000523 | 32.87 CHF | 33.07 CHF | 🟢 +0.20 CHF (+0.61 %) | 53'337.04 (-16 %) |
 | **ETH** long (lang) | 02.11.2026 21:04 | 1'843.99 | 1'860.57 | 0.012649 | 23.33 CHF | 23.53 CHF | 🟢 +0.21 CHF (+0.90 %) | 1'449.18 (-22 %) |
-| **BNB** long (lang) | 02.11.2026 21:04 | 570.38 | 565.91 | 0.041690 | 23.78 CHF | 23.59 CHF | 🔴 -0.19 CHF (-0.78 %) | 450.90 (-20 %) |
-| **SOL** long (lang) | 02.11.2026 21:04 | 75.10 | 75.23 | 0.233083 | 17.50 CHF | 17.53 CHF | 🟢 +0.03 CHF (+0.17 %) | 53.80 (-28 %) |
-| **HYPE** long (lang) | 02.11.2026 21:04 | 68.38 | 68.37 | 0.211733 | 14.48 CHF | 14.48 CHF | 🔴 -0.00 CHF (-0.02 %) | 44.97 (-34 %) |
-| **XRP** long (lang) | 04.11.2026 01:04 | 1.05 | 1.04 | 19.302774 | 20.19 CHF | 20.01 CHF | 🔴 -0.18 CHF (-0.90 %) | 0.79 (-24 %) |
+| **BNB** long (lang) | 02.11.2026 21:04 | 570.38 | 567.70 | 0.041690 | 23.78 CHF | 23.67 CHF | 🔴 -0.11 CHF (-0.47 %) | 450.90 (-21 %) |
+| **SOL** long (lang) | 02.11.2026 21:04 | 75.10 | 75.45 | 0.233083 | 17.50 CHF | 17.59 CHF | 🟢 +0.08 CHF (+0.46 %) | 53.80 (-29 %) |
+| **HYPE** long (lang) | 02.11.2026 21:04 | 68.38 | 68.80 | 0.211733 | 14.48 CHF | 14.57 CHF | 🟢 +0.09 CHF (+0.61 %) | 44.97 (-35 %) |
+| **XRP** long (lang) | 04.11.2026 01:04 | 1.05 | 1.04 | 19.302774 | 20.19 CHF | 20.02 CHF | 🔴 -0.17 CHF (-0.82 %) | 0.79 (-24 %) |
 
 **Signale jetzt**
 
@@ -201,4 +201,3 @@ _Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang) und Trendfolge (4h), nur in 
 - 2026-11-03 14:42 UTC · **coindesk** · [South Korea asks its biggest banks how a major crypto hack would hit them](https://www.coindesk.com/business/2026/11/03/south-korea-asks-its-biggest-banks-how-a-major-crypto-hack-would-hit-them) _(Thema: hack)_
 - 2026-11-03 11:22 UTC · **decrypt** · [Liquid Network Restores Full Bitcoin Backing Two Months After $320M Exploit](https://decrypt.co/382397/liquid-network-restores-full-bitcoin-backing-two-months-after-320m-exploit) _(Thema: hack)_
 - 2026-11-03 11:12 UTC · **coindesk** · [Liquid’s bitcoin IOUs are fully backed again after a $320 million exploit](https://www.coindesk.com/markets/2026/11/03/liquid-s-bitcoin-ious-are-fully-backed-again-after-a-usd320-million-exploit) _(Thema: hack)_
-- 2026-11-03 08:56 UTC · **coindesk** · [Mercado Bitcoin pledges to cover all user losses after near $40 million hack](https://www.coindesk.com/business/2026/11/03/mercado-bitcoin-pledges-to-cover-all-user-losses-after-near-usd40-million-hack) _(Thema: hack)_
