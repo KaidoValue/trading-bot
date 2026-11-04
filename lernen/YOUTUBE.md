@@ -50,10 +50,54 @@ keine Regel direkt übernommen. Die Bausteine daraus stehen aber im Strategie-La
 kombinieren kann. Besteht eine solche Kombination die Prüfung, kommt sie automatisch in den KI-Bot.
 Ausführliche Zahlen: [VERGLEICH.md](VERGLEICH.md).
 
+## Auswertung 4.11.2026 (19 neue Videos vom 24.10. bis 2.11.)
+
+Von 19 Videos drehen sich 6 um Krypto, der Rest um Aktien, Silber, Politik und KI. Neu und brauchbar ist vor allem
+das STA-Video «1000 Altcoin-Rallyes untersucht». Es nennt fünf Signale, die vor grossen Altcoin-Anstiegen kamen:
+
+| Signal (Kanal) | Was gesagt wird | Prüfbar? |
+|---|---|---|
+| Altcoin-Season-Index (STA) | Kaufen, wenn der Anteil der Altcoins, die Bitcoin über 90 Tage schlagen, von unter 25 % wieder steigt; ab 75 % ist die Party vorbei | Nur mit Kursen vieler Coins gleichzeitig. Die Test-Strategien schauen auf einen Coin. **Vorgemerkt für den Profi-Bot** (Rotation Bitcoin ↔ Altcoins) |
+| Ethereum-MVRV über 1 (STA) | Kurs steigt wieder über den durchschnittlichen Einstandspreis aller Anleger | On-Chain-Daten, nicht testbar (siehe oben) |
+| Zinsen sinken (STA) | Tiefere Zinsen machen riskante Anlagen attraktiver | Makro, keine Handelsregel |
+| 200-Tage-Linie: zweiter Test, dann Ausbruch (STA) | Unter die Linie fallen, Retest, nochmals fallen, dann Ausbruch darüber | Steckt schon in der 200-Tage-Regel des Hauptbots und in `yt_zyklus` |
+| RSI überverkauft unter 30 (STA) | Bärenmarkt-Böden kamen fast immer mit überverkauftem Wochen-RSI | Steckt schon in `yt_zyklus` (Walk-Forward −3,1 %) |
+
+Weitere Punkte:
+
+- **Gestaffelt kaufen statt alles auf einmal** (STA, «31 Minuten Bitcoin-Erfahrung»): im Bärenmarkt in drei Teilen zu
+  etwa 30 % einsteigen und einen Kern (rund 25 %) langfristig nie verkaufen. Das ist Positions-Verwaltung, keine
+  Einstiegsregel. Vorgemerkt als Idee für den Profi-Bot (Limit-Orders in Stufen).
+- **US-Zwischenwahlen** (HKCM, zwei Videos): Bitcoin fiel bisher bis zur Wahl und stieg danach. Das sind nur drei
+  Fälle (2014, 2018, 2022), zu wenig für einen ehrlichen Test. Nicht übernommen.
+- Alle übrigen Videos enthalten Kursziele für einzelne Aktien oder Coins und Werbung für Einstiegszonen, keine Regeln.
+
+**Ergebnis:** keine neue Strategie zum Testen, weil die prüfbaren Regeln schon getestet sind. Die laufenden Bots
+bleiben unverändert.
+
 ## Alle Videos
 
 | Datum | Kanal | Video | Krypto |
 |---|---|---|---|
+| 2026-11-02 | @phantombyhkcm | [Warum Nike eine der attraktivsten Aktien der letzten 10 Jahre ist](https://www.youtube.com/watch?v=U_jE97q3bJI) | nein |
+| 2026-11-02 | @hkcm | [Warum der Silber-Crash noch lange nicht vorbei ist!](https://www.youtube.com/watch?v=3H1Yjx1lVMk) | nein |
+| 2026-11-02 | @hkcm | [US-Wahlen: Die nächste Bitcoin-Rally steht bevor!](https://www.youtube.com/watch?v=NDwLIJAFxH0) | ja |
+| 2026-11-01 | @phantombyhkcm | [Solche Chancen gibt es an der Börse nur alle 10 Jahre.](https://www.youtube.com/watch?v=gSenVll2GTQ) | nein |
+| 2026-11-01 | @hkcm | [KI ersetzt den Menschen? Leonard Schmedding warnt vor einem radikalen Umbruch!](https://www.youtube.com/watch?v=wL3ypdqGqtQ) | nein |
+| 2026-11-01 | @hkcm | [FMC: Wir haben richtig reingesch***en!](https://www.youtube.com/watch?v=UO_InUQd0Ac) | nein |
+| 2026-10-31 | @STA_Solutions | [Der Markt fällt, HYPE steigt: Hier wartet die nächste Chance...](https://www.youtube.com/watch?v=Yh8ziyKaFIY) | ja |
+| 2026-10-30 | @phantombyhkcm | [Der Finanzmarkt stürzt ein! So verhalten wir uns jetzt](https://www.youtube.com/watch?v=_Ayd-j_VT-w) | nein |
+| 2026-10-30 | @hkcm | [„Frankreich könnte jetzt Europa zum Einsturz bringen“ - Max Otte](https://www.youtube.com/watch?v=WaCFjvP8-gI) | nein |
+| 2026-10-30 | @STA_Solutions | [Google brennt: War der heftige Absturz nur der erste Funke?](https://www.youtube.com/watch?v=wzkve9qwLAc) | am Rand |
+| 2026-10-29 | @hkcm | [Warum bereiten sich plötzlich so viele Länder auf den Ernstfall vor?](https://www.youtube.com/watch?v=SAMJHXiEp-o) | nein |
+| 2026-10-29 | @hkcm | [Die Trendwende ist da – jetzt geht's los! 🔥](https://www.youtube.com/watch?v=YVww0W4ZuOw) | nein |
+| 2026-10-29 | @STA_Solutions | [1000 Altcoin-Rallyes untersucht: Was den Anstiegen vorausging...](https://www.youtube.com/watch?v=P_vRLLzStHI) | ja |
+| 2026-10-28 | @phantombyhkcm | [Diese Aktie könnte jetzt ausbrechen!](https://www.youtube.com/watch?v=OmX9OagGpVY) | nein |
+| 2026-10-28 | @hkcm | [US-Wahlen: Wird Bitcoin auch dieses Mal wieder crashen?](https://www.youtube.com/watch?v=XYmSwI3PRA0) | ja |
+| 2026-10-26 | @phantombyhkcm | [Ich werde meine China Positionen bis Jahresende DEUTLICH ausbauen!](https://www.youtube.com/watch?v=ZYYJtvkXHvY) | nein |
+| 2026-10-26 | @phantombyhkcm | [Basisinvestment für jedes Depot](https://www.youtube.com/watch?v=zRGQjtEE5Hk) | nein |
+| 2026-10-26 | @STA_Solutions | [Öl-Krise wegen neuer Angriffe? Prüfe zuerst diesen Punkt...](https://www.youtube.com/watch?v=STvTbqWRRr4) | am Rand |
+| 2026-10-24 | @STA_Solutions | [Gib mir 31 Minuten, ich gebe dir 10.000 Stunden Bitcoin-Erfahrung](https://www.youtube.com/watch?v=Lz2X6iN7a2M) | ja |
 | 2026-10-23 | @hkcm | [China steht kurz davor, die deutsche Autoindustrie zu demütigen](https://www.youtube.com/watch?v=V6Qu8DpXlGo) | am Rand |
 | 2026-10-23 | @hkcm | [Diese Aktie könnte sich vervierfachen!](https://www.youtube.com/watch?v=ka4rOyEy1CU) | nein |
 | 2026-10-23 | @phantombyhkcm | [Die Zeit der China Aktien ist gekommen!](https://www.youtube.com/watch?v=kccWYNyGlYI) | am Rand |
