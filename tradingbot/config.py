@@ -15,6 +15,8 @@ class RiskConfig:
     take_profit_atr: float = 4.0        # Take-Profit = Einstieg + 4 x ATR
     max_position_pct: float = 0.25      # max. 25 % des Kapitals in einer Position
     max_invested_pct: float = 1.0       # höchstens so viel vom Kapital insgesamt investiert (alle Coins zusammen)
+    slot_cap: bool = False              # statt max_position_pct: max_invested_pct geteilt durch die Zahl der Coins
+                                        # mit mindestens 200 abgeschlossenen Tageskerzen (Profi-Bot)
     max_daily_loss_pct: float = 0.03    # Tagesverlust > 3 % -> heute nicht mehr handeln
     max_drawdown_pct: float = 0.15      # Rückgang > 15 % vom Höchststand -> Not-Aus
     halt_days: float = 0                # 0 = Not-Aus bis zum manuellen Neustart, sonst Pause in Tagen

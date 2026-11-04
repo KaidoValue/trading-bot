@@ -125,6 +125,9 @@ So funktioniert es (Einstellung `horizons:` in den Configs):
 - Alle Horizonte eines Bots teilen sich **ein Konto** und die gemeinsamen Risikoregeln (Not-Aus, Tageslimit, max. Positionen).
   Alle Positionen zusammen sind höchstens `max_invested_pct` × Hebel des Kapitals gross, auch wenn ein Horizont mehr
   hält, als sein Anteil heute erlaubt (Anteile wandern, Übernahmen).
+- `slot_cap: true` (Standard aus): Der Deckel je Coin ist dann `max_invested_pct` geteilt durch die Zahl der Coins mit
+  mindestens 200 abgeschlossenen Tageskerzen, also mit Bitcoin allein 75 %, mit Bitcoin und Ethereum je 37,5 %
+  (für den geplanten Profi-Bot, gleich in Simulation und Demo).
 - Jeder Horizont hat eigene Kerzen, eigene Strategie und eigene Stops (`stop_loss_atr`, `take_profit_atr`, `risk_per_trade`).
 - Pro Coin gibt es eine Position. Sie gehört dem Horizont, der sie eröffnet hat; nur er schliesst sie per Signal
   (Stops gelten immer). Mit `horizon_priority: true` darf ein **längerer** Horizont eine Position eines kürzeren
@@ -345,6 +348,15 @@ Unterschiede sind Zufall); Leitplanke: kein Rückgang über 75 %.
 „Start erst 2022“: frische 1'000 am 1. Januar 2022 (Beginn eines Crashs, Bitcoin −65 % im Jahr 2022), bis Oktober 2026.
 Selbst ausprobieren: `python -m tradingbot historie --bots ... --start 2022-01-01` (Gebührenstufe wählbar mit
 `--gebuehren normiert|staffel|alt`, siehe [Realistische Kosten](#realistische-kosten-wie-bei-kraken)).
+
+**Für faire Vergleiche (Profi-Bot-Prüfung):** `--ende 2022-12-31` schneidet die Kurse nach diesem Tag ab, bevor
+Indikatoren gerechnet werden (kein Blick in die weggesperrten Jahre). `--cache-fest` lädt nichts nach und löscht nichts;
+fehlt eine Datei, bricht die Simulation ab. `--quellen coinbase` (oder `bitfinex`, `kraken`) holt die Kursgeschichte
+von anderen Börsen, mit eigenen Cache-Dateien je Quelle. `--abschnitte` rechnet «bis 2022» und «ab 2023» je als
+frischen Start mit dem Startkapital statt als Ausschnitt eines langen Laufs. Der Bericht nennt die Quellen und einen
+SHA-256-Fingerabdruck der benutzten Cache-Dateien und zeigt zusätzlich Gebühren, Kosten in % pro Jahr (Gebühren,
+Slippage, Zinsen), Umschlag, Ø investiert, Kostenanteil am Bruttogewinn und «Bitcoin halten nach Kosten» (ein Kauf
+am Start mit Gebühr und Slippage).
 
 Was die Simulation gezeigt hat:
 

@@ -120,7 +120,7 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     break
                 log.error("NOT-AUS: %s. Pause für %s Tage.", trader.risk.halt_reason, cfg.risk.halt_days)
             notes, spreads, trends = ([hinweis] if hinweis and n == 1 else []) + auftrag + ohne, {}, {}
-            learning_daily = {}
+            learning_daily, slots = {}, None
             if (cfg.phase_gate or cfg.phase_exit) and not trader.risk.halted:
                 for s in prices:
                     phase = _phase(exchange, s)
@@ -165,11 +165,14 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     factor = _correlation_factor(s, sig, frames, trader, cfg.risk.correlation_limit)
                     if h.trend_filter and s not in trends:
                         trends[s] = _trend(exchange, s)
+                    if cfg.risk.slot_cap and slots is None:
+                        slots = _slots(exchange, cfg.symbols, now)
                     trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
                                      size_factor=factor, can_open_new=liquid, horizon=h.name,
                                      trend=trends[s] if h.trend_filter else None,
                                      anchor=float(ind.ema(df["close"], 20).iloc[-1]),
-                                     extra=_verzoegerung(df, h.timeframe, now))
+                                     extra=_verzoegerung(df, h.timeframe, now),
+                                     max_position_pct=cfg.risk.max_invested_pct / slots if slots else None)
                     eq = trader.equity(px)
                     notes.append(prefix + trader.note)
             eq = _liquidate(trader, px, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
@@ -470,6 +473,20 @@ def _trend(exchange, symbol: str) -> int:
     except Exception as e:
         log.warning("%s: Tageskerzen für den Trendfilter nicht abrufbar: %s", symbol, e)
         return 0
+
+
+def _slots(exchange, symbols: list[str], now: datetime) -> int:
+    """slot_cap: Zahl der Coins mit mindestens 200 abgeschlossenen Tageskerzen vor heute, mindestens 1. Ein Coin,
+    dessen Tageskerzen nicht abrufbar sind, zählt mit (kleinerer Deckel je Coin, nie ein grösserer)."""
+    today = now.astimezone(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    n = 0
+    for s in symbols:
+        try:
+            n += int((data.fetch_recent(exchange, s, "1d", 400).index < today).sum() >= 200)
+        except Exception as e:
+            log.warning("%s: Tageskerzen für slot_cap nicht abrufbar, zählt mit: %s", s, e)
+            n += 1
+    return max(n, 1)
 
 
 def _phase(exchange, symbol: str) -> str | None:

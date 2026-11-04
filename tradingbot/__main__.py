@@ -17,6 +17,9 @@
   python -m tradingbot historie --bots a.yaml b.yaml c.yaml   # komplette Bots über die ganze Krypto-Geschichte
   python -m tradingbot historie --bots ... --start 2022-01-01 # wie oben, aber erst ab diesem Tag handeln
   python -m tradingbot historie --bots ... --gebuehren alt     # Vergleich: fest 0,26 % statt Kraken-Staffel
+  python -m tradingbot historie --bots ... --ende 2022-12-31 --cache-fest   # blind bis Ende 2022, nichts nachladen
+  python -m tradingbot historie --bots ... --quellen coinbase  # Kursgeschichte nur von Coinbase (eigene Cache-Dateien)
+  python -m tradingbot historie --bots ... --abschnitte        # bis 2022 und ab 2023 je als frischer Start
 """
 from __future__ import annotations
 
@@ -179,6 +182,14 @@ def main() -> None:
     p.add_argument("--gebuehren", choices=["normiert", "staffel", "alt"], default="normiert",
                    help="historie: Gebührenstufe wie für ein Konto mit Startkapital (normiert, Standard), nach dem "
                    "Umsatz des wachsenden Simulationskontos (staffel) oder fest 0,26 %% wie früher (alt)")
+    p.add_argument("--ende", help="historie: Simulation endet am Ende dieses Tages, z.B. 2022-12-31 (spätere Kurse "
+                   "werden vor allen Berechnungen abgeschnitten)")
+    p.add_argument("--cache-fest", action="store_true", help="historie: nur den Kurs-Cache in data/historie benutzen, "
+                   "nie nachladen oder löschen; fehlt eine Datei, bricht die Simulation ab")
+    p.add_argument("--quellen", nargs="+", help="historie: Börsen für die Kursgeschichte, z.B. coinbase oder "
+                   "bitfinex:USD (Standard: bitstamp, binance, binanceus, kucoin); jede Börse hat eigene Cache-Dateien")
+    p.add_argument("--abschnitte", action="store_true", help="historie: jeden Abschnitt (bis 2022, ab 2023) als "
+                   "frischen Start mit dem Startkapital rechnen statt als Ausschnitt aus dem langen Lauf")
     p.add_argument("-v", "--verbose", action="store_true")
     args = p.parse_args()
 
@@ -234,9 +245,16 @@ def main() -> None:
         # Reihenfolge wie im laufenden Bot: bei gleichzeitigen Signalen bekommt der erste Coin zuerst Kapital
         coins = list(dict.fromkeys(s.split("/")[0] for p in (args.bots or [args.config]) for s in Config.load(p).symbols))
         start = pd.Timestamp(args.start, tz="UTC") if args.start else None
-        runs, chef, btc = historie.run_all(args.bots or [args.config], coins, start, args.gebuehren)
-        btc = btc[btc.index >= start] if start is not None else btc
-        text = historie.report(runs, chef, btc, args.gebuehren)
+        end = pd.Timestamp(args.ende, tz="UTC") + pd.Timedelta(days=1) if args.ende else None
+        if start is not None and end is not None and start >= end:
+            raise SystemExit("--start muss vor --ende liegen.")
+        sources = historie.sources(args.quellen)
+        g = historie.run_all(args.bots or [args.config], coins, start, args.gebuehren, end=end, sources=sources,
+                             fixed=args.cache_fest, sections=args.abschnitte)
+        runs, chef = g.runs, g.chef
+        btc = g.btc[g.btc.index >= start] if start is not None else g.btc
+        text = historie.report(runs, chef, btc, args.gebuehren, fresh=g.fresh or None,
+                               kopf=historie.herkunft(g.files, sources, args.cache_fest, end))
         Path("lernen").mkdir(exist_ok=True)
         Path("lernen/HISTORIE.md").write_text(text, encoding="utf-8")
         curves = pd.DataFrame({n: r.equity for n, r in runs.items()} | ({"chef": chef} if chef is not None else {})
