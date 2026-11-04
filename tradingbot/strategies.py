@@ -228,10 +228,12 @@ class Adaptive(Strategy):
         cached = getattr(self, "_pnl_cache", None)
         if cached is not None and cached[0] is df:
             return cached[1]
-        cols = {m.name: replay(df, m.signals(df), cfg,
+        results = {m.name: replay(df, m.signals(df), cfg,
                               self.params.get("execution_horizon"),
-                              daily_history=self.params.get("daily_history")).returns for m in self.members}
-        result = pd.DataFrame(cols)
+                              daily_history=self.params.get("daily_history")) for m in self.members}
+        self._replay_activity = {name: {"closed": len(r.trades), "exposure": r.exposure}
+                                 for name, r in results.items()}
+        result = pd.DataFrame({name: r.returns for name, r in results.items()})
         self._pnl_cache = (df, result)
         return result
 
@@ -251,6 +253,16 @@ class Adaptive(Strategy):
         w = self.weights(df)
         score = sum(w[m.name] * _holding(m.signals(df), allow_short) for m in self.members)
         threshold = self.params.get("threshold", 0.5)
+        active = int((w.iloc[-1] > 0).sum()) if len(w) else 0
+        activity = getattr(self, "_replay_activity", {})
+        traded = any(x["closed"] or x["exposure"] for x in activity.values())
+        reason = ("Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen"
+                  if not active and activity and not traded else
+                  "Keine positiv gewichtete Strategie nach Kosten" if not active else
+                  f"{active}/{len(self.members)} Strategien positiv gewichtet")
+        self.last_diagnostic = {"reason": reason, "score": float(score.iloc[-1]),
+                                "threshold": float(threshold), "active_members": active,
+                                "simulated_closed": sum(x["closed"] for x in activity.values())}
         sig = pd.Series(0, index=df.index)
         sig[score >= threshold] = 1
         sig[score <= -threshold if allow_short else score < threshold / 2] = -1

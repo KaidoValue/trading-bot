@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -48,8 +49,49 @@ ASSET_WORDS = {
     "BTC": ["bitcoin", "btc"],
     "ETH": ["ethereum", "ether", "eth "],
     "SOL": ["solana", "sol "],
+    "BNB": ["bnb", "binance coin"],
+    "XRP": ["xrp", "ripple"],
+    "TRX": ["trx", "tron"],
+    "ZEC": ["zec", "zcash"],
+    "HYPE": ["hype", "hyperliquid"],
 }
 GENERAL_WORDS = ["crypto", "krypto", "market", "sec", "fed", "regulat", "stablecoin", "exchange"]
+
+
+def matches(text: str, words) -> bool:
+    """Match words, not e.g. 'sec' inside 'security' or 'rate' in 'corporate'."""
+    stems = {"hack", "exploit", "breach", "regulat", "adopt", "bankrupt", "prohibit",
+             "etf approv", "etf inflow", "tariff", "sanction"}
+    return any(re.search(r"\b" + re.escape(w.strip()) + (r"\w*" if w.strip() in stems else "") + r"\b",
+                         text, re.I) for w in words)
+
+
+def relevant(title: str, asset: str) -> bool:
+    if matches(title, ASSET_WORDS.get(asset.upper(), [asset])):
+        return True
+    # An explicitly named different coin is not automatically a market-wide event.
+    if any(matches(title, words) for words in ASSET_WORDS.values()):
+        return False
+    return matches(title, GENERAL_WORDS)
+
+
+_GENERIC = set("a an the of on in at to for from by with and or as is are was were has have new major "
+               "crypto cryptocurrency bitcoin btc ethereum eth exchange market markets hack hacked hacking "
+               "exploit exploited breach security stolen drained drains funds wallets million billion reports "
+               "report says say after before over into it its this that more will may could would".split())
+
+
+def same_event(a: Headline, b: Headline) -> bool:
+    """Conservative title heuristic, not semantic verification of an event."""
+    def tokens(h):
+        return set(re.findall(r"[a-z0-9]+", h.title.lower())) - _GENERIC
+    left, right = tokens(a), tokens(b)
+    entities = {"binance", "coinbase", "kraken", "bybit", "gitbook", "mercado", "ftx",
+                "solana", "ripple", "tron", "zcash", "hyperliquid"}
+    if left & entities and right & entities and not left & right & entities:
+        return False
+    common = left & right
+    return bool(common) and (left == right or (len(common) >= 2 and len(common) / min(len(left), len(right)) >= 0.5))
 
 
 @dataclass
@@ -74,15 +116,18 @@ class MarketContext:
     def allows(self, side: int, block_level: float = 0.5) -> bool:
         """Keine neuen Trades rund um Wirtschaftstermine und bei Ereignissen mit unklarer Richtung.
         Keine Longs bei klar negativer, keine Shorts bei klar positiver Nachrichtenlage."""
+        return not self.block_reason(side, block_level)
+
+    def block_reason(self, side: int, block_level: float = 0.5) -> str:
         if self.blackout:
-            return False
-        if self.alerts:
-            impact = sum(a.impact for a in self.alerts) / len(self.alerts)
-            if abs(impact) < 0.3 or (impact * side < 0 and abs(impact) >= block_level):
-                return False
-        if side > 0:
-            return self.news_score > -block_level
-        return self.news_score < block_level
+            return "Wirtschaftstermin: " + self.blackout
+        for alert in self.alerts:
+            # Opposite alerts must not cancel each other's risk in an average.
+            if abs(alert.impact) < 0.3 or alert.impact * side <= -block_level:
+                return f"Ereignis {alert.who}: {alert.title}"
+        if self.news_score * side <= -block_level:
+            return f"bestätigte Themen: {', '.join(self.confirmed)}, Wert {self.news_score:+.2f}"
+        return ""
 
     def size_factor(self) -> float:
         """Bei extremer Angst oder Gier ist der Markt nervös: Positionen halbieren."""
@@ -145,17 +190,31 @@ def score_headlines(headlines: list[Headline], asset: str, min_sources: int = 2,
                     now: datetime | None = None) -> tuple[float, dict[str, list[str]]]:
     """Bewertet Schlagzeilen. Nur Themen, die von mehreren Quellen bestätigt sind, fliessen ein."""
     now = now or datetime.now(timezone.utc)
-    relevant_words = ASSET_WORDS.get(asset.upper(), [asset.lower()]) + GENERAL_WORDS
     sources_per_theme: dict[str, set[str]] = {}
+    candidates: dict[str, list[Headline]] = {}
     for h in headlines:
-        if now - h.published > timedelta(hours=max_age_hours):
+        if not timedelta(0) <= now - h.published <= timedelta(hours=max_age_hours):
             continue
         text = f" {h.title.lower()} "
-        if not any(w in text for w in relevant_words):
+        if not relevant(text, asset):
             continue
         for theme, (_, words) in THEMES.items():
-            if any(w in text for w in words):
-                sources_per_theme.setdefault(theme, set()).add(h.source)
+            if matches(text, words):
+                candidates.setdefault(theme, []).append(h)
+    for theme, items in candidates.items():
+        if abs(THEMES[theme][0]) < 0.5:
+            sources_per_theme[theme] = {h.source for h in items}
+            continue
+        # Require a mutually matching group, not a chain of unrelated incidents.
+        groups: list[list[Headline]] = []
+        for h in sorted(items, key=lambda x: (x.title.lower(), x.source)):
+            group = next((g for g in groups if all(same_event(h, other) for other in g)), None)
+            if group is None:
+                groups.append([h])
+            else:
+                group.append(h)
+        sources_per_theme[theme] = set().union(*(
+            {h.source for h in g} for g in groups if len({h.source for h in g}) >= min_sources))
     confirmed = {t: sorted(s) for t, s in sources_per_theme.items() if len(s) >= min_sources}
     if not confirmed:
         return 0.0, {}
@@ -170,15 +229,14 @@ def evidence(headlines: list[Headline], asset: str, themes, max_age_hours: float
              now: datetime | None = None, limit: int = 8) -> list[dict]:
     """Die Schlagzeilen, auf denen die bestätigten Themen beruhen (neueste zuerst)."""
     now = now or datetime.now(timezone.utc)
-    relevant_words = ASSET_WORDS.get(asset.upper(), [asset.lower()]) + GENERAL_WORDS
     out = []
     for h in sorted(headlines, key=lambda h: h.published, reverse=True):
-        if now - h.published > timedelta(hours=max_age_hours):
+        if not timedelta(0) <= now - h.published <= timedelta(hours=max_age_hours):
             continue
         text = f" {h.title.lower()} "
-        if not any(w in text for w in relevant_words):
+        if not relevant(text, asset):
             continue
-        hit = next((t for t in themes if any(w in text for w in THEMES[t][1])), None)
+        hit = next((t for t in themes if h.source in themes[t] and matches(text, THEMES[t][1])), None)
         if hit:
             out.append({"theme": hit, "source": h.source, "title": h.title, "link": h.link,
                         "published": h.published.isoformat()})
@@ -237,7 +295,7 @@ class NewsMonitor:
         self.event_seconds = event_seconds
         self.events_checked = 0.0
 
-    def current(self) -> MarketContext:
+    def current(self, asset: str | None = None) -> MarketContext:
         now = time.time()
         if now - self.context.fetched_at >= self.refresh:
             self.headlines = fetch_headlines(get=self.get)
@@ -252,4 +310,9 @@ class NewsMonitor:
             self.events_checked = now
             if self.context.blackout:
                 log.warning("Wirtschaftstermin: %s, keine neuen Trades", self.context.blackout)
-        return self.context
+        if asset is None or asset.upper() == self.asset.upper():
+            return self.context
+        from dataclasses import replace
+        score, confirmed = score_headlines(self.headlines, asset, self.min_sources)
+        return replace(self.context, news_score=score, confirmed=confirmed,
+                       evidence=evidence(self.headlines, asset, confirmed))

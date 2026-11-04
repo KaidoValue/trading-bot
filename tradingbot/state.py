@@ -48,6 +48,7 @@ def save(path: Path, trader: Trader, last_bar: dict, abgleich: dict | None = Non
         "closed": trader.closed,
         "last_bar": last_bar,
         "note": trader.note,
+        "decisions": trader.decisions,
         "news": trader.context.to_dict() if trader.context else None,
         "updated": datetime.now().astimezone(),
         "risk": {"peak_equity": r.peak_equity, "day": r.day, "day_start_equity": r.day_start_equity,
@@ -87,6 +88,7 @@ def load(path: Path, trader: Trader) -> dict:
     trader.open_trades = {s: _trade(s, t) for s, t in state["open_trades"].items()}
     trader.closed = state["closed"]
     trader.note = state.get("note", "")
+    trader.decisions = state.get("decisions") or {}
     trader.buchhaltung = state.get("buchhaltung") or {}
     trader.altlasten = trader.buchhaltung.get("altlasten", 0.0)
     trader.zaehler = state.get("zaehler") or {}
