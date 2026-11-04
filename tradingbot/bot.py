@@ -51,6 +51,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     from .evaluation import evaluation_params
     strategies = {h.name: build(h.strategy, allow_short=cfg.allow_short,
                                 **{**h.strategy_params, **evaluation_params(cfg, h)}) for h in horizons}
+    from .research import Research
+    research = {h.name: Research(cfg, h) for h in horizons
+                if cfg.research_enabled and cfg.mode == "paper" and hasattr(strategies[h.name], "member_pnl")}
     for h in horizons:
         _pretrain(strategies[h.name], cfg, h.timeframe)
     trader = make_trader(cfg, exchange)
@@ -132,6 +135,10 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                 # zuerst alle Kerzen holen: die Korrelations-Sperre braucht auch die Coins, die später drankommen
                 frames = _frames(exchange, [s for s in cfg.symbols if s in prices or s in trader.open_trades],
                                  h.timeframe, cfg.fehler_path, bars=600 if hasattr(strategy, "member_pnl") else 300)
+                study = research.get(h.name)
+                if study:
+                    study.advance(frames, now)
+                    trader.research[h.name] = study.summary()
                 for s in prices:
                     key = f"{h.name}:{s}" if h.name else s
                     if s not in frames:
@@ -152,12 +159,30 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                             continue
                         strategy.params["daily_history"] = learning_daily[s]
                     sig = int(strategy.signals(df).iloc[-1])
+                    if news:
+                        trader.context = news.current(s.split("/")[0])
+                    gate = None
+                    if study:
+                        if s not in spreads:
+                            spreads[s] = _spread(exchange, s)
+                        report, gate = study.observe(s, df, sig, getattr(strategy, "last_diagnostic", None),
+                                                     trader.context, spreads[s], trader.broker.fee(s), now)
+                        trader.research[h.name] = study.summary()
+                        strategy.last_diagnostic = {**getattr(strategy, "last_diagnostic", {}), "research": report}
                     if hasattr(strategy, "learn"):
                         strategy.learn(s, df)        # KI-Gedächtnis: neue Kerzen merken
                     last_bar[key] = df.index[-1]
                     if sig == 0:
                         notes.append(f"{prefix}{s}: kein Signal")
                         _decision(trader, key, s, h, now, df.index[-1], sig, "Kein Signal", strategy)
+                        if study:
+                            study.decision(s, df.index[-1], "Kein Signal", now)
+                        continue
+                    if gate is False and sig > 0 and s not in trader.open_trades:
+                        reason = "Geprüfter KI-Filter: Nettovorteil oder Wahrscheinlichkeit zu gering"
+                        _decision(trader, key, s, h, now, df.index[-1], sig, reason, strategy)
+                        notes.append(prefix + s + ": " + reason)
+                        study.decision(s, df.index[-1], reason, now)
                         continue
                     if s not in spreads:
                         spreads[s] = _spread(exchange, s)
@@ -178,6 +203,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     eq = trader.equity(px)
                     notes.append(prefix + trader.note)
                     _decision(trader, key, s, h, now, df.index[-1], sig, trader.note, strategy)
+                    if study:
+                        study.decision(s, df.index[-1], trader.note, now)
             eq = _liquidate(trader, px, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
             if notes:
                 trader.note = " | ".join(notes)
@@ -188,6 +215,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     opened = state._utc(t.opened)
                     last_bar.setdefault(f"stop:{s}", max(now - STOP_BACK, opened) if opened else now - STOP_BACK)
             _write_trades(log_path, trader.closed)
+            for study in research.values():
+                study.save()
             if news:
                 trader.context = news.current()  # overview remains the primary asset's briefing
             state.save(cfg.state_path, trader, last_bar, abgleich)

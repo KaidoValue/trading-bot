@@ -264,6 +264,12 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
             reason = d["reason"] + (" · KI: " + learning["reason"] if learning else "")
             reason = reason.replace("|", "/").replace("\n", " ")
             out.append(f"| {d['symbol']} | {d['horizon'] or d['timeframe']} | {local(d['checked'])} | {reason} |")
+    if b.trader.research:
+        out += ["", "**KI-Forschung: getrennte Vorwärtstests mit Kosten**", "",
+                "Die Werte betreffen isolierte Testpositionen, keine erzielte Portfoliorendite.", "",
+                "| Horizont | Status | Ausgewertet | Offen | Datenlücken / ungültig |", "|---|---|---|---|---|"]
+        for h, r in b.trader.research.items():
+            out.append(f"| {h} | {r['status']} | {r['completed']} | {r['pending']} | {r['invalid']} |")
     if b.trader.closed:
         out += ["", "**Letzte abgeschlossene Trades**", "",
                 "| Coin | Gekauft | Verkauft | Einstieg | Ausstieg | Ergebnis | Grund |", "|---|---|---|---|---|---|---|"]

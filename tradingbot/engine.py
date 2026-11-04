@@ -53,6 +53,7 @@ class Trader:
     closed: list[dict] = field(default_factory=list)
     note: str = ""                             # letzte Entscheidung in Worten (für Status-Anzeige)
     decisions: dict = field(default_factory=dict)  # last evaluated decision per horizon and symbol
+    research: dict = field(default_factory=dict)   # model readiness and forward evidence per horizon
     horizons: dict = field(default_factory=dict)   # Name -> config.Horizon (kurz/mittel/lang)
     adaptive_shares: bool = False
     priority: bool = False      # längerer Horizont darf eine Position eines kürzeren übernehmen bzw. drehen

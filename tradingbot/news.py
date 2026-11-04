@@ -112,6 +112,7 @@ class MarketContext:
     alerts: list = field(default_factory=list)    # aktuelle Ereignis-Alarme (siehe events.py)
     evidence: list = field(default_factory=list)  # Schlagzeilen hinter den bestätigten Themen
     blackout: str | None = None                   # wichtiger Wirtschaftstermin steht an
+    analysis: dict = field(default_factory=dict)   # optional language-model annotation, never an order gate
 
     def allows(self, side: int, block_level: float = 0.5) -> bool:
         """Keine neuen Trades rund um Wirtschaftstermine und bei Ereignissen mit unklarer Richtung.
@@ -137,6 +138,7 @@ class MarketContext:
 
     def to_dict(self) -> dict:
         return {"fear_greed": self.fear_greed, "news_score": self.news_score, "themes": self.confirmed,
+                "analysis": self.analysis,
                 "blackout": self.blackout, "evidence": self.evidence,
                 "alerts": [{"who": a.who, "title": a.title, "source": a.source,
                             "published": a.published.isoformat()} for a in self.alerts]}
@@ -246,6 +248,15 @@ def evidence(headlines: list[Headline], asset: str, themes, max_age_hours: float
 def briefing(ctx: dict) -> str:
     """Kurzinfo zur Nachrichtenlage als Markdown (für STATUS.md)."""
     lines = ["## Nachrichtenlage", ""]
+    analysis = ctx.get("analysis") or {}
+    if analysis:
+        lines += ["**Zusätzliche Sprachanalyse:** " + analysis.get("status", "unbekannt"), ""]
+        for item in analysis.get("items", []):
+            title = item["title"].replace("[", "(").replace("]", ")")
+            why = item["explanation"].replace("\n", " ")
+            lines.append(f"- [{title}]({item['link']}) · {item['kind']} · {', '.join(item['assets'])}: {why}")
+        if analysis.get("items"):
+            lines += ["", "Sprachmodell-Einschätzungen sind Zusatzinformationen und steuern keine Orders.", ""]
     fg = ctx.get("fear_greed")
     if fg is not None:
         mood = ("extreme Angst" if fg <= 25 else "Angst" if fg <= 45 else "neutral" if fg <= 55
@@ -302,6 +313,11 @@ class NewsMonitor:
             score, confirmed = score_headlines(self.headlines, self.asset, self.min_sources)
             self.context = MarketContext(fetch_fear_greed(self.get), score, confirmed, now)
             self.context.evidence = evidence(self.headlines, self.asset, confirmed)
+            from .news_analysis import analyze
+            try:
+                self.context.analysis = analyze(self.headlines)
+            except Exception:
+                self.context.analysis = {"status": "Sprachanalyse nicht verfügbar", "items": []}
             log.info("Marktlage: Fear&Greed=%s, News=%.2f, bestätigte Themen=%s",
                      self.context.fear_greed, score, confirmed or "-")
             self.events_checked = 0.0

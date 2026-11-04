@@ -79,6 +79,9 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
         stufe, _, taker, _ = b.trader.broker.tier()                 # Gebührenstufe nach dem 30-Tage-Umsatz
         fees = f"{_chf(b.trader.gebuehren_bisher())} CHF · " + (f"Stufe {stufe}: {taker * 100:.2f} %" if stufe
                                                                  else f"fest {taker * 100:.2f} %")
+        research = ''.join(f"<div class='small'><b>KI-Lernen {escape(h)}</b>: {escape(r['status'])}<br>"
+                           f"{r['completed']} ausgewertete Fälle · {r['pending']} offen · {r['invalid']} unbrauchbar</div>"
+                           for h, r in b.trader.research.items())
         cards.append(f"""<div class="card" style="--c:{COLORS[i % 4]}">
   <div class="card-title">{escape(titles[b.cfg.name])}</div>{halt}{warn}
   <div class="big">{_chf(eq)} <small>CHF</small></div>
@@ -90,6 +93,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
   <div class="kv"><span>Gebühren bisher · Stufe</span><b>{fees}</b></div>
   <div class="kv"><span>Horizonte</span><b>{escape(b.cfg.horizon_text())}</b></div>
   <div class="kv"><span>Short / Hebel</span><b>{'Short erlaubt' if b.cfg.allow_short else 'nur long'} · {lev}</b></div>
+  {research}
 </div>""")
     if chef:
         alloc = "".join(f'<div class="seg" style="flex:{w * 100:.1f};background:{COLORS[j]}" title="{s}"></div>'
@@ -167,6 +171,13 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
             detail = learning.get("reason", "")
             if learning:
                 detail += f" · Kaufwert {learning['score']:.2f} / Schwelle {learning['threshold']:.2f}"
+            research = learning.get("research") or {}
+            if research:
+                detail += " · " + research["status"]
+                p = research.get("active_probability")
+                p = research.get("probability") if p is None else p
+                if p is not None:
+                    detail += f" · Modellschätzung für positiven Netto-Testtrade: {p:.0%} (keine Zusage)"
             items.append(f"<tr><td>{escape(d['symbol'])}</td><td>{escape(d['horizon'] or d['timeframe'])}</td>"
                          f"<td>{escape({1: 'Kaufen/halten', -1: 'Raus/Cash', 0: 'Neutral'}.get(d.get('signal'), 'Keine Daten'))}</td>"
                          f"<td class='reason'>{escape(d['reason'])}<div class='small muted'>{escape(detail)}</div></td>"
