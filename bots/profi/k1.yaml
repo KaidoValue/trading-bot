@@ -1,0 +1,55 @@
+# K1, Pflicht-Gegner des Profi-Bots (NUR SIMULATION, lernen/PROFI_PLAN.md): Kopie von bots/config_langfrist.yaml,
+# nur mit dem Horizont «lang» (share 1.0) und ohne News und Ereignisse. Alle anderen Werte wie beim Langfrist-Bot.
+# Zeigt, ob schon eine Config-Änderung am Langfrist-Bot reicht.
+
+mode: paper
+title: "K1: Langfrist-Bot nur mit «lang» (Profi-Vergleich)"
+description: "Wie der Langfrist-Bot, aber nur der Horizont «lang» (200-Tage-Linie, Wochen bis Monate) und ohne News und Ereignisse. Bis 100 % investiert, je Coin bis 20 %. Pflicht-Gegner des Profi-Bots, nur Simulation."
+exchange: kraken
+symbols: ["BTC/CHF", "ETH/CHF", "BNB/CHF", "XRP/CHF", "SOL/CHF", "TRX/CHF", "ZEC/CHF", "HYPE/CHF"]   # BTC/ETH direkt in CHF, die anderen über USD umgerechnet (siehe data.Converted)
+timeframe: 1d
+history_exchange: bitstamp
+history_symbol: BTC/USD
+starting_capital: 100
+fee_rate: 0.006      # Schätzwert für Strategie-Labor und Einzel-Backtests; Demo und Geschichts-Simulation rechnen mit der Kraken-Staffel
+fee_model: kraken    # Gebührenstaffel nach 30-Tage-Umsatz wie bei Kraken (fix = immer fee_rate)
+slippage: 0.0005
+
+horizons:
+  lang:                       # Hauptstil: 200-Tage-Linie, investiert über der Linie
+    timeframe: 1d
+    strategy: regime
+    strategy_params: {period: 200}
+    share: 1.0
+    trend_filter: true
+adaptive_shares: true
+horizon_priority: true
+allow_short: false
+short_probation: true
+poll_seconds: 300
+reevaluate: true
+
+use_news: false
+news_refresh_minutes: 15
+news_min_sources: 2
+use_events: false
+event_pause_minutes: 30
+event_feeds: {}
+
+risk:
+  risk_per_trade: 0.05        # Stop weit weg; die Grösse begrenzt ohnehin max_position_pct (ca. 4 % Risiko)
+  stop_loss_atr: 8.0          # Notfall-Stop (ca. 25-30 % unter Einstieg)
+  take_profit_atr: 1000       # kein festes Ziel: Ausstieg nur über das Signal
+  max_position_pct: 0.20      # pro Coin
+  max_invested_pct: 1.0
+  max_daily_loss_pct: 0.15
+  max_drawdown_pct: 0.35
+  halt_days: 30              # nach Not-Aus 30 Tage Pause, dann geht es weiter
+  min_order_value: 10
+  max_total_risk_pct: 1.0
+  max_open_positions: 8
+  max_trades_per_day: 10
+  loss_streak_pause: 99
+  pause_hours: 0
+  max_spread_pct: 0.003
+  correlation_limit: 0.8

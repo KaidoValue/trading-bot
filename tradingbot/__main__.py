@@ -27,6 +27,7 @@
   python -m tradingbot profi --schritt E0 --liste              # Jobs als JSON (GitHub-Matrix) ...
   python -m tradingbot profi --schritt E0 --nur-bot k1 --nur-fenster 2012-2022  # ... und nur einen Job rechnen
   python -m tradingbot profi --zusammenfassen                  # lernen/PROFI_ERGEBNISSE.md aus lernen/profi/ neu
+  python -m tradingbot profi --schritt E0 --laden              # nur Kurse in den Cache holen (vor dem Einfrieren)
 """
 from __future__ import annotations
 
@@ -212,6 +213,8 @@ def main() -> None:
                    "Ergebnisdateien in lernen/profi/ neu bauen, ohne zu rechnen")
     p.add_argument("--liste", action="store_true", help="profi: die Jobs (Bot und Fenster) als JSON ausgeben, ohne zu "
                    "rechnen, z.B. für eine GitHub-Matrix")
+    p.add_argument("--laden", action="store_true", help="profi: nur die Kursdateien aller Jobs in den Cache "
+                   "data/historie holen (mit --cache-fest nur prüfen, ob alle da sind) und den Fingerabdruck zeigen")
     p.add_argument("--nur-bot", nargs="+", help="profi: nur diese Bots rechnen (Namen wie in --liste)")
     p.add_argument("--nur-fenster", nargs="+", help="profi: nur diese Fenster rechnen, z.B. 2012-2022")
     p.add_argument("-v", "--verbose", action="store_true")
@@ -306,6 +309,13 @@ def main() -> None:
             raise SystemExit("profi: --sieger braucht --config (die Basis des Amtsinhabers).")
         amt = [basis, *args.sieger] if basis and args.schritt != "E0" else []
         eigenes = auswertung.eigenes_fenster(args.start, args.ende) if args.start or args.ende else None
+        if args.laden:
+            quellen = historie.sources(args.quellen)
+            for f in auswertung.laden(args.schritt, amt, args.varianten, eigenes, quellen, args.cache_fest,
+                                      args.nur_bot, args.nur_fenster):
+                print(f)
+            print(f"Fingerabdruck des Kurs-Caches ({', '.join(n for n, _ in quellen)}): {auswertung.cache_id(quellen)}")
+            return
         if args.liste:
             print(json.dumps(auswertung.liste(args.schritt, amt, args.varianten, eigenes, args.pruefung,
                                               args.nur_bot, args.nur_fenster)))

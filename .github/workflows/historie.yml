@@ -6,7 +6,7 @@ name: Geschichts-Simulation
 on:
   push:
     branches: ["claude/**"]
-    paths: ["tradingbot/**", "bots/**", ".github/workflows/historie.yml"]
+    paths: ["tradingbot/**", "bots/**", "!bots/profi/**", ".github/workflows/historie.yml"]
   workflow_dispatch: {}
 
 permissions:

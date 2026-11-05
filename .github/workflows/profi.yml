@@ -1,0 +1,292 @@
+# Profi-Bot-Prüfung (lernen/PROFI_PLAN.md): rechnet ein vorab registriertes Experiment E0-E6 mit
+# `python -m tradingbot profi` auf dem eingefrorenen Kurs-Cache, je Bot und Fenster ein eigener Job.
+# Nur von Hand: Actions -> "Profi-Bot-Prüfung" -> Run workflow, bei "Use workflow from" den Profi-Zweig wählen
+# (nie main). Der erste Lauf lädt die Kurse in den Cache profi-2026-11-03, danach wird nur noch gelesen.
+# Die Ergebnisse kommen auf denselben Zweig: lernen/profi/, lernen/PROFI_ERGEBNISSE.md, lernen/PROFI_PRUEFPROTOKOLL.md.
+name: Profi-Bot-Prüfung
+
+on:
+  workflow_dispatch:
+    inputs:
+      schritt:
+        description: "Experiment: E0 Messlatte, E1-E4 Leiter, E5 Robustheit, E6 Einmal-Prüfung"
+        type: choice
+        options: [E0, E1, E2, E3, E4, E5, E6]
+        default: E0
+      config:
+        description: "Basis-Config des Amtsinhabers (--config); leer: in E1 bots/profi/e1_kb3.yaml"
+        type: string
+        default: ""
+      sieger:
+        description: "Überlagerungen früherer Sieger (--sieger), mit Leerzeichen getrennt"
+        type: string
+        default: ""
+      varianten:
+        description: "Herausforderer (--varianten), mit Leerzeichen getrennt, die einfachere zuerst"
+        type: string
+        default: ""
+      quellen:
+        description: "Andere Börsen (--quellen), z.B. coinbase für die dritte Quelle; leer = Standard"
+        type: string
+        default: ""
+      gebuehren:
+        description: "Gebührenstufe: normiert für Entscheide, alt nur als Kontrolle in E0"
+        type: choice
+        options: [normiert, alt, staffel]
+        default: normiert
+      pruefung:
+        description: "Einmal-Prüfung mit Kursen ab 2023 (--pruefung, nur E6; kommt ins Prüfprotokoll)"
+        type: boolean
+        default: false
+      nur_bot:
+        description: "Nur diese Bots (--nur-bot), mit Leerzeichen getrennt; leer = alle"
+        type: string
+        default: ""
+      nur_fenster:
+        description: "Nur diese Fenster (--nur-fenster), z.B. 2016-2022; leer = alle"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+env:
+  SCHRITT: ${{ inputs.schritt }}
+  CONFIG: ${{ inputs.config }}
+  SIEGER: ${{ inputs.sieger }}
+  VARIANTEN: ${{ inputs.varianten }}
+  QUELLEN: ${{ inputs.quellen }}
+  GEBUEHREN: ${{ inputs.gebuehren }}
+  PRUEFUNG: ${{ inputs.pruefung }}
+  NUR_BOT: ${{ inputs.nur_bot }}
+  NUR_FENSTER: ${{ inputs.nur_fenster }}
+
+jobs:
+  vorbereiten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    outputs:
+      args: ${{ steps.plan.outputs.args }}
+      rechnen: ${{ steps.plan.outputs.rechnen }}
+      chef: ${{ steps.plan.outputs.chef }}
+      hat_rechnen: ${{ steps.plan.outputs.hat_rechnen }}
+      hat_chef: ${{ steps.plan.outputs.hat_chef }}
+      fingerabdruck: ${{ steps.pruefen.outputs.fingerabdruck }}
+    steps:
+      - name: Nie auf main
+        run: |
+          if [ "$GITHUB_REF_TYPE" != "branch" ] || [ "$GITHUB_REF_NAME" = "main" ]; then
+            echo "::error::Profi-Läufe nie auf main: bei «Use workflow from» den Profi-Zweig wählen."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - name: Jobs bestimmen (je Bot und Fenster)
+        id: plan
+        run: |
+          args=(--schritt "$SCHRITT" --gebuehren "$GEBUEHREN")
+          [ -z "$CONFIG" ] || args+=(--config "$CONFIG")
+          [ -z "$SIEGER" ] || args+=(--sieger $SIEGER)
+          [ -z "$VARIANTEN" ] || args+=(--varianten $VARIANTEN)
+          [ -z "$QUELLEN" ] || args+=(--quellen $QUELLEN)
+          [ "$PRUEFUNG" != "true" ] || args+=(--pruefung)
+          auswahl=()
+          [ -z "$NUR_BOT" ] || auswahl+=(--nur-bot $NUR_BOT)
+          [ -z "$NUR_FENSTER" ] || auswahl+=(--nur-fenster $NUR_FENSTER)
+          python -m tradingbot profi "${args[@]}" "${auswahl[@]}" --liste > jobs.json
+          jq -r '.include[] | "\(.bot): \(.fenster)"' jobs.json
+          {
+            echo "args=${args[*]}"
+            echo "rechnen=$(jq -c '{include: [.include[] | select(.bot != "chef")]}' jobs.json)"
+            echo "chef=$(jq -c '{include: [.include[] | select(.bot == "chef")]}' jobs.json)"
+            echo "hat_rechnen=$(jq -r 'any(.include[]; .bot != "chef")' jobs.json)"
+            echo "hat_chef=$(jq -r 'any(.include[]; .bot == "chef")' jobs.json)"
+          } >> "$GITHUB_OUTPUT"
+      - name: Eingefrorener Kurs-Cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: data/historie
+          key: profi-2026-11-03
+      - name: Kurse laden (nur beim ersten Lauf)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          if [ -f lernen/profi/cache_github.txt ]; then
+            echo "::error::Der eingefrorene Cache profi-2026-11-03 fehlt (GitHub löscht einen Cache nach 7 Tagen ohne Zugriff, und er gilt nur auf dem Zweig, auf dem er entstand). Neu laden würde die Kurse ändern: siehe lernen/PROFI_PLAN.md, «Caches»."
+            exit 1
+          fi
+          python -m tradingbot profi --schritt E0 --laden
+          python -m tradingbot profi --schritt E1 --varianten bots/profi/varianten/e1_kbe.yaml --laden
+          dritte=""
+          for q in coinbase bitfinex; do
+            if python -m tradingbot profi --schritt E1 --varianten bots/profi/varianten/e1_kbe.yaml --quellen "$q" --laden; then
+              dritte="$q"
+              break
+            fi
+          done
+          [ -n "$dritte" ] || echo "::warning::Keine dritte Quelle geladen (coinbase, bitfinex): E5 (c) und die E6-Warnung fehlen."
+      - name: Cache prüfen
+        id: pruefen
+        env:
+          ARGS: ${{ steps.plan.outputs.args }}
+        run: |
+          read -ra args <<< "$ARGS"
+          python -m tradingbot profi "${args[@]}" --laden --cache-fest
+          fp=$(python -c "from tradingbot.auswertung import cache_id; print(cache_id())")
+          if [ -f lernen/profi/cache_github.txt ] && [ "$(cat lernen/profi/cache_github.txt)" != "$fp" ]; then
+            echo "::error::Der Kurs-Cache hat einen anderen Fingerabdruck als lernen/profi/cache_github.txt: $fp"
+            exit 1
+          fi
+          echo "fingerabdruck=$fp" >> "$GITHUB_OUTPUT"
+
+  rechnen:
+    needs: vorbereiten
+    if: needs.vorbereiten.outputs.hat_rechnen == 'true'
+    name: ${{ matrix.bot }} · ${{ matrix.fenster }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.vorbereiten.outputs.rechnen) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Kurse aus dem eingefrorenen Cache (nur lesen)
+        uses: actions/cache/restore@v4
+        with:
+          path: data/historie
+          key: profi-2026-11-03
+          fail-on-cache-miss: true
+      - name: Rechnen
+        env:
+          ARGS: ${{ needs.vorbereiten.outputs.args }}
+          FINGERABDRUCK: ${{ needs.vorbereiten.outputs.fingerabdruck }}
+          BOT: ${{ matrix.bot }}
+          FENSTER: ${{ matrix.fenster }}
+        run: |
+          read -ra args <<< "$ARGS"
+          [ "$(python -c "from tradingbot.auswertung import cache_id; print(cache_id())")" = "$FINGERABDRUCK" ] || {
+            echo "::error::Anderer Kurs-Cache als im Job vorbereiten."; exit 1; }
+          vorher=$(stat -c %s lernen/PROFI_PRUEFPROTOKOLL.md 2>/dev/null || echo 0)
+          python -m tradingbot profi "${args[@]}" --cache-fest --nur-bot "$BOT" --nur-fenster "$FENSTER" > geschrieben.txt
+          cat geschrieben.txt
+          mkdir -p ausgabe/pruefprotokoll
+          xargs -a geschrieben.txt cp --parents -t ausgabe
+          eintrag="ausgabe/pruefprotokoll/${BOT}__${FENSTER}.md"      # mit --pruefung: der neue Eintrag dieses Jobs
+          tail -c +$((vorher + 1)) lernen/PROFI_PRUEFPROTOKOLL.md > "$eintrag" 2>/dev/null || true
+          [ -s "$eintrag" ] || rm -f "$eintrag"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ergebnis__${{ matrix.bot }}__${{ matrix.fenster }}
+          path: ausgabe/
+          if-no-files-found: error
+
+  chef:
+    needs: [vorbereiten, rechnen]
+    if: ${{ !cancelled() && needs.vorbereiten.outputs.hat_chef == 'true' }}
+    name: chef · ${{ matrix.fenster }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.vorbereiten.outputs.chef) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Kurse aus dem eingefrorenen Cache (nur lesen)
+        uses: actions/cache/restore@v4
+        with:
+          path: data/historie
+          key: profi-2026-11-03
+          fail-on-cache-miss: true
+      - name: Läufe der Stil-Bots aus diesem Lauf
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: ergebnis__config_*__${{ matrix.fenster }}
+          merge-multiple: true
+          path: .
+      - name: Rechnen
+        env:
+          ARGS: ${{ needs.vorbereiten.outputs.args }}
+          FINGERABDRUCK: ${{ needs.vorbereiten.outputs.fingerabdruck }}
+          BOT: ${{ matrix.bot }}
+          FENSTER: ${{ matrix.fenster }}
+        run: |
+          read -ra args <<< "$ARGS"
+          [ "$(python -c "from tradingbot.auswertung import cache_id; print(cache_id())")" = "$FINGERABDRUCK" ] || {
+            echo "::error::Anderer Kurs-Cache als im Job vorbereiten."; exit 1; }
+          vorher=$(stat -c %s lernen/PROFI_PRUEFPROTOKOLL.md 2>/dev/null || echo 0)
+          python -m tradingbot profi "${args[@]}" --cache-fest --nur-bot "$BOT" --nur-fenster "$FENSTER" > geschrieben.txt
+          cat geschrieben.txt
+          mkdir -p ausgabe/pruefprotokoll
+          xargs -a geschrieben.txt cp --parents -t ausgabe
+          eintrag="ausgabe/pruefprotokoll/${BOT}__${FENSTER}.md"      # mit --pruefung: der neue Eintrag dieses Jobs
+          tail -c +$((vorher + 1)) lernen/PROFI_PRUEFPROTOKOLL.md > "$eintrag" 2>/dev/null || true
+          [ -s "$eintrag" ] || rm -f "$eintrag"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ergebnis__${{ matrix.bot }}__${{ matrix.fenster }}
+          path: ausgabe/
+          if-no-files-found: error
+
+  sammeln:
+    needs: [vorbereiten, rechnen, chef]
+    if: ${{ !cancelled() && needs.vorbereiten.result == 'success' && github.ref != 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Ergebnisse aller Jobs
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: ergebnis__*
+          merge-multiple: true
+          path: ergebnisse
+      - name: Ergebnisse auf den Zweig speichern
+        env:
+          FINGERABDRUCK: ${{ needs.vorbereiten.outputs.fingerabdruck }}
+        run: |
+          mkdir -p lernen/profi
+          [ ! -d ergebnisse/lernen/profi ] || cp -r ergebnisse/lernen/profi/. lernen/profi/
+          for f in $(ls ergebnisse/pruefprotokoll/*.md 2>/dev/null | sort); do
+            sed -n '/^## /,$p' "$f" >> lernen/PROFI_PRUEFPROTOKOLL.md      # nur anhängen
+          done
+          [ -f lernen/profi/cache_github.txt ] || [ -z "$FINGERABDRUCK" ] || echo "$FINGERABDRUCK" > lernen/profi/cache_github.txt
+          python -m tradingbot profi --zusammenfassen > /dev/null
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add lernen/profi lernen/PROFI_ERGEBNISSE.md lernen/PROFI_PRUEFPROTOKOLL.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Profi-Bot $SCHRITT: Ergebnisse (GitHub-Lauf $GITHUB_RUN_ID)"
+          for i in 1 2 3 4 5; do
+            if git pull -q --rebase -X theirs origin "$GITHUB_REF_NAME"; then
+              python -m tradingbot profi --zusammenfassen > /dev/null      # Bericht aus allen Ergebnissen des Zweigs
+              git add lernen/PROFI_ERGEBNISSE.md
+              git diff --cached --quiet || git commit -q -m "Profi-Bot: Bericht neu zusammengefasst"
+              git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            else
+              git rebase --abort || true
+            fi
+            sleep $((5 * i))
+          done
+          exit 1

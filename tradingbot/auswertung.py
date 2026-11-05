@@ -328,6 +328,25 @@ def _kurse(cfg: Config, laden: Callable) -> tuple[dict[str, pd.DataFrame], list[
     return frames, dateien
 
 
+def laden(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = (), eigenes: Fenster | None = None,
+          quellen: tuple = historie.SOURCES, fest: bool = False, nur_bot=None, nur_fenster=None) -> list[Path]:
+    """--laden: die Kursdateien aller Jobs in den Cache data/historie holen, ohne zu rechnen (fehlende und solche, die
+    älter als 7 Tage sind; mit --cache-fest nur prüfen, ob alle da sind). So wird der Cache vor dem ersten Lauf
+    gefüllt und danach eingefroren."""
+    a, vs = namen(amt, varianten)
+    jobs = auswahl(plan(schritt, a, vs, eigenes), nur_bot, nur_fenster)
+    exchanges, benutzt = {}, []
+
+    def lade(coin: str, tf: str):
+        return historie.load_coin(coin, tf, exchanges, quellen, fest, benutzt), []
+    for n in jobs:
+        if (b := bot(n, amt, varianten)).cfg is not None:
+            _kurse(b.cfg, lade)
+    if HALTEN in jobs or CHEF in jobs:
+        lade("BTC", "1d")
+    return sorted(set(benutzt))
+
+
 def _notaus(run: historie.BotRun, cfg: Config, frames: dict) -> list[dict]:
     """E2: je Not-Aus-Verkauf der Kurs, die Rendite des Coins in den 90 Tagen danach (verpasste Erholung) und wann
     und zu welchem Kurs das Signal des Horizonts später verkauft hätte. None: Die Kurse reichen nicht so weit."""
