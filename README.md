@@ -411,6 +411,22 @@ Für Kostenstress multipliziert `fee_factor: 1.5` alle Gebührensätze.
 - **GitHub-Matrix:** `--liste` gibt die Jobs (Bot und Fenster) als JSON aus, `--nur-bot` und `--nur-fenster` rechnen
   nur einen Teil davon. Der Chef liest die Kurven der drei Stil-Bots aus ihren Ergebnisdateien im selben Fenster.
 
+## Profi-Bot-Prüfung
+
+Ablauf, Configs, Fenster und Regeln der Prüfung sind vor der ersten Rechnung in
+[lernen/PROFI_PLAN.md](lernen/PROFI_PLAN.md) festgelegt, dort stehen auch die genauen Angaben je Schritt.
+
+- **GitHub:** Actions → «Profi-Bot-Prüfung» → Run workflow, nur von Hand und nie auf main: bei «Use workflow from» den
+  Profi-Zweig wählen. Zuerst laufen die Tests, dann je Bot und Fenster ein eigener Job auf dem eingefrorenen Kurs-Cache
+  `profi-2026-11-03` (der erste Lauf füllt ihn, danach wird nur gelesen). Der letzte Job speichert `lernen/profi/`,
+  `lernen/PROFI_ERGEBNISSE.md` und das Prüfprotokoll auf denselben Zweig. Damit GitHub den Knopf zeigt, muss
+  `.github/workflows/profi.yml` auch auf main liegen.
+- **Hirans PC:** `scripts\profi_pc.bat E0` (weitere Angaben wie im Plan) rechnet denselben Stand mit Binance-Kursen in
+  einer eigenen Kopie `%USERPROFILE%\trading-bot-profi` und lädt die Ergebnisse hoch; die Kurse friert der erste Lauf
+  als Zip mit Fingerabdruck ein.
+- **Nur Kurse laden:** `python -m tradingbot profi --schritt E0 --laden` holt die Kursdateien aller Jobs eines
+  Schritts nach `data/historie/`, ohne zu rechnen; mit `--cache-fest` prüft es nur, ob alle da sind.
+
 ## Marktphasen: der Bot wählt kurz, mittel oder lang selbst (Test: `bots/config_phasen.yaml`)
 
 Der 5️⃣ Phasen-Bot (vorerst nur in der Simulation) bestimmt für jeden Coin aus den Tageskerzen die **Marktphase**:

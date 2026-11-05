@@ -65,6 +65,9 @@ jobs:
   vorbereiten:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    concurrency:                    # nie zwei Läufe gleichzeitig beim Füllen des Caches: der zweite liest ihn dann
+      group: profi-vorbereiten-${{ github.ref }}
+      cancel-in-progress: false
     outputs:
       args: ${{ steps.plan.outputs.args }}
       rechnen: ${{ steps.plan.outputs.rechnen }}
@@ -176,15 +179,23 @@ jobs:
           read -ra args <<< "$ARGS"
           [ "$(python -c "from tradingbot.auswertung import cache_id; print(cache_id())")" = "$FINGERABDRUCK" ] || {
             echo "::error::Anderer Kurs-Cache als im Job vorbereiten."; exit 1; }
-          vorher=$(stat -c %s lernen/PROFI_PRUEFPROTOKOLL.md 2>/dev/null || echo 0)
+          stat -c %s lernen/PROFI_PRUEFPROTOKOLL.md > protokoll_vorher.txt 2>/dev/null || echo 0 > protokoll_vorher.txt
           python -m tradingbot profi "${args[@]}" --cache-fest --nur-bot "$BOT" --nur-fenster "$FENSTER" > geschrieben.txt
           cat geschrieben.txt
+      - name: Ergebnis und Eintrag im Prüfprotokoll einpacken (auch nach einem Fehler)
+        if: always()
+        env:
+          BOT: ${{ matrix.bot }}
+          FENSTER: ${{ matrix.fenster }}
+        run: |
           mkdir -p ausgabe/pruefprotokoll
-          xargs -a geschrieben.txt cp --parents -t ausgabe
+          [ ! -s geschrieben.txt ] || xargs -a geschrieben.txt cp --parents -t ausgabe
           eintrag="ausgabe/pruefprotokoll/${BOT}__${FENSTER}.md"      # mit --pruefung: der neue Eintrag dieses Jobs
-          tail -c +$((vorher + 1)) lernen/PROFI_PRUEFPROTOKOLL.md > "$eintrag" 2>/dev/null || true
+          [ ! -f protokoll_vorher.txt ] || tail -c +$(($(cat protokoll_vorher.txt) + 1)) lernen/PROFI_PRUEFPROTOKOLL.md \
+            > "$eintrag" 2>/dev/null || true
           [ -s "$eintrag" ] || rm -f "$eintrag"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ergebnis__${{ matrix.bot }}__${{ matrix.fenster }}
           path: ausgabe/
@@ -229,15 +240,23 @@ jobs:
           read -ra args <<< "$ARGS"
           [ "$(python -c "from tradingbot.auswertung import cache_id; print(cache_id())")" = "$FINGERABDRUCK" ] || {
             echo "::error::Anderer Kurs-Cache als im Job vorbereiten."; exit 1; }
-          vorher=$(stat -c %s lernen/PROFI_PRUEFPROTOKOLL.md 2>/dev/null || echo 0)
+          stat -c %s lernen/PROFI_PRUEFPROTOKOLL.md > protokoll_vorher.txt 2>/dev/null || echo 0 > protokoll_vorher.txt
           python -m tradingbot profi "${args[@]}" --cache-fest --nur-bot "$BOT" --nur-fenster "$FENSTER" > geschrieben.txt
           cat geschrieben.txt
+      - name: Ergebnis und Eintrag im Prüfprotokoll einpacken (auch nach einem Fehler)
+        if: always()
+        env:
+          BOT: ${{ matrix.bot }}
+          FENSTER: ${{ matrix.fenster }}
+        run: |
           mkdir -p ausgabe/pruefprotokoll
-          xargs -a geschrieben.txt cp --parents -t ausgabe
+          [ ! -s geschrieben.txt ] || xargs -a geschrieben.txt cp --parents -t ausgabe
           eintrag="ausgabe/pruefprotokoll/${BOT}__${FENSTER}.md"      # mit --pruefung: der neue Eintrag dieses Jobs
-          tail -c +$((vorher + 1)) lernen/PROFI_PRUEFPROTOKOLL.md > "$eintrag" 2>/dev/null || true
+          [ ! -f protokoll_vorher.txt ] || tail -c +$(($(cat protokoll_vorher.txt) + 1)) lernen/PROFI_PRUEFPROTOKOLL.md \
+            > "$eintrag" 2>/dev/null || true
           [ -s "$eintrag" ] || rm -f "$eintrag"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ergebnis__${{ matrix.bot }}__${{ matrix.fenster }}
           path: ausgabe/
@@ -245,7 +264,8 @@ jobs:
 
   sammeln:
     needs: [vorbereiten, rechnen, chef]
-    if: ${{ !cancelled() && needs.vorbereiten.result == 'success' && github.ref != 'refs/heads/main' }}
+    # auch nach Fehlern oder Abbruch: jeder Eintrag im Prüfprotokoll kommt auf den Zweig
+    if: ${{ always() && needs.vorbereiten.result == 'success' && github.ref != 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

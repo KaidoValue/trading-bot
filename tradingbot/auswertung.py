@@ -19,6 +19,7 @@ import copy
 import json
 import logging
 import os
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,6 +39,7 @@ log = logging.getLogger(__name__)
 ORDNER = Path("lernen/profi")
 ERGEBNISSE = Path("lernen/PROFI_ERGEBNISSE.md")
 PROTOKOLL = Path("lernen/PROFI_PRUEFPROTOKOLL.md")
+PLAN = Path("lernen/PROFI_PLAN.md")                # Vorab-Registrierung mit dem Commit der eingefrorenen Fassung
 SPERRE = pd.Timestamp("2023-01-01", tz="UTC")       # Kurse ab hier nur mit --pruefung
 FERN = pd.Timestamp("2100-01-01", tz="UTC")
 SCHRITTE = {"E0": "Messlatte", "E1": "Kern", "E2": "Sicherheitsnetz", "E3": "Wochentakt", "E4": "Grösse nachführen",
@@ -758,14 +760,27 @@ def tabelle_kennzahlen(eintraege: list[dict]) -> str:
     return historie._md(pd.DataFrame(zeilen, index=index))
 
 
-def bericht(erg: list[dict]) -> str:
+def fassung(pfad: Path | None = None) -> str | None:
+    """Commit der eingefrorenen Fassung aus der Vorab-Registrierung (Zeile «**Eingefrorene Fassung:** Commit `…`» in
+    lernen/PROFI_PLAN.md); None, solange er nicht eingetragen ist."""
+    p = Path(pfad or PLAN)
+    m = re.search(r"\*\*Eingefrorene Fassung:\*\* Commit `([0-9a-f]{7,40})`", p.read_text(encoding="utf-8")) \
+        if p.exists() else None
+    return m.group(1) if m else None
+
+
+def bericht(erg: list[dict], plan: str | None = None) -> str:
     """Tabellen aus allen Ergebnisdateien: Kennzahlen je Schritt, Cache und Gebühren, dazu L_dev (E0), Regel G, Sieger
-    und Tor (E1-E4), E5-Kriterien und Go-Regeln (E6), je Haupt-Cache und über die Caches."""
+    und Tor (E1-E4), E5-Kriterien und Go-Regeln (E6), je Haupt-Cache und über die Caches. plan: Commit der
+    eingefrorenen Fassung (fassung()), den der Bericht nennt, dazu je Cache die Commits der Läufe."""
     idx = {(e["schritt"], e["cache"], e["gebuehren"], e["name"], e["fenster"]["name"]): e for e in erg}
     standard = [list(q) for q in historie.SOURCES]
     caches: dict[str, dict] = {}
     for e in erg:
-        c = caches.setdefault(e["cache"], {"quellen": e["quellen"], "boersen": set(), "fest": True, "laeufe": 0})
+        c = caches.setdefault(e["cache"], {"quellen": e["quellen"], "boersen": set(), "fest": True, "laeufe": 0,
+                                           "commits": set(), "sauber": True})
+        c["commits"].add(e["commit"][:12])
+        c["sauber"] &= bool(e["sauber"])
         c["boersen"] |= {d.split("_")[0] for d in e["kursdateien"]}
         c["fest"] &= bool(e["cache_fest"])
         c["laeufe"] += 1
@@ -800,12 +815,16 @@ def bericht(erg: list[dict]) -> str:
            f"Aus {len(erg)} Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes "
            "Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den "
            "vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen "
-           "nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).", "", "## Caches", ""]
+           "nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).", "",
+           "Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung "
+           + (f"Commit `{plan}`." if plan else "noch nicht eingetragen."), "", "## Caches", ""]
     out += [_tabelle({kurz(c): {"Quellen": ", ".join(f"{n} ({q})" for n, q in caches[c]["quellen"]),
                                 "Börsen der Kursdateien": ", ".join(sorted(caches[c]["boersen"])) or "–",
                                 "eingefroren": "ja" if caches[c]["fest"] else "nein",
                                 "Läufe": caches[c]["laeufe"],
-                                "zählt für": "Entscheide" if c in haupt else "nur Information"}
+                                "zählt für": "Entscheide" if c in haupt else "nur Information",
+                                "Commits": ", ".join(sorted(caches[c]["commits"]))
+                                + ("" if caches[c]["sauber"] else " (mit Änderungen ohne Commit)")}
                      for c in haupt + zusatz}), ""]
     if len(haupt) == 1:
         out += ["Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (Schwäche).", ""]
@@ -934,7 +953,7 @@ def _regel_2(k: dict, kandidat: str) -> list[float]:
 
 def zusammenfassen(ordner: Path | None = None, ziel: Path | None = None) -> str:
     """PROFI_ERGEBNISSE.md aus allen Ergebnisdateien neu bauen, ohne zu simulieren. Schreibt nie lernen/HISTORIE.md."""
-    text = bericht(lesen(ordner))
+    text = bericht(lesen(ordner), fassung())
     ziel = Path(ziel or ERGEBNISSE)
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(text + "\n", encoding="utf-8")

@@ -1,0 +1,4 @@
+# E5 (a), Nachbarwert des Leiter-Siegers (lernen/PROFI_PLAN.md): 9 % statt 12 % Risiko bis zum Notfall-Stop.
+# Überlagerung (deep merge) auf den Amtsinhaber; keine Auswahl, nur Robustheit.
+risk:
+  risk_per_trade: 0.09

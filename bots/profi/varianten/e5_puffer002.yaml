@@ -1,0 +1,5 @@
+# E5 (a), Nachbarwert (lernen/PROFI_PLAN.md): Puffer 0,02 an der Linie, der Nachbar −0,01 von 0,03 (e1_kb3).
+# Überlagerung (deep merge) auf den Amtsinhaber; keine Auswahl, nur Robustheit.
+horizons:
+  kern:
+    strategy_params: {band: 0.02}

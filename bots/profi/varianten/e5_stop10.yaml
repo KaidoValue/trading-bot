@@ -1,0 +1,4 @@
+# E5 (a), Nachbarwert des Leiter-Siegers (lernen/PROFI_PLAN.md): Notfall-Stop bei 10 ATR statt 8.
+# Überlagerung (deep merge) auf den Amtsinhaber; keine Auswahl, nur Robustheit.
+risk:
+  stop_loss_atr: 10.0
