@@ -2,6 +2,7 @@
 in historie.yml, profi --laden, das PC-Skript und der Bericht mit der eingefrorenen Fassung."""
 import json
 import os
+import shutil
 import subprocess
 import sys
 import types
@@ -12,6 +13,7 @@ import pytest
 import yaml
 
 from test_auswertung import A, _ergebnis, _kz, _profi
+from test_profi_werkzeug import _welle
 from tradingbot import auswertung as aw
 from tradingbot import historie
 
@@ -100,12 +102,18 @@ def test_pc_skript_hat_windows_zeilenenden_und_die_standardquellen():
     # Standardquellen wie auf GitHub (BTC von Bitstamp, Altcoins von Binance): so zählt der PC als Haupt-Cache
     assert "--quellen" not in text and "py -m tradingbot profi --schritt %SCHRITT% %REST% --cache-fest" in text
     assert "lernen/PROFI_PRUEFPROTOKOLL.md merge=union" in (ROOT / ".gitattributes").read_text(encoding="utf-8")
+    # nach einem Abbruch kommen der Eintrag im Prüfprotokoll und die Teilergebnisse trotzdem hoch, wie auf GitHub
+    assert "py -m tradingbot profi --schritt %SCHRITT% %REST% --cache-fest || goto abgebrochen\r\n" in text
+    abbruch = text.split("\r\n:abgebrochen\r\n")[1].split("\r\n\r\n")[0]
+    assert "set DANACH=fehler\r\n" in abbruch and abbruch.endswith("goto hochladen")
+    assert "git add lernen/profi lernen/PROFI_ERGEBNISSE.md lernen/PROFI_PRUEFPROTOKOLL.md" in text.split(":hochladen")[1]
 
 
 class _Boerse:
-    """ccxt-Börse ohne Netz: Tageskerzen vom 1.1. bis 28.2.2020 für jeden Coin, den sie führt."""
-    def __init__(self, coins: set, quote: str):
-        self.coins, self.quote = coins, quote
+    """ccxt-Börse ohne Netz: Tageskerzen ab `ab` bis 28.2.2020 für jeden Coin, den sie führt. fehler: (Symbol,
+    Zeitraster), bei denen die erste Anfrage scheitert (wie eine Zeitüberschreitung)."""
+    def __init__(self, coins: set, quote: str, ab: str = "2020-01-01", fehler=()):
+        self.coins, self.quote, self.ab, self.fehler = coins, quote, ab, set(fehler)
 
     def load_markets(self):
         return {f"{c}/{self.quote}": {} for c in self.coins}
@@ -120,7 +128,10 @@ class _Boerse:
         return pd.Timestamp(ms, unit="ms", tz="UTC").isoformat()
 
     def fetch_ohlcv(self, symbol, timeframe, since=None, limit=1000):
-        tage = pd.date_range("2020-01-01", "2020-02-28", freq="D", tz="UTC")
+        if (symbol, timeframe) in self.fehler:
+            self.fehler.discard((symbol, timeframe))
+            raise TimeoutError(f"{symbol} {timeframe}: Zeitüberschreitung")
+        tage = pd.date_range(self.ab, "2020-02-28", freq="D", tz="UTC")
         return [[t.value // 10**6, 7.0, 7.5, 6.5, 7.0, 1.0] for t in tage if t.value // 10**6 >= since][:limit]
 
 
@@ -133,8 +144,8 @@ def test_laden_holt_die_kurse_aller_jobs_und_rechnet_nichts(monkeypatch, tmp_pat
     alle = {s.split("/")[0] for s in aw.bot("config_langfrist").cfg.symbols}
     boersen = {"bitstamp": {"BTC", "ETH"}, "binance": alle - {"HYPE"}, "binanceus": set(), "kucoin": alle,
                "coinbase": {"BTC", "ETH"}}
-    monkeypatch.setitem(sys.modules, "ccxt", types.SimpleNamespace(
-        **{n: (lambda cfg, n=n: _Boerse(boersen[n], historie.QUOTES[n])) for n in boersen}))
+    monkeypatch.setitem(sys.modules, "ccxt", types.SimpleNamespace(**{n: (lambda cfg, n=n: _Boerse(
+        boersen[n], historie.QUOTES[n], "2011-08-18" if n == "bitstamp" else "2020-01-01")) for n in boersen}))
 
     def datei(coin, tf, quellen=historie.SOURCES):    # die Börse mit der längsten Geschichte, bei Gleichstand die erste
         return tmp_path / "historie" / f"{next(n for n, _ in quellen if coin in boersen[n])}_{coin}_{tf}.csv"
@@ -168,6 +179,87 @@ def test_laden_holt_die_kurse_aller_jobs_und_rechnet_nichts(monkeypatch, tmp_pat
     datei("SOL", "1d").unlink()
     with pytest.raises(SystemExit, match="Eingefrorener Cache"):
         laden("--schritt", "E0", "--cache-fest")
+
+
+@pytest.mark.parametrize("bitstamp", [{"ab": "2011-08-18", "fehler": [("BTC/USD", "1h")]}, {"ab": "2014-01-01"}])
+def test_laden_friert_bitcoin_nur_von_bitstamp_ab_2011_ein(monkeypatch, tmp_path, bitstamp):
+    """Scheitert bei Bitstamp eine einzige Anfrage, nimmt load_coin still die nächste Börse (hier Binance ab 2020).
+    --laden bricht dann ab, statt eine kürzere BTC-Geschichte einzufrieren; ebenso, wenn sie erst nach 2011 beginnt."""
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr(historie, "CACHE", tmp_path / "historie")
+    boersen = {"bitstamp": _Boerse({"BTC"}, "USD", **bitstamp), "binance": _Boerse({"BTC"}, "USDT"),
+               "binanceus": _Boerse(set(), "USD"), "kucoin": _Boerse({"BTC"}, "USDT")}
+    monkeypatch.setitem(sys.modules, "ccxt", types.SimpleNamespace(**{n: (lambda cfg, b=b: b) for n, b in boersen.items()}))
+    geladen = "binance_BTC_1h.csv ab 2020-01-01" if "fehler" in bitstamp else "bitstamp_BTC_1h.csv ab 2014-01-01"
+    with pytest.raises(SystemExit, match=f"BTC 1h: erwartet bitstamp_BTC_1h.csv ab 2011, geladen: {geladen}"):
+        aw.laden("E0", nur_bot=["config_langfrist"])
+    if "fehler" in bitstamp:                                                 # BTC 1d kam ohne Fehler von Bitstamp
+        assert aw.laden("E0", nur_bot=["p_minus_1"]) == [tmp_path / "historie" / "bitstamp_BTC_1d.csv"]
+
+
+@pytest.mark.skipif(shutil.which("jq") is None, reason="jq fehlt (auf GitHub vorhanden)")
+def test_cache_pruefen_nur_fuer_die_gewaehlten_jobs(tmp_path):
+    """E6 auf der dritten Quelle mit Auswahl (nur_bot, nur_fenster): Von coinbase liegen nur BTC und ETH im Cache.
+    «Cache prüfen» bekommt die Auswahl aus dem Plan-Schritt und prüft nur die Kurse dieser Jobs."""
+    schritte = {s.get("id"): s for s in _ablauf("profi.yml")["jobs"]["vorbereiten"]["steps"]}
+    (tmp_path / "bots").symlink_to(ROOT / "bots")
+    (tmp_path / "bin").mkdir()
+    (tmp_path / "bin" / "python").symlink_to(sys.executable)
+    (tmp_path / "data" / "historie").mkdir(parents=True)
+    for coin in ("BTC", "ETH"):
+        _welle("2015-07-20", 30).to_csv(tmp_path / "data" / "historie" / f"coinbase_{coin}_1d.csv")
+    ausgabe = tmp_path / "ausgabe.txt"
+    env = {"PATH": f"{tmp_path / 'bin'}:{os.environ['PATH']}", "HOME": str(tmp_path), "PYTHONPATH": str(ROOT),
+           "GITHUB_OUTPUT": str(ausgabe), "SCHRITT": "E6", "CONFIG": "bots/profi/e1_kb3.yaml", "SIEGER": "",
+           "VARIANTEN": "", "QUELLEN": "coinbase", "GEBUEHREN": "normiert", "PRUEFUNG": "true",
+           "NUR_BOT": "e1_kb3 p_minus_1 bitcoin_halten", "NUR_FENSTER": "ab-2023Q1"}
+
+    def lauf(schritt: str, **mehr) -> subprocess.CompletedProcess:
+        return subprocess.run(["bash", "-e", "-c", schritte[schritt]["run"]], cwd=tmp_path, env=env | mehr,
+                              capture_output=True, text=True)
+    assert lauf("plan").returncode == 0
+    outputs = dict(z.split("=", 1) for z in ausgabe.read_text(encoding="utf-8").splitlines())
+    werte = {k: outputs[v.split("steps.plan.outputs.")[1].strip(" }")] for k, v in schritte["pruefen"]["env"].items()}
+    r = lauf("pruefen", **werte)
+    assert r.returncode == 0, r.stderr
+    assert r.stdout.splitlines()[0] == "data/historie/coinbase_BTC_1d.csv" and "fingerabdruck=" in \
+        ausgabe.read_text(encoding="utf-8")
+    r = lauf("pruefen", **(werte | {"AUSWAHL": ""}))                       # ohne Auswahl: alle Bots von E6
+    assert r.returncode != 0 and "Eingefrorener Cache (--cache-fest): keine Datei für" in r.stderr
+
+
+def test_pruefprotokoll_behaelt_beim_zusammenfuehren_beide_eintraege(tmp_path, monkeypatch):
+    """Zwei Läufe hängen an dieselbe Fassung an, mit gleichem Befehl und Commit (ein wiederholter Job): Beim
+    «pull --rebase -X theirs» wie im Sammel-Job (merge=union aus .gitattributes) bleiben beide Einträge vollständig."""
+    monkeypatch.chdir(tmp_path)
+
+    def git(*args, ort=tmp_path):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", *args],
+                       cwd=ort, check=True, capture_output=True)
+    fern, a, b = tmp_path / "fern.git", tmp_path / "a", tmp_path / "b"
+    git("init", "-q", "--bare", "-b", "main", str(fern))
+    git("clone", "-q", str(fern), str(a))
+    (a / "lernen").mkdir()
+    for datei in (".gitattributes", "lernen/PROFI_PRUEFPROTOKOLL.md"):
+        (a / datei).write_bytes((ROOT / datei).read_bytes())
+    git("add", ".", ort=a)
+    git("commit", "-q", "-m", "Kopf", ort=a)
+    git("push", "-q", "origin", "HEAD:main", ort=a)
+    git("clone", "-q", str(fern), str(b))
+    jobs = {"e1_kb3": aw.gestaffelt_pruefung()[5:6]}
+    for klon, lauf in ((a, "4711"), (b, "4712")):
+        monkeypatch.setenv("GITHUB_RUN_ID", lauf)
+        aw.protokoll("python -m tradingbot profi --schritt E6 --pruefung", historie.SOURCES, "f" * 64, True, jobs,
+                     klon / "lernen" / "PROFI_PRUEFPROTOKOLL.md")
+        git("commit", "-q", "-am", f"Lauf {lauf}", ort=klon)
+    git("push", "-q", "origin", "HEAD:main", ort=a)
+    git("pull", "-q", "--rebase", "-X", "theirs", "origin", "main", ort=b)
+    text = (b / "lernen" / "PROFI_PRUEFPROTOKOLL.md").read_text(encoding="utf-8")
+    eintraege = [z for z in text.splitlines() if z.startswith("- ")]
+    assert text.startswith((ROOT / "lernen" / "PROFI_PRUEFPROTOKOLL.md").read_text(encoding="utf-8"))
+    assert [z.split(" · ")[1] for z in eintraege] == ["GitHub-Lauf 4711", "GitHub-Lauf 4712"]
+    assert all(z.endswith(f"`{'f' * 64}` (eingefroren, --cache-fest) · Befehl `python -m tradingbot profi --schritt E6 "
+                          "--pruefung` · Läufe e1_kb3: ab-2024Q2") for z in eintraege)
 
 
 def test_bericht_nennt_die_eingefrorene_fassung_und_die_commits(tmp_path, monkeypatch):

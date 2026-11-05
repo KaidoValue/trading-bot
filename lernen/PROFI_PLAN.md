@@ -63,12 +63,17 @@ Nach der ersten Rechnung gilt der eingetragene Massstab bis zum Entscheid.
 - Der erste GitHub-Lauf auf dem Profi-Zweig lädt alle Kurse für E0 bis E6 und die dritte Quelle (`profi --laden`) und
   speichert den Cache. Danach wird er nur gelesen (`--cache-fest`), und jeder Job prüft den Fingerabdruck. Auf dem PC
   lädt der erste Lauf die Kurse und friert sie als Zip ein; danach rechnet jeder Lauf nur mit dem Zip.
+- Vor dem Einfrieren prüft `profi --laden`, dass jede BTC-Datei der Haupt-Caches von Bitstamp kommt und spätestens am
+  31.12.2011 beginnt. Sonst bricht es ab, und nichts wird eingefroren (eine einzige gescheiterte Anfrage bei Bitstamp
+  liesse sonst still eine andere Börse mit kürzerer Geschichte einspringen); später nochmals laden.
 - Datenende ist die letzte Kerze im eingefrorenen Cache; «bis Datenende» heisst bis dorthin.
 - BTC kommt in beiden Haupt-Caches von Bitstamp. Unabhängig prüft nur die dritte Quelle, und die beginnt erst
   2015/2016.
 - **Haupt-Caches** sind Ergebnisse mit den Standardquellen. Nur sie und nur mit normierten Gebühren zählen für
-  Entscheide; jede Regel muss in jedem Haupt-Cache gelten. Fehlt der PC-Lauf, zählt der GitHub-Cache allein, und der
-  Bericht zeigt das als Schwäche.
+  Entscheide; jede Regel muss in jedem Haupt-Cache gelten. Ein Schritt ist erst entschieden, wenn er in jedem
+  Haupt-Cache gerechnet ist: Bis dahin zeigt der Bericht seine Entscheide als vorläufig, und der nächste Schritt startet
+  erst danach (sein Amtsinhaber hängt am Sieger). Fehlt der PC-Lauf, zählt der GitHub-Cache allein; das entscheidet
+  Hiran ausdrücklich vor dem nächsten Schritt, und der Bericht zeigt es als Schwäche.
 - **Cache verloren** (GitHub löscht einen Cache nach 7 Tagen ohne Zugriff und gibt ihn nur dem Zweig, auf dem er
   entstand; das Zip auf dem PC gelöscht): nicht neu laden, der Ablauf bricht ab. Hiran entscheidet; neu einfrieren
   heisst neuer Cache und alle Schritte auf diesem Cache neu rechnen. Darum laufen alle Profi-Läufe auf dem Zweig
@@ -340,6 +345,14 @@ Vor der ersten Rechnung festgehalten; so rechnet `tradingbot/auswertung.py`.
   einer Toleranz von 10⁻⁹, damit zum Beispiel 0,30 + 0,05 ≤ 0,35 gilt. «Über» und «besser» heissen echt grösser.
 - **Mehrere Herausforderer:** Bestehen mehrere Regel G, muss der spätere (komplexere) auch den früheren nach Regel G
   schlagen, sonst bleibt die einfachere Variante.
+- **Weg durch die Leiter:** E1 beginnt bei e1_kb3, dem Amtsinhaber von E1a. Gewinnt e1_kb5, ist «e1_kb3+e1_kb5» in
+  E1b Amtsinhaber, und seine Ergebnisdateien behalten beide Rollen (`rollen`). E2 geht vom Sieger von E1 aus, E3 vom
+  Sieger von E2, E4 vom Sieger von E3 (fehlt eine Stufe, vom letzten Sieger davor). Gruppen mit einem anderen
+  Amtsinhaber, zum Beispiel nach einer Rechnung mit einem früheren Sieger, zeigt der Bericht als überholt; sie zählen
+  weder für den Sieger noch für die E2-Flagge.
+- **Vorläufig:** Fehlen einem Haupt-Cache Läufe eines Schritts, die ein anderer Haupt-Cache hat, sind Sieger, Tor,
+  Flagge und Entscheid dieses Schritts vorläufig (so im Bericht). Hat er gar keine Läufe des Schritts, ist ohne ihn
+  entschieden; sonst gelten seine fehlenden Zahlen als nicht erfüllt.
 - **Tor:** Fehlt E0 im selben Cache, gibt es dort kein L_dev, und das Tor gilt als nicht bestanden.
 - **E2-Flagge:** Sie gilt, wenn der Not-Aus bleibt (der Amtsinhaber gewinnt E2) und er 2012-2022 in mindestens einem
   Haupt-Cache höchstens 2-mal auslöst.
@@ -348,7 +361,9 @@ Vor der ersten Rechnung festgehalten; so rechnet `tradingbot/auswertung.py`.
 - **E5 (b)** vergleicht mit Bitcoin halten zu normalen Kosten; **E5 (c)** mit den Calmar-Unterschieden 2016-2022
   (Kandidat minus Bitcoin halten, Kandidat minus P−1), gleich heisst dasselbe Vorzeichen in jedem Haupt-Cache.
 - **Rücksprung nach verfehltem E5:** Er geschieht nicht automatisch. Der Bericht sagt «zurück zum E1-Sieger», und E5
-  wird von Hand neu gestartet, mit dem E1-Sieger als Kandidat und seinen Nachbarwerten.
+  wird von Hand neu gestartet, mit dem E1-Sieger als Kandidat und seinen Nachbarwerten. Verfehlt der E1-Sieger selbst
+  E5 (auch wenn er schon der Leiter-Sieger war), sagt der Bericht «kein E6 für den Kern, No-Go». Ein Kern-Kandidat
+  ohne bestandenes E5 bekommt auch in E6 ein No-Go; P−1 und K1 brauchen kein E5.
 - **Kandidat in E6** ist der Amtsinhaber des E6-Laufs (`--config` und `--sieger`); Herausforderer in E6 sind nur die
   Varianten ohne Not-Aus für Regel 7.
 - **Go-Regel 6** zählt den Chef zu den heutigen Bots: Langfrist, KI, Risiko, Phasen und Chef (wie Regel 1 ohne K1).
@@ -357,7 +372,8 @@ Vor der ersten Rechnung festgehalten; so rechnet `tradingbot/auswertung.py`.
 - **Dritte Quelle:** coinbase, sonst bitfinex (wenn coinbase beim ersten Laden nicht erreichbar ist). Sie hat nur BTC
   und ETH; für K1 gibt es darum keine dritte Quelle.
 - **Chef:** Er rechnet aus den gerundeten Kapitalkurven der drei Stil-Bots im selben Fenster, auf GitHub aus ihren
-  Ergebnisdateien und auf dem PC im selben Lauf; beides gibt dasselbe Ergebnis.
+  Ergebnisdateien und auf dem PC im selben Lauf; beides gibt dasselbe Ergebnis. Sein Ergebnis nennt Commit und
+  Kurs-Fingerabdruck jedes Stil-Laufs und alle Kursdateien; war ein Stil-Lauf nicht sauber, ist es der Chef auch.
 - **Ein Lauf** im Sinn von «genau einmal je Quelle» ist ein GitHub-Lauf (alle Einträge mit derselben GitHub-Lauf-Nummer)
   bzw. ein Aufruf von `scripts\profi_pc.bat`. Sind P−1 und K1 die Kandidaten, gehören zwei Aufrufe dazu (zuerst P−1,
   dann K1 mit `--nur-bot k1`). Bricht ein Job ab, darf genau dieser Job mit `--nur-bot` und `--nur-fenster`
@@ -366,10 +382,12 @@ Vor der ersten Rechnung festgehalten; so rechnet `tradingbot/auswertung.py`.
 ## Prüfprotokoll
 
 `lernen/PROFI_PRUEFPROTOKOLL.md` wird nur angehängt. Jeder Lauf mit `--pruefung` schreibt vor der Rechnung einen
-Eintrag: Zeit (UTC), Commit (mit Hinweis bei Änderungen ohne Commit), Quellen, Cache-Fingerabdruck (eingefroren oder
-nicht), Befehl, Läufe (Bot: Fenster) und auf GitHub die Lauf-Nummer. Auf GitHub schreibt jeder Job einen eigenen
-Eintrag, und der letzte Job hängt alle an, auch nach Fehlern oder Abbruch. Beim Zusammenführen bleiben Einträge
-gleichzeitiger Läufe beide erhalten (`.gitattributes`: `merge=union`).
+Eintrag: Zeit (UTC), auf GitHub die Lauf-Nummer, Commit (mit Hinweis bei Änderungen ohne Commit), Quellen,
+Cache-Fingerabdruck (eingefroren oder nicht), Befehl und Läufe (Bot: Fenster). Auf GitHub schreibt jeder Job einen
+eigenen Eintrag, und der letzte Job hängt alle an, auch nach Fehlern oder Abbruch; auf dem PC lädt das Skript den
+Eintrag und die fertigen Teilergebnisse auch nach einem Abbruch hoch. Jeder Eintrag ist genau eine Zeile: So bleiben
+beim Zusammenführen die Einträge gleichzeitiger Läufe beide vollständig erhalten (`.gitattributes`: `merge=union`),
+auch bei gleichem Befehl.
 
 ## Befehle
 
@@ -392,7 +410,8 @@ steht, bleibt leer (`gebuehren` normiert, `pruefung` aus). Mehrere Dateien mit L
 
 Zuerst laufen alle Tests, dann je Bot und Fenster ein eigener Job auf dem eingefrorenen Cache (`--cache-fest`), der
 Chef nach den drei Stil-Bots. Der letzte Job speichert `lernen/profi/`, `lernen/PROFI_ERGEBNISSE.md` und das
-Prüfprotokoll auf denselben Zweig. Bot-Stände fasst der Ablauf nie an.
+Prüfprotokoll auf denselben Zweig. Bot-Stände fasst der Ablauf nie an. Einen weiteren Lauf erst starten, wenn der Job
+«vorbereiten» des vorigen fertig ist: GitHub hält nur einen wartenden Lauf, ein dritter bricht ihn still ab.
 
 ### Hirans PC
 
@@ -421,7 +440,7 @@ Kandidaten gelten.
 | Schritt | GitHub (Eingaben) | PC (`scripts\profi_pc.bat …`) |
 |---|---|---|
 | E0 | `schritt` E0 | `E0` |
-| E0 Kontrolle | `schritt` E0, `gebuehren` alt | `E0 --gebuehren alt` (freiwillig) |
+| E0 Kontrolle | `schritt` E0, `gebuehren` alt | `E0 --gebuehren alt` |
 | E1a | `schritt` E1, `varianten` `bots/profi/varianten/e1_kb5.yaml` | `E1 --varianten bots/profi/varianten/e1_kb5.yaml` |
 | E1b | `schritt` E1, `config` `bots/profi/e1_kb3.yaml`, `sieger` S, `varianten` `bots/profi/varianten/e1_kbe.yaml` | `E1 --config bots/profi/e1_kb3.yaml --sieger S --varianten bots/profi/varianten/e1_kbe.yaml` |
 | E2 | `schritt` E2, `config` `bots/profi/e1_kb3.yaml`, `sieger` S, `varianten` `bots/profi/varianten/e2_ohne_notaus.yaml bots/profi/varianten/e2_trail6.yaml` | `E2 --config bots/profi/e1_kb3.yaml --sieger S --varianten bots/profi/varianten/e2_ohne_notaus.yaml bots/profi/varianten/e2_trail6.yaml` |

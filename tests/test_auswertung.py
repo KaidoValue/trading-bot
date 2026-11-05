@@ -1,6 +1,7 @@
 """Auswertung für den Profi-Bot (python -m tradingbot profi): Überlagerungen, Fenster, Sperre ab 2023, Prüfprotokoll,
 gepaarter Block-Bootstrap, Regel G, Tor, E5-Kriterien, Go-Regeln und Zusammenfassen über zwei Caches."""
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -207,16 +208,19 @@ def test_pruefung_haengt_jeden_lauf_ans_protokoll(ordner, monkeypatch):
     _profi(monkeypatch, *args)
     erst = protokoll.read_text(encoding="utf-8")
     cache = historie.cache_fingerprint([ordner / "data" / "historie" / "bitstamp_BTC_1d.csv"])
-    assert erst.startswith("# Profi-Bot: Prüfprotokoll") and erst.count("\n## ") == 1
-    assert f"- Cache-Fingerabdruck: `{cache}` (eingefroren, --cache-fest)" in erst
-    assert "- Befehl: `python -m tradingbot profi " + " ".join(args) + "`" in erst
-    assert "- Commit: `unbekannt`" in erst and "- Quellen: bitstamp (USD), binance (USDT)" in erst
-    assert "- Läufe: kern: 2023-01-01-bis-Ende" in erst
+    eintrag = erst.splitlines()[-1]                                          # ein Eintrag ist genau eine Zeile
+    assert erst.startswith("# Profi-Bot: Prüfprotokoll") and erst.count("\n- ") == 1 and eintrag.startswith("- **20")
+    assert f" · Cache-Fingerabdruck `{cache}` (eingefroren, --cache-fest) · " in eintrag
+    assert " · Befehl `python -m tradingbot profi " + " ".join(args) + "` · " in eintrag
+    assert " UTC** · Commit `unbekannt` (tradingbot/ oder bots/ mit Änderungen ohne Commit) · Quellen bitstamp (USD), " \
+           "binance (USDT)" in eintrag and eintrag.endswith(" · Läufe kern: 2023-01-01-bis-Ende")
     e = json.loads(aw.datei("E1", cache, "kern", "2023-01-01-bis-Ende", "normiert").read_text(encoding="utf-8"))
     assert e["pruefung"] and e["letzter_tag"] == "2023-06-19"                 # bis Datenende
+    monkeypatch.setenv("GITHUB_RUN_ID", "4711")
     _profi(monkeypatch, *args)
     zweit = protokoll.read_text(encoding="utf-8")
-    assert zweit.startswith(erst) and zweit.count("\n## ") == 2               # nur angehängt
+    assert zweit.startswith(erst) and zweit.count("\n- ") == 2               # nur angehängt
+    assert " UTC** · GitHub-Lauf 4711 · Commit `unbekannt`" in zweit.splitlines()[-1]
 
 
 def test_chef_rechnet_aus_den_ergebnisdateien_der_stil_bots(ordner, monkeypatch):
@@ -225,16 +229,69 @@ def test_chef_rechnet_aus_den_ergebnisdateien_der_stil_bots(ordner, monkeypatch)
     args = ["--schritt", "E0", "--start", "2022-01-01", "--ende", "2022-12-31", "--cache-fest", "--nur-bot", "chef"]
     with pytest.raises(SystemExit, match="Chef: Lauf von config_langfrist im Fenster 2022 fehlt"):
         _profi(monkeypatch, *args)
+    stunden = ordner / "data" / "historie" / "bitstamp_BTC_1h.csv"            # die Kurse eines Stil-Bots
+    stunden.write_text("x\n", encoding="utf-8")
     cache = aw.cache_id()
     tage = pd.date_range("2022-01-01", "2022-12-31", tz="UTC")
     for i, s in enumerate(STYLES):
         kurve = {f"{t:%Y-%m-%d}": round(100 * (1 + 0.001 * i) ** j, 4) for j, t in enumerate(tage)}
         _ergebnis(cache, "E0", s, "2022", _kz(1.0), kurve=kurve)
+    zweiter = list(STYLES)[1]
+    pfad = aw.datei("E0", cache, zweiter, "2022", "normiert")
+    alt = json.loads(pfad.read_text(encoding="utf-8"))
+    pfad.write_text(json.dumps(alt | {"commit": "def", "sauber": False, "kursdateien": [stunden.name]}), encoding="utf-8")
     _profi(monkeypatch, *args)
     e = json.loads(aw.datei("E0", cache, "chef", "2022", "normiert").read_text(encoding="utf-8"))
     assert e["rolle"] == "chef" and e["config"] == {"stil_bots": list(STYLES), "startkapital": 100}
     assert (e["erster_tag"], e["letzter_tag"], e["startkapital"]) == ("2022-01-01", "2022-12-31", 100)
     assert 100 < e["kurve"]["2022-12-31"] < 100 * 1.002 ** 364 and e["kennzahlen"]["Calmar"] > 0
+    # woher er rechnet: Commit und Kurse jedes Stil-Laufs; einer mit Änderungen ohne Commit macht ihn ebenso unsauber
+    btc = ordner / "data" / "historie" / "bitstamp_BTC_1d.csv"
+    assert e["kursdateien"] == [btc.name, stunden.name] and e["kurs_fingerabdruck"] == historie.cache_fingerprint(
+        [btc, stunden])
+    assert e["stil_laeufe"] == {s: {"commit": "def" if s == zweiter else "abc", "sauber": s != zweiter,
+                                    "erstellt": "x", "kurs_fingerabdruck": "x"} for s in STYLES}
+    assert not e["sauber"] and "| abc, def, unbekannt (mit Änderungen ohne Commit) |" in aw.zusammenfassen()
+
+
+def _schein(monkeypatch):
+    """historie.simulate ohne Simulation: feste Tagesrendite je Config (Puffer 5 % besser, mit ETH schlechter), für
+    alle dieselbe Schwankung, keine Kosten."""
+    def simulate(cfg, coins, start=None, fees="normiert", end=None):
+        tage = pd.date_range(start, end - pd.Timedelta(days=1), freq="D", tz="UTC")
+        r = 0.0005 + 0.0003 * (cfg.horizon_list()[0].strategy_params["band"] == 0.05) - 0.0002 * (len(cfg.symbols) > 1)
+        eq = pd.Series(cfg.starting_capital * np.cumprod(1 + r + 0.02 * np.sin(np.arange(len(tage)) / 5)), tage)
+        daily = pd.DataFrame(0.0, index=tage, columns=historie.DAILY).assign(invested=eq, open=1, coins=1)
+        return historie.BotRun(cfg, eq, pd.DataFrame(), 0, 0, daily)
+    monkeypatch.setattr(historie, "simulate", simulate)
+
+
+def test_e1b_behaelt_die_rolle_des_e1a_siegers(ordner, monkeypatch):
+    """E1a, dann E1b mit dem Sieger von E1a als Amtsinhaber (Befehle wie im Plan): Dessen Ergebnisdateien werden neu
+    geschrieben und behalten die Rolle aus E1a. Der Bericht nennt den richtigen E1-Sieger und rechnet das Tor für ihn."""
+    _schein(monkeypatch)
+    _welle("2021-01-01", 900, 10.0).to_csv(ordner / "data" / "historie" / "bitstamp_ETH_1d.csv")
+    (ordner / "bots" / "profi" / "varianten" / "eth.yaml").write_text("symbols: [BTC/CHF, ETH/CHF]\n", encoding="utf-8")
+    cache = aw.cache_id()
+    for n, c in zip(aw.L_DEV, (0.5, 0.2, 0.9, 1.5, 0.4, 0.6, 0.8, 0.3)):     # L_dev 1,5: das Tor verlangt 1,275
+        _ergebnis(cache, "E0", n, aw.HAUPT, _kz(c), "chef" if n == "chef" else "vergleich")
+    e1 = ["--schritt", "E1", "--config", "bots/profi/kern.yaml", "--cache-fest", "--varianten"]
+    _profi(monkeypatch, *e1, "bots/profi/varianten/band5.yaml")                                       # E1a
+    assert "**Sieger von E1: kern+band5**" in aw.zusammenfassen()
+    e1b = [*e1, "bots/profi/varianten/eth.yaml", "--sieger", "bots/profi/varianten/band5.yaml"]
+    _profi(monkeypatch, *e1b)
+    text = (ordner / "lernen" / "PROFI_ERGEBNISSE.md").read_text(encoding="utf-8")
+    assert f"| **kern+band5 · Cache {cache[:12]}** | ✓ 1.71 gegen 0.91 |" in text                 # Regel G aus E1a
+    assert f"| **kern+band5+eth · Cache {cache[:12]}** | ✗ 1.16 gegen 1.71 |" in text
+    assert "**Sieger von E1: kern+band5**" in text and "überholt" not in text
+    assert f"| **Cache {cache[:12]}** | ✓ 1.71 gegen 1.27 | ✓ 0.00 % | ✓ |" in text and "**Tor bestanden:**" in text
+    pfad = aw.datei("E1", cache, "kern+band5", aw.HAUPT, "normiert")
+    e = json.loads(pfad.read_text(encoding="utf-8"))
+    rollen = [{"rolle": "herausforderer", "amtsinhaber": "kern", "nr": 1},
+              {"rolle": "amtsinhaber", "amtsinhaber": "kern+band5", "nr": 0}]
+    assert (e["rolle"], e["amtsinhaber"], e["nr"]) == ("amtsinhaber", "kern+band5", 0) and e["rollen"] == rollen
+    _profi(monkeypatch, *e1b)                                                     # wiederholt: keine Rolle doppelt
+    assert json.loads(pfad.read_text(encoding="utf-8"))["rollen"] == rollen
 
 
 # --- Gepaarter Block-Bootstrap
@@ -455,7 +512,8 @@ def _ergebnis(cache, schritt, name, fenster, kz, rolle="vergleich", amt=None, nr
     quellen = [["coinbase", "USD"]] if cache == C else [list(q) for q in historie.SOURCES]
     e = {"schritt": schritt, "gebuehren": gebuehren, "quellen": quellen, "cache": cache, "cache_fest": True,
          "commit": "abc", "sauber": True, "befehl": "test", "pruefung": schritt == "E6", "erstellt": "x", "name": name,
-         "rolle": rolle, "amtsinhaber": amt, "nr": nr, "fenster": f._asdict(), "erster_tag": f.start,
+         "rolle": rolle, "amtsinhaber": amt, "nr": nr, "rollen": [{"rolle": rolle, "amtsinhaber": amt, "nr": nr}],
+         "fenster": f._asdict(), "erster_tag": f.start,
          "letzter_tag": f.ende or "2026-11-03", "startkapital": 100, "dateien": [], "ueberlagerung": ueberlagerung,
          "config": {}, "kursdateien": ["bitstamp_BTC_1d.csv"], "kurs_fingerabdruck": "x", "kennzahlen": kz,
          "notaus": list(notaus), "kurve": kurve or {}}
@@ -554,3 +612,75 @@ def test_zusammenfassen_e2_e5_e6(tmp_path, monkeypatch):
         _ergebnis(cache, "E6", "p_minus_1", aw.PRUEFUNG, _kz(1.56, dd=-29.0, cagr=45.2, kosten=2.0, anteil=5.0))
         _ergebnis(cache, "E6", "p_minus_1", "Crash-2022", _kz(0.6, dd=-40.0))
     assert "**Entscheid: No-Go für den Kandidaten, Vorschlag P−1**" in aw.zusammenfassen()
+
+
+def test_jede_stufe_geht_vom_sieger_der_vorigen_aus(tmp_path, monkeypatch):
+    """E2 nach einem geänderten E1-Ergebnis neu gerechnet: Die alte Gruppe (Amtsinhaber kern) bleibt liegen, zählt aber
+    weder für den Sieger von E2 noch für die E2-Flagge; Wurzel ist der Sieger von E1."""
+    monkeypatch.chdir(tmp_path)
+    _leiter(A)                                                               # Sieger von E1: kern+band5
+    for amt, hers in (("kern", ["kern+ohne"]), ("kern+band5", ["kern+band5+ohne", "kern+band5+trail6"])):
+        for f in (aw.HAUPT, *aw.HAELFTEN):
+            _ergebnis(A, "E2", amt, f, _kz(0.9, notaus=1), "amtsinhaber", amt, kurve=_kurve(1) if f == aw.HAUPT else None)
+            for nr, her in enumerate(hers, 1):                               # nur trail6 schlägt den Amtsinhaber
+                plus = 0.002 if her.endswith("trail6") else -0.001
+                _ergebnis(A, "E2", her, f, _kz(1.0 if plus > 0 else 0.8), "herausforderer", amt, nr,
+                          kurve=_kurve(1, plus) if f == aw.HAUPT else None)
+    text = aw.zusammenfassen()
+    assert "**Sieger von E2: kern+band5+trail6**" in text and "**E2-Flagge: nicht gesetzt**" in text
+    assert "### Regel G gegen den Amtsinhaber kern (überholt)" in text
+    assert "Zählt nicht: kern ist nicht der Sieger von E1 (kern+band5)." in text
+    assert "### Regel G gegen den Amtsinhaber kern+band5\n" in text
+    for p in (tmp_path / "lernen" / "profi" / "E2").rglob("kern+band5*.json"):  # E2 noch nicht mit dem E1-Sieger
+        p.unlink()
+    text = aw.zusammenfassen()
+    assert "**Sieger von E2: –** (E2 ist noch nicht mit dem Sieger von E1 gerechnet: kern+band5 als Amtsinhaber)" in text
+    assert "**E2-Flagge: nicht gesetzt** (E2 nicht mit dem Sieger von E1 gerechnet)." in text
+
+
+def test_vorlaeufig_solange_einem_haupt_cache_laeufe_fehlen(tmp_path, monkeypatch):
+    """Cache B (z.B. der PC) hat E1 noch nicht oder nur zum Teil: Sieger und Tor sind vorläufig, bis E1 in jedem
+    Haupt-Cache gerechnet ist."""
+    monkeypatch.chdir(tmp_path)
+    _leiter(A)
+    _leiter(B)
+    shutil.rmtree(tmp_path / "lernen" / "profi" / "E1" / B[:12])               # B: nur E0
+    text = aw.zusammenfassen()
+    assert f"**Vorläufig:** Cache {B[:12]} hat noch keine Läufe von E1, entschieden ist ohne diesen Cache. Der nächste " \
+           "Schritt startet erst, wenn E1 in jedem Haupt-Cache gerechnet ist" in text
+    assert "**Sieger von E1: kern+band5** (vorläufig)" in text and "**Tor bestanden (vorläufig):**" in text
+    assert "Nur ein Haupt-Cache" not in text and text.count("**Vorläufig:**") == 1    # E0 ist in beiden vollständig
+    _leiter(B)
+    aw.datei("E1", B, "kern+band5", "2020-2022", "normiert").unlink()           # B: ein Job fehlt
+    text = aw.zusammenfassen()
+    assert f"**Vorläufig:** In Cache {B[:12]} fehlen 1 von 6 Läufen von E1 (fehlende Zahlen gelten als nicht " \
+           "erfüllt)." in text and "**Sieger von E1: kern** (vorläufig)" in text
+    _leiter(B)
+    text = aw.zusammenfassen()
+    assert "orläufig" not in text and "**Sieger von E1: kern+band5**\n" in text
+
+
+def test_e5_des_e1_siegers_verfehlt_ist_ein_no_go(tmp_path, monkeypatch):
+    """Verfehlt der E1-Sieger E5, gibt es kein E6 für den Kern: No-Go statt «zurück zum E1-Sieger», auch in E6."""
+    monkeypatch.chdir(tmp_path)
+    k, _, _ = _e5()
+    g, p = _go()
+    for cache in (A, B):
+        _leiter(cache)                                                       # Sieger von E1: kern+band5
+        for n, fs in k.items():                                              # Kandidat kern, (c) ohne dritte Quelle
+            rolle = {"kand": "amtsinhaber", "nah1": "herausforderer"}.get(n, "vergleich")
+            for f, kz in fs.items():
+                _ergebnis(cache, "E5", n.replace("kand", "kern"), f, kz, rolle, "kern" if rolle != "vergleich" else None,
+                          int(n == "nah1"), ueberlagerung={"risk": {"stop_loss_atr": 6}} if n == "nah1" else None)
+        for n, fs in g.items():
+            for f, kz in fs.items():
+                _ergebnis(cache, "E6", n.replace("kand", "kern"), f, kz, "amtsinhaber" if n == "kand" else "vergleich",
+                          "kern" if n == "kand" else None)
+    text = aw.zusammenfassen()
+    assert "**E5 nicht bestanden**: zurück zum E1-Sieger und nur diesen prüfen, keine neuen Varianten." in text
+    assert "**Entscheid: No-Go (E5 nicht bestanden: kein E6 für den Kern)**" in text     # die Go-Regeln allein: Go
+    for cache in (A, B):
+        _leiter(cache, her_haelfte=0.29)                                     # jetzt bleibt kern Sieger von E1
+    text = aw.zusammenfassen()
+    assert "**E5 nicht bestanden**: Der Kandidat ist der E1-Sieger, darum kein E6 für den Kern, sondern ein No-Go mit " \
+           "Begründung." in text and "**Entscheid: No-Go (E5 nicht bestanden: kein E6 für den Kern)**" in text

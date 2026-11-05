@@ -65,7 +65,9 @@ jobs:
   vorbereiten:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    concurrency:                    # nie zwei Läufe gleichzeitig beim Füllen des Caches: der zweite liest ihn dann
+    # nie zwei Läufe gleichzeitig beim Füllen des Caches: der zweite liest ihn dann. GitHub hält je Gruppe nur einen
+    # wartenden Lauf, ein dritter bricht ihn ab: den nächsten Lauf erst starten, wenn «vorbereiten» fertig ist.
+    concurrency:
       group: profi-vorbereiten-${{ github.ref }}
       cancel-in-progress: false
     outputs:
@@ -105,6 +107,7 @@ jobs:
           jq -r '.include[] | "\(.bot): \(.fenster)"' jobs.json
           {
             echo "args=${args[*]}"
+            echo "auswahl=${auswahl[*]}"
             echo "rechnen=$(jq -c '{include: [.include[] | select(.bot != "chef")]}' jobs.json)"
             echo "chef=$(jq -c '{include: [.include[] | select(.bot == "chef")]}' jobs.json)"
             echo "hat_rechnen=$(jq -r 'any(.include[]; .bot != "chef")' jobs.json)"
@@ -137,9 +140,11 @@ jobs:
         id: pruefen
         env:
           ARGS: ${{ steps.plan.outputs.args }}
+          AUSWAHL: ${{ steps.plan.outputs.auswahl }}
         run: |
           read -ra args <<< "$ARGS"
-          python -m tradingbot profi "${args[@]}" --laden --cache-fest
+          read -ra auswahl <<< "$AUSWAHL"          # nur die Jobs dieses Laufs (die dritte Quelle hat nur BTC und ETH)
+          python -m tradingbot profi "${args[@]}" "${auswahl[@]}" --laden --cache-fest
           fp=$(python -c "from tradingbot.auswertung import cache_id; print(cache_id())")
           if [ -f lernen/profi/cache_github.txt ] && [ "$(cat lernen/profi/cache_github.txt)" != "$fp" ]; then
             echo "::error::Der Kurs-Cache hat einen anderen Fingerabdruck als lernen/profi/cache_github.txt: $fp"
@@ -289,7 +294,7 @@ jobs:
           mkdir -p lernen/profi
           [ ! -d ergebnisse/lernen/profi ] || cp -r ergebnisse/lernen/profi/. lernen/profi/
           for f in $(ls ergebnisse/pruefprotokoll/*.md 2>/dev/null | sort); do
-            sed -n '/^## /,$p' "$f" >> lernen/PROFI_PRUEFPROTOKOLL.md      # nur anhängen
+            sed -n '/^- /p' "$f" >> lernen/PROFI_PRUEFPROTOKOLL.md      # nur anhängen, ein Eintrag je Zeile
           done
           [ -f lernen/profi/cache_github.txt ] || [ -z "$FINGERABDRUCK" ] || echo "$FINGERABDRUCK" > lernen/profi/cache_github.txt
           python -m tradingbot profi --zusammenfassen > /dev/null

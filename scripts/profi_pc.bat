@@ -112,19 +112,31 @@ echo.
 echo Rechne: profi --schritt %SCHRITT% %REST%
 echo Das kann mehrere Stunden dauern: den PC eingeschaltet lassen und dieses Fenster nicht schliessen.
 echo.
-py -m tradingbot profi --schritt %SCHRITT% %REST% --cache-fest || goto fehler
+set MELDUNG=Profi-Bot %SCHRITT%: Ergebnisse vom PC (Binance)
+set DANACH=fertig
+py -m tradingbot profi --schritt %SCHRITT% %REST% --cache-fest || goto abgebrochen
 
+:hochladen
 echo.
 echo Lade die Ergebnisse hoch. Beim ersten Mal oeffnet sich ein GitHub-Anmeldefenster: bitte dort anmelden.
 git add lernen/profi lernen/PROFI_ERGEBNISSE.md lernen/PROFI_PRUEFPROTOKOLL.md
-git diff --cached --quiet && goto fertig
-git commit -q -m "Profi-Bot %SCHRITT%: Ergebnisse vom PC (Binance)"
+git diff --cached --quiet && goto %DANACH%
+git commit -q -m "%MELDUNG%"
 for /l %%i in (1,1,3) do (
-  git pull -q --rebase -X theirs origin %ZWEIG% && py -m tradingbot profi --zusammenfassen > nul && git add lernen/PROFI_ERGEBNISSE.md && (git diff --cached --quiet || git commit -q -m "Profi-Bot: Bericht neu zusammengefasst") && git push -q origin HEAD:%ZWEIG% && goto fertig
+  git pull -q --rebase -X theirs origin %ZWEIG% && py -m tradingbot profi --zusammenfassen > nul && git add lernen/PROFI_ERGEBNISSE.md && (git diff --cached --quiet || git commit -q -m "Profi-Bot: Bericht neu zusammengefasst") && git push -q origin HEAD:%ZWEIG% && goto %DANACH%
   git rebase --abort 2> nul
   timeout /t 5 > nul
 )
 goto fehler
+
+:abgebrochen
+REM Auch nach einem Abbruch kommen der Eintrag im Pruefprotokoll (mit --pruefung vor der Rechnung geschrieben) und die
+REM fertigen Teilergebnisse auf den Zweig, wie auf GitHub
+echo.
+echo Die Rechnung ist abgebrochen. Eintrag im Pruefprotokoll und fertige Teilergebnisse kommen trotzdem hoch.
+set MELDUNG=Profi-Bot %SCHRITT%: abgebrochen (PC), Pruefprotokoll und Teilergebnisse
+set DANACH=fehler
+goto hochladen
 
 :fertig
 echo.

@@ -41,6 +41,7 @@ ERGEBNISSE = Path("lernen/PROFI_ERGEBNISSE.md")
 PROTOKOLL = Path("lernen/PROFI_PRUEFPROTOKOLL.md")
 PLAN = Path("lernen/PROFI_PLAN.md")                # Vorab-Registrierung mit dem Commit der eingefrorenen Fassung
 SPERRE = pd.Timestamp("2023-01-01", tz="UTC")       # Kurse ab hier nur mit --pruefung
+BTC_AB = "2011-12-31"                               # Haupt-Caches: erste BTC-Kerze von Bitstamp spätestens hier
 FERN = pd.Timestamp("2100-01-01", tz="UTC")
 SCHRITTE = {"E0": "Messlatte", "E1": "Kern", "E2": "Sicherheitsnetz", "E3": "Wochentakt", "E4": "Grösse nachführen",
             "E5": "Robustheit", "E6": "Einmal-Prüfung"}
@@ -282,24 +283,25 @@ def _commit() -> tuple[str, bool]:
 def protokoll(befehl: str, quellen: tuple, cache: str, fest: bool, jobs: dict[str, list[Fenster]],
               pfad: Path | None = None) -> None:
     """Prüfprotokoll: Jeder Lauf mit --pruefung kommt vor der Rechnung mit Datum, Commit, Quellen,
-    Cache-Fingerabdruck und Befehl dazu. Nur anhängen, nie überschreiben."""
+    Cache-Fingerabdruck und Befehl dazu. Nur anhängen, nie überschreiben. Ein Eintrag ist genau eine Zeile (mit Zeit
+    und GitHub-Lauf): So behält das Zusammenführen mit merge=union die Einträge zweier Läufe vollständig, auch bei
+    gleichem Befehl; mehrzeilige Einträge würden Zeile für Zeile verschmolzen."""
     pfad = pfad or PROTOKOLL
     commit, sauber = _commit()
-    zeilen = [f"## {datetime.now(timezone.utc):%Y-%m-%d %H:%M:%S} UTC", "",
-              f"- Commit: `{commit}`" + ("" if sauber else " (tradingbot/ oder bots/ mit Änderungen ohne Commit)"),
-              "- Quellen: " + ", ".join(f"{n} ({q})" for n, q in quellen),
-              f"- Cache-Fingerabdruck: `{cache}`" + (" (eingefroren, --cache-fest)" if fest else " (nicht eingefroren)"),
-              f"- Befehl: `{befehl}`",
-              "- Läufe: " + "; ".join(f"{n}: {', '.join(f.name for f in fs)}" for n, fs in jobs.items())]
-    if os.getenv("GITHUB_RUN_ID"):
-        zeilen.append(f"- GitHub-Lauf: {os.getenv('GITHUB_RUN_ID')}")
+    teile = [f"**{datetime.now(timezone.utc):%Y-%m-%d %H:%M:%S} UTC**",
+             *([f"GitHub-Lauf {os.getenv('GITHUB_RUN_ID')}"] if os.getenv("GITHUB_RUN_ID") else []),
+             f"Commit `{commit}`" + ("" if sauber else " (tradingbot/ oder bots/ mit Änderungen ohne Commit)"),
+             "Quellen " + ", ".join(f"{n} ({q})" for n, q in quellen),
+             f"Cache-Fingerabdruck `{cache}`" + (" (eingefroren, --cache-fest)" if fest else " (nicht eingefroren)"),
+             f"Befehl `{befehl}`",
+             "Läufe " + "; ".join(f"{n}: {', '.join(f.name for f in fs)}" for n, fs in jobs.items())]
     pfad.parent.mkdir(parents=True, exist_ok=True)
     neu = not pfad.exists()
     with pfad.open("a", encoding="utf-8") as f:
         if neu:
             f.write("# Profi-Bot: Prüfprotokoll\n\nJeder Lauf mit Kursen ab 2023 (`profi --pruefung`), automatisch "
                     "angehängt. Die Einmal-Prüfung E6 läuft genau einmal je Quelle.\n\n")
-        f.write("\n".join(zeilen) + "\n\n")
+        f.write("- " + " · ".join(teile) + "\n")
 
 
 # --- Rechnen: je Bot und Fenster ein frischer Start, eine Ergebnisdatei
@@ -334,13 +336,23 @@ def laden(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = (), 
           quellen: tuple = historie.SOURCES, fest: bool = False, nur_bot=None, nur_fenster=None) -> list[Path]:
     """--laden: die Kursdateien aller Jobs in den Cache data/historie holen, ohne zu rechnen (fehlende und solche, die
     älter als 7 Tage sind; mit --cache-fest nur prüfen, ob alle da sind). So wird der Cache vor dem ersten Lauf
-    gefüllt und danach eingefroren."""
+    gefüllt und danach eingefroren. Mit den Standardquellen muss Bitcoin von Bitstamp ab 2011 kommen, sonst bricht es
+    ab: Ein kurzer Ausfall von Bitstamp würde sonst still eine kürzere Geschichte von einer anderen Börse einfrieren."""
     a, vs = namen(amt, varianten)
     jobs = auswahl(plan(schritt, a, vs, eigenes), nur_bot, nur_fenster)
     exchanges, benutzt = {}, []
 
     def lade(coin: str, tf: str):
-        return historie.load_coin(coin, tf, exchanges, quellen, fest, benutzt), []
+        n = len(benutzt)
+        df = historie.load_coin(coin, tf, exchanges, quellen, fest, benutzt)
+        if coin == "BTC" and "bitstamp" in dict(quellen):      # Haupt-Caches: Bitcoin von Bitstamp ab 2011
+            von = {p.name: f"{df.index[0]:%Y-%m-%d}" for p in benutzt[n:]} if df is not None and len(df) else {}
+            if von.get(f"bitstamp_BTC_{tf}.csv", "9999") > BTC_AB:
+                raise SystemExit(f"BTC {tf}: erwartet bitstamp_BTC_{tf}.csv ab 2011, geladen: "
+                                 + (", ".join(f"{d} ab {t}" for d, t in von.items()) or "nichts")
+                                 + ". Wohl war Bitstamp kurz nicht erreichbar und eine andere Börse sprang ein: so "
+                                 "nicht einfrieren, sondern später nochmals laden.")
+        return df, []
     for n in jobs:
         if (b := bot(n, amt, varianten)).cfg is not None:
             _kurse(b.cfg, lade)
@@ -383,8 +395,10 @@ def rechnen(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = ()
             quellen: tuple = historie.SOURCES, fest: bool = False, gebuehren: str = "normiert",
             pruefung: bool = False, nur_bot=None, nur_fenster=None, befehl: str = "") -> list[Path]:
     """Rechnet die Jobs des Schritts (je Bot und Fenster ein frischer Start mit dem Startkapital), schreibt je Lauf
-    eine Ergebnisdatei und baut danach PROFI_ERGEBNISSE.md neu. Der Chef braucht die Läufe der drei Stil-Bots im
-    selben Fenster: aus diesem Lauf oder aus ihren Ergebnisdateien (gleicher Schritt, Cache und Gebühren)."""
+    eine Ergebnisdatei und baut danach PROFI_ERGEBNISSE.md neu. Hat ein Bot im selben Schritt schon eine andere Rolle
+    (der Sieger von E1a ist in E1b Amtsinhaber), behält die Datei unter «rollen» alle. Der Chef braucht die Läufe der
+    drei Stil-Bots im selben Fenster: aus diesem Lauf oder aus ihren Ergebnisdateien (gleicher Schritt, Cache und
+    Gebühren); sein Ergebnis nennt deren Commit und Kursdateien."""
     a, vs = namen(amt, varianten)
     jobs = auswahl(plan(schritt, a, vs, eigenes), nur_bot, nur_fenster)
     alle_fenster = [f for fs in jobs.values() for f in fs]
@@ -413,7 +427,6 @@ def rechnen(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = ()
         btc, kursdateien[HALTEN] = laden("BTC", "1d")
         if btc is None or not len(btc):
             raise SystemExit("Keine BTC-Tageskerzen für Bitcoin halten und den Chef.")
-        kursdateien[CHEF] = kursdateien[HALTEN]
     cache, (commit, sauber) = cache_id(quellen), _commit()
     kopf = {"schritt": schritt, "gebuehren": gebuehren, "quellen": [list(q) for q in quellen], "cache": cache,
             "cache_fest": fest, "commit": commit, "sauber": sauber, "befehl": befehl, "pruefung": pruefung,
@@ -425,24 +438,25 @@ def rechnen(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = ()
         b = bots[n]
         for f in fs:
             log.warning("Rechne %s, Fenster %s ...", n, f.name)
-            notaus, config = [], b.config
+            notaus, config, dateien, herkunft = [], b.config, kursdateien.get(n, []), {}
             if n == HALTEN:
                 prices = btc["close"] if f.bis is None else btc["close"][btc.index < f.bis]
                 run = historie.hold_run(prices, ref.cfg.starting_capital, fee, ref.cfg.slippage, f.von)
                 config = {"startkapital": ref.cfg.starting_capital, "gebuehr": fee, "slippage": ref.cfg.slippage}
             elif n == CHEF:
-                runs = {}
+                runs, dateien = {}, list(kursdateien[HALTEN])
                 for s in STYLES:
-                    if (s, f.name) in stil:
-                        runs[s] = stil[s, f.name]
-                        continue
-                    pfad = datei(schritt, cache, s, f.name, gebuehren)
-                    if not pfad.exists():
-                        raise SystemExit(f"Chef: Lauf von {s} im Fenster {f.name} fehlt ({pfad}). Zuerst die drei "
-                                         f"Stil-Bots rechnen ({', '.join(STYLES)}).")
-                    e = json.loads(pfad.read_text(encoding="utf-8"))
+                    if (s, f.name) not in stil:
+                        pfad = datei(schritt, cache, s, f.name, gebuehren)
+                        if not pfad.exists():
+                            raise SystemExit(f"Chef: Lauf von {s} im Fenster {f.name} fehlt ({pfad}). Zuerst die drei "
+                                             f"Stil-Bots rechnen ({', '.join(STYLES)}).")
+                        stil[s, f.name] = json.loads(pfad.read_text(encoding="utf-8"))
+                    e = stil[s, f.name]
                     runs[s] = historie.BotRun(Config(starting_capital=e["startkapital"]), _kurve_aus(e),
                                               pd.DataFrame(), 0, 0)
+                    herkunft[s] = {k: e[k] for k in ("commit", "sauber", "erstellt", "kurs_fingerabdruck")}
+                    dateien += [historie.CACHE / d for d in e["kursdateien"]]
                 capital = next(iter(runs.values())).cfg.starting_capital
                 historie.CACHE.mkdir(parents=True, exist_ok=True)
                 curve = historie.simulate_chef(runs, btc, historie.CACHE / "chef_sim.json", capital)
@@ -454,19 +468,23 @@ def rechnen(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = ()
                     notaus = _notaus(run, b.cfg, frames[n])
             kz = historie.segment(run, f.von, f.bis or FERN)
             eq = run.equity
-            e = kopf | {"name": n, "rolle": b.rolle, "amtsinhaber": a if b.rolle in ROLLEN[:2] else None,
-                        "nr": b.nr, "fenster": f._asdict(),
+            pfad = datei(schritt, cache, n, f.name, gebuehren)
+            rolle = {"rolle": b.rolle, "amtsinhaber": a if b.rolle in ROLLEN[:2] else None, "nr": b.nr}
+            frueher = json.loads(pfad.read_text(encoding="utf-8")).get("rollen", []) if pfad.exists() else []
+            e = kopf | {"name": n, **rolle, "rollen": [r for r in frueher if r != rolle] + [rolle],
+                        "fenster": f._asdict(),
                         "erster_tag": f"{eq.index[0]:%Y-%m-%d}" if len(eq) else None,
                         "letzter_tag": f"{eq.index[-1]:%Y-%m-%d}" if len(eq) else None,
                         "startkapital": run.cfg.starting_capital, "dateien": list(b.dateien),
                         "ueberlagerung": b.ueberlagerung, "config": config,
-                        "kursdateien": sorted({p.name for p in kursdateien[n]}),
-                        "kurs_fingerabdruck": historie.cache_fingerprint(kursdateien[n]),
+                        "kursdateien": sorted({p.name for p in dateien}),
+                        "kurs_fingerabdruck": historie.cache_fingerprint(dateien),
                         "kennzahlen": {k: None if isinstance(v, float) and np.isnan(v) else v for k, v in kz.items()},
                         "notaus": notaus, "kurve": {f"{t:%Y-%m-%d}": round(float(v), 4) for t, v in eq.items()}}
+            if herkunft:            # Chef: aus welchen Läufen der Stil-Bots (Commit, Kurse) er gerechnet ist
+                e |= {"sauber": sauber and all(h["sauber"] for h in herkunft.values()), "stil_laeufe": herkunft}
             if n in STYLES:         # die Kurve wie in der Ergebnisdatei: so rechnet der Chef in jedem Fall gleich
-                stil[n, f.name] = historie.BotRun(run.cfg, _kurve_aus(e), pd.DataFrame(), 0, 0)
-            pfad = datei(schritt, cache, n, f.name, gebuehren)
+                stil[n, f.name] = e
             pfad.parent.mkdir(parents=True, exist_ok=True)
             pfad.write_text(_json(e), encoding="utf-8")
             geschrieben.append(pfad)
@@ -779,7 +797,7 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
     for e in erg:
         c = caches.setdefault(e["cache"], {"quellen": e["quellen"], "boersen": set(), "fest": True, "laeufe": 0,
                                            "commits": set(), "sauber": True})
-        c["commits"].add(e["commit"][:12])
+        c["commits"] |= {x["commit"][:12] for x in (e, *e.get("stil_laeufe", {}).values())}
         c["sauber"] &= bool(e["sauber"])
         c["boersen"] |= {d.split("_")[0] for d in e["kursdateien"]}
         c["fest"] &= bool(e["cache_fest"])
@@ -796,6 +814,13 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
 
     def ks(schritt: str) -> dict[str, dict]:
         return {c: k for c in haupt if (k := kz(schritt, c))}
+
+    def luecken(schritt: str) -> dict[str, tuple[int, int]]:
+        """Haupt-Caches, denen Läufe (Bot und Fenster) des Schritts fehlen, die ein anderer Haupt-Cache hat: (fehlend,
+        alle)."""
+        laeufe = {c: {(n, f) for n, fs in kz(schritt, c).items() for f in fs} for c in haupt}
+        alle = set().union(*laeufe.values())
+        return {c: (len(alle - x), len(alle)) for c, x in laeufe.items() if alle - x}
     memo: dict = {}
 
     def p(schritt: str, fenster: str = HAUPT) -> Callable:
@@ -807,9 +832,10 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
         return wahrscheinlich
 
     def bots(schritt: str, rolle: str, amt: str | None = None) -> list[str]:
-        es = {e["name"]: e for e in erg if e["schritt"] == schritt and e["rolle"] == rolle
-              and (amt is None or e["amtsinhaber"] == amt)}
-        return [n for n, _ in sorted(es.items(), key=lambda x: (x[1]["nr"], x[0]))]
+        """Bots mit dieser Rolle in einem der Läufe des Schritts (rollen), nach Platz in --varianten."""
+        nr = {e["name"]: r["nr"] for e in erg if e["schritt"] == schritt for r in e["rollen"]
+              if r["rolle"] == rolle and (amt is None or r["amtsinhaber"] == amt)}
+        return sorted(nr, key=lambda n: (nr[n], n))
     kurz = lambda c: f"Cache {c[:12]}"
     out = ["# Profi-Bot: Ergebnisse der Auswertung", "",
            f"Aus {len(erg)} Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes "
@@ -829,21 +855,28 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
     if len(haupt) == 1:
         out += ["Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (Schwäche).", ""]
 
-    # Leiter zuerst entscheiden: E1 braucht für das Tor L_dev aus E0, E6 die Flagge aus E2
-    leiter, flagge = {}, Ok(False, "E2 nicht gerechnet")
+    # Leiter zuerst entscheiden: E1 braucht für das Tor L_dev aus E0, E6 die Flagge aus E2. Jede Stufe geht vom Sieger
+    # der vorigen aus (E2 vom Sieger von E1 usw.; in E1 führt der Sieger von E1a nach E1b). Gruppen anderer
+    # Amtsinhaber, z.B. von einer Rechnung mit einem früheren Sieger, sind überholt und zählen nicht.
+    leiter, flagge, vorher = {}, Ok(False, "E2 nicht gerechnet"), None
     for s in LEITER:
         gruppen = {a: bots(s, "herausforderer", a) for a in bots(s, "amtsinhaber")}
         if not gruppen:
             continue
         je = {a: sieger(ks(s), a, hers, p(s)) for a, hers in gruppen.items()}
-        wurzel = next((a for a in gruppen if all(a not in h for h in gruppen.values())), next(iter(gruppen)))
-        weg = [wurzel]
-        while je[weg[-1]] in gruppen and je[weg[-1]] not in weg:
+        wurzel = vorher[1] if vorher else next((a for a in gruppen if all(a not in h for h in gruppen.values())),
+                                               next(iter(gruppen)))
+        weg = [wurzel] if wurzel in gruppen else []
+        while weg and je[weg[-1]] in gruppen and je[weg[-1]] not in weg:
             weg.append(je[weg[-1]])
-        leiter[s] = (gruppen, je, je[weg[-1]], wurzel)
+        leiter[s] = (gruppen, je, je[weg[-1]] if weg else None, wurzel, weg, vorher and vorher[0])
         if s == "E2":
-            flagge = e2_flagge(ks(s), wurzel, je[wurzel])
+            flagge = e2_flagge(ks(s), wurzel, je[wurzel]) if weg else \
+                Ok(False, f"E2 nicht mit dem Sieger von {vorher[0]} gerechnet")
+        if weg:
+            vorher = (s, je[weg[-1]])
 
+    e5_ok: dict[str, bool] = {}                 # E5 bestanden je Kandidat: ohne das kein E6 für den Kern
     for s, titel in SCHRITTE.items():
         eintraege = [e for e in erg if e["schritt"] == s]
         if not eintraege:
@@ -853,7 +886,14 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
             for g in sorted({e["gebuehren"] for e in eintraege if e["cache"] == c}):
                 teil = [e for e in eintraege if e["cache"] == c and e["gebuehren"] == g]
                 out += [f"### Kennzahlen: {kurz(c)}, Gebühren {g}", "", tabelle_kennzahlen(teil), ""]
-        k = ks(s)
+        k, luecke = ks(s), luecken(s)
+        vorl = " (vorläufig)" if luecke else ""
+        if luecke:
+            teile = "; ".join(f"{kurz(c)} hat noch keine Läufe von {s}, entschieden ist ohne diesen Cache" if c not in k
+                              else f"in {kurz(c)} fehlen {n} von {alle} Läufen von {s} (fehlende Zahlen gelten als "
+                              "nicht erfüllt)" for c, (n, alle) in luecke.items())
+            out += [f"**Vorläufig:** {teile[0].upper()}{teile[1:]}. Der nächste Schritt startet erst, wenn {s} in jedem "
+                    "Haupt-Cache gerechnet ist; lässt Hiran einen Haupt-Cache weg, ist das eine Schwäche.", ""]
         if s == "E0":
             werte = {kurz(c): l_dev(x) for c, x in k.items()}
             out += ["### L_dev (höchster Calmar 2012-2022 der Vergleichs-Bots)", "",
@@ -873,7 +913,7 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
                         out += [f"### Alte (fest 0,26 %) gegen normierte Kosten: {kurz(c)}, {fenster}", "",
                                 _tabelle(zeilen), ""]
         elif s in leiter:
-            gruppen, je, final, wurzel = leiter[s]
+            gruppen, je, final, wurzel, weg, vor = leiter[s]
             for a, hers in gruppen.items():
                 zeilen = {}
                 gut = [h for h in hers if ersetzt(k, a, h, p(s))]     # bestehen mehrere: auch gegeneinander
@@ -882,19 +922,24 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
                         g = regel_g(x, gegen, her, p(s)(c, her, gegen))
                         zeilen[f"{_label(her)}{'' if gegen == a else ' gegen ' + _label(gegen)} · {kurz(c)}"] = {
                             TITEL.get(n, n): _zelle(v) for n, v in g.items()}
-                out += [f"### Regel G gegen den Amtsinhaber {_label(a)}", "",
+                out += [f"### Regel G gegen den Amtsinhaber {_label(a)}" + ("" if a in weg else " (überholt)"), "",
                         _tabelle(zeilen) if zeilen else "Keine Herausforderer.", "",
                         f"**Sieger: {_label(je[a])}**" + (" (der Amtsinhaber bleibt)" if je[a] == a else ""), ""]
-            out += [f"**Sieger von {s}: {_label(final)}**", ""]
+                if a not in weg:
+                    out += [f"Zählt nicht: {_label(a)} ist nicht " + (f"der Sieger von {vor} ({_label(wurzel)})." if vor
+                            else f"auf dem Weg ab {_label(wurzel)}."), ""]
+            out += [f"**Sieger von {s}: {_label(final)}**{vorl}" if final else
+                    f"**Sieger von {s}: –** ({s} ist noch nicht mit dem Sieger von {vor} gerechnet: "
+                    f"{_label(wurzel)} als Amtsinhaber)", ""]
             if s == "E1":
                 k0 = ks("E0")
                 t = {kurz(c): tor(x, final, l_dev(k0.get(c, {}))[0]) for c, x in k.items()}
                 bestanden = bool(t) and all(v["besteht"] for v in t.values())
                 out += ["### Tor nach E1", "",
                         _tabelle({c: {n: _zelle(v) for n, v in x.items()} for c, x in t.items()}) if t else "–",
-                        "", "**Tor bestanden:** weiter mit E2." if bestanden else
-                        "**Tor nicht bestanden:** Die Leiter wird abgebrochen; E6 prüft nur P−1 und K1 als Kandidaten.",
-                        ""]
+                        "", f"**Tor bestanden{vorl}:** weiter mit E2." if bestanden else
+                        f"**Tor nicht bestanden{vorl}:** Die Leiter wird abgebrochen; E6 prüft nur P−1 und K1 als "
+                        "Kandidaten.", ""]
             if s == "E2":
                 notaus = {f"{kurz(e['cache'])} · {x['tag']} {x['coin']}":
                           {"Kurs": x["kurs"], "Rendite 90 Tage danach %": x["rendite_90_tage_pct"],
@@ -903,21 +948,23 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
                           and e["gebuehren"] == "normiert" and e["cache"] in haupt for x in e["notaus"]}
                 out += ["### Not-Aus des Amtsinhabers 2012-2022", "",
                         _tabelle(notaus) if notaus else "Kein Not-Aus.", "",
-                        f"**E2-Flagge: {'gesetzt' if flagge else 'nicht gesetzt'}** ({flagge.text}).", ""]
+                        f"**E2-Flagge: {'gesetzt' if flagge else 'nicht gesetzt'}{vorl}** ({flagge.text}).", ""]
         elif s == "E5":
+            e1 = leiter["E1"][2] if "E1" in leiter else None
             for kand in bots(s, "amtsinhaber"):
                 hers = bots(s, "herausforderer", kand)
                 ueber = {n: next(e["ueberlagerung"] for e in eintraege if e["name"] == n) for n in hers}
                 stress = [n for n in hers if ist_kostenstress(ueber[n])]
                 dritte = [kz(s, c) for c in zusatz if kz(s, c)]
                 r = {kurz(c): e5(x, kand, [n for n in hers if n not in stress], stress, dritte) for c, x in k.items()}
-                bestanden = bool(r) and all(v["bestanden"] for v in r.values())
+                e5_ok[kand] = bestanden = bool(r) and all(v["bestanden"] for v in r.values())
                 out += [f"### E5-Kriterien für {_label(kand)}", "",
                         _tabelle({TITEL.get(n, n): {c: _zelle(v[n]) for c, v in r.items()} for n in next(iter(r.values()))})
                         if r else "Keine Läufe auf einem Haupt-Cache.", "",
-                        f"**E5 {'bestanden' if bestanden else 'nicht bestanden'}**" +
-                        ("" if bestanden else ": zurück zum E1-Sieger und nur diesen prüfen, keine neuen Varianten."),
-                        ""]
+                        f"**E5 {'bestanden' if bestanden else 'nicht bestanden'}{vorl}**" +
+                        ("" if bestanden else ": Der Kandidat ist der E1-Sieger, darum kein E6 für den Kern, sondern "
+                         "ein No-Go mit Begründung." if kand == e1 else
+                         ": zurück zum E1-Sieger und nur diesen prüfen, keine neuen Varianten."), ""]
         elif s == "E6":
             for kand in bots(s, "amtsinhaber"):
                 ohne = bots(s, "herausforderer", kand)
@@ -927,9 +974,12 @@ def bericht(erg: list[dict], plan: str | None = None) -> str:
                 vorschlag = p1 and all(v["P−1 erfüllt die Regeln 1 und 3-5"] for v in r.values())
                 entscheid = ("Go" if regeln and not p1 else
                              "No-Go für den Kandidaten, Vorschlag P−1" if vorschlag else "No-Go")
+                if kand not in (P1, K1) and not e5_ok.get(kand):      # der Kern kommt nur nach bestandenem E5 in E6
+                    entscheid = "No-Go (" + ("E5 nicht bestanden" if kand in e5_ok else "ohne E5") + \
+                                ": kein E6 für den Kern)"
                 out += [f"### Go-Regeln für {_label(kand)}", "",
                         _tabelle({TITEL.get(n, n): {c: _zelle(v[n]) for c, v in r.items()} for n in next(iter(r.values()))})
-                        if r else "Keine Läufe auf einem Haupt-Cache.", "", f"**Entscheid: {entscheid}**", ""]
+                        if r else "Keine Läufe auf einem Haupt-Cache.", "", f"**Entscheid: {entscheid}**{vorl}", ""]
                 info = {}
                 for c, x in k.items():
                     info[kurz(c)] = {"Bootstrap P(besser als halten)": _z(p(s, PRUEFUNG)(c, kand, HALTEN))}
