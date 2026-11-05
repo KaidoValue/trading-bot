@@ -202,6 +202,7 @@ def test_sperre_verweigert_kurse_ab_2023_ohne_pruefung(ordner, monkeypatch, fens
 
 
 def test_pruefung_haengt_jeden_lauf_ans_protokoll(ordner, monkeypatch):
+    monkeypatch.delenv("GITHUB_RUN_ID", raising=False)                       # erster Lauf wie am PC, auch auf GitHub
     args = ["--schritt", "E1", "--config", "bots/profi/kern.yaml", "--start", "2023-01-01", "--cache-fest",
             "--nur-bot", "kern", "--pruefung"]
     protokoll = ordner / "lernen" / "PROFI_PRUEFPROTOKOLL.md"
