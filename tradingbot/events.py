@@ -22,7 +22,7 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
-from .news import Headline, THEMES, fetch_headlines
+from .news import Headline, THEMES, fetch_headlines, matches
 
 log = logging.getLogger(__name__)
 
@@ -74,13 +74,17 @@ def detect_alerts(headlines: list[Headline], official_sources: set[str], now: da
         if now - h.published > timedelta(minutes=window_minutes) or h.published > now + timedelta(minutes=5):
             continue
         text = f" {h.title.lower()} "
-        who = next((name for name, words in KEY_PEOPLE.items() if any(w in text for w in words)), None)
+        who = next((name for name, words in KEY_PEOPLE.items() if matches(text, words)), None)
         official = h.source in official_sources
         if not (official or who):
             continue
-        if not any(w in text for w in MARKET_WORDS):
+        if not matches(text, MARKET_WORDS):
             continue
-        impacts = [imp for imp, words in themes.values() if any(w in text for w in words)]
+        impacts = [imp for imp, words in themes.values() if matches(text, words)]
+        # A person's name alone in commentary is not an actionable announcement.
+        if not official and not matches(text, ["announces", "announced", "signs", "signed", "orders",
+                                               "raises", "cuts", "bans", "approves", "imposes", "warns"]):
+            continue
         impact = sum(impacts) / len(impacts) if impacts else 0.0
         alerts.append(Alert(who or h.source, h.title, h.source, h.published, impact))
     return alerts

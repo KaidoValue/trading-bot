@@ -77,6 +77,7 @@ class Config:
     strategy_params: dict = field(default_factory=dict)
     poll_seconds: int = 60
     reevaluate: bool = False            # Signal bei jedem Lauf neu prüfen, nicht nur bei neuer Kerze
+    research_enabled: bool = False      # forward-only probability learning and paper comparison
     use_news: bool = True               # Fear & Greed Index und bestätigte News berücksichtigen
     news_refresh_minutes: int = 15
     news_min_sources: int = 2           # so viele Portale müssen ein Thema melden

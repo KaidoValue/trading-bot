@@ -35,6 +35,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Bots kurz nach jedem Kerzenschluss laufen lassen (9 Durchläufe, ca. 4½ Stunden)
+        env:
+          OPENAI_API_KEY: ${{ secrets.NEWS_OPENAI_API_KEY }}
+          NEWS_LLM_ENABLED: ${{ vars.NEWS_LLM_ENABLED }}
+          NEWS_LLM_MODEL: ${{ vars.NEWS_LLM_MODEL }}
+          NEWS_LLM_MAX_CALLS_PER_DAY: ${{ vars.NEWS_LLM_MAX_CALLS_PER_DAY || '1' }}
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"

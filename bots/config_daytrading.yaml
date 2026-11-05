@@ -3,6 +3,7 @@
 
 # Betriebsart: paper (Demo, Standard) oder live (echtes Geld)
 mode: paper
+research_enabled: true
 title: "2️⃣ KI-Bot (lernend, kurz bis lang)"
 description: "Lernende KI mit Gedächtnis: merkt sich für jede Marktphase, welche Strategie funktioniert, mit zeitlich abgewerteter Erfahrung. Nutzt zusätzlich selbst erfundene Strategien aus dem Strategie-Labor. Handelt auf drei Horizonten (1h Daytrading, 4h, Tageskerzen) mit je eigenem Gedächtnis, nur in Trendrichtung. Neue Lernlogik: noch keine validierte Renditeaussage. Laborstrategien erst nach separater Paper-Probe."
 
@@ -65,6 +66,9 @@ horizons:
       pretrain: false
       memory_half_life_days: 90
       memory_file: daten/state/ki_gedaechtnis_lang_v2.json
+      # Tagesstrategien einzeln nach Kosten bewerten, einschliesslich vier Buchregeln.
+      observe_members: [regime, buch_turtle, buch_triple_screen, buch_golden_cross, buch_livermore,
+                        trend_recovery, time_series_momentum]
     share: 0.5
     stop_loss_atr: 4.0
     take_profit_atr: 10.0

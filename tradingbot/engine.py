@@ -52,6 +52,8 @@ class Trader:
     open_trades: dict[str, OpenTrade] = field(default_factory=dict)
     closed: list[dict] = field(default_factory=list)
     note: str = ""                             # letzte Entscheidung in Worten (für Status-Anzeige)
+    decisions: dict = field(default_factory=dict)  # last evaluated decision per horizon and symbol
+    research: dict = field(default_factory=dict)   # model readiness and forward evidence per horizon
     horizons: dict = field(default_factory=dict)   # Name -> config.Horizon (kurz/mittel/lang)
     adaptive_shares: bool = False
     priority: bool = False      # längerer Horizont darf eine Position eines kürzeren übernehmen bzw. drehen
@@ -187,7 +189,8 @@ class Trader:
         if h and h.min_edge and atr > 0:
             first = (h.partial_atr or h.take_profit_atr or self.risk.cfg.take_profit_atr) * atr / price
             if first < h.min_edge * self.costs(symbol):
-                self.note = f"{symbol}: kein Einstieg (erwartete Bewegung zu klein für die Gebühren)"
+                self.note = (f"{symbol}: kein Einstieg (Kursziel {first:.2%}, erforderlich "
+                             f"{h.min_edge * self.costs(symbol):.2%} inkl. Gebührenpuffer)")
                 return
         if h and not stretch_ok(signal, price, anchor, atr, h.max_stretch_atr):
             self.note = f"{symbol}: warte auf Rücksetzer (Kurs zu weit von der 20er-Linie entfernt)"
@@ -203,8 +206,7 @@ class Trader:
             log.info("%s %s", when, self.note)
             return
         if self.context and not self.context.allows(signal):
-            s = self.context.summary()
-            self.note = f"{symbol}: Einstieg pausiert wegen Nachrichtenlage ({s['event'] if s['event'] != '-' else 'bestätigte Themen: ' + s['news_themes'] + ', Wert ' + str(s['news_score'])})"
+            self.note = f"{symbol}: Einstieg pausiert wegen Nachrichtenlage ({self.context.block_reason(signal)})"
             log.info("%s %s", when, self.note)
             return
         factor = size_factor * phase_factor * (self.context.size_factor() if self.context else 1.0)
@@ -255,6 +257,8 @@ class Trader:
                          + (f" ({phase_why})" if phase_why else ""))
             log.info("%s %s %s %.6f @ %.2f (Stop %.2f, Ziel %.2f)", when, "LONG" if signal > 0 else "SHORT",
                      symbol, fill.qty, fill.price, plan.stop, plan.target)
+        else:
+            self.note = f"{symbol}: Order vom Broker nicht ausgeführt (Guthaben oder Mindestmenge prüfen)"
 
     def check_phase(self, symbol: str, phase: str, price: float, when) -> None:
         """Neue Marktphase des Coins merken. Mit phase_exit wird eine Position geschlossen, sobald die Phase gegen

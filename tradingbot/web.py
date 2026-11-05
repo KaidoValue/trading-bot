@@ -79,6 +79,9 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
         stufe, _, taker, _ = b.trader.broker.tier()                 # Gebührenstufe nach dem 30-Tage-Umsatz
         fees = f"{_chf(b.trader.gebuehren_bisher())} CHF · " + (f"Stufe {stufe}: {taker * 100:.2f} %" if stufe
                                                                  else f"fest {taker * 100:.2f} %")
+        research = ''.join(f"<div class='small'><b>KI-Lernen {escape(h)}</b>: {escape(r['status'])}<br>"
+                           f"{r['completed']} ausgewertete Fälle · {r['pending']} offen · {r['invalid']} unbrauchbar</div>"
+                           for h, r in b.trader.research.items())
         cards.append(f"""<div class="card" style="--c:{COLORS[i % 4]}">
   <div class="card-title">{escape(titles[b.cfg.name])}</div>{halt}{warn}
   <div class="big">{_chf(eq)} <small>CHF</small></div>
@@ -90,6 +93,7 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
   <div class="kv"><span>Gebühren bisher · Stufe</span><b>{fees}</b></div>
   <div class="kv"><span>Horizonte</span><b>{escape(b.cfg.horizon_text())}</b></div>
   <div class="kv"><span>Short / Hebel</span><b>{'Short erlaubt' if b.cfg.allow_short else 'nur long'} · {lev}</b></div>
+  {research}
 </div>""")
     if chef:
         alloc = "".join(f'<div class="seg" style="flex:{w * 100:.1f};background:{COLORS[j]}" title="{s}"></div>'
@@ -159,8 +163,33 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
     first_tv = tv_symbol(next(iter(tickers)), exchange) if tickers else "KRAKEN:BTCCHF"
     stand = _local(now)
 
+    decisions = []
+    for b in bots:
+        items = []
+        for d in b.trader.decisions.values():
+            learning = d.get("learning") or {}
+            detail = learning.get("reason", "")
+            if learning:
+                detail += f" · Kaufwert {learning['score']:.2f} / Schwelle {learning['threshold']:.2f}"
+            research = learning.get("research") or {}
+            if research:
+                detail += " · " + research["status"]
+                p = research.get("active_probability")
+                p = research.get("probability") if p is None else p
+                if p is not None:
+                    detail += f" · Modellschätzung für positiven Netto-Testtrade: {p:.0%} (keine Zusage)"
+            items.append(f"<tr><td>{escape(d['symbol'])}</td><td>{escape(d['horizon'] or d['timeframe'])}</td>"
+                         f"<td>{escape({1: 'Kaufen/halten', -1: 'Raus/Cash', 0: 'Neutral'}.get(d.get('signal'), 'Keine Daten'))}</td>"
+                         f"<td class='reason'>{escape(d['reason'])}<div class='small muted'>{escape(detail)}</div></td>"
+                         f"<td>{_local(d['checked'])}</td></tr>")
+        body = ''.join(items) or '<tr><td colspan="5">Entscheidungen werden beim nächsten Signallauf erfasst.</td></tr>'
+        decisions.append(f"<details><summary>{escape(short[b.cfg.name])} – letzte Prüfung je Coin und Horizont</summary>"
+                         f"<div class='scroll'><table><thead><tr><th>Coin</th><th>Horizont</th><th>Signal</th>"
+                         f"<th>Begründung</th><th>Geprüft (CH)</th></tr></thead><tbody>{body}</tbody></table></div></details>")
+
     return TEMPLATE.format(stand=stand, cards="\n".join(cards), positions=positions, trades=trades,
-                           market="".join(market), curve=json.dumps(curve), first_tv=first_tv)
+                           market="".join(market), curve=json.dumps(curve), first_tv=first_tv,
+                           decisions="".join(decisions))
 
 
 TEMPLATE = """<!doctype html>
@@ -191,6 +220,7 @@ main{{padding:16px 20px;max-width:1500px;margin:0 auto}}
 @media(max-width:900px){{.two{{grid-template-columns:1fr}}}}
 @media(max-width:600px){{main,header,footer{{padding-left:16px;padding-right:16px}}.grid{{grid-template-columns:1fr}}#tv{{height:360px}}}}
 .scroll{{overflow-x:auto}}table{{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}}
+summary{{cursor:pointer;padding:12px 14px}}td.reason{{white-space:normal;min-width:260px;max-width:600px}}
 th,td{{padding:8px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid #1f242a}}th{{color:var(--muted);font-weight:500;font-size:12px}}
 .r{{text-align:right}}tr.sym{{cursor:pointer}}tr.sym:hover,tr.sym.active{{background:#1e2329}}
 .tag{{font-size:11px;font-weight:700;padding:2px 6px;border-radius:3px}}.tag.long{{background:#0e3a2a;color:var(--up)}}.tag.short{{background:#4a1820;color:var(--down)}}
@@ -202,6 +232,10 @@ footer{{color:var(--muted);font-size:12px;padding:16px 20px 28px;max-width:1500p
 <div class="stand">Stand {stand} Schweizer Zeit · aktualisiert sich alle 30 Min.</div></header>
 <main>
 <div class="grid">{cards}</div>
+
+<div class="panel"><h2>Warum handelt der Bot – oder wartet?</h2>
+<p class="small muted" style="padding:0 14px">Gespeicherte Entscheidungen, keine Live-Signale. Der Prüfzeitpunkt gilt je Horizont. Risikosperren und fehlende Marktdaten können weitere Einstiege verhindern.</p>
+{decisions}</div>
 
 <div class="panel"><h2>Kapitalverlauf</h2><div class="chartbox"><canvas id="curve"></canvas></div></div>
 

@@ -256,6 +256,20 @@ def bot_section(b: Bot, prices: dict[str, float], frames: dict) -> list[str]:
                     "Details in [lernen/LABOR.md](lernen/LABOR.md)"]
     if b.trader.note:
         out += ["", "**Letzte Entscheidung:** " + b.trader.note.replace(" | ", " · ")]
+    if b.trader.decisions:
+        out += ["", "**Gespeicherte Entscheidungen je Coin und Horizont**", "",
+                "| Coin | Horizont | Geprüft (CH) | Begründung |", "|---|---|---|---|"]
+        for d in b.trader.decisions.values():
+            learning = d.get("learning") or {}
+            reason = d["reason"] + (" · KI: " + learning["reason"] if learning else "")
+            reason = reason.replace("|", "/").replace("\n", " ")
+            out.append(f"| {d['symbol']} | {d['horizon'] or d['timeframe']} | {local(d['checked'])} | {reason} |")
+    if b.trader.research:
+        out += ["", "**KI-Forschung: getrennte Vorwärtstests mit Kosten**", "",
+                "Die Werte betreffen isolierte Testpositionen, keine erzielte Portfoliorendite.", "",
+                "| Horizont | Status | Ausgewertet | Offen | Datenlücken / ungültig |", "|---|---|---|---|---|"]
+        for h, r in b.trader.research.items():
+            out.append(f"| {h} | {r['status']} | {r['completed']} | {r['pending']} | {r['invalid']} |")
     if b.trader.closed:
         out += ["", "**Letzte abgeschlossene Trades**", "",
                 "| Coin | Gekauft | Verkauft | Einstieg | Ausstieg | Ergebnis | Grund |", "|---|---|---|---|---|---|---|"]

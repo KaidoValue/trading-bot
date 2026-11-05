@@ -66,6 +66,23 @@ def test_member_returns_are_production_replay_returns():
     pd.testing.assert_series_equal(strategy.member_pnl(df)["trend"], expected, check_names=False)
 
 
+def test_observed_strategies_learn_without_changing_votes(tmp_path):
+    df = data.synthetic(bars=500, seed=7)
+    params = dict(members=["trend"], **evaluation_params(config()))
+    original = build("adaptive_memory", **params)
+    path = tmp_path / "memory.json"
+    trial = build("adaptive_memory", observe_members=["trend_recovery", "time_series_momentum"],
+                  memory_file=path, **params)
+    comparison = build("adaptive_memory", memory_file=tmp_path / "baseline.json", **params)
+    pd.testing.assert_series_equal(comparison.signals(df), trial.signals(df))
+    assert list(original.weights(df)) == list(trial.weights(df)) == ["trend"]
+    trial.learn("BTC", df)
+    comparison.learn("BTC", df)
+    assert any("trend_recovery" in bucket and "time_series_momentum" in bucket
+               for bucket in Memory(path).stats.values())
+    pd.testing.assert_series_equal(comparison.signals(df), trial.signals(df))
+
+
 def test_future_prices_do_not_change_replay_or_adaptive_signals():
     df = data.synthetic(bars=700, seed=3)
     strategy = build("adaptive_memory", **evaluation_params(config()))

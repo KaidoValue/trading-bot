@@ -51,6 +51,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
     from .evaluation import evaluation_params
     strategies = {h.name: build(h.strategy, allow_short=cfg.allow_short,
                                 **{**h.strategy_params, **evaluation_params(cfg, h)}) for h in horizons}
+    from .research import Research
+    research = {h.name: Research(cfg, h) for h in horizons
+                if cfg.research_enabled and cfg.mode == "paper" and hasattr(strategies[h.name], "member_pnl")}
     for h in horizons:
         _pretrain(strategies[h.name], cfg, h.timeframe)
     trader = make_trader(cfg, exchange)
@@ -132,11 +135,16 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                 # zuerst alle Kerzen holen: die Korrelations-Sperre braucht auch die Coins, die später drankommen
                 frames = _frames(exchange, [s for s in cfg.symbols if s in prices or s in trader.open_trades],
                                  h.timeframe, cfg.fehler_path, bars=600 if hasattr(strategy, "member_pnl") else 300)
+                study = research.get(h.name)
+                if study:
+                    study.advance(frames, now)
+                    trader.research[h.name] = study.summary()
                 for s in prices:
+                    key = f"{h.name}:{s}" if h.name else s
                     if s not in frames:
                         notes.append(f"{prefix}{s}: keine Kerzen, Signal ausgesetzt")
+                        _decision(trader, key, s, h, now, None, None, "Keine Kerzen, Signal ausgesetzt")
                         continue
-                    key = f"{h.name}:{s}" if h.name else s
                     df = frames[s]
                     if last_bar.get(key) == df.index[-1] and not cfg.reevaluate:
                         continue  # keine neue abgeschlossene Kerze
@@ -147,14 +155,34 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                         except Exception as e:
                             waechter.melden(cfg.fehler_path, e, f"Lern-Tageskerzen {s}: ")
                             notes.append(f"{prefix}{s}: Lern-Tageskerzen fehlen, Signal ausgesetzt")
+                            _decision(trader, key, s, h, now, df.index[-1], None, "Lern-Tageskerzen fehlen")
                             continue
                         strategy.params["daily_history"] = learning_daily[s]
                     sig = int(strategy.signals(df).iloc[-1])
+                    if news:
+                        trader.context = news.current(s.split("/")[0])
+                    gate = None
+                    if study:
+                        if s not in spreads:
+                            spreads[s] = _spread(exchange, s)
+                        report, gate = study.observe(s, df, sig, getattr(strategy, "last_diagnostic", None),
+                                                     trader.context, spreads[s], trader.broker.fee(s), now)
+                        trader.research[h.name] = study.summary()
+                        strategy.last_diagnostic = {**getattr(strategy, "last_diagnostic", {}), "research": report}
                     if hasattr(strategy, "learn"):
                         strategy.learn(s, df)        # KI-Gedächtnis: neue Kerzen merken
                     last_bar[key] = df.index[-1]
                     if sig == 0:
                         notes.append(f"{prefix}{s}: kein Signal")
+                        _decision(trader, key, s, h, now, df.index[-1], sig, "Kein Signal", strategy)
+                        if study:
+                            study.decision(s, df.index[-1], "Kein Signal", now)
+                        continue
+                    if gate is False and sig > 0 and s not in trader.open_trades:
+                        reason = "Geprüfter KI-Filter: Nettovorteil oder Wahrscheinlichkeit zu gering"
+                        _decision(trader, key, s, h, now, df.index[-1], sig, reason, strategy)
+                        notes.append(prefix + s + ": " + reason)
+                        study.decision(s, df.index[-1], reason, now)
                         continue
                     if s not in spreads:
                         spreads[s] = _spread(exchange, s)
@@ -167,6 +195,8 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                         trends[s] = _trend(exchange, s)
                     if cfg.risk.slot_cap and slots is None:
                         slots = _slots(exchange, cfg.symbols, now)
+                    if news:
+                        trader.context = news.current(s.split("/")[0])
                     trader.on_signal(s, sig, prices[s], float(ind.atr(df).iloc[-1]), eq, now,
                                      size_factor=factor, can_open_new=liquid, horizon=h.name,
                                      trend=trends[s] if h.trend_filter else None,
@@ -175,6 +205,9 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                                      max_position_pct=cfg.risk.max_invested_pct / slots if slots else None)
                     eq = trader.equity(px)
                     notes.append(prefix + trader.note)
+                    _decision(trader, key, s, h, now, df.index[-1], sig, trader.note, strategy)
+                    if study:
+                        study.decision(s, df.index[-1], trader.note, now)
             eq = _liquidate(trader, px, prices, cfg.risk, now)      # nochmals: neue Positionen brauchen Sicherheit
             if notes:
                 trader.note = " | ".join(notes)
@@ -185,6 +218,10 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
                     opened = state._utc(t.opened)
                     last_bar.setdefault(f"stop:{s}", max(now - STOP_BACK, opened) if opened else now - STOP_BACK)
             _write_trades(log_path, trader.closed)
+            for study in research.values():
+                study.save()
+            if news:
+                trader.context = news.current()  # overview remains the primary asset's briefing
             state.save(cfg.state_path, trader, last_bar, abgleich)
             _erledigt(fertig)               # erst jetzt: bricht der Lauf vorher ab, führt der nächste sie nochmals aus
             journal.write(cfg, before_open, before_closed, trader, now)
@@ -198,6 +235,12 @@ def run(cfg: Config, max_iterations: int | None = None) -> None:
             time.sleep(cfg.poll_seconds)
     if failed and max_iterations == 1:      # --once (zyklus.sh): Exit-Code 1, sonst bliebe der Fehler unsichtbar
         raise SystemExit(1)
+
+
+def _decision(trader, key, symbol, horizon, now, bar, signal, reason, strategy=None):
+    trader.decisions[key] = {"symbol": symbol, "horizon": horizon.name, "timeframe": horizon.timeframe,
+                             "checked": now, "bar": bar, "signal": signal, "reason": reason,
+                             "learning": getattr(strategy, "last_diagnostic", None)}
 
 
 def _pretrain(strategy, cfg: Config, timeframe: str | None = None) -> None:

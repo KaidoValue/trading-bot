@@ -82,6 +82,35 @@ class Regime(Strategy):
         return sig
 
 
+class TrendRecovery(Strategy):
+    """Enter on recovery of the 20-bar mean in a long trend, exit below the prior ten-bar low."""
+    name = "trend_recovery"
+
+    def signals(self, df):
+        close = df["close"]
+        short_mean = close.rolling(20).mean()
+        long_mean = close.rolling(200).mean()
+        recovered = (close.shift() <= short_mean.shift()) & (close > short_mean)
+        signal = pd.Series(0, index=df.index)
+        signal[recovered & (close > long_mean)] = 1
+        signal[(close < long_mean) | (close < df["low"].shift().rolling(10).min())] = -1
+        return signal
+
+
+class TimeSeriesMomentum(Strategy):
+    """Directional price momentum across three horizons; intended for daily spot data."""
+    name = "time_series_momentum"
+
+    def signals(self, df):
+        close = df["close"]
+        returns = pd.concat([close.pct_change(n, fill_method=None) for n in (30, 90, 180)], axis=1)
+        ready = returns.notna().all(axis=1)
+        signal = pd.Series(0, index=df.index)
+        signal[ready & returns.gt(0).all(axis=1)] = 1
+        signal[ready & (returns.lt(0).sum(axis=1) >= 2)] = -1
+        return signal
+
+
 class Ensemble(Strategy):
     """Mehrheitsentscheid mehrerer Strategien. Kauf erst, wenn `min_votes` Strategien zustimmen."""
     name = "ensemble"
@@ -215,6 +244,8 @@ class Adaptive(Strategy):
         names = params.get("members") or ["trend", "mean_reversion", "breakout", "pullback", "momentum",
                                             "price_action", "smc", "reversal", "range"]
         self.members = [STRATEGIES[n](allow_short=params.get("allow_short", False)) for n in names]
+        self.observers = [STRATEGIES[n](allow_short=params.get("allow_short", False))
+                          for n in dict.fromkeys(params.get("observe_members", [])) if n not in names]
 
     def member_pnl(self, df) -> pd.DataFrame:
         """Rendite pro Kerze, die jede Teilstrategie gebracht hätte (abzüglich Gebühren bei jedem Wechsel)."""
@@ -228,16 +259,18 @@ class Adaptive(Strategy):
         cached = getattr(self, "_pnl_cache", None)
         if cached is not None and cached[0] is df:
             return cached[1]
-        cols = {m.name: replay(df, m.signals(df), cfg,
+        results = {m.name: replay(df, m.signals(df), cfg,
                               self.params.get("execution_horizon"),
-                              daily_history=self.params.get("daily_history")).returns for m in self.members}
-        result = pd.DataFrame(cols)
+                              daily_history=self.params.get("daily_history")) for m in self.members + self.observers}
+        self._replay_activity = {name: {"closed": len(r.trades), "exposure": r.exposure}
+                                 for name, r in results.items() if name in {m.name for m in self.members}}
+        result = pd.DataFrame({name: r.returns for name, r in results.items()})
         self._pnl_cache = (df, result)
         return result
 
     def weights(self, df) -> pd.DataFrame:
         lookback = self.params.get("lookback", 200)
-        pnl = self.member_pnl(df)
+        pnl = self.member_pnl(df)[[m.name for m in self.members]]
         raw = pnl.rolling(lookback, min_periods=lookback // 2).sum()
         if self.params.get("memory"):
             mem, trust = self._memory_scores(df, pnl, lookback)
@@ -251,6 +284,16 @@ class Adaptive(Strategy):
         w = self.weights(df)
         score = sum(w[m.name] * _holding(m.signals(df), allow_short) for m in self.members)
         threshold = self.params.get("threshold", 0.5)
+        active = int((w.iloc[-1] > 0).sum()) if len(w) else 0
+        activity = getattr(self, "_replay_activity", {})
+        traded = any(x["closed"] or x["exposure"] for x in activity.values())
+        reason = ("Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen"
+                  if not active and activity and not traded else
+                  "Keine positiv gewichtete Strategie nach Kosten" if not active else
+                  f"{active}/{len(self.members)} Strategien positiv gewichtet")
+        self.last_diagnostic = {"reason": reason, "score": float(score.iloc[-1]),
+                                "threshold": float(threshold), "active_members": active,
+                                "simulated_closed": sum(x["closed"] for x in activity.values())}
         sig = pd.Series(0, index=df.index)
         sig[score >= threshold] = 1
         sig[score <= -threshold if allow_short else score < threshold / 2] = -1
@@ -481,7 +524,7 @@ def trend_direction(daily: pd.DataFrame, period: int = 200) -> pd.Series:
 
 
 STRATEGIES = {cls.name: cls for cls in (TrendFollowing, MeanReversion, Breakout, Regime, Pullback, Momentum, PriceAction,
-                                        SmartMoney, Reversal, RangeTrading, Ensemble, Adaptive,
+                                        SmartMoney, Reversal, RangeTrading, TrendRecovery, TimeSeriesMomentum, Ensemble, Adaptive,
                                         AdaptiveMemory, YtFibWave, YtCycle, YtDivergence,
                                         BookTurtle, BookTripleScreen, BookGoldenCross, BookLivermore)}
 
