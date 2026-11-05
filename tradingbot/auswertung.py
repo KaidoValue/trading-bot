@@ -20,6 +20,7 @@ import json
 import logging
 import os
 import re
+import shlex
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -40,6 +41,7 @@ ORDNER = Path("lernen/profi")
 ERGEBNISSE = Path("lernen/PROFI_ERGEBNISSE.md")
 PROTOKOLL = Path("lernen/PROFI_PRUEFPROTOKOLL.md")
 PLAN = Path("lernen/PROFI_PLAN.md")                # Vorab-Registrierung mit dem Commit der eingefrorenen Fassung
+AUFTRAG = ORDNER / "auftrag.yml"                    # Auftrag für profi.yml per Push (statt Run workflow)
 SPERRE = pd.Timestamp("2023-01-01", tz="UTC")       # Kurse ab hier nur mit --pruefung
 BTC_AB = "2011-12-31"                               # Haupt-Caches: erste BTC-Kerze von Bitstamp spätestens hier
 FERN = pd.Timestamp("2100-01-01", tz="UTC")
@@ -258,6 +260,34 @@ def liste(schritt: str, amt: Sequence[str] = (), varianten: Sequence[str] = (), 
     for n in jobs:
         bot(n, amt, varianten)
     return {"include": [{"bot": n, "fenster": f.name} for n, fs in jobs.items() for f in fs]}
+
+
+def auftrag(pfad: Path | None = None) -> str:
+    """profi.yml, gestartet durch einen Push von lernen/profi/auftrag.yml: die Angaben des Auftrags (dieselben
+    Schlüssel wie die Eingaben von «Run workflow») geprüft und als Shell-Zuweisungen SCHRITT=... für den Ablauf.
+    Mehrere Dateien oder Namen als YAML-Liste oder mit Leerzeichen getrennt."""
+    a = yaml.safe_load((pfad or AUFTRAG).read_text(encoding="utf-8")) or {}
+    listen = ("config", "sieger", "varianten", "quellen", "nur_bot", "nur_fenster")
+    if not isinstance(a, dict) or (falsch := set(a) - {"schritt", "gebuehren", "pruefung", *listen}):
+        raise SystemExit(f"Auftrag: unbekannte Angaben {sorted(falsch) if isinstance(a, dict) else a!r}")
+    werte = {"SCHRITT": str(a.get("schritt", "")), "GEBUEHREN": str(a.get("gebuehren") or "normiert"),
+             "PRUEFUNG": a.get("pruefung", False)}
+    if werte["SCHRITT"] not in SCHRITTE:
+        raise SystemExit(f"Auftrag: schritt muss {', '.join(SCHRITTE)} sein, nicht «{werte['SCHRITT']}»")
+    if werte["GEBUEHREN"] not in historie.FEES:
+        raise SystemExit(f"Auftrag: gebuehren muss {', '.join(historie.FEES)} sein")
+    if not isinstance(werte["PRUEFUNG"], bool):
+        raise SystemExit("Auftrag: pruefung muss true oder false sein")
+    werte["PRUEFUNG"] = "true" if werte["PRUEFUNG"] else "false"
+    for k in listen:
+        v = a.get(k) or ""
+        v = " ".join(map(str, v)) if isinstance(v, list) else str(v)
+        if not re.fullmatch(r"[A-Za-z0-9_./:+ -]*", v):
+            raise SystemExit(f"Auftrag: unerlaubte Zeichen in {k}: «{v}»")
+        werte[k.upper()] = " ".join(v.split())
+    if len(werte["CONFIG"].split()) > 1:
+        raise SystemExit("Auftrag: config ist genau eine Datei")
+    return "\n".join(f"{k}={shlex.quote(v)}" for k, v in werte.items())
 
 
 # --- Herkunft: Cache, Commit, Prüfprotokoll

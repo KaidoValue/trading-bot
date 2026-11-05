@@ -397,16 +397,32 @@ auch bei gleichem Befehl.
 2. Diese Datei und `bots/profi/` sind committet. Der Hash dieses Commits kommt oben bei «Eingefrorene Fassung» an die
    Stelle des Platzhalters, in Backticks (so liest ihn der Bericht); das ist ein eigener Commit, der nur diese Zeile
    ändert.
-3. `.github/workflows/profi.yml` kommt zusätzlich auf main, nur diese Datei: GitHub zeigt «Run workflow» nur für
-   Abläufe, die auf dem Hauptzweig liegen. Gerechnet wird trotzdem der Stand des Zweigs, der bei «Use workflow from»
-   gewählt ist; auf main bricht der Ablauf sofort ab.
+3. Gestartet wird mit der Auftrag-Datei (unten). Nur wer den Knopf «Run workflow» will, braucht
+   `.github/workflows/profi.yml` zusätzlich auf main, nur diese Datei und nur mit Hirans Zustimmung: GitHub zeigt den
+   Knopf nur für Abläufe, die auf dem Hauptzweig liegen. Gerechnet wird in beiden Fällen der Stand des Profi-Zweigs;
+   auf main bricht der Ablauf sofort ab.
 4. Der erste GitHub-Lauf (E0) läuft allein, bis sein erster Job «vorbereiten» fertig ist: Er lädt die Kurse und
    friert den Cache ein.
 
 ### GitHub
 
-Actions → «Profi-Bot-Prüfung» → Run workflow → «Use workflow from»: `claude/project-thread-usz8e3`. Was hier nicht
-steht, bleibt leer (`gebuehren` normiert, `pruefung` aus). Mehrere Dateien mit Leerzeichen getrennt.
+Zwei gleichwertige Wege, beide nur auf dem Profi-Zweig `claude/project-thread-usz8e3`, nie auf main:
+
+- **Auftrag-Datei:** `lernen/profi/auftrag.yml` auf dem Profi-Zweig ändern und pushen; jeder Push dieser Datei startet
+  genau einen Lauf. Die Schlüssel sind dieselben wie die Eingaben von «Run workflow» (`schritt`, `config`, `sieger`,
+  `varianten`, `quellen`, `gebuehren`, `pruefung`, `nur_bot`, `nur_fenster`); falsche oder unbekannte Angaben brechen
+  ab, bevor etwas gerechnet wird. Beispiel E1a:
+
+  ```yaml
+  schritt: E1
+  varianten: bots/profi/varianten/e1_kb5.yaml
+  ```
+
+- **Run workflow:** Actions → «Profi-Bot-Prüfung» → Run workflow → «Use workflow from»: `claude/project-thread-usz8e3`.
+  Den Knopf zeigt GitHub erst, wenn `.github/workflows/profi.yml` auch auf main liegt.
+
+Was in der Tabelle unten nicht steht, bleibt leer (`gebuehren` normiert, `pruefung` aus). Mehrere Dateien mit
+Leerzeichen getrennt (in der Auftrag-Datei auch als YAML-Liste).
 
 Zuerst laufen alle Tests, dann je Bot und Fenster ein eigener Job auf dem eingefrorenen Cache (`--cache-fest`), der
 Chef nach den drei Stil-Bots. Der letzte Job speichert `lernen/profi/`, `lernen/PROFI_ERGEBNISSE.md` und das

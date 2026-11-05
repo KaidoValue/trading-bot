@@ -59,7 +59,9 @@ def test_profi_configs_nur_demo_mit_kraken_kosten_und_vorab_registriert(monkeypa
 
 def test_profi_yml_nur_von_hand_mit_eingefrorenem_cache_und_nie_auf_main(tmp_path):
     wf = _ablauf("profi.yml")
-    assert list(wf["on"]) == ["workflow_dispatch"]
+    # von Hand: «Run workflow» oder ein Push der Auftrag-Datei auf einem claude/-Zweig, sonst nichts
+    assert set(wf["on"]) == {"workflow_dispatch", "push"}
+    assert wf["on"]["push"] == {"branches": ["claude/**"], "paths": ["lernen/profi/auftrag.yml"]}
     schritte = {j: v["steps"] for j, v in wf["jobs"].items()}
     caches = [(j, s) for j, ss in schritte.items() for s in ss if s.get("uses", "").startswith("actions/cache")]
     assert {j for j, _ in caches} == {"vorbereiten", "rechnen", "chef"}
@@ -87,6 +89,38 @@ def test_profi_yml_nur_von_hand_mit_eingefrorenem_cache_und_nie_auf_main(tmp_pat
     for j in ("rechnen", "chef"):
         assert [s.get("if") for s in schritte[j][-2:]] == ["always()", "always()"]
     assert wf["jobs"]["sammeln"]["if"].startswith("${{ always()")
+
+
+def test_auftrag_per_push_gibt_dieselben_angaben_wie_run_workflow(tmp_path):
+    """Ein Push von lernen/profi/auftrag.yml startet den Ablauf mit den Angaben der Datei (Listen oder mit Leerzeichen
+    getrennt); bei «Run workflow» gelten die Eingaben. Falsche Angaben brechen ab, bevor etwas gerechnet wird."""
+    plan = next(s for s in _ablauf("profi.yml")["jobs"]["vorbereiten"]["steps"] if s.get("id") == "plan")["run"]
+    kopf = plan[:plan.index("\nfi\n") + 4]
+    zeigen = 'echo "$SCHRITT|$CONFIG|$SIEGER|$VARIANTEN|$QUELLEN|$GEBUEHREN|$PRUEFUNG|$NUR_BOT|$NUR_FENSTER"'
+    (tmp_path / "lernen" / "profi").mkdir(parents=True)
+    datei = tmp_path / "lernen" / "profi" / "auftrag.yml"
+
+    def lauf(ereignis: str, **eingaben):
+        env = {"PATH": os.environ["PATH"], "PYTHONPATH": str(ROOT), "GITHUB_EVENT_NAME": ereignis} | eingaben
+        return subprocess.run(["bash", "-c", kopf + zeigen], cwd=tmp_path, env=env, capture_output=True, text=True)
+
+    datei.write_text("schritt: E1\nconfig: bots/profi/e1_kb3.yaml\nsieger: [bots/profi/varianten/e1_kb5.yaml]\n"
+                     "varianten: bots/profi/varianten/e1_kbe.yaml\n", encoding="utf-8")
+    r = lauf("push")
+    assert r.returncode == 0, r.stderr
+    assert r.stdout.strip() == ("E1|bots/profi/e1_kb3.yaml|bots/profi/varianten/e1_kb5.yaml|"
+                                "bots/profi/varianten/e1_kbe.yaml||normiert|false||")
+    r = lauf("workflow_dispatch", SCHRITT="E0", GEBUEHREN="alt", PRUEFUNG="false")
+    assert r.stdout.strip() == "E0|||||alt|false||"            # die Datei zählt nur bei einem Push
+    datei.write_text("schritt: E6\npruefung: true\nconfig: bots/profi/e1_kb3.yaml\nquellen: coinbase\n"
+                     "nur_fenster: [ab-2023Q1, Crash-2022]\n", encoding="utf-8")
+    assert lauf("push").stdout.strip() == "E6|bots/profi/e1_kb3.yaml|||coinbase|normiert|true||ab-2023Q1 Crash-2022"
+    for falsch in ("schritt: E7\n", "schritt: E0\npruefung: ja\n", "schritt: E0\ngebuehren: billig\n",
+                   "schritt: E0\nquellen: 'coinbase; rm -rf .'\n", "schritt: E0\nvariante: x.yaml\n",
+                   "schritt: E0\nconfig: [a.yaml, b.yaml]\n"):
+        datei.write_text(falsch, encoding="utf-8")
+        r = lauf("push")
+        assert r.returncode != 0 and "Auftrag:" in r.stderr and not r.stdout.strip(), falsch
 
 
 def test_historie_rechnet_nie_profi_configs():

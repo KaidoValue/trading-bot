@@ -1,11 +1,16 @@
 # Profi-Bot-Prüfung (lernen/PROFI_PLAN.md): rechnet ein vorab registriertes Experiment E0-E6 mit
 # `python -m tradingbot profi` auf dem eingefrorenen Kurs-Cache, je Bot und Fenster ein eigener Job.
-# Nur von Hand: Actions -> "Profi-Bot-Prüfung" -> Run workflow, bei "Use workflow from" den Profi-Zweig wählen
-# (nie main). Der erste Lauf lädt die Kurse in den Cache profi-2026-11-03, danach wird nur noch gelesen.
+# Nur von Hand, auf zwei Wegen und nie auf main: Actions -> "Profi-Bot-Prüfung" -> Run workflow, bei "Use workflow from"
+# den Profi-Zweig wählen (der Knopf erscheint erst, wenn diese Datei auch auf main liegt), oder auf dem Profi-Zweig
+# lernen/profi/auftrag.yml mit denselben Angaben ändern und pushen (lernen/PROFI_PLAN.md, «Befehle»).
+# Der erste Lauf lädt die Kurse in den Cache profi-2026-11-03, danach wird nur noch gelesen.
 # Die Ergebnisse kommen auf denselben Zweig: lernen/profi/, lernen/PROFI_ERGEBNISSE.md, lernen/PROFI_PRUEFPROTOKOLL.md.
 name: Profi-Bot-Prüfung
 
 on:
+  push:                       # ein Auftrag: lernen/profi/auftrag.yml auf einem claude/-Zweig geändert
+    branches: ["claude/**"]
+    paths: ["lernen/profi/auftrag.yml"]
   workflow_dispatch:
     inputs:
       schritt:
@@ -71,6 +76,7 @@ jobs:
       group: profi-vorbereiten-${{ github.ref }}
       cancel-in-progress: false
     outputs:
+      schritt: ${{ steps.plan.outputs.schritt }}
       args: ${{ steps.plan.outputs.args }}
       rechnen: ${{ steps.plan.outputs.rechnen }}
       chef: ${{ steps.plan.outputs.chef }}
@@ -94,6 +100,10 @@ jobs:
       - name: Jobs bestimmen (je Bot und Fenster)
         id: plan
         run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then     # Angaben aus lernen/profi/auftrag.yml statt der Eingaben
+            zuweisungen=$(python -c "from tradingbot.auswertung import auftrag; print(auftrag())") || exit 1
+            eval "$zuweisungen"
+          fi
           args=(--schritt "$SCHRITT" --gebuehren "$GEBUEHREN")
           [ -z "$CONFIG" ] || args+=(--config "$CONFIG")
           [ -z "$SIEGER" ] || args+=(--sieger $SIEGER)
@@ -106,6 +116,7 @@ jobs:
           python -m tradingbot profi "${args[@]}" "${auswahl[@]}" --liste > jobs.json
           jq -r '.include[] | "\(.bot): \(.fenster)"' jobs.json
           {
+            echo "schritt=$SCHRITT"
             echo "args=${args[*]}"
             echo "auswahl=${auswahl[*]}"
             echo "rechnen=$(jq -c '{include: [.include[] | select(.bot != "chef")]}' jobs.json)"
@@ -290,6 +301,7 @@ jobs:
       - name: Ergebnisse auf den Zweig speichern
         env:
           FINGERABDRUCK: ${{ needs.vorbereiten.outputs.fingerabdruck }}
+          SCHRITT: ${{ needs.vorbereiten.outputs.schritt }}
         run: |
           mkdir -p lernen/profi
           [ ! -d ergebnisse/lernen/profi ] || cp -r ergebnisse/lernen/profi/. lernen/profi/
