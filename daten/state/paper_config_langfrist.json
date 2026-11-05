@@ -138,20 +138,20 @@
       "__dt__": "2026-11-05T07:00:00+00:00"
     },
     "stop:BTC/CHF": {
-      "__dt__": "2026-11-05T08:01:00+00:00"
+      "__dt__": "2026-11-05T08:31:00+00:00"
     },
     "stop:HYPE/CHF": {
-      "__dt__": "2026-11-05T08:01:00+00:00"
+      "__dt__": "2026-11-05T08:31:00+00:00"
     }
   },
-  "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: kein Einstieg (Spread im Orderbuch zu gross) | [lang] BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] XRP/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] SOL/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] TRX/CHF: Signal 'raus', bleibe in Cash | [lang] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt | [mittel] BTC/CHF: kein Signal | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: kein Einstieg (Kursziel 1.20%, erforderlich 8.50% inkl. Geb\u00fchrenpuffer) | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: kein Signal | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+  "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] XRP/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] SOL/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] TRX/CHF: Signal 'raus', bleibe in Cash | [lang] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt | [mittel] BTC/CHF: kein Signal | [mittel] ETH/CHF: kein Signal | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: kein Einstieg (Kursziel 1.19%, erforderlich 8.50% inkl. Geb\u00fchrenpuffer) | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: kein Signal | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
   "decisions": {
     "lang:BTC/CHF": {
       "symbol": "BTC/CHF",
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -165,13 +165,13 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
       },
       "signal": 1,
-      "reason": "ETH/CHF: kein Einstieg (Spread im Orderbuch zu gross)",
+      "reason": "ETH/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
       "learning": null
     },
     "lang:BNB/CHF": {
@@ -179,7 +179,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -193,7 +193,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -207,7 +207,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -221,7 +221,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -235,7 +235,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -249,7 +249,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-04T00:00:00+00:00"
@@ -263,7 +263,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -277,7 +277,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -291,7 +291,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -305,13 +305,13 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
       },
       "signal": 1,
-      "reason": "XRP/CHF: kein Einstieg (Kursziel 1.20%, erforderlich 8.50% inkl. Geb\u00fchrenpuffer)",
+      "reason": "XRP/CHF: kein Einstieg (Kursziel 1.19%, erforderlich 8.50% inkl. Geb\u00fchrenpuffer)",
       "learning": null
     },
     "mittel:SOL/CHF": {
@@ -319,7 +319,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -333,7 +333,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -347,7 +347,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -361,7 +361,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T04:00:00+00:00"
@@ -375,7 +375,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -395,7 +395,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -415,7 +415,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -435,7 +435,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -455,7 +455,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -475,7 +475,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -495,7 +495,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -515,7 +515,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-05T08:01:42.377063+00:00"
+        "__dt__": "2026-11-05T08:31:41.975895+00:00"
       },
       "bar": {
         "__dt__": "2026-11-05T07:00:00+00:00"
@@ -545,7 +545,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-05T08:02:49.118109+00:00"
+    "__dt__": "2026-11-05T08:32:48.872677+00:00"
   },
   "risk": {
     "peak_equity": 100.03956552260361,
@@ -562,41 +562,41 @@
   },
   "prices": {
     "BTC/CHF": [
-      65466.7,
-      "2026-11-05T08:01:42+00:00"
+      65726.5,
+      "2026-11-05T08:31:41+00:00"
     ],
     "ETH/CHF": [
       1968.98,
-      "2026-11-05T08:01:42+00:00"
+      "2026-11-05T08:31:41+00:00"
     ],
     "BNB/CHF": [
-      580.7009804,
-      "2026-11-05T08:01:42+00:00"
+      583.5290877,
+      "2026-11-05T08:31:41+00:00"
     ],
     "XRP/CHF": [
-      1.0710676158,
-      "2026-11-05T08:01:42+00:00"
+      1.08032211,
+      "2026-11-05T08:31:41+00:00"
     ],
     "SOL/CHF": [
-      78.10760160000001,
-      "2026-11-05T08:01:42+00:00"
+      78.9378219,
+      "2026-11-05T08:31:41+00:00"
     ],
     "TRX/CHF": [
-      0.25957726972000006,
-      "2026-11-05T08:01:42+00:00"
+      0.25990933158,
+      "2026-11-05T08:31:41+00:00"
     ],
     "ZEC/CHF": [
-      1075.0154102000001,
-      "2026-11-05T08:01:42+00:00"
+      1076.8516875,
+      "2026-11-05T08:31:41+00:00"
     ],
     "HYPE/CHF": [
-      67.8955384,
-      "2026-11-05T08:01:42+00:00"
+      68.183595,
+      "2026-11-05T08:31:41+00:00"
     ]
   },
   "abgleich": {
-    "kapital": 99.79,
-    "erwartet": 99.79,
+    "kapital": 99.92,
+    "erwartet": 99.92,
     "differenz": 0.0
   },
   "paper": {
@@ -607,9 +607,9 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-05T08:01:42.377063+00:00"
+      "__dt__": "2026-11-05T08:31:41.975895+00:00"
     },
-    "quote_usd": 1.226001029840865,
+    "quote_usd": 1.2246347526850117,
     "volume": [
       [
         {
