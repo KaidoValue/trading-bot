@@ -913,19 +913,12 @@
         "title": "$3.1B in Stolen Binance Crypto Has Yet to Be Laundered: Elliptic",
         "link": "https://decrypt.co/382711/3-1b-in-stolen-binance-crypto-has-yet-to-be-laundered-elliptic",
         "published": "2026-11-06T14:04:18+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "cointelegraph",
-        "title": "Asian crypto exchanges batten down the hatches as hacks surge: Asia Express",
-        "link": "https://cointelegraph.com/magazine/asian-crypto-exchanges-bunker-down-as-hacks-surge-asia-express?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-        "published": "2026-11-05T22:18:42+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-06T22:04:03.837386+00:00"
+    "__dt__": "2026-11-06T22:33:32.861638+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -942,36 +935,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      62305.3,
-      "2026-11-06T22:03:01+00:00"
+      62349.4,
+      "2026-11-06T22:33:01+00:00"
     ],
     "ETH/CHF": [
-      1835.27,
-      "2026-11-06T22:03:01+00:00"
+      1838.36,
+      "2026-11-06T22:33:01+00:00"
     ],
     "BNB/CHF": [
-      570.1230922,
-      "2026-11-06T22:03:01+00:00"
+      570.2373936,
+      "2026-11-06T22:33:01+00:00"
     ],
     "XRP/CHF": [
-      0.9715696441999999,
-      "2026-11-06T22:03:01+00:00"
+      0.96941014,
+      "2026-11-06T22:33:01+00:00"
     ],
     "SOL/CHF": [
-      74.408874,
-      "2026-11-06T22:03:01+00:00"
+      74.045604,
+      "2026-11-06T22:33:01+00:00"
     ],
     "TRX/CHF": [
-      0.26137307863,
-      "2026-11-06T22:03:01+00:00"
+      0.26151198903999995,
+      "2026-11-06T22:33:01+00:00"
     ],
     "ZEC/CHF": [
-      1103.0335344999999,
-      "2026-11-06T22:03:01+00:00"
+      1093.23016,
+      "2026-11-06T22:33:01+00:00"
     ],
     "HYPE/CHF": [
-      64.7012262,
-      "2026-11-06T22:03:01+00:00"
+      64.5096144,
+      "2026-11-06T22:33:01+00:00"
     ]
   },
   "abgleich": {
@@ -984,9 +977,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-06T22:03:01.321588+00:00"
+      "__dt__": "2026-11-06T22:33:01.306914+00:00"
     },
-    "quote_usd": 1.2175967076185026,
+    "quote_usd": 1.2174929385409565,
     "volume": []
   }
 }
