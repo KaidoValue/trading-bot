@@ -14,6 +14,7 @@ fehler() {
 python -m tradingbot paper --config bots/config_langfrist.yaml --once || fehler "Langfrist-Bot" "Durchlauf fehlgeschlagen"
 python -m tradingbot paper --config bots/config_daytrading.yaml --once || fehler "KI-Bot" "Durchlauf fehlgeschlagen"
 python -m tradingbot paper --config bots/config_risiko.yaml --once || fehler "Risiko-Bot" "Durchlauf fehlgeschlagen"
+python -m tradingbot.agent_trial || fehler "30-Tage-Lernexperiment" "Durchlauf fehlgeschlagen"
 
 # Fehlermeldungen der Übersicht landen in daten/logs/uebersicht_fehler.txt. Die Nachrichtenlage kommt nur an eine neu
 # geschriebene STATUS.md (sonst stünde sie in der alten ein zweites Mal)
