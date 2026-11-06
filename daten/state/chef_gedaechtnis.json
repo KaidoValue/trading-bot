@@ -41,6 +41,20 @@
     -0.06237657730898105,
     96
    ]
+  },
+  "Abw\u00e4rtstrend, wild": {
+   "config_langfrist": [
+    0.0008990515248457065,
+    1
+   ],
+   "config_daytrading": [
+    0.0,
+    1
+   ],
+   "config_risiko": [
+    0.0027756605968338732,
+    1
+   ]
   }
  },
  "seen": {},
