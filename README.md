@@ -106,6 +106,7 @@ Welche Punkte aus deiner Trading-Wissensliste der Bot abdeckt, steht in **[lerne
 | `tradingbot/events.py` | Wichtige Ereignisse: Trump, Powell, Musk & Co., Fed, SEC, Wirtschaftskalender |
 | `tradingbot/bot.py` | Laufender Bot (auf GitHub ein Durchlauf alle 30 Minuten, kurz nach Kerzenschluss): holt Kurse, prüft die Stops mit den Minutenkerzen seit dem letzten Lauf, dazu Orderbuch und Nachrichtenlage, und entscheidet |
 | `tradingbot/historie.py` | Geschichts-Simulation der kompletten Bots über 2011-2026 inkl. Chef, Kursgeschichte mit Cache |
+| `tradingbot/auswertung.py` | Auswertung für den Profi-Bot (`profi`): frische Fenster, Überlagerungen, Sperre ab 2023, Prüfprotokoll, Block-Bootstrap, Regel G und Go-Regeln |
 
 ## Zeithorizonte: gleiche Bedingungen für alle Bots
 
@@ -125,6 +126,9 @@ So funktioniert es (Einstellung `horizons:` in den Configs):
 - Alle Horizonte eines Bots teilen sich **ein Konto** und die gemeinsamen Risikoregeln (Not-Aus, Tageslimit, max. Positionen).
   Alle Positionen zusammen sind höchstens `max_invested_pct` × Hebel des Kapitals gross, auch wenn ein Horizont mehr
   hält, als sein Anteil heute erlaubt (Anteile wandern, Übernahmen).
+- `slot_cap: true` (Standard aus): Der Deckel je Coin ist dann `max_invested_pct` geteilt durch die Zahl der Coins mit
+  mindestens 200 abgeschlossenen Tageskerzen, also mit Bitcoin allein 75 %, mit Bitcoin und Ethereum je 37,5 %
+  (für den geplanten Profi-Bot, gleich in Simulation und Demo).
 - Jeder Horizont hat eigene Kerzen, eigene Strategie und eigene Stops (`stop_loss_atr`, `take_profit_atr`, `risk_per_trade`).
 - Pro Coin gibt es eine Position. Sie gehört dem Horizont, der sie eröffnet hat; nur er schliesst sie per Signal
   (Stops gelten immer). Mit `horizon_priority: true` darf ein **längerer** Horizont eine Position eines kürzeren
@@ -346,6 +350,15 @@ Unterschiede sind Zufall); Leitplanke: kein Rückgang über 75 %.
 Selbst ausprobieren: `python -m tradingbot historie --bots ... --start 2022-01-01` (Gebührenstufe wählbar mit
 `--gebuehren normiert|staffel|alt`, siehe [Realistische Kosten](#realistische-kosten-wie-bei-kraken)).
 
+**Für faire Vergleiche (Profi-Bot-Prüfung):** `--ende 2022-12-31` schneidet die Kurse nach diesem Tag ab, bevor
+Indikatoren gerechnet werden (kein Blick in die weggesperrten Jahre). `--cache-fest` lädt nichts nach und löscht nichts;
+fehlt eine Datei, bricht die Simulation ab. `--quellen coinbase` (oder `bitfinex`, `kraken`) holt die Kursgeschichte
+von anderen Börsen, mit eigenen Cache-Dateien je Quelle. `--abschnitte` rechnet «bis 2022» und «ab 2023» je als
+frischen Start mit dem Startkapital statt als Ausschnitt eines langen Laufs. Der Bericht nennt die Quellen und einen
+SHA-256-Fingerabdruck der benutzten Cache-Dateien und zeigt zusätzlich Gebühren, Kosten in % pro Jahr (Gebühren,
+Slippage, Zinsen), Umschlag, Ø investiert, Kostenanteil am Bruttogewinn und «Bitcoin halten nach Kosten» (ein Kauf
+am Start mit Gebühr und Slippage).
+
 Was die Simulation gezeigt hat:
 
 - **Trendfilter** war die wichtigste Verbesserung (+18 % pro Jahr beim Langfrist-Bot im Schnitt aller Varianten).
@@ -370,6 +383,50 @@ Grenzen: keine historischen News und Ereignisse, kein Orderbuch-Spread, keine Ko
 Die Jahre 2011-2013 hatten sehr wenig Handel an den Börsen. Kleine Details (z.B. welcher Coin bei gleichzeitigen
 Signalen zuerst Kapital bekommt) verschieben das Ergebnis um einige Prozent pro Jahr: Die Zahlen sind
 Grössenordnungen, keine Vorhersage. Vergangene Ergebnisse sind keine Garantie.
+
+## Profi-Bot auswerten (`profi`)
+
+```bash
+python -m tradingbot profi --schritt E0 --cache-fest
+python -m tradingbot profi --schritt E1 --config bots/profi/e1_kb3.yaml --varianten bots/profi/varianten/e1_kb5.yaml
+python -m tradingbot profi --zusammenfassen
+```
+
+Rechnet die vorab registrierten Experimente E0 bis E6 des Profi-Bot-Plans. Jeder Bot startet in jedem Fenster frisch
+mit seinem Startkapital: 2012-2022 und die Hälften 2012-2019 und 2020-2022, in E5 dazu 2016-2022, 28 gestaffelte
+3-Jahres-Fenster (Start vierteljährlich 2013-2019) und die Crash-Starts 2014 und 2018. Varianten sind Überlagerungen
+auf den Amtsinhaber (`--config` plus `--sieger`, Herausforderer mit `--varianten`): Nur die geänderten Schlüssel stehen
+in der Datei, die volle Config kommt in jedes Ergebnis und geht durch dieselbe Prüfung wie beim Laden einer Config.
+Für Kostenstress multipliziert `fee_factor: 1.5` alle Gebührensätze.
+
+- **Blind bis Ende 2022:** Ohne `--pruefung` werden die Kurse ab 2023 vor allen Berechnungen abgeschnitten, und Fenster
+  mit Tagen ab 2023 (auch ein offenes Ende) werden verweigert. Jeder Lauf mit `--pruefung` kommt vorher mit Datum,
+  Commit, Quellen, Cache-Fingerabdruck und Befehl ins Prüfprotokoll `lernen/PROFI_PRUEFPROTOKOLL.md` (nur angehängt).
+- **Ergebnisse:** je Bot und Fenster eine JSON-Datei unter `lernen/profi/<Schritt>/<Cache>/` (Quellen, Cache, Commit,
+  Fenster, volle Config, Kennzahlen, Kapitalkurve je Tag). Daraus entsteht `lernen/PROFI_ERGEBNISSE.md`; mit
+  `--zusammenfassen` ohne neue Rechnung. Darin stehen die Kennzahlen mit dem Abstand zu «Bitcoin halten nach Kosten»
+  und P−1, L_dev, Regel G mit gepaartem Block-Bootstrap, das Tor nach E1, die E2-Flagge, die E5-Kriterien und die
+  Go-Regeln. Entschieden wird nur mit normierten Gebühren und in jedem Cache der Standardquellen; eine andere Quelle
+  (`--quellen`) zählt nur zur Information. `lernen/HISTORIE.md` bleibt unberührt.
+- **GitHub-Matrix:** `--liste` gibt die Jobs (Bot und Fenster) als JSON aus, `--nur-bot` und `--nur-fenster` rechnen
+  nur einen Teil davon. Der Chef liest die Kurven der drei Stil-Bots aus ihren Ergebnisdateien im selben Fenster.
+
+## Profi-Bot-Prüfung
+
+Ablauf, Configs, Fenster und Regeln der Prüfung sind vor der ersten Rechnung in
+[lernen/PROFI_PLAN.md](lernen/PROFI_PLAN.md) festgelegt, dort stehen auch die genauen Angaben je Schritt.
+
+- **GitHub:** nur von Hand und nie auf main, auf zwei Wegen: auf dem Profi-Zweig `lernen/profi/auftrag.yml` mit den
+  Angaben des Schritts ändern und pushen, oder Actions → «Profi-Bot-Prüfung» → Run workflow mit dem Profi-Zweig bei
+  «Use workflow from» (den Knopf zeigt GitHub erst, wenn `.github/workflows/profi.yml` auch auf main liegt). Zuerst
+  laufen die Tests, dann je Bot und Fenster ein eigener Job auf dem eingefrorenen Kurs-Cache
+  `profi-2026-11-03` (der erste Lauf füllt ihn, danach wird nur gelesen). Der letzte Job speichert `lernen/profi/`,
+  `lernen/PROFI_ERGEBNISSE.md` und das Prüfprotokoll auf denselben Zweig.
+- **Hirans PC:** `scripts\profi_pc.bat E0` (weitere Angaben wie im Plan) rechnet denselben Stand mit Binance-Kursen in
+  einer eigenen Kopie `%USERPROFILE%\trading-bot-profi` und lädt die Ergebnisse hoch; die Kurse friert der erste Lauf
+  als Zip mit Fingerabdruck ein.
+- **Nur Kurse laden:** `python -m tradingbot profi --schritt E0 --laden` holt die Kursdateien aller Jobs eines
+  Schritts nach `data/historie/`, ohne zu rechnen; mit `--cache-fest` prüft es nur, ob alle da sind.
 
 ## Marktphasen: der Bot wählt kurz, mittel oder lang selbst (Test: `bots/config_phasen.yaml`)
 

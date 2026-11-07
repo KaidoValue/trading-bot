@@ -1,0 +1,4 @@
+# E5 (b), Kostenstress (lernen/PROFI_PLAN.md): alle Gebühren × 1,5 und Slippage × 2 (0,10 % je Seite).
+# Überlagerung (deep merge) auf den Amtsinhaber; nur fee_factor und slippage, darum zählt sie als Kostenstress.
+fee_factor: 1.5
+slippage: 0.001

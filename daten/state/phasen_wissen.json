@@ -1,39 +1,43 @@
 {
  "stats": {
-  "Aufw\u00e4rtstrend, ruhig|lang": [
-   25.080868901193117,
-   36
-  ],
-  "Aufw\u00e4rtstrend, wild|lang": [
-   4.448533288462929,
-   46
-  ],
-  "Seitw\u00e4rts, ruhig|lang": [
-   66.29257836705787,
-   65
-  ],
-  "Seitw\u00e4rts, wild|lang": [
-   0.31538066330246967,
-   16
-  ],
   "Aufw\u00e4rtstrend, ruhig|mittel": [
-   -0.8224715133493876,
-   63
+   -0.9366179961246377,
+   90
   ],
-  "Seitw\u00e4rts, wild|mittel": [
-   -0.21313330992176155,
-   33
-  ],
-  "Seitw\u00e4rts, ruhig|mittel": [
-   -0.0805331466043329,
-   9
+  "Aufw\u00e4rtstrend, ruhig|lang": [
+   33.03215968680998,
+   40
   ],
   "Aufw\u00e4rtstrend, wild|mittel": [
-   0.2689151546430226,
-   27
+   -1.7446652084294514,
+   103
+  ],
+  "Aufw\u00e4rtstrend, wild|lang": [
+   4.619403970510817,
+   40
+  ],
+  "Seitw\u00e4rts, ruhig|lang": [
+   66.68799794238022,
+   61
+  ],
+  "Seitw\u00e4rts, wild|lang": [
+   -0.007585836005805827,
+   14
+  ],
+  "Seitw\u00e4rts, wild|mittel": [
+   -0.14135285730102579,
+   41
+  ],
+  "Seitw\u00e4rts, ruhig|mittel": [
+   -0.40990342836815097,
+   21
   ],
   "Seitw\u00e4rts, ruhig|kurz": [
-   0.03344301319784666,
+   0.029351578563645772,
+   1
+  ],
+  "Aufw\u00e4rtstrend, wild|kurz": [
+   -0.009099528143075854,
    1
   ]
  },

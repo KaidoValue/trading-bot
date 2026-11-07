@@ -1,0 +1,58 @@
+# Profi-Bot «Kern zuerst», Amtsinhaber von E1: Bitcoin nur über der 200-Tage-Linie. NUR SIMULATION
+# (python -m tradingbot profi), kein Demo-Bot: die Bot-Läufe und scripts/reset_paper.py lesen nur bots/config*.yaml.
+# Vorab registriert in lernen/PROFI_PLAN.md; die Herausforderer sind Überlagerungen in bots/profi/varianten/.
+#
+# Grösse nach Schwankung: 12 % Risiko bis zum Notfall-Stop bei 8 ATR (Gewicht ≈ 1,5 % / ATR %), höchstens 75 %
+# investiert, je Coin 75 % geteilt durch die Zahl der Coins mit mindestens 200 Tageskerzen (slot_cap). Not-Aus bei
+# 35 % Rückgang vom Höchststand, dann 30 Tage Pause. Ohne Hebel, ohne Short, ohne News- und Ereignis-Pausen.
+
+mode: paper
+title: "Profi-Bot (Demo, Kern zuerst)"
+description: "Bitcoin nur über der 200-Tage-Linie, Grösse nach Schwankung, höchstens 75 % investiert. Ohne Hebel, ohne Short, ohne News-Pausen."
+exchange: kraken
+symbols: ["BTC/CHF"]          # E1b: dazu ETH/CHF (varianten/e1_kbe.yaml), nur wenn er Regel G besteht
+timeframe: 1d
+history_exchange: bitstamp
+history_symbol: BTC/USD
+starting_capital: 100
+fee_rate: 0.006      # nur Labor und Einzel-Backtests; Simulation und Demo rechnen mit der Kraken-Staffel
+fee_model: kraken    # Vergleiche mit --gebuehren normiert
+slippage: 0.0005     # E5 (b): 0.001
+poll_seconds: 300
+reevaluate: true     # Kauf bei breitem Spread im nächsten Lauf nachholen
+allow_short: false
+short_probation: false
+adaptive_shares: false
+horizon_priority: false
+phase_gate: false
+phase_exit: false
+use_news: false
+use_events: false
+
+horizons:
+  kern:                       # 200-Tage-Linie auf Tageskerzen: Kauf über Linie +1 %, Verkauf unter Linie −3 %
+    timeframe: 1d
+    strategy: regime
+    strategy_params: {period: 200, band: 0.03}    # E1a: 0.03 gegen 0.05
+    share: 1.0
+    trend_filter: false
+
+risk:
+  risk_per_trade: 0.12        # Gewicht ≈ 1,5 % / ATR %
+  stop_loss_atr: 8.0          # Notfall-Stop
+  take_profit_atr: 1000       # kein Ziel, Ausstieg nur über das Signal
+  max_position_pct: 0.75      # mit slot_cap: 0.75 / Zahl handelbarer Kern-Coins
+  slot_cap: true
+  max_invested_pct: 0.75
+  max_daily_loss_pct: 0.15
+  max_drawdown_pct: 0.35      # Not-Aus; E2: 0.99 (aus) bzw. Nachlauf-Stop 6 ATR ohne Not-Aus
+  halt_days: 30
+  min_order_value: 10
+  max_total_risk_pct: 1.0
+  max_open_positions: 2
+  max_trades_per_day: 6
+  loss_streak_pause: 99
+  pause_hours: 0
+  max_spread_pct: 0.003       # nur Demo: kein Kauf bei breitem Spread; Verkäufe und Stops immer
+  correlation_limit: 1.01     # aus, denn die Simulation kennt keine Korrelationsprüfung
+  leverage: 1.0

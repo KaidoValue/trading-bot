@@ -1,36 +1,58 @@
 # 🕰️ Geschichts-Simulation: alle Bots über die ganze Krypto-Geschichte
 
-Zeitraum: **18.08.2011 bis 27.10.2026**, Startkapital je Bot 1'000 (USD). Jeder Bot handelt mit allen Zeithorizonten, allen Coins (sobald es sie gibt), seinen Risikoregeln, Hebel und Zinsen. Ohne historische News. Vergangene Ergebnisse sind keine Garantie.
+Zeitraum: **18.08.2011 bis 29.10.2026**, Startkapital je Bot 100 (USD). Jeder Bot handelt mit allen Zeithorizonten, seinen Coins (sobald es sie gibt), seinen Risikoregeln, Hebel und Zinsen. Ohne historische News. Vergangene Ergebnisse sind keine Garantie.
+
+Kurse von bitstamp (USD), binance (USDT), binanceus (USD), kucoin (USDT). Fingerabdruck der 16 Kursdateien (SHA-256): `9ee6f2fb0964accdc195fcfcc2ee267cb1b4e87f2ad0fcf54c029e3518830841`
+
+Gebühren: Kraken-Gebührenstaffel wie für ein Konto mit dem Startkapital (ab 0,80 % je Order; ein über die Jahre gewachsenes Simulationskonto bekommt keinen Mengenrabatt). Dazu Slippage je Order, Margin-Kosten und Liquidationsgebühr.
 
 ## Gesamtergebnis
 
-| | 1️⃣ Langfrist-Bot (Hauptbot) | 2️⃣ KI-Bot (lernend, kurz bis lang) | 3️⃣ Risiko-Bot (aggressiv, Hebel 3×) | 4️⃣ Chef-Bot |
-|---|---|---|---|---|
-| **Endkapital** | 649'516.18 | 10'521.69 | 1'796'269.18 | 78'181.95 |
-| **Rendite %** | 64'851.62 | 952.17 | 179'526.92 | 7'718.20 |
-| **Buy & Hold %** | 741'285.32 | 741'285.32 | 741'285.32 | – |
-| **B&H Drawdown %** | -84.86 | -84.86 | -84.86 | – |
-| **Max. Drawdown %** | -50.77 | -26.01 | -62.01 | -39.74 |
-| **Sharpe** | 1.30 | 1.04 | 1.17 | – |
-| **Trades** | 221 | 535 | 227 | – |
-| **Trefferquote %** | 28.50 | 43.40 | 30.80 | – |
-| **CRV** | 8.24 | 2.14 | 5.39 | – |
-| **Expectancy** | 2'546.45 | 18.06 | 6'577.68 | – |
-| **Profit Factor** | 3.29 | 1.64 | 2.40 | – |
-| **Max. Verlustserie** | 22 | 12 | 23 | – |
-| **Not-Aus** | 7 | 8 | 0 | – |
-| **Liquidationen** | 0 | 0 | 0 | – |
+| | 1️⃣ Langfrist-Bot (Hauptbot) | 2️⃣ KI-Bot (lernend, kurz bis lang) | 3️⃣ Risiko-Bot (aggressiv, Hebel 3×) | 5️⃣ Phasen-Bot (wählt kurz, mittel oder lang selbst) | 4️⃣ Chef-Bot |
+|---|---|---|---|---|---|
+| **Endkapital** | 35'675.45 | 433.54 | 7'146.93 | 5'158.02 | 612.23 |
+| **Rendite %** | 35'575.45 | 333.54 | 7'046.93 | 5'058.02 | 512.72 |
+| **Buy & Hold %** | 745'313.94 | 745'313.94 | 745'313.94 | 745'313.94 | – |
+| **B&H nach Kosten %** | 739'028.40 | 739'028.40 | 739'028.40 | 739'028.40 | – |
+| **B&H Drawdown %** | -84.86 | -84.86 | -84.86 | -84.86 | – |
+| **Max. Drawdown %** | -43.77 | -23.79 | -65.73 | -61.99 | -45.62 |
+| **Sharpe** | 1.23 | 0.94 | 0.84 | 1.05 | – |
+| **Trades** | 170 | 244 | 150 | 412 | – |
+| **Trefferquote %** | 23.50 | 35.20 | 20.70 | 22.60 | – |
+| **CRV** | 8.57 | 3.08 | 6.34 | 5.21 | – |
+| **Expectancy** | 168.61 | 1.36 | 36.61 | 10.18 | – |
+| **Profit Factor** | 2.64 | 1.67 | 1.65 | 1.52 | – |
+| **Max. Verlustserie** | 21 | 13 | 21 | 24 | – |
+| **Not-Aus** | 8 | 5 | 0 | 5 | – |
+| **Liquidationen** | 0 | 0 | 0 | 0 | – |
 
 ## Entwicklung und Prüfung
 
 Die Einstellungen der Bots wurden nur mit den Jahren **bis 2022** gewählt. Die Jahre **ab 2023** waren dabei weggesperrt und zeigen, wie die Bots auf unbekannten Kursen abschneiden.
 
-| | bis 2022: pro Jahr % | bis 2022: Max. DD % | bis 2022: Treffer % | ab 2023: pro Jahr % | ab 2023: Max. DD % | ab 2023: Treffer % |
-|---|---|---|---|---|---|---|
-| **1️⃣ Langfrist-Bot (Hauptbot)** | 58 | -50.80 | 28.60 | 39.60 | -35.40 | 28.40 |
-| **2️⃣ KI-Bot (lernend, kurz bis lang)** | 17.60 | -24.70 | 46.40 | 14.40 | -19.20 | 37.30 |
-| **3️⃣ Risiko-Bot (aggressiv, Hebel 3×)** | 65.50 | -62 | 22.20 | 58.60 | -49.10 | 38.70 |
-| **Bitcoin halten** | 90.40 | -84.90 | – | 51.30 | -53.10 | – |
+Jeder Abschnitt ist ein Ausschnitt aus dem Lauf über die ganze Geschichte. Kosten = Gebühren + Slippage + Zinsen, Umschlag = gehandelter Wert, beide pro Jahr im Verhältnis zum Ø Kapital; Kostenanteil = Kosten in % des Gewinns vor Kosten. «Bitcoin halten nach Kosten»: ein Kauf am ersten Tag mit 0,80 % Gebühr und 0,05 % Slippage, danach nur halten.
+
+### bis 2022
+
+| | pro Jahr % | Max. DD % | Calmar | Treffer % | Trades je Coin/Jahr | Gebühren | Kosten %/Jahr | Umschlag/Jahr | Ø investiert % | Kostenanteil % |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **1️⃣ Langfrist-Bot (Hauptbot)** | 56.30 | -42.90 | 1.31 | 23.50 | 2.69 | 1'404.49 | 2.95 | 3.47 | 25.60 | 8.60 |
+| **2️⃣ KI-Bot (lernend, kurz bis lang)** | 11.90 | -21.50 | 0.55 | 40 | 3.71 | 52.24 | 2.27 | 2.67 | 6.90 | 17.70 |
+| **3️⃣ Risiko-Bot (aggressiv, Hebel 3×)** | 40.80 | -65.70 | 0.62 | 22.90 | 2.64 | 820.35 | 3.05 | 3.58 | 33.20 | 15.40 |
+| **5️⃣ Phasen-Bot (wählt kurz, mittel oder lang selbst)** | 44 | -44.20 | 1 | 22.50 | 2.80 | 564.38 | 2.42 | 2.85 | 20.10 | 8.80 |
+| **Bitcoin halten** | 90.40 | -84.90 | 1.07 | – | – | – | – | – | – | – |
+| **Bitcoin halten nach Kosten** | 90.30 | -84.90 | 1.06 | – | – | 0.79 | 0 | 0 | 100 | 0 |
+
+### ab 2023
+
+| | pro Jahr % | Max. DD % | Calmar | Treffer % | Trades je Coin/Jahr | Gebühren | Kosten %/Jahr | Umschlag/Jahr | Ø investiert % | Kostenanteil % |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **1️⃣ Langfrist-Bot (Hauptbot)** | 23.30 | -35.40 | 0.66 | 23.60 | 2.51 | 2'648.79 | 3.04 | 3.57 | 55.20 | 12.50 |
+| **2️⃣ KI-Bot (lernend, kurz bis lang)** | 5.10 | -15.90 | 0.32 | 29.40 | 3.80 | 74.33 | 5 | 5.89 | 19.70 | 51.10 |
+| **3️⃣ Risiko-Bot (aggressiv, Hebel 3×)** | 10.40 | -40.40 | 0.26 | 16.70 | 1.88 | 704.66 | 7.65 | 3.69 | 55.60 | 44.80 |
+| **5️⃣ Phasen-Bot (wählt kurz, mittel oder lang selbst)** | -5.30 | -39 | -0.13 | 22.60 | 10.81 | 2'119.44 | 10.72 | 12.62 | 27.90 | 210.60 |
+| **Bitcoin halten** | 51.50 | -53.10 | 0.97 | – | – | – | – | – | – | – |
+| **Bitcoin halten nach Kosten** | 51.10 | -53.10 | 0.96 | – | – | 0.79 | 0.05 | 0.06 | 100 | 0.20 |
 
 ## 1️⃣ Langfrist-Bot (Hauptbot)
 
@@ -38,61 +60,56 @@ Die Einstellungen der Bots wurden nur mit den Jahren **bis 2022** gewählt. Die 
 
 | | Rendite % | Kapital Ende | Trades | Trefferquote % |
 |---|---|---|---|---|
-| **2011** | 0 | 1'000 | 0 | – |
-| **2012** | 17.30 | 1'173 | 0 | – |
-| **2013** | 433.70 | 6'261 | 4 | 75 |
-| **2014** | -18.20 | 5'120 | 4 | 25 |
-| **2015** | 11.30 | 5'696 | 1 | 0 |
-| **2016** | 37.50 | 7'830 | 0 | – |
-| **2017** | 446.40 | 42'783 | 4 | 25 |
-| **2018** | -28.30 | 30'687 | 16 | 12.50 |
-| **2019** | 23.50 | 37'888 | 10 | 30 |
-| **2020** | 30.10 | 49'293 | 24 | 20.80 |
-| **2021** | 393 | 243'004 | 47 | 42.60 |
-| **2022** | -25.20 | 181'704 | 23 | 13 |
-| **2023** | 79.90 | 326'856 | 22 | 36.40 |
-| **2024** | 36.30 | 445'445 | 33 | 21.20 |
-| **2025** | 68.30 | 749'886 | 27 | 33.30 |
-| **2026** | -13.40 | 649'516 | 6 | 16.70 |
+| **2011** | 0 | 100 | 0 | – |
+| **2012** | 17.30 | 117 | 0 | – |
+| **2013** | 429.80 | 621 | 3 | 66.70 |
+| **2014** | -18.80 | 505 | 4 | 25 |
+| **2015** | 10.90 | 560 | 1 | 0 |
+| **2016** | 37.50 | 770 | 0 | – |
+| **2017** | 442.80 | 4'177 | 4 | 25 |
+| **2018** | -26.90 | 3'052 | 12 | 16.70 |
+| **2019** | 7.40 | 3'276 | 8 | 25 |
+| **2020** | 54.40 | 5'058 | 18 | 22.20 |
+| **2021** | 321.20 | 21'304 | 28 | 28.60 |
+| **2022** | -24.80 | 16'012 | 20 | 15 |
+| **2023** | 21.60 | 19'474 | 13 | 15.40 |
+| **2024** | 33.20 | 25'935 | 26 | 15.40 |
+| **2025** | 47.40 | 38'228 | 27 | 37 |
+| **2026** | -6.70 | 35'675 | 6 | 16.70 |
 
 **Nach Zeithorizont**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **kurz** | 14 | 35.70 | -4'864 | 0.20 |
-| **lang** | 184 | 22.80 | 568'491 | 3.43 |
-| **mittel** | 23 | 69.60 | -861 | 0.85 |
+| **lang** | 170 | 23.50 | 28'664 | 2.64 |
 
 **Nach Coin**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **BNB/USD** | 30 | 23.30 | 140'720 | 3.88 |
-| **BTC/USD** | 28 | 42.90 | 64'162 | 4.90 |
-| **ETH/USD** | 16 | 37.50 | 25'261 | 3.04 |
-| **SOL/USD** | 17 | 29.40 | 168'077 | 10.51 |
-| **TRX/USD** | 20 | 15 | 106'190 | 4.82 |
-| **XRP/USD** | 56 | 26.80 | -41'462 | 0.26 |
-| **ZEC/USD** | 54 | 27.80 | 99'818 | 2.48 |
+| **BNB/USD** | 26 | 19.20 | 9'770 | 3.30 |
+| **BTC/USD** | 25 | 44 | 7'074 | 7.12 |
+| **ETH/USD** | 14 | 50 | 3'130 | 6.56 |
+| **HYPE/USD** | 3 | 0 | -352 | 0 |
+| **SOL/USD** | 5 | 40 | 3'518 | 6.84 |
+| **TRX/USD** | 16 | 25 | 4'278 | 3.40 |
+| **XRP/USD** | 46 | 13 | -3'379 | 0.26 |
+| **ZEC/USD** | 35 | 14.30 | 4'624 | 2.09 |
 
 **Nach Richtung**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **long** | 221 | 28.50 | 562'766 | 3.29 |
+| **long** | 170 | 23.50 | 28'664 | 2.64 |
 
 **Nach Ausstiegsgrund**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **Not-Aus** | 12 | 41.70 | 169'350 | 90.88 |
-| **Signal** | 174 | 20.70 | 249'334 | 2.14 |
-| **Stop auf Einstand** | 18 | 94.40 | 3'862 | 223.34 |
-| **Stop auf Einstand (Gap)** | 1 | 100 | 70 | – |
-| **Stop-Loss** | 10 | 0 | -24'798 | 0 |
-| **Take-Profit** | 4 | 100 | 165'238 | – |
-| **Vorrang lang** | 1 | 0 | -5 | 0 |
-| **Vorrang mittel** | 1 | 0 | -285 | 0 |
+| **Not-Aus** | 19 | 47.40 | 14'954 | 16.22 |
+| **Signal** | 147 | 19.70 | 1'098 | 1.07 |
+| **Stop-Loss** | 2 | 0 | -1'176 | 0 |
+| **Take-Profit** | 2 | 100 | 13'788 | – |
 
 ## 2️⃣ KI-Bot (lernend, kurz bis lang)
 
@@ -100,62 +117,56 @@ Die Einstellungen der Bots wurden nur mit den Jahren **bis 2022** gewählt. Die 
 
 | | Rendite % | Kapital Ende | Trades | Trefferquote % |
 |---|---|---|---|---|
-| **2011** | 0 | 1'000 | 0 | – |
-| **2012** | 12.80 | 1'128 | 7 | 42.90 |
-| **2013** | 48.80 | 1'678 | 34 | 61.80 |
-| **2014** | -1.70 | 1'649 | 17 | 47.10 |
-| **2015** | 9.60 | 1'808 | 7 | 57.10 |
-| **2016** | 17.80 | 2'130 | 8 | 62.50 |
-| **2017** | 42.40 | 3'033 | 36 | 55.60 |
-| **2018** | -20 | 2'427 | 58 | 34.50 |
-| **2019** | 14.40 | 2'776 | 23 | 34.80 |
-| **2020** | 36.10 | 3'777 | 52 | 46.20 |
-| **2021** | 80.10 | 6'801 | 100 | 51 |
-| **2022** | -7.40 | 6'299 | 16 | 12.50 |
-| **2023** | 11.90 | 7'051 | 38 | 42.10 |
-| **2024** | 42.90 | 10'078 | 60 | 36.70 |
-| **2025** | 2.30 | 10'305 | 52 | 36.50 |
-| **2026** | 2.10 | 10'522 | 27 | 33.30 |
+| **2011** | 0 | 100 | 0 | – |
+| **2012** | 10.80 | 111 | 10 | 30 |
+| **2013** | 39.50 | 155 | 13 | 76.90 |
+| **2014** | -4.30 | 148 | 5 | 0 |
+| **2015** | 6 | 157 | 6 | 50 |
+| **2016** | 17.70 | 184 | 6 | 66.70 |
+| **2017** | 30.90 | 241 | 10 | 70 |
+| **2018** | -1.70 | 237 | 1 | 0 |
+| **2019** | 11.70 | 265 | 13 | 30.80 |
+| **2020** | -3.30 | 256 | 23 | 21.70 |
+| **2021** | 50.70 | 386 | 37 | 48.60 |
+| **2022** | -7.30 | 358 | 11 | 0 |
+| **2023** | 0.20 | 359 | 15 | 13.30 |
+| **2024** | 25.40 | 450 | 42 | 35.70 |
+| **2025** | 4.60 | 470 | 40 | 35 |
+| **2026** | -7.80 | 434 | 12 | 8.30 |
 
 **Nach Zeithorizont**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **kurz** | 40 | 37.50 | 46 | 1.12 |
-| **lang** | 361 | 41.30 | 10'585 | 1.83 |
-| **mittel** | 134 | 50.70 | -969 | 0.51 |
+| **lang** | 244 | 35.20 | 332 | 1.67 |
 
 **Nach Coin**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **BNB/USD** | 61 | 42.60 | 1'514 | 1.69 |
-| **BTC/USD** | 132 | 51.50 | 3'238 | 2.60 |
-| **ETH/USD** | 43 | 44.20 | 590 | 1.29 |
-| **HYPE/USD** | 2 | 50 | 38 | 3.05 |
-| **SOL/USD** | 68 | 39.70 | 370 | 1.19 |
-| **TRX/USD** | 50 | 44 | 1'632 | 1.82 |
-| **XRP/USD** | 130 | 38.50 | 105 | 1.03 |
-| **ZEC/USD** | 49 | 38.80 | 2'176 | 2.15 |
+| **BNB/USD** | 30 | 30 | 57 | 1.71 |
+| **BTC/USD** | 93 | 41.90 | 168 | 2.31 |
+| **ETH/USD** | 35 | 31.40 | 9 | 1.08 |
+| **HYPE/USD** | 4 | 0 | -8 | 0 |
+| **SOL/USD** | 4 | 75 | 1 | 1.07 |
+| **TRX/USD** | 36 | 30.60 | 45 | 1.56 |
+| **XRP/USD** | 27 | 18.50 | -1 | 0.99 |
+| **ZEC/USD** | 15 | 53.30 | 62 | 3.80 |
 
 **Nach Richtung**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **long** | 535 | 43.40 | 9'662 | 1.64 |
+| **long** | 244 | 35.20 | 332 | 1.67 |
 
 **Nach Ausstiegsgrund**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **Not-Aus** | 20 | 10 | -749 | 0.09 |
-| **Signal** | 221 | 25.80 | -4'256 | 0.38 |
-| **Stop auf Einstand** | 41 | 100 | 414 | – |
-| **Stop auf Einstand (Gap)** | 4 | 50 | -13 | 0.20 |
-| **Stop-Loss** | 69 | 0 | -6'874 | 0 |
-| **Take-Profit** | 106 | 100 | 21'295 | – |
-| **Vorrang lang** | 51 | 37.30 | -39 | 0.88 |
-| **Vorrang mittel** | 23 | 21.70 | -116 | 0.45 |
+| **Not-Aus** | 15 | 26.70 | -22 | 0.20 |
+| **Signal** | 133 | 14.30 | -196 | 0.20 |
+| **Stop-Loss** | 33 | 0 | -219 | 0 |
+| **Take-Profit** | 63 | 100 | 769 | – |
 
 ## 3️⃣ Risiko-Bot (aggressiv, Hebel 3×)
 
@@ -163,56 +174,133 @@ Die Einstellungen der Bots wurden nur mit den Jahren **bis 2022** gewählt. Die 
 
 | | Rendite % | Kapital Ende | Trades | Trefferquote % |
 |---|---|---|---|---|
-| **2011** | 0 | 1'000 | 0 | – |
-| **2012** | 23.10 | 1'231 | 0 | – |
-| **2013** | 291 | 4'813 | 2 | 100 |
-| **2014** | -22.30 | 3'742 | 4 | 25 |
-| **2015** | 23.80 | 4'633 | 1 | 0 |
-| **2016** | 69.10 | 7'835 | 0 | – |
-| **2017** | 747.90 | 66'434 | 4 | 25 |
-| **2018** | -48.70 | 34'099 | 15 | 13.30 |
-| **2019** | 32.10 | 45'033 | 10 | 30 |
-| **2020** | 49.30 | 67'237 | 22 | 18.20 |
-| **2021** | 582.20 | 458'698 | 27 | 29.60 |
-| **2022** | -32.80 | 308'293 | 23 | 13 |
-| **2023** | 84.50 | 568'649 | 32 | 43.80 |
-| **2024** | 111.40 | 1'201'995 | 54 | 44.40 |
-| **2025** | 108.60 | 2'506'845 | 25 | 28 |
-| **2026** | -28.30 | 1'796'269 | 8 | 12.50 |
+| **2011** | 0 | 100 | 0 | – |
+| **2012** | 23 | 123 | 0 | – |
+| **2013** | 285.90 | 475 | 2 | 100 |
+| **2014** | -22.30 | 369 | 4 | 25 |
+| **2015** | 23.30 | 454 | 1 | 0 |
+| **2016** | 68.10 | 764 | 0 | – |
+| **2017** | 690.50 | 6'037 | 4 | 25 |
+| **2018** | -43.40 | 3'417 | 11 | 18.20 |
+| **2019** | 11.10 | 3'795 | 8 | 37.50 |
+| **2020** | 8.60 | 4'120 | 16 | 6.20 |
+| **2021** | 75.80 | 7'243 | 27 | 33.30 |
+| **2022** | -32.40 | 4'897 | 23 | 13 |
+| **2023** | 5.30 | 5'155 | 8 | 25 |
+| **2024** | 41.40 | 7'289 | 24 | 16.70 |
+| **2025** | -3.30 | 7'049 | 14 | 21.40 |
+| **2026** | 1.40 | 7'147 | 8 | 0 |
 
 **Nach Zeithorizont**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **kurz** | 4 | 25 | -14'428 | 0.21 |
-| **lang** | 185 | 20.50 | 1'309'533 | 2.54 |
-| **mittel** | 38 | 81.60 | 198'029 | 2.02 |
+| **lang** | 148 | 19.60 | 5'388 | 1.64 |
+| **mittel** | 2 | 100 | 104 | – |
 
 **Nach Coin**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **BNB/USD** | 30 | 20 | 271'178 | 2.88 |
-| **BTC/USD** | 24 | 45.80 | 157'711 | 4.45 |
-| **ETH/USD** | 15 | 40 | 63'045 | 3.63 |
-| **SOL/USD** | 22 | 36.40 | 287'072 | 4.53 |
-| **TRX/USD** | 19 | 15.80 | 335'813 | 3.86 |
-| **XRP/USD** | 77 | 39 | -36'069 | 0.92 |
-| **ZEC/USD** | 40 | 15 | 414'383 | 2.90 |
+| **BNB/USD** | 19 | 21.10 | -864 | 0.26 |
+| **BTC/USD** | 23 | 39.10 | 4'007 | 6.09 |
+| **ETH/USD** | 14 | 35.70 | 2'637 | 4.44 |
+| **HYPE/USD** | 1 | 0 | -106 | 0 |
+| **SOL/USD** | 4 | 25 | 541 | 2.63 |
+| **TRX/USD** | 15 | 26.70 | 2'329 | 3.11 |
+| **XRP/USD** | 39 | 15.40 | -1'558 | 0.33 |
+| **ZEC/USD** | 35 | 5.70 | -1'493 | 0.19 |
 
 **Nach Richtung**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **long** | 227 | 30.80 | 1'493'134 | 2.40 |
+| **long** | 150 | 20.70 | 5'492 | 1.65 |
 
 **Nach Ausstiegsgrund**
 
 | | Trades | Trefferquote % | Ergebnis | Profit Factor |
 |---|---|---|---|---|
-| **Signal** | 181 | 19.90 | 1'045'712 | 2.31 |
-| **Stop auf Einstand** | 26 | 100 | 143'795 | – |
-| **Stop auf Einstand (Gap)** | 1 | 100 | 154 | – |
-| **Stop-Loss** | 11 | 0 | -266'132 | 0 |
-| **Take-Profit** | 7 | 100 | 569'805 | – |
-| **Vorrang mittel** | 1 | 0 | -200 | 0 |
+| **Signal** | 143 | 19.60 | 3'333 | 1.44 |
+| **Stop auf Einstand** | 2 | 100 | 104 | – |
+| **Stop-Loss** | 4 | 0 | -840 | 0 |
+| **Take-Profit** | 1 | 100 | 2'895 | – |
+
+## 5️⃣ Phasen-Bot (wählt kurz, mittel oder lang selbst)
+
+**Jahr für Jahr**
+
+| | Rendite % | Kapital Ende | Trades | Trefferquote % |
+|---|---|---|---|---|
+| **2011** | 0 | 100 | 0 | – |
+| **2012** | 31.70 | 132 | 1 | 0 |
+| **2013** | 466.70 | 747 | 4 | 50 |
+| **2014** | -6.20 | 700 | 4 | 25 |
+| **2015** | 4.50 | 732 | 1 | 0 |
+| **2016** | 15.90 | 848 | 0 | – |
+| **2017** | 141.90 | 2'052 | 4 | 25 |
+| **2018** | -13.30 | 1'780 | 11 | 18.20 |
+| **2019** | 10.10 | 1'959 | 8 | 25 |
+| **2020** | 43.30 | 2'808 | 19 | 21.10 |
+| **2021** | 193.80 | 8'250 | 28 | 28.60 |
+| **2022** | -23.10 | 6'341 | 22 | 13.60 |
+| **2023** | -2.20 | 6'204 | 124 | 22.60 |
+| **2024** | -7.90 | 5'715 | 120 | 24.20 |
+| **2025** | -20.60 | 4'538 | 58 | 20.70 |
+| **2026** | 13.70 | 5'158 | 8 | 12.50 |
+
+**Nach Zeithorizont**
+
+| | Trades | Trefferquote % | Ergebnis | Profit Factor |
+|---|---|---|---|---|
+| **kurz** | 2 | 50 | 15 | 3.53 |
+| **lang** | 155 | 23.90 | 5'931 | 2.25 |
+| **mittel** | 255 | 21.60 | -1'750 | 0.47 |
+
+**Nach Coin**
+
+| | Trades | Trefferquote % | Ergebnis | Profit Factor |
+|---|---|---|---|---|
+| **BNB/USD** | 108 | 19.40 | 2'056 | 1.82 |
+| **BTC/USD** | 32 | 43.80 | 2'730 | 6.57 |
+| **ETH/USD** | 36 | 25 | 1'332 | 2.68 |
+| **HYPE/USD** | 3 | 0 | -55 | 0 |
+| **SOL/USD** | 23 | 21.70 | 793 | 7.88 |
+| **TRX/USD** | 57 | 21.10 | -613 | 0.34 |
+| **XRP/USD** | 98 | 21.40 | -1'206 | 0.41 |
+| **ZEC/USD** | 55 | 20 | -840 | 0.27 |
+
+**Nach Richtung**
+
+| | Trades | Trefferquote % | Ergebnis | Profit Factor |
+|---|---|---|---|---|
+| **long** | 412 | 22.60 | 4'196 | 1.52 |
+
+**Nach Marktphase und Horizont**
+
+| | Trades | Trefferquote % | Ergebnis | Profit Factor |
+|---|---|---|---|---|
+| **('Aufwärtstrend, ruhig', 'lang')** | 40 | 32.50 | 300 | 1.24 |
+| **('Aufwärtstrend, ruhig', 'mittel')** | 90 | 24.40 | -660 | 0.45 |
+| **('Aufwärtstrend, wild', 'kurz')** | 1 | 0 | -6 | 0 |
+| **('Aufwärtstrend, wild', 'lang')** | 40 | 17.50 | -164 | 0.85 |
+| **('Aufwärtstrend, wild', 'mittel')** | 103 | 17.50 | -868 | 0.37 |
+| **('Seitwärts, ruhig', 'kurz')** | 1 | 100 | 21 | – |
+| **('Seitwärts, ruhig', 'lang')** | 61 | 24.60 | 6'052 | 3.93 |
+| **('Seitwärts, ruhig', 'mittel')** | 21 | 28.60 | -68 | 0.56 |
+| **('Seitwärts, wild', 'lang')** | 14 | 14.30 | -256 | 0.22 |
+| **('Seitwärts, wild', 'mittel')** | 41 | 22 | -155 | 0.74 |
+
+**Nach Ausstiegsgrund**
+
+| | Trades | Trefferquote % | Ergebnis | Profit Factor |
+|---|---|---|---|---|
+| **Nachlauf-Stop** | 70 | 71.40 | 1'358 | 16.44 |
+| **Nachlauf-Stop (Gap)** | 3 | 66.70 | 122 | 122.29 |
+| **Not-Aus** | 16 | 43.80 | 1'366 | 2.74 |
+| **Phase gekippt** | 9 | 0 | -139 | 0 |
+| **Signal** | 197 | 15.20 | -850 | 0.80 |
+| **Stop-Loss** | 109 | 0 | -2'689 | 0 |
+| **Stop-Loss (Gap)** | 1 | 0 | -1 | 0 |
+| **Take-Profit** | 3 | 100 | 5'067 | – |
+| **Vorrang lang** | 4 | 25 | -39 | 0.03 |
