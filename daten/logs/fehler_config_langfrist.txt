@@ -1,0 +1,1 @@
+2026-11-07 14:02 UTC | RequestTimeout | Kerzen HYPE/CHF 1h: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=60
