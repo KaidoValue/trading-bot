@@ -3,28 +3,28 @@
   "closed": [],
   "last_bar": {
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-07T15:00:00+00:00"
+      "__dt__": "2026-11-07T16:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-07T12:00:00+00:00"
@@ -75,17 +75,17 @@
       "__dt__": "2026-11-06T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "decisions": {
     "kurz:BTC/CHF": {
       "symbol": "BTC/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "BTC/CHF: Signal 'raus', bleibe in Cash",
@@ -98,7 +98,7 @@
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
           "completed": 73,
-          "pending": 6,
+          "pending": 8,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -114,10 +114,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "ETH/CHF: Signal 'raus', bleibe in Cash",
@@ -130,7 +130,7 @@
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
           "completed": 73,
-          "pending": 7,
+          "pending": 8,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -146,10 +146,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "BNB/CHF: Signal 'raus', bleibe in Cash",
@@ -162,7 +162,7 @@
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
           "completed": 73,
-          "pending": 7,
+          "pending": 8,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -178,10 +178,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "XRP/CHF: Signal 'raus', bleibe in Cash",
@@ -210,10 +210,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "SOL/CHF: Signal 'raus', bleibe in Cash",
@@ -242,10 +242,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "TRX/CHF: Signal 'raus', bleibe in Cash",
@@ -274,10 +274,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "ZEC/CHF: Signal 'raus', bleibe in Cash",
@@ -306,10 +306,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-07T16:03:01.108569+00:00"
+        "__dt__": "2026-11-07T17:03:02.930553+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-07T15:00:00+00:00"
+        "__dt__": "2026-11-07T16:00:00+00:00"
       },
       "signal": -1,
       "reason": "HYPE/CHF: Signal 'raus', bleibe in Cash",
@@ -883,8 +883,8 @@
     "news_score": -1.0,
     "themes": {
       "hack": [
-        "cointelegraph",
-        "decrypt"
+        "coindesk",
+        "cointelegraph"
       ]
     },
     "analysis": {
@@ -895,23 +895,23 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "coindesk",
+        "title": "Gnosis Pay breach exposes card numbers, home addresses and linked crypto wallets",
+        "link": "https://www.coindesk.com/business/2026/11/07/gnosis-pay-breach-exposes-card-numbers-home-addresses-and-linked-crypto-wallets",
+        "published": "2026-11-07T16:51:00+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "cointelegraph",
         "title": "Gnosis Pay breach exposes card details, personal data and crypto wallet information",
         "link": "https://cointelegraph.com/news/gnosis-pay-breach-exposes-card-details-personal-data-crypto-wallet-information?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
         "published": "2026-11-06T20:51:23+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "decrypt",
-        "title": "Crypto Card Provider Gnosis Pay Says Hackers Accessed Customer Data",
-        "link": "https://decrypt.co/382718/crypto-card-provider-gnosis-pay-hackers-customer-data",
-        "published": "2026-11-06T16:41:29+00:00"
       }
     ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-07T16:33:32.649911+00:00"
+    "__dt__": "2026-11-07T17:04:05.359839+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -929,35 +929,35 @@
   "prices": {
     "BTC/CHF": [
       62158.7,
-      "2026-11-07T16:33:01+00:00"
+      "2026-11-07T17:03:02+00:00"
     ],
     "ETH/CHF": [
-      1832.81,
-      "2026-11-07T16:33:01+00:00"
+      1832.74,
+      "2026-11-07T17:03:02+00:00"
     ],
     "BNB/CHF": [
-      569.402694,
-      "2026-11-07T16:33:01+00:00"
+      569.8488026,
+      "2026-11-07T17:03:02+00:00"
     ],
     "XRP/CHF": [
-      0.9522079499999999,
-      "2026-11-07T16:33:01+00:00"
+      0.9529486484,
+      "2026-11-07T17:03:02+00:00"
     ],
     "SOL/CHF": [
-      73.498872,
-      "2026-11-07T16:33:01+00:00"
+      73.57100659999999,
+      "2026-11-07T17:03:02+00:00"
     ],
     "TRX/CHF": [
-      0.262527654,
-      "2026-11-07T16:33:01+00:00"
+      0.26252619008,
+      "2026-11-07T17:03:02+00:00"
     ],
     "ZEC/CHF": [
-      1036.1550300000001,
-      "2026-11-07T16:33:01+00:00"
+      1037.1400984,
+      "2026-11-07T17:03:02+00:00"
     ],
     "HYPE/CHF": [
-      63.609215999999996,
-      "2026-11-07T16:33:01+00:00"
+      63.4598188,
+      "2026-11-07T17:03:02+00:00"
     ]
   },
   "abgleich": {
@@ -970,9 +970,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-07T16:33:01.264458+00:00"
+      "__dt__": "2026-11-07T17:03:02.930553+00:00"
     },
-    "quote_usd": 1.2174336498660823,
+    "quote_usd": 1.2174632934817016,
     "volume": []
   }
 }
