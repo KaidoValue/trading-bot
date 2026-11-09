@@ -144,7 +144,7 @@
       "__dt__": "2026-11-09T18:01:00+00:00"
     }
   },
-  "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: kein Signal | [lang] BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] XRP/CHF: Signal 'raus', bleibe in Cash | [lang] SOL/CHF: kein Signal | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+  "note": "BTC/CHF: kein aktueller Kurs, Position zum letzten Kurs vom 09.11. 18:01 UTC bewertet, Stops und Signale ausgesetzt | [lang] ETH/CHF: keine Kerzen, Signal ausgesetzt | [lang] BNB/CHF: keine Kerzen, Signal ausgesetzt | [lang] XRP/CHF: keine Kerzen, Signal ausgesetzt | [lang] SOL/CHF: keine Kerzen, Signal ausgesetzt | [lang] TRX/CHF: keine Kerzen, Signal ausgesetzt | [lang] ZEC/CHF: keine Kerzen, Signal ausgesetzt | [lang] HYPE/CHF: keine Kerzen, Signal ausgesetzt | [mittel] ETH/CHF: keine Kerzen, Signal ausgesetzt | [mittel] BNB/CHF: keine Kerzen, Signal ausgesetzt | [mittel] XRP/CHF: keine Kerzen, Signal ausgesetzt | [mittel] SOL/CHF: keine Kerzen, Signal ausgesetzt | [mittel] TRX/CHF: keine Kerzen, Signal ausgesetzt | [mittel] ZEC/CHF: keine Kerzen, Signal ausgesetzt | [mittel] HYPE/CHF: keine Kerzen, Signal ausgesetzt | [kurz] ETH/CHF: keine Kerzen, Signal ausgesetzt | [kurz] BNB/CHF: keine Kerzen, Signal ausgesetzt | [kurz] XRP/CHF: keine Kerzen, Signal ausgesetzt | [kurz] SOL/CHF: keine Kerzen, Signal ausgesetzt | [kurz] TRX/CHF: keine Kerzen, Signal ausgesetzt | [kurz] ZEC/CHF: keine Kerzen, Signal ausgesetzt | [kurz] HYPE/CHF: keine Kerzen, Signal ausgesetzt",
   "decisions": {
     "lang:BTC/CHF": {
       "symbol": "BTC/CHF",
@@ -165,13 +165,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 0,
-      "reason": "Kein Signal",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:BNB/CHF": {
@@ -179,13 +177,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 1,
-      "reason": "BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:XRP/CHF": {
@@ -193,13 +189,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "XRP/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:SOL/CHF": {
@@ -207,13 +201,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 0,
-      "reason": "Kein Signal",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:TRX/CHF": {
@@ -221,13 +213,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 0,
-      "reason": "Kein Signal",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:ZEC/CHF": {
@@ -235,13 +225,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 1,
-      "reason": "ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:HYPE/CHF": {
@@ -249,13 +237,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 1,
-      "reason": "HYPE/CHF: Position offen, Signal best\u00e4tigt",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:BTC/CHF": {
@@ -277,13 +263,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "ETH/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:BNB/CHF": {
@@ -291,13 +275,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "BNB/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:XRP/CHF": {
@@ -305,13 +287,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "XRP/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:SOL/CHF": {
@@ -319,13 +299,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "SOL/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:TRX/CHF": {
@@ -333,13 +311,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "TRX/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:ZEC/CHF": {
@@ -347,13 +323,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "ZEC/CHF: Signal 'raus', bleibe in Cash",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:HYPE/CHF": {
@@ -361,13 +335,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "kurz:BTC/CHF": {
@@ -395,140 +367,84 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "ETH/CHF: Signal 'raus', bleibe in Cash",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     },
     "kurz:BNB/CHF": {
       "symbol": "BNB/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "BNB/CHF: Signal 'raus', bleibe in Cash",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     },
     "kurz:XRP/CHF": {
       "symbol": "XRP/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "XRP/CHF: Signal 'raus', bleibe in Cash",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     },
     "kurz:SOL/CHF": {
       "symbol": "SOL/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "SOL/CHF: Signal 'raus', bleibe in Cash",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     },
     "kurz:TRX/CHF": {
       "symbol": "TRX/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "TRX/CHF: Signal 'raus', bleibe in Cash",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     },
     "kurz:ZEC/CHF": {
       "symbol": "ZEC/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "ZEC/CHF: Signal 'raus', bleibe in Cash",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     },
     "kurz:HYPE/CHF": {
       "symbol": "HYPE/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-09T18:01:42.106591+00:00"
+        "__dt__": "2026-11-09T21:01:43.591894+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T17:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
-      "learning": {
-        "reason": "Keine simulierten Ausf\u00fchrungen: Filter, Kapital und Mindestorder pr\u00fcfen",
-        "score": 0.0,
-        "threshold": 0.5,
-        "active_members": 0,
-        "simulated_closed": 0
-      }
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
+      "learning": null
     }
   },
   "research": {},
@@ -542,10 +458,17 @@
     },
     "blackout": null,
     "evidence": [],
-    "alerts": []
+    "alerts": [
+      {
+        "who": "powell (fed)",
+        "title": "Federal Reserve Board announces approval of two applications by Mutual Federal Bancorp, MHC, and MFB Bancorp, Inc.",
+        "source": "federalreserve",
+        "published": "2026-11-09T21:00:00+00:00"
+      }
+    ]
   },
   "updated": {
-    "__dt__": "2026-11-09T18:02:48.950567+00:00"
+    "__dt__": "2026-11-09T21:05:55.499055+00:00"
   },
   "risk": {
     "peak_equity": 100.03956552260361,
@@ -566,37 +489,37 @@
       "2026-11-09T18:01:42+00:00"
     ],
     "ETH/CHF": [
-      1741.6,
-      "2026-11-09T18:01:42+00:00"
+      1730.91,
+      "2026-11-09T21:01:43+00:00"
     ],
     "BNB/CHF": [
-      564.1368873,
-      "2026-11-09T18:01:42+00:00"
+      566.2290925,
+      "2026-11-09T21:01:43+00:00"
     ],
     "XRP/CHF": [
-      0.8958443478000001,
-      "2026-11-09T18:01:42+00:00"
+      0.901196918,
+      "2026-11-09T21:01:43+00:00"
     ],
     "SOL/CHF": [
-      71.0748873,
-      "2026-11-09T18:01:42+00:00"
+      71.281298,
+      "2026-11-09T21:01:43+00:00"
     ],
     "TRX/CHF": [
-      0.2602627767,
-      "2026-11-09T18:01:42+00:00"
+      0.26013479785,
+      "2026-11-09T21:01:43+00:00"
     ],
     "ZEC/CHF": [
-      960.6984362,
-      "2026-11-09T18:01:42+00:00"
+      961.310703,
+      "2026-11-09T21:01:43+00:00"
     ],
     "HYPE/CHF": [
-      61.3369128,
-      "2026-11-09T18:01:42+00:00"
+      61.799602500000006,
+      "2026-11-09T21:01:43+00:00"
     ]
   },
   "abgleich": {
-    "kapital": 97.51,
-    "erwartet": 97.51,
+    "kapital": 97.59,
+    "erwartet": 97.59,
     "differenz": 0.0
   },
   "paper": {
@@ -607,9 +530,9 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-09T18:01:42.106591+00:00"
+      "__dt__": "2026-11-09T21:01:43.591894+00:00"
     },
-    "quote_usd": 1.216885503243,
+    "quote_usd": 1.2160272390101539,
     "volume": [
       [
         {

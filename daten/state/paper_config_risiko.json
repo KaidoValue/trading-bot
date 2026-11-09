@@ -131,7 +131,7 @@
       "sold": 0.0,
       "sold_value": 0.0,
       "realized": 0.0,
-      "interest": 0.16390347949689507,
+      "interest": 0.16687752747290102,
       "fees_done": 0.0,
       "margin_value": 12.855257380314663
     }
@@ -228,7 +228,7 @@
       "__dt__": "2026-11-06T00:04:00+00:00"
     }
   },
-  "note": "[mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] BNB/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+  "note": "BTC/CHF: kein aktueller Kurs, Position zum letzten Kurs vom 09.11. 18:04 UTC bewertet, Stops und Signale ausgesetzt | BNB/CHF: kein aktueller Kurs, Position zum letzten Kurs vom 09.11. 18:04 UTC bewertet, Stops und Signale ausgesetzt | XRP/CHF: kein aktueller Kurs, Signale ausgesetzt | SOL/CHF: kein aktueller Kurs, Position zum letzten Kurs vom 09.11. 18:04 UTC bewertet, Stops und Signale ausgesetzt | TRX/CHF: kein aktueller Kurs, Signale ausgesetzt | ZEC/CHF: kein aktueller Kurs, Signale ausgesetzt | HYPE/CHF: kein aktueller Kurs, Position zum letzten Kurs vom 09.11. 18:04 UTC bewertet, Stops und Signale ausgesetzt | [mittel] ETH/CHF: keine Kerzen, Signal ausgesetzt | [lang] ETH/CHF: keine Kerzen, Signal ausgesetzt",
   "decisions": {
     "mittel:BTC/CHF": {
       "symbol": "BTC/CHF",
@@ -249,13 +249,11 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-09T16:04:18.569981+00:00"
+        "__dt__": "2026-11-09T21:09:18.887006+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-09T12:00:00+00:00"
-      },
-      "signal": -1,
-      "reason": "ETH/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "mittel:BNB/CHF": {
@@ -361,13 +359,11 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-09T00:04:28.023297+00:00"
+        "__dt__": "2026-11-09T21:09:18.887006+00:00"
       },
-      "bar": {
-        "__dt__": "2026-11-08T00:00:00+00:00"
-      },
-      "signal": 0,
-      "reason": "Kein Signal",
+      "bar": null,
+      "signal": null,
+      "reason": "Keine Kerzen, Signal ausgesetzt",
       "learning": null
     },
     "lang:BNB/CHF": {
@@ -458,7 +454,7 @@
   "research": {},
   "news": null,
   "updated": {
-    "__dt__": "2026-11-09T18:04:43.046942+00:00"
+    "__dt__": "2026-11-09T21:11:11.743593+00:00"
   },
   "risk": {
     "peak_equity": 104.76119273186904,
@@ -479,8 +475,8 @@
       "2026-11-09T18:04:14+00:00"
     ],
     "ETH/CHF": [
-      1741.6,
-      "2026-11-09T18:04:14+00:00"
+      1764.92,
+      "2026-11-09T21:09:18+00:00"
     ],
     "BNB/CHF": [
       564.0710466,
@@ -508,12 +504,12 @@
     ]
   },
   "abgleich": {
-    "kapital": 92.66,
-    "erwartet": 92.66,
+    "kapital": 92.95,
+    "erwartet": 92.95,
     "differenz": 0.0
   },
   "paper": {
-    "cash": -14.507729714722533,
+    "cash": -14.510703762698538,
     "positions": {
       "BTC/CHF": 0.000522555718492097,
       "ETH/CHF": 0.01264932572271568,
@@ -522,9 +518,9 @@
       "HYPE/CHF": 0.21173287485711234,
       "XRP/CHF": 0.0
     },
-    "interest_paid": 0.24327256861020377,
+    "interest_paid": 0.24624661658620972,
     "interest_at": {
-      "__dt__": "2026-11-09T18:04:14.146072+00:00"
+      "__dt__": "2026-11-09T21:09:18.887006+00:00"
     },
     "quote_usd": 1.2169743583502695,
     "volume": [
