@@ -289,8 +289,9 @@ def test_pruefprotokoll_behaelt_beim_zusammenfuehren_beide_eintraege(tmp_path, m
     git("push", "-q", "origin", "HEAD:main", ort=a)
     git("pull", "-q", "--rebase", "-X", "theirs", "origin", "main", ort=b)
     text = (b / "lernen" / "PROFI_PRUEFPROTOKOLL.md").read_text(encoding="utf-8")
-    eintraege = [z for z in text.splitlines() if z.startswith("- ")]
-    assert text.startswith((ROOT / "lernen" / "PROFI_PRUEFPROTOKOLL.md").read_text(encoding="utf-8"))
+    vorher = (ROOT / "lernen" / "PROFI_PRUEFPROTOKOLL.md").read_text(encoding="utf-8")  # samt echten Einträgen
+    assert text.startswith(vorher)
+    eintraege = [z for z in text[len(vorher):].splitlines() if z.startswith("- ")]       # nur die beiden neuen
     assert [z.split(" · ")[1] for z in eintraege] == ["GitHub-Lauf 4711", "GitHub-Lauf 4712"]
     assert all(z.endswith(f"`{'f' * 64}` (eingefroren, --cache-fest) · Befehl `python -m tradingbot profi --schritt E6 "
                           "--pruefung` · Läufe e1_kb3: ab-2024Q2") for z in eintraege)
