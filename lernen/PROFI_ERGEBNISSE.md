@@ -1,6 +1,6 @@
 # Profi-Bot: Ergebnisse der Auswertung
 
-Aus 31 Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).
+Aus 36 Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).
 
 Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung Commit `dce942282a04b2eeda025a315ed361e805dce2b8`.
 
@@ -8,7 +8,7 @@ Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung Commit
 
 | | Quellen | Börsen der Kursdateien | eingefroren | Läufe | zählt für | Commits |
 |---|---|---|---|---|---|---|
-| **Cache ee111aa363f9** | bitstamp (USD), binance (USDT), binanceus (USD), kucoin (USDT) | binanceus, bitstamp, kucoin | ja | 31 | Entscheide | 39961fe3b194, 4fe71ac40526, c011d2d4df76, cda7f449de55 |
+| **Cache ee111aa363f9** | bitstamp (USD), binance (USDT), binanceus (USD), kucoin (USDT) | binanceus, bitstamp, kucoin | ja | 36 | Entscheide | 39961fe3b194, c011d2d4df76, cda7f449de55, e13f4f514529 |
 
 Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (Schwäche).
 
@@ -99,4 +99,47 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Cache ee111aa363f9** | ✗ 1.05 gegen 1.33 | ✓ 1.06 % | ✗ |
 
 **Tor nicht bestanden:** Die Leiter wird abgebrochen; E6 prüft nur P−1 und K1 als Kandidaten.
+
+## E6 Einmal-Prüfung
+
+### Kennzahlen: Cache ee111aa363f9, Gebühren normiert
+
+| | Fenster | CAGR % | Max. DD % | Calmar | Trades | Gebühren | Kosten %/Jahr | Umschlag/Jahr | Ø investiert % | Kostenanteil % | Not-Aus | Δ Calmar halten | Δ Calmar P−1 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **K1** | ab-2023Q1 (bis 2026-11-11) | 30.20 | -31 | 0.98 | 65 | 25.39 | 3.48 | 4.09 | 74.50 | 13.20 | 0 | – | – |
+| **K1** | Crash-2022 (bis 2026-11-11) | 16.60 | -31.70 | 0.52 | 73 | 21.37 | 3.24 | 3.81 | 58.70 | 17 | 0 | – | – |
+| **K1** | ab-2023Q2 (bis 2026-11-11) | 26.20 | -32.60 | 0.80 | 58 | 19.99 | 3.30 | 3.88 | 71.40 | 13.90 | 0 | – | – |
+| **K1** | ab-2023Q3 (bis 2026-11-11) | 34.30 | -30.60 | 1.12 | 53 | 21.84 | 3.32 | 3.91 | 73 | 12 | 0 | – | – |
+| **K1** | ab-2023Q4 (bis 2026-11-11) | 26.30 | -40.80 | 0.65 | 60 | 21.93 | 4.09 | 4.81 | 70.20 | 17.90 | 1 | – | – |
+| **K1** | ab-2024Q1 (bis 2026-11-11) | 21.10 | -40.90 | 0.52 | 56 | 17.49 | 4.16 | 4.89 | 67.80 | 20.30 | 1 | – | – |
+| **K1** | ab-2024Q2 (bis 2026-11-11) | 11 | -42.50 | 0.26 | 45 | 11.85 | 3.94 | 4.63 | 60.10 | 28.70 | 1 | – | – |
+| **K1** | ab-2024Q3 (bis 2026-11-11) | 19.30 | -34.70 | 0.56 | 42 | 12.08 | 3.83 | 4.51 | 64.20 | 19.90 | 0 | – | – |
+| **K1** | ab-2024Q4 (bis 2026-11-11) | 20.20 | -43 | 0.47 | 34 | 10.87 | 3.65 | 4.30 | 63.20 | 19.60 | 1 | – | – |
+| **K1** | ab-2025Q1 (bis 2026-11-11) | 3.50 | -31.20 | 0.11 | 22 | 5.19 | 2.96 | 3.48 | 49.90 | 45.70 | 0 | – | – |
+| **K1** | ab-2025Q2 (bis 2026-11-11) | 10.30 | -31.80 | 0.32 | 17 | 4.79 | 2.82 | 3.32 | 55.20 | 22.90 | 0 | – | – |
+| **K1** | ab-2025Q3 (bis 2026-11-11) | 13.40 | -31.70 | 0.42 | 13 | 3.97 | 2.72 | 3.20 | 54.70 | 18.40 | 0 | – | – |
+| **K1** | ab-2025Q4 (bis 2026-11-11) | -4.40 | -28.50 | -0.15 | 11 | 3.06 | 3.32 | 3.91 | 42.20 | – | 0 | – | – |
+
+### Go-Regeln für K1
+
+| | Cache ee111aa363f9 |
+|---|---|
+| **1. Calmar ≥ bester Vergleichs-Bot + 0,10** | ✗ 0.98 gegen – |
+| **2. Calmar ≥ halten und ≥ P−1 − 0,05** | ✗ 0.98 gegen halten –, P−1 − 0,05 – |
+| **3. Max. DD ≤ 0,6 × halten, auch Crash 2022** | ✗ -31.0 % gegen – %; Crash 2022 -31.7 % gegen – % |
+| **4. CAGR ≥ ⅓ von halten** | ✗ 30.2 % gegen ⅓ × – % |
+| **5. Kosten ≤ 3 %, Kostenanteil ≤ 25 %** | ✗ 3.48 %/Jahr, Kostenanteil 13.2 % |
+| **6. in ≥ 8 von 12 Fenstern besser als der beste heutige Bot** | ✗ 0 von 12 |
+| **7. bei E2-Flagge: ohne Not-Aus erfüllt 1-4** | ✓ keine E2-Flagge |
+| **Go** | ✗ |
+| **P−1 besser um mehr als 0,05** | ✗ – gegen 0.98 |
+| **P−1 erfüllt die Regeln 1 und 3-5** | ✗ 1✗ 3✗ 4✗ 5✗ |
+
+**Entscheid: No-Go**
+
+Nur zur Information (dritte Quelle und Bootstrap):
+
+| | Bootstrap P(besser als halten) |
+|---|---|
+| **Cache ee111aa363f9** | – |
 
