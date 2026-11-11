@@ -19,3 +19,5 @@
 2026-11-09 21:08 UTC | RequestTimeout | Kerzen TRX/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=TRXUSD&interval=1440
 2026-11-09 21:08 UTC | RequestTimeout | Kerzen ZEC/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=XZECZUSD&interval=1440
 2026-11-09 21:09 UTC | RequestTimeout | Kerzen HYPE/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=1440
+2026-11-11 14:03 UTC | ExchangeNotAvailable | Kerzen HYPE/CHF 1h: kraken {"error":["EGeneral:Internal error"]}
+2026-11-11 14:03 UTC | ExchangeNotAvailable | Lern-Tageskerzen BTC/CHF: kraken {"error":["EGeneral:Internal error"]}
