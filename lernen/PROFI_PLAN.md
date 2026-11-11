@@ -1,6 +1,6 @@
 # Profi-Bot «Kern zuerst»: Vorab-Registrierung
 
-- **Eingefrorene Fassung:** Commit _(noch leer: wird vor dem ersten E0-Lauf eingetragen)_
+- **Eingefrorene Fassung:** Commit `dce942282a04b2eeda025a315ed361e805dce2b8`
 - **Fassung mit Stufe 2 (E3/E4):** entfällt, E3 und E4 entfallen (siehe «Zeitplan»)
 - **E6-Kandidat:** _(offen: nach E5 eintragen, mit `--config`, `--sieger` und Commit)_
 - **Massstab:** Calmar. Bestätigung durch Hiran: keine, die Karte vom 4.11. blieb bis E0 unbeantwortet; wie am 5.11.
