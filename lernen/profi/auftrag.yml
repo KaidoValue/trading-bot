@@ -1,3 +1,4 @@
 schritt: E6
-config: bots/profi/p_minus_1.yaml
+config: bots/profi/k1.yaml
+nur_bot: k1
 pruefung: true
