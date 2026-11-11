@@ -2,7 +2,9 @@
 
 - **Eingefrorene Fassung:** Commit `dce942282a04b2eeda025a315ed361e805dce2b8`
 - **Fassung mit Stufe 2 (E3/E4):** entfällt, E3 und E4 entfallen (siehe «Zeitplan»)
-- **E6-Kandidat:** _(offen: nach E5 eintragen, mit `--config`, `--sieger` und Commit)_
+- **E6-Kandidat:** Tor nach E1 nicht bestanden (Calmar 1,05 gegen 0,85 × L_dev = 1,33), darum P−1
+  (`--config bots/profi/p_minus_1.yaml`) und K1 (`--config bots/profi/k1.yaml`), ohne `--sieger`; Commit
+  `fbb57a00f3a0618907b8a21feaba95d8e9edecf3`
 - **Massstab:** Calmar. Bestätigung durch Hiran: keine, die Karte vom 4.11. blieb bis E0 unbeantwortet; wie am 5.11.
   angekündigt gilt Calmar.
 - **Registriert:** 5.11.2026, bevor eine einzige Profi-Zahl mit echten Kursen gerechnet ist. Bis hier liefen alle
