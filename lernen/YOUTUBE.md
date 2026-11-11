@@ -50,6 +50,15 @@ keine Regel direkt übernommen. Die Bausteine daraus stehen aber im Strategie-La
 kombinieren kann. Besteht eine solche Kombination die Prüfung, kommt sie automatisch in den KI-Bot.
 Ausführliche Zahlen: [VERGLEICH.md](VERGLEICH.md).
 
+## Auswertung 11.11.2026 (14 neue Videos vom 3.11. bis 9.11.)
+
+Nur 2 Videos drehen sich direkt um Krypto (HKCM über Hyperliquid/HYPE), 2 weitere um die Aktie Strategy, die
+Bitcoin hält. Der Rest behandelt Aktien, Silber, Öl und die US-Wahlen. Die Krypto-Videos nennen den Einstieg eines
+bekannten Investors und Kursziele (160-180 % Potenzial) und werben für ein kostenpflichtiges Altcoin-Paket. Das sind
+Prognosen und Werbung, keine prüfbaren Regeln.
+
+**Ergebnis:** keine neue Strategie zum Testen. Die laufenden Bots bleiben unverändert.
+
 ## Auswertung 4.11.2026 (19 neue Videos vom 24.10. bis 2.11.)
 
 Von 19 Videos drehen sich 6 um Krypto, der Rest um Aktien, Silber, Politik und KI. Neu und brauchbar ist vor allem
@@ -79,6 +88,20 @@ bleiben unverändert.
 
 | Datum | Kanal | Video | Krypto |
 |---|---|---|---|
+| 2026-11-09 | @hkcm | [Weltweite Angriffe auf Banksysteme! Was passiert mit unserem Geld?](https://www.youtube.com/watch?v=O-LCaAJGbss) | nein |
+| 2026-11-09 | @STA_Solutions | [Rohöl fällt! Ich hab's euch doch gesagt... (schon wieder)](https://www.youtube.com/watch?v=4wWUPQvsOCw) | am Rand |
+| 2026-11-08 | @phantombyhkcm | [Ist Strategy die größte Bitcoin-Chance unserer Zeit?](https://www.youtube.com/watch?v=81236ylQqA8) | am Rand |
+| 2026-11-07 | @phantombyhkcm | [Strategy: Noch besser als Bitcoin? #bitcoin #strategy #btc](https://www.youtube.com/watch?v=XaTJew3W5Fo) | am Rand |
+| 2026-11-06 | @hkcm | [Hedgefonds-Legende steigt ein! Dieser Altcoin könnte explodieren! 🚀](https://www.youtube.com/watch?v=4XwgXcJWKKQ) | ja |
+| 2026-11-06 | @hkcm | [Diese Fintech-Aktie trotzt dem Abverkauf!](https://www.youtube.com/watch?v=9dq6Xpkt4fo) | nein |
+| 2026-11-05 | @phantombyhkcm | [Welche Aktien würden wir kaufen, wenn soeben die Blase geplatzt ist?](https://www.youtube.com/watch?v=oUdNku4qwGk) | nein |
+| 2026-11-05 | @hkcm | [US-Börsen: Drei Analysen zeigen jetzt dasselbe Signal!](https://www.youtube.com/watch?v=0FwzUplB-Xw) | nein |
+| 2026-11-05 | @hkcm | [Trump verliert die Macht – jetzt explodiert die Börse? 🚀](https://www.youtube.com/watch?v=_Qv9nmWbjyE) | nein |
+| 2026-11-04 | @phantombyhkcm | [HKCM Special: Was die US-WAHL für die Börsen bedeutet!](https://www.youtube.com/watch?v=-hsp7jEREJY) | nein |
+| 2026-11-04 | @hkcm | [Wahl-Hammer in den USA! Was bedeutet das für die Märkte?](https://www.youtube.com/watch?v=EGsOZlmJxJI) | nein |
+| 2026-11-04 | @hkcm | [Silber bereits 60 % gefallen – der Crash geht weiter!](https://www.youtube.com/watch?v=mEGDzfIkg1s) | nein |
+| 2026-11-03 | @phantombyhkcm | [Während alle wegsehen, entsteht bei dieser Aktie eine historische Chance!](https://www.youtube.com/watch?v=SRKWX7918xw) | nein |
+| 2026-11-03 | @hkcm | [JETZT steigt das Großkapital bei diesem Altcoin ein!](https://www.youtube.com/watch?v=Omm_ILU2SSE) | ja |
 | 2026-11-02 | @phantombyhkcm | [Warum Nike eine der attraktivsten Aktien der letzten 10 Jahre ist](https://www.youtube.com/watch?v=U_jE97q3bJI) | nein |
 | 2026-11-02 | @hkcm | [Warum der Silber-Crash noch lange nicht vorbei ist!](https://www.youtube.com/watch?v=3H1Yjx1lVMk) | nein |
 | 2026-11-02 | @hkcm | [US-Wahlen: Die nächste Bitcoin-Rally steht bevor!](https://www.youtube.com/watch?v=NDwLIJAFxH0) | ja |

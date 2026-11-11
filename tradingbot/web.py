@@ -111,6 +111,27 @@ def page(bots, chef, tickers: dict, prices: dict, history: pd.DataFrame, now, ex
   <div class="small muted">{escape(chef.reason)}</div>
 </div>""")
 
+    trial_path = Path("daten/agent_trial/trial.json")
+    if trial_path.exists():
+        trial = json.loads(trial_path.read_text(encoding="utf-8"))
+        labels = {"learner": "Lernagent", "frozen": "Eingefrorenes Startmodell"}
+        trial_rows = []
+        for name, label in labels.items():
+            wallet = trial[name]
+            trial_rows.append(
+                f"<div class='kv'><span>{label}</span><b>{_chf(wallet['equity'])} CHF</b></div>"
+                f"<div class='small'>Größter Rückgang {wallet['max_drawdown']:.1%} · "
+                f"Gebühren {_chf(wallet['fees'])} CHF · {wallet['fills']} Ausführungen</div>")
+        status = "Läuft" if trial["status"] == "running" else (
+            "Beendet · Gewinnziel erreicht" if trial.get("objective_met") else "Beendet · Gewinnziel verfehlt")
+        cards.append(
+            "<div class='card' style='--c:#956de8'><div class='card-title'>30-Tage-Lernexperiment · Demo</div>"
+            f"<div class='small'>{status} · Start {_local(trial['started'])} · Ende {_local(trial['ends'])}</div>"
+            + "".join(trial_rows)
+            + f"<div class='small'>Modellupdates {trial['learner']['updates']} · "
+              f"Bewertung {_local(trial.get('updated', trial['started']))}</div>"
+              "<div class='small muted'>BTC/CHF · Entscheidung täglich · je 100 CHF Startkapital</div></div>")
+
     # --- Offene Positionen
     rows = []
     for i, b in enumerate(bots):

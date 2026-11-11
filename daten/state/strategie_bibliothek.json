@@ -16,7 +16,8 @@
   "accepted": true,
   "name": "labor_3",
   "found": "2026-10-23",
-  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn Marktstruktur abwärts UND bullishe RSI-Divergenz."
+  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn Marktstruktur abwärts UND bullishe RSI-Divergenz.",
+  "status": "legacy"
  },
  {
   "entry": [
@@ -34,7 +35,8 @@
   "accepted": true,
   "name": "labor_4",
   "found": "2026-10-23",
-  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn bullishe RSI-Divergenz."
+  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn bullishe RSI-Divergenz.",
+  "status": "legacy"
  },
  {
   "entry": [
@@ -52,7 +54,8 @@
   "accepted": true,
   "name": "labor_2",
   "found": "2026-10-23",
-  "text": "Kaufen, wenn Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn Kurs im oberen Teil der Range (Premium) UND bullishe RSI-Divergenz."
+  "text": "Kaufen, wenn Kurs unter dem unteren Bollinger-Band UND bearishes Kerzenmuster. Verkaufen, wenn Kurs im oberen Teil der Range (Premium) UND bullishe RSI-Divergenz.",
+  "status": "legacy"
  },
  {
   "entry": [
@@ -71,7 +74,8 @@
   "accepted": true,
   "name": "labor_1",
   "found": "2026-10-23",
-  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND bearishes Kerzenmuster UND Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn Kurs im oberen Teil der Range (Premium) UND bullishe RSI-Divergenz."
+  "text": "Kaufen, wenn Kurs unter der 200er-Linie UND bearishes Kerzenmuster UND Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn Kurs im oberen Teil der Range (Premium) UND bullishe RSI-Divergenz.",
+  "status": "legacy"
  },
  {
   "entry": [
@@ -88,6 +92,7 @@
   "accepted": true,
   "name": "labor_5",
   "found": "2026-11-01",
-  "text": "Kaufen, wenn bullishe RSI-Divergenz UND Kurs im unteren Teil der Range (Discount). Verkaufen, wenn bullishe RSI-Divergenz."
+  "text": "Kaufen, wenn bullishe RSI-Divergenz UND Kurs im unteren Teil der Range (Discount). Verkaufen, wenn bullishe RSI-Divergenz.",
+  "status": "legacy"
  }
 ]

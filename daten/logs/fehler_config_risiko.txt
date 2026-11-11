@@ -1,0 +1,18 @@
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs BTC/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs BNB/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs XRP/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs SOL/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs TRX/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs ZEC/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | ExchangeNotAvailable | Kurs HYPE/CHF: kraken {"error":["EService:Unavailable"]}
+2026-11-09 21:09 UTC | RequestTimeout | Minutenkerzen ETH/CHF: kraken GET https://api.kraken.com/0/public/OHLC?pair=ETHCHF&interval=1
+2026-11-09 21:09 UTC | RequestTimeout | Kerzen BTC/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=XBTCHF&interval=240
+2026-11-09 21:09 UTC | RequestTimeout | Kerzen ETH/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=ETHCHF&interval=240
+2026-11-09 21:10 UTC | RequestTimeout | Kerzen BNB/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=BNBUSD&interval=240
+2026-11-09 21:10 UTC | RequestTimeout | Kerzen SOL/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=SOLUSD&interval=240
+2026-11-09 21:10 UTC | RequestTimeout | Kerzen HYPE/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=240
+2026-11-09 21:10 UTC | RequestTimeout | Kerzen BTC/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=XBTCHF&interval=1440
+2026-11-09 21:10 UTC | RequestTimeout | Kerzen ETH/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=ETHCHF&interval=1440
+2026-11-09 21:10 UTC | RequestTimeout | Kerzen BNB/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=BNBUSD&interval=1440
+2026-11-09 21:11 UTC | RequestTimeout | Kerzen SOL/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=SOLUSD&interval=1440
+2026-11-09 21:11 UTC | RequestTimeout | Kerzen HYPE/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=1440

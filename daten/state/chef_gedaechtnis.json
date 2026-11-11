@@ -30,16 +30,30 @@
   },
   "Aufw\u00e4rtstrend, wild": {
    "config_langfrist": [
-    -0.0005319523569349283,
-    54
+    -0.021596175650060778,
+    96
    ],
    "config_daytrading": [
     0.0,
-    54
+    96
    ],
    "config_risiko": [
-    0.025134256928375787,
-    54
+    -0.06237657730898105,
+    96
+   ]
+  },
+  "Abw\u00e4rtstrend, wild": {
+   "config_langfrist": [
+    -0.0017264200975845023,
+    267
+   ],
+   "config_daytrading": [
+    0.0,
+    267
+   ],
+   "config_risiko": [
+    -0.029986506446118333,
+    267
    ]
   }
  },
