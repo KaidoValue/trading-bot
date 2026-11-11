@@ -1,2 +1,3 @@
 schritt: E1
-varianten: bots/profi/varianten/e1_kb5.yaml
+config: bots/profi/e1_kb3.yaml
+varianten: bots/profi/varianten/e1_kbe.yaml
