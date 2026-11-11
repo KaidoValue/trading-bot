@@ -1,6 +1,6 @@
 # Profi-Bot: Ergebnisse der Auswertung
 
-Aus 110 Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).
+Aus 132 Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).
 
 Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung Commit `dce942282a04b2eeda025a315ed361e805dce2b8`.
 
@@ -8,7 +8,8 @@ Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung Commit
 
 | | Quellen | Börsen der Kursdateien | eingefroren | Läufe | zählt für | Commits |
 |---|---|---|---|---|---|---|
-| **Cache ee111aa363f9** | bitstamp (USD), binance (USDT), binanceus (USD), kucoin (USDT) | binanceus, bitstamp, kucoin | ja | 110 | Entscheide | 39961fe3b194, 8489efb03767, c011d2d4df76, cda7f449de55 |
+| **Cache ee111aa363f9** | bitstamp (USD), binance (USDT), binanceus (USD), kucoin (USDT) | binanceus, bitstamp, kucoin | ja | 130 | Entscheide | 39961fe3b194, 4fe71ac40526, 8489efb03767, c011d2d4df76, cda7f449de55, e13f4f514529 |
+| **Cache 38898c7f8d13** | coinbase (USD) | coinbase | ja | 2 | nur Information | 14758ab75364 |
 
 Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (Schwäche).
 
@@ -114,8 +115,10 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **K1** | ab-2023Q1 (bis 2026-11-11) | 30.20 | -31 | 0.98 | 65 | 25.39 | 3.48 | 4.09 | 74.50 | 13.20 | 0 | 0.09 | 0.30 |
 | **Chef** | ab-2023Q1 (bis 2026-11-11) | -9.90 | -46.30 | -0.21 | 0 | – | – | – | – | – | – | -1.10 | -0.89 |
 | **Bitcoin halten nach Kosten** | ab-2023Q1 (bis 2026-11-11) | 47.20 | -53.10 | 0.89 | 0 | 0.79 | 0.05 | 0.06 | 100 | 0.20 | 0 | – | 0.21 |
+| **K1** | Crash-2022 (bis 2026-11-11) | 16.60 | -31.70 | 0.52 | 73 | 21.37 | 3.24 | 3.81 | 58.70 | 17 | 0 | 0.38 | 0 |
 | **P−1** | Crash-2022 (bis 2026-11-11) | 20.80 | -39.70 | 0.52 | 8 | 28.44 | 3.12 | 3.67 | 53.10 | 16.70 | 0 | 0.38 | – |
 | **Bitcoin halten nach Kosten** | Crash-2022 (bis 2026-11-11) | 9.40 | -67.30 | 0.14 | 0 | 0.79 | 0.14 | 0.17 | 100 | 1.50 | 0 | – | -0.38 |
+| **K1** | ab-2023Q2 (bis 2026-11-11) | 26.20 | -32.60 | 0.80 | 58 | 19.99 | 3.30 | 3.88 | 71.40 | 13.90 | 0 | 0.23 | 0.38 |
 | **P−1** | ab-2023Q2 (bis 2026-11-11) | 16.80 | -39.70 | 0.42 | 8 | 20.16 | 3.63 | 4.28 | 65.60 | 22.10 | 0 | -0.15 | – |
 | **KI** | ab-2023Q2 (bis 2026-11-11) | -2.30 | -10.60 | -0.22 | 13 | 2.53 | 0.80 | 0.95 | 3 | – | 0 | -0.79 | -0.64 |
 | **Langfrist** | ab-2023Q2 (bis 2026-11-11) | -2.70 | -15.60 | -0.17 | 10 | 2.10 | 0.66 | 0.78 | 9.30 | – | 0 | -0.74 | -0.59 |
@@ -123,6 +126,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2023Q2 (bis 2026-11-11) | 10.30 | -48.40 | 0.21 | 33 | 17.81 | 13.69 | 4.20 | 78.50 | 63 | 0 | -0.36 | -0.21 |
 | **Chef** | ab-2023Q2 (bis 2026-11-11) | -7.40 | -26.20 | -0.28 | 0 | – | – | – | – | – | – | -0.85 | -0.70 |
 | **Bitcoin halten nach Kosten** | ab-2023Q2 (bis 2026-11-11) | 30.20 | -53.10 | 0.57 | 0 | 0.79 | 0.10 | 0.11 | 100 | 0.50 | 0 | – | 0.15 |
+| **K1** | ab-2023Q3 (bis 2026-11-11) | 34.30 | -30.60 | 1.12 | 53 | 21.84 | 3.32 | 3.91 | 73 | 12 | 0 | 0.56 | 0.72 |
 | **P−1** | ab-2023Q3 (bis 2026-11-11) | 15.80 | -39.70 | 0.40 | 8 | 18.90 | 3.80 | 4.47 | 63 | 23.90 | 0 | -0.16 | – |
 | **KI** | ab-2023Q3 (bis 2026-11-11) | 4.60 | -20.60 | 0.22 | 40 | 10.52 | 2.88 | 3.39 | 13 | 40.70 | 1 | -0.34 | -0.18 |
 | **Langfrist** | ab-2023Q3 (bis 2026-11-11) | 0.10 | -18.90 | 0 | 26 | 5.94 | 1.82 | 2.15 | 29.70 | 95.70 | 0 | -0.56 | -0.40 |
@@ -130,6 +134,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2023Q3 (bis 2026-11-11) | 39 | -64.70 | 0.60 | 63 | 48.26 | 25.53 | 6.68 | 109.80 | 53.20 | 0 | 0.04 | 0.20 |
 | **Chef** | ab-2023Q3 (bis 2026-11-11) | -6.90 | -35.10 | -0.20 | 0 | – | – | – | – | – | – | -0.76 | -0.60 |
 | **Bitcoin halten nach Kosten** | ab-2023Q3 (bis 2026-11-11) | 29.90 | -53.10 | 0.56 | 0 | 0.79 | 0.11 | 0.12 | 100 | 0.60 | 0 | – | 0.16 |
+| **K1** | ab-2023Q4 (bis 2026-11-11) | 26.30 | -40.80 | 0.65 | 60 | 21.93 | 4.09 | 4.81 | 70.20 | 17.90 | 1 | -0.04 | 0.05 |
 | **P−1** | ab-2023Q4 (bis 2026-11-11) | 23.90 | -39.70 | 0.60 | 7 | 20.73 | 3.66 | 4.31 | 63.80 | 18.80 | 0 | -0.09 | – |
 | **KI** | ab-2023Q4 (bis 2026-11-11) | 3.60 | -20.20 | 0.18 | 33 | 8.61 | 2.61 | 3.06 | 11.20 | 44 | 1 | -0.51 | -0.42 |
 | **Langfrist** | ab-2023Q4 (bis 2026-11-11) | 9.80 | -38.30 | 0.26 | 45 | 12.12 | 3.08 | 3.62 | 50.10 | 27.60 | 1 | -0.43 | -0.34 |
@@ -137,6 +142,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2023Q4 (bis 2026-11-11) | 33.20 | -65.20 | 0.51 | 63 | 45.43 | 28.04 | 7.16 | 120.70 | 60.70 | 0 | -0.18 | -0.09 |
 | **Chef** | ab-2023Q4 (bis 2026-11-11) | -8.20 | -45.50 | -0.18 | 0 | – | – | – | – | – | – | -0.87 | -0.78 |
 | **Bitcoin halten nach Kosten** | ab-2023Q4 (bis 2026-11-11) | 36.50 | -53.10 | 0.69 | 0 | 0.79 | 0.10 | 0.12 | 100 | 0.50 | 0 | – | 0.09 |
+| **K1** | ab-2024Q1 (bis 2026-11-11) | 21.10 | -40.90 | 0.52 | 56 | 17.49 | 4.16 | 4.89 | 67.80 | 20.30 | 1 | 0.15 | 0.27 |
 | **P−1** | ab-2024Q1 (bis 2026-11-11) | 10.10 | -39.70 | 0.25 | 7 | 14.25 | 3.94 | 4.64 | 62.20 | 32.40 | 0 | -0.12 | – |
 | **KI** | ab-2024Q1 (bis 2026-11-11) | 1.60 | -19.90 | 0.08 | 67 | 16.73 | 5.70 | 6.70 | 24.30 | 79.50 | 2 | -0.29 | -0.17 |
 | **Langfrist** | ab-2024Q1 (bis 2026-11-11) | 9.80 | -35.60 | 0.27 | 41 | 10.41 | 3.04 | 3.58 | 54.20 | 26.60 | 1 | -0.10 | 0.02 |
@@ -144,6 +150,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2024Q1 (bis 2026-11-11) | 0.80 | -50.90 | 0.02 | 52 | 18.80 | 14.45 | 6.42 | 87 | 95.70 | 0 | -0.35 | -0.23 |
 | **Chef** | ab-2024Q1 (bis 2026-11-11) | -10.50 | -41.70 | -0.25 | 0 | – | – | – | – | – | – | -0.62 | -0.50 |
 | **Bitcoin halten nach Kosten** | ab-2024Q1 (bis 2026-11-11) | 19.60 | -53.10 | 0.37 | 0 | 0.79 | 0.16 | 0.19 | 100 | 1.20 | 0 | – | 0.12 |
+| **K1** | ab-2024Q2 (bis 2026-11-11) | 11 | -42.50 | 0.26 | 45 | 11.85 | 3.94 | 4.63 | 60.10 | 28.70 | 1 | 0.22 | 0.49 |
 | **P−1** | ab-2024Q2 (bis 2026-11-11) | -9 | -38.70 | -0.23 | 7 | 8.77 | 4.46 | 5.24 | 58.60 | – | 0 | -0.27 | – |
 | **KI** | ab-2024Q2 (bis 2026-11-11) | -1.90 | -19.40 | -0.10 | 58 | 14.13 | 5.65 | 6.65 | 21.70 | 149 | 1 | -0.14 | 0.13 |
 | **Langfrist** | ab-2024Q2 (bis 2026-11-11) | -4 | -10.40 | -0.38 | 5 | 0.89 | 0.40 | 0.47 | 4.70 | – | 0 | -0.42 | -0.15 |
@@ -151,6 +158,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2024Q2 (bis 2026-11-11) | 0.50 | -18.80 | 0.03 | 17 | 4.35 | 1.89 | 2.21 | 25 | 76.80 | 0 | -0.01 | 0.26 |
 | **Chef** | ab-2024Q2 (bis 2026-11-11) | -4.30 | -11.50 | -0.38 | 0 | – | – | – | – | – | – | -0.42 | -0.15 |
 | **Bitcoin halten nach Kosten** | ab-2024Q2 (bis 2026-11-11) | 2.20 | -53.10 | 0.04 | 0 | 0.79 | 0.27 | 0.32 | 100 | 12.50 | 0 | – | 0.27 |
+| **K1** | ab-2024Q3 (bis 2026-11-11) | 19.30 | -34.70 | 0.56 | 42 | 12.08 | 3.83 | 4.51 | 64.20 | 19.90 | 0 | 0.43 | 0.72 |
 | **P−1** | ab-2024Q3 (bis 2026-11-11) | -4.90 | -30.30 | -0.16 | 7 | 9.87 | 4.94 | 5.82 | 54.20 | – | 0 | -0.29 | – |
 | **KI** | ab-2024Q3 (bis 2026-11-11) | 0.50 | -15.80 | 0.03 | 58 | 14.61 | 6.30 | 7.41 | 22.60 | 92.90 | 1 | -0.10 | 0.19 |
 | **Langfrist** | ab-2024Q3 (bis 2026-11-11) | 7 | -22 | 0.32 | 14 | 4.02 | 1.64 | 1.93 | 35.20 | 19.90 | 0 | 0.19 | 0.48 |
@@ -158,6 +166,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2024Q3 (bis 2026-11-11) | 0.70 | -46.50 | 0.01 | 20 | 8.09 | 10.24 | 3.94 | 67.10 | 94.40 | 0 | -0.12 | 0.17 |
 | **Chef** | ab-2024Q3 (bis 2026-11-11) | -4.90 | -32.40 | -0.15 | 0 | – | – | – | – | – | – | -0.28 | 0.01 |
 | **Bitcoin halten nach Kosten** | ab-2024Q3 (bis 2026-11-11) | 7.10 | -53.10 | 0.13 | 0 | 0.79 | 0.26 | 0.31 | 100 | 4.60 | 0 | – | 0.29 |
+| **K1** | ab-2024Q4 (bis 2026-11-11) | 20.20 | -43 | 0.47 | 34 | 10.87 | 3.65 | 4.30 | 63.20 | 19.60 | 1 | 0.29 | 0.07 |
 | **P−1** | ab-2024Q4 (bis 2026-11-11) | 12.10 | -29.90 | 0.40 | 3 | 6.52 | 2.53 | 2.98 | 56.10 | 20.30 | 0 | 0.22 | – |
 | **KI** | ab-2024Q4 (bis 2026-11-11) | 3.60 | -17.50 | 0.20 | 49 | 12.65 | 5.69 | 6.69 | 20.30 | 63.60 | 1 | 0.02 | -0.20 |
 | **Langfrist** | ab-2024Q4 (bis 2026-11-11) | 7.80 | -23.30 | 0.34 | 16 | 4.36 | 1.95 | 2.30 | 41.50 | 21.10 | 0 | 0.16 | -0.06 |
@@ -165,6 +174,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2024Q4 (bis 2026-11-11) | 1.20 | -50.40 | 0.02 | 33 | 11.71 | 12.89 | 5.63 | 81.40 | 93.10 | 0 | -0.16 | -0.38 |
 | **Chef** | ab-2024Q4 (bis 2026-11-11) | -5.60 | -34.60 | -0.16 | 0 | – | – | – | – | – | – | -0.34 | -0.56 |
 | **Bitcoin halten nach Kosten** | ab-2024Q4 (bis 2026-11-11) | 9.60 | -53.10 | 0.18 | 0 | 0.79 | 0.28 | 0.33 | 100 | 3.80 | 0 | – | -0.22 |
+| **K1** | ab-2025Q1 (bis 2026-11-11) | 3.50 | -31.20 | 0.11 | 22 | 5.19 | 2.96 | 3.48 | 49.90 | 45.70 | 0 | 0.34 | 0.29 |
 | **P−1** | ab-2025Q1 (bis 2026-11-11) | -5.50 | -29.90 | -0.18 | 3 | 4.84 | 3.01 | 3.54 | 52.30 | – | 0 | 0.05 | – |
 | **KI** | ab-2025Q1 (bis 2026-11-11) | -2.20 | -16.80 | -0.13 | 29 | 7.22 | 4.11 | 4.83 | 16.50 | 215.70 | 1 | 0.10 | 0.05 |
 | **Langfrist** | ab-2025Q1 (bis 2026-11-11) | -4.90 | -11.40 | -0.43 | 7 | 1.21 | 0.75 | 0.88 | 9.40 | – | 0 | -0.20 | -0.25 |
@@ -172,6 +182,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2025Q1 (bis 2026-11-11) | -7 | -19.70 | -0.35 | 11 | 2.61 | 1.69 | 1.99 | 12.60 | – | 0 | -0.12 | -0.17 |
 | **Chef** | ab-2025Q1 (bis 2026-11-11) | -8.20 | -16.30 | -0.50 | 0 | – | – | – | – | – | – | -0.27 | -0.32 |
 | **Bitcoin halten nach Kosten** | ab-2025Q1 (bis 2026-11-11) | -12.40 | -53.10 | -0.23 | 0 | 0.79 | 0.49 | 0.57 | 100 | – | 0 | – | -0.05 |
+| **K1** | ab-2025Q2 (bis 2026-11-11) | 10.30 | -31.80 | 0.32 | 17 | 4.79 | 2.82 | 3.32 | 55.20 | 22.90 | 0 | 0.48 | -0.21 |
 | **P−1** | ab-2025Q2 (bis 2026-11-11) | 8.10 | -15.30 | 0.53 | 1 | 2.58 | 1.48 | 1.75 | 47.10 | 17.10 | 0 | 0.69 | – |
 | **KI** | ab-2025Q2 (bis 2026-11-11) | -3.80 | -18.10 | -0.21 | 31 | 7.67 | 5.06 | 5.95 | 18.70 | 398.80 | 1 | -0.05 | -0.74 |
 | **Langfrist** | ab-2025Q2 (bis 2026-11-11) | 8.40 | -19.20 | 0.44 | 11 | 2.90 | 1.79 | 2.11 | 37.80 | 18.10 | 0 | 0.60 | -0.09 |
@@ -179,6 +190,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2025Q2 (bis 2026-11-11) | 0.80 | -20.80 | 0.04 | 18 | 5.46 | 4.41 | 4.19 | 39.50 | 84.40 | 0 | 0.20 | -0.49 |
 | **Chef** | ab-2025Q2 (bis 2026-11-11) | -5.30 | -18.60 | -0.28 | 0 | – | – | – | – | – | – | -0.12 | -0.81 |
 | **Bitcoin halten nach Kosten** | ab-2025Q2 (bis 2026-11-11) | -8.50 | -53.10 | -0.16 | 0 | 0.79 | 0.51 | 0.60 | 100 | – | 0 | – | -0.69 |
+| **K1** | ab-2025Q3 (bis 2026-11-11) | 13.40 | -31.70 | 0.42 | 13 | 3.97 | 2.72 | 3.20 | 54.70 | 18.40 | 0 | 0.86 | 0.47 |
 | **P−1** | ab-2025Q3 (bis 2026-11-11) | -0.80 | -15.30 | -0.05 | 1 | 2.35 | 1.81 | 2.13 | 41.80 | 184.10 | 0 | 0.39 | – |
 | **KI** | ab-2025Q3 (bis 2026-11-11) | -3 | -16.80 | -0.18 | 22 | 5.83 | 4.51 | 5.31 | 14.90 | 296.40 | 1 | 0.26 | -0.13 |
 | **Langfrist** | ab-2025Q3 (bis 2026-11-11) | 11.20 | -23.30 | 0.48 | 9 | 2.76 | 1.95 | 2.29 | 39.90 | 15.80 | 0 | 0.92 | 0.53 |
@@ -186,6 +198,7 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2025Q3 (bis 2026-11-11) | 18.90 | -64.10 | 0.29 | 24 | 13.20 | 25.77 | 6.80 | 113.20 | 70.10 | 0 | 0.73 | 0.34 |
 | **Chef** | ab-2025Q3 (bis 2026-11-11) | -13.10 | -33.20 | -0.39 | 0 | – | – | – | – | – | – | 0.05 | -0.34 |
 | **Bitcoin halten nach Kosten** | ab-2025Q3 (bis 2026-11-11) | -23.10 | -53.10 | -0.44 | 0 | 0.79 | 0.76 | 0.90 | 100 | – | 0 | – | -0.39 |
+| **K1** | ab-2025Q4 (bis 2026-11-11) | -4.40 | -28.50 | -0.15 | 11 | 3.06 | 3.32 | 3.91 | 42.20 | – | 0 | 0.50 | 0.27 |
 | **P−1** | ab-2025Q4 (bis 2026-11-11) | -6.40 | -15.30 | -0.42 | 1 | 2.26 | 2.30 | 2.70 | 28.70 | – | 0 | 0.23 | – |
 | **KI** | ab-2025Q4 (bis 2026-11-11) | -7.60 | -11.30 | -0.68 | 5 | 1.20 | 1.25 | 1.47 | 1.20 | – | 0 | -0.03 | -0.26 |
 | **Langfrist** | ab-2025Q4 (bis 2026-11-11) | -7.30 | -14.10 | -0.52 | 3 | 0.74 | 0.76 | 0.90 | 5.60 | – | 0 | 0.13 | -0.10 |
@@ -193,6 +206,37 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **Risiko** | ab-2025Q4 (bis 2026-11-11) | -28 | -39.20 | -0.71 | 9 | 2.83 | 9.34 | 4.07 | 32 | – | 0 | -0.06 | -0.29 |
 | **Chef** | ab-2025Q4 (bis 2026-11-11) | -17.60 | -24.10 | -0.73 | 0 | – | – | – | – | – | – | -0.08 | -0.31 |
 | **Bitcoin halten nach Kosten** | ab-2025Q4 (bis 2026-11-11) | -34.80 | -53.10 | -0.65 | 0 | 0.79 | 1.14 | 1.34 | 100 | – | 0 | – | -0.23 |
+
+### Kennzahlen: Cache 38898c7f8d13, Gebühren normiert
+
+| | Fenster | CAGR % | Max. DD % | Calmar | Trades | Gebühren | Kosten %/Jahr | Umschlag/Jahr | Ø investiert % | Kostenanteil % | Not-Aus | Δ Calmar halten | Δ Calmar P−1 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **P−1** | ab-2023Q1 (bis 2026-11-11) | 26.90 | -39.70 | 0.68 | 8 | 28.46 | 3.47 | 4.09 | 66.80 | 16.70 | 0 | -0.21 | – |
+| **Bitcoin halten nach Kosten** | ab-2023Q1 (bis 2026-11-11) | 47.20 | -53.10 | 0.89 | 0 | 0.79 | 0.05 | 0.06 | 100 | 0.20 | 0 | – | 0.21 |
+
+### Go-Regeln für K1
+
+| | Cache ee111aa363f9 |
+|---|---|
+| **1. Calmar ≥ bester Vergleichs-Bot + 0,10** | ✓ 0.98 gegen 0.81 |
+| **2. Calmar ≥ halten und ≥ P−1 − 0,05** | ✓ 0.98 gegen halten 0.89, P−1 − 0,05 0.63 |
+| **3. Max. DD ≤ 0,6 × halten, auch Crash 2022** | ✓ -31.0 % gegen -53.1 %; Crash 2022 -31.7 % gegen -67.3 % |
+| **4. CAGR ≥ ⅓ von halten** | ✓ 30.2 % gegen ⅓ × 47.2 % |
+| **5. Kosten ≤ 3 %, Kostenanteil ≤ 25 %** | ✗ 3.48 %/Jahr, Kostenanteil 13.2 % |
+| **6. in ≥ 8 von 12 Fenstern besser als der beste heutige Bot** | ✓ 9 von 12 |
+| **7. bei E2-Flagge: ohne Not-Aus erfüllt 1-4** | ✓ keine E2-Flagge |
+| **Go** | ✗ |
+| **P−1 besser um mehr als 0,05** | ✗ 0.68 gegen 0.98 |
+| **P−1 erfüllt die Regeln 1 und 3-5** | ✗ 1✗ 3✗ 4✓ 5✗ |
+
+**Entscheid: No-Go**
+
+Nur zur Information (dritte Quelle und Bootstrap):
+
+| | Bootstrap P(besser als halten) | Warnung |
+|---|---|---|
+| **Cache ee111aa363f9** | 0.44 | – |
+| **Cache 38898c7f8d13** | – | – |
 
 ### Go-Regeln für P−1
 
@@ -213,7 +257,8 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 
 Nur zur Information (dritte Quelle und Bootstrap):
 
-| | Bootstrap P(besser als halten) |
-|---|---|
-| **Cache ee111aa363f9** | 0.30 |
+| | Bootstrap P(besser als halten) | Warnung |
+|---|---|---|
+| **Cache ee111aa363f9** | 0.30 | – |
+| **Cache 38898c7f8d13** | 0.31 | – |
 
