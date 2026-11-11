@@ -1,4 +1,6 @@
 schritt: E6
-config: bots/profi/k1.yaml
-nur_bot: k1
+config: bots/profi/p_minus_1.yaml
+quellen: coinbase
+nur_bot: p_minus_1 bitcoin_halten
+nur_fenster: ab-2023Q1
 pruefung: true
