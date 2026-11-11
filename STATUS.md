@@ -1,6 +1,6 @@
 # 📈 Trading-Bot: Übersicht (Demo mit Spielgeld)
 
-Stand: **11.11.2026 20:35** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
+Stand: **11.11.2026 21:06** Schweizer Zeit · wird jede Stunde automatisch aktualisiert
 
 > 🖥️ **[Zur Trading-Oberfläche](https://kaidovalue.github.io/trading-bot/)** (übersichtlich, mit Live-Chart)
 
@@ -14,10 +14,10 @@ Stand: **11.11.2026 20:35** Schweizer Zeit · wird jede Stunde automatisch aktua
 | | **1️⃣ Langfrist-Bot (Hauptbot)** | **2️⃣ KI-Bot (lernend, kurz bis lang)** | **3️⃣ Risiko-Bot (aggressiv, Hebel 3×)** |
 |---|---|---|---|
 | Startkapital | 100.00 CHF | 100.00 CHF | 100.00 CHF |
-| **Kapital jetzt** | **97.58 CHF** | **100.00 CHF** | **91.58 CHF** |
-| Gewinn / Verlust | 🔴 -2.42 CHF (-2.42 %) | ⚪ +0.00 CHF (+0.00 %) | 🔴 -8.42 CHF (-8.42 %) |
-| Im Einsatz (investiert) | 28.39 CHF (29 %) | 0.00 CHF (0 %) | 69.00 CHF (75 %) |
-| Cash (nicht investiert) | 69.19 CHF | 100.00 CHF | 22.59 CHF |
+| **Kapital jetzt** | **97.62 CHF** | **100.00 CHF** | **91.66 CHF** |
+| Gewinn / Verlust | 🔴 -2.38 CHF (-2.38 %) | ⚪ +0.00 CHF (+0.00 %) | 🔴 -8.34 CHF (-8.34 %) |
+| Im Einsatz (investiert) | 28.42 CHF (29 %) | 0.00 CHF (0 %) | 69.07 CHF (75 %) |
+| Cash (nicht investiert) | 69.19 CHF | 100.00 CHF | 22.58 CHF |
 | Offene Positionen | 2 | 0 | 3 |
 | Abgeschlossene Trades | 0 | 0 | 3 |
 | Gebühren bisher | 0.24 CHF | 0.00 CHF | 1.51 CHF |
@@ -28,7 +28,7 @@ Stand: **11.11.2026 20:35** Schweizer Zeit · wird jede Stunde automatisch aktua
 | Hebel | ohne | ohne | 3× (Zinsen bisher 0.29 CHF) |
 | Hebel aktuell | – | – | 0.75× (erlaubt 3×) |
 | Buchhaltung | ✅ stimmt (Abweichung 0.00 CHF) | ✅ stimmt (Abweichung 0.00 CHF) | ✅ stimmt (Abweichung 0.00 CHF) |
-| Letzter Durchlauf | 11.11.2026 20:32 (vor 2 Min.) | 11.11.2026 20:33 (vor 1 Min.) | 11.11.2026 20:34 (vor 1 Min.) |
+| Letzter Durchlauf | 11.11.2026 21:02 (vor 3 Min.) | 11.11.2026 21:04 (vor 2 Min.) | 11.11.2026 21:05 (vor 1 Min.) |
 
 ## 4️⃣ Chef-Bot (verteilt auf die drei Stile)
 
@@ -37,13 +37,13 @@ Er handelt nicht selbst, sondern legt sein eigenes Kapital anteilig in die Stile
 | | |
 |---|---|
 | Startkapital | 100.00 CHF |
-| **Kapital jetzt** | **95.97 CHF** |
-| Gewinn / Verlust | 🔴 -4.03 CHF (-4.03 %) |
+| **Kapital jetzt** | **96.00 CHF** |
+| Gewinn / Verlust | 🔴 -4.00 CHF (-4.00 %) |
 | **Aktuelle Verteilung** | Langfrist 28 % · KI 30 % · Risiko 16 % · Cash 26 % |
 | Marktphase (BTC, Tageskerzen) | Abwärtstrend, wild |
 | Letzte Begründung | Marktphase «Abwärtstrend, wild», Einschätzung: Langfrist -0.7 %, KI +0.0 %, Risiko -4.6 % |
 | Umschicht-Gebühren bisher | 1.71 CHF |
-| Erfahrung im Gedächtnis | 426 Läufe |
+| Erfahrung im Gedächtnis | 427 Läufe |
 
 **Was das Gedächtnis in dieser Phase weiss:** KI +0.000 %/Lauf, Langfrist -0.001 %/Lauf, Risiko -0.011 %/Lauf
 
@@ -52,14 +52,14 @@ Er handelt nicht selbst, sondern legt sein eigenes Kapital anteilig in die Stile
 
 | Coin | Kurs jetzt | 24 Std. | Live-Chart |
 |---|---|---|---|
-| **BTC** | 61'889.50 CHF | 🟢 +1.70 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
-| **ETH** | 1'731.51 CHF | 🟢 +2.30 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
-| **BNB** | 570.96 CHF | 🟢 +0.88 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
-| **XRP** | 0.88 CHF | 🟢 +0.01 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
-| **SOL** | 70.51 CHF | 🟢 +1.71 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
-| **TRX** | 0.26 CHF | 🔴 -0.23 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
-| **ZEC** | 823.49 CHF | 🔴 -5.30 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
-| **HYPE** | 60.69 CHF | 🟢 +0.90 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
+| **BTC** | 61'915.00 CHF | 🟢 +1.74 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BTCCHF) |
+| **ETH** | 1'731.49 CHF | 🟢 +2.30 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ETHCHF) |
+| **BNB** | 571.57 CHF | 🟢 +0.97 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:BNBUSD) |
+| **XRP** | 0.88 CHF | 🟢 +0.36 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:XRPUSD) |
+| **SOL** | 70.64 CHF | 🟢 +1.87 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:SOLUSD) |
+| **TRX** | 0.26 CHF | 🔴 -0.17 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:TRXUSD) |
+| **ZEC** | 833.89 CHF | 🔴 -4.11 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:ZECUSD) |
+| **HYPE** | 60.88 CHF | 🟢 +1.20 % | [öffnen](https://www.tradingview.com/chart/?symbol=KRAKEN:HYPEUSD) |
 
 ## 1️⃣ Langfrist-Bot (Hauptbot)
 
@@ -69,8 +69,8 @@ _Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt auch mitte
 
 | Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
 |---|---|---|---|---|---|---|---|---|
-| **BTC** long (lang) | 04.11.2026 21:01 | 65'280.50 | 61'889.50 | 0.000306 | 19.98 CHF | 18.94 CHF | 🔴 -1.04 CHF (-5.19 %) | 52'267.92 (-16 %) |
-| **HYPE** long (lang) | 04.11.2026 21:01 | 68.01 | 60.69 | 0.155592 | 10.58 CHF | 9.44 CHF | 🔴 -1.14 CHF (-10.76 %) | 35.88 (-41 %) |
+| **BTC** long (lang) | 04.11.2026 21:01 | 65'280.50 | 61'915.00 | 0.000306 | 19.98 CHF | 18.95 CHF | 🔴 -1.03 CHF (-5.16 %) | 52'267.92 (-16 %) |
+| **HYPE** long (lang) | 04.11.2026 21:01 | 68.01 | 60.88 | 0.155592 | 10.58 CHF | 9.47 CHF | 🔴 -1.11 CHF (-10.49 %) | 35.88 (-41 %) |
 
 **Signale jetzt**
 
@@ -91,30 +91,30 @@ _Schwerpunkt langfristig (200-Tage-Linie, Wochen bis Monate), handelt auch mitte
 
 | Coin | Horizont | Geprüft (CH) | Begründung |
 |---|---|---|---|
-| BTC/CHF | lang | 11.11.2026 20:31 | BTC/CHF: Position offen, Signal bestätigt |
-| ETH/CHF | lang | 11.11.2026 20:31 | ETH/CHF: Signal 'raus', bleibe in Cash |
-| BNB/CHF | lang | 11.11.2026 20:31 | BNB/CHF: kein Einstieg (Order kleiner als Mindestgrösse) |
-| XRP/CHF | lang | 11.11.2026 20:31 | XRP/CHF: Signal 'raus', bleibe in Cash |
-| SOL/CHF | lang | 11.11.2026 20:31 | SOL/CHF: Signal 'raus', bleibe in Cash |
-| TRX/CHF | lang | 11.11.2026 20:31 | Kein Signal |
-| ZEC/CHF | lang | 11.11.2026 20:31 | ZEC/CHF: kein Einstieg (Order kleiner als Mindestgrösse) |
-| HYPE/CHF | lang | 11.11.2026 20:31 | HYPE/CHF: Position offen, Signal bestätigt |
-| BTC/CHF | mittel | 11.11.2026 20:31 | BTC/CHF: Position gehört zum Horizont «lang» |
-| ETH/CHF | mittel | 11.11.2026 20:31 | ETH/CHF: Signal 'raus', bleibe in Cash |
-| BNB/CHF | mittel | 11.11.2026 20:31 | BNB/CHF: Signal 'raus', bleibe in Cash |
-| XRP/CHF | mittel | 11.11.2026 20:31 | XRP/CHF: Signal 'raus', bleibe in Cash |
-| SOL/CHF | mittel | 11.11.2026 20:31 | SOL/CHF: Signal 'raus', bleibe in Cash |
-| TRX/CHF | mittel | 11.11.2026 20:31 | Kein Signal |
-| ZEC/CHF | mittel | 11.11.2026 20:31 | ZEC/CHF: Signal 'raus', bleibe in Cash |
-| HYPE/CHF | mittel | 11.11.2026 20:31 | HYPE/CHF: Position gehört zum Horizont «lang» |
-| BTC/CHF | kurz | 11.11.2026 20:31 | BTC/CHF: Position gehört zum Horizont «lang» · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| ETH/CHF | kurz | 11.11.2026 20:31 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| BNB/CHF | kurz | 11.11.2026 20:31 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| XRP/CHF | kurz | 11.11.2026 20:31 | XRP/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| SOL/CHF | kurz | 11.11.2026 20:31 | SOL/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| TRX/CHF | kurz | 11.11.2026 20:31 | TRX/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| ZEC/CHF | kurz | 11.11.2026 20:31 | ZEC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| HYPE/CHF | kurz | 11.11.2026 20:31 | HYPE/CHF: Position gehört zum Horizont «lang» · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| BTC/CHF | lang | 11.11.2026 21:01 | BTC/CHF: Position offen, Signal bestätigt |
+| ETH/CHF | lang | 11.11.2026 21:01 | ETH/CHF: Signal 'raus', bleibe in Cash |
+| BNB/CHF | lang | 11.11.2026 21:01 | BNB/CHF: kein Einstieg (Order kleiner als Mindestgrösse) |
+| XRP/CHF | lang | 11.11.2026 21:01 | XRP/CHF: Signal 'raus', bleibe in Cash |
+| SOL/CHF | lang | 11.11.2026 21:01 | SOL/CHF: Signal 'raus', bleibe in Cash |
+| TRX/CHF | lang | 11.11.2026 21:01 | Kein Signal |
+| ZEC/CHF | lang | 11.11.2026 21:01 | ZEC/CHF: kein Einstieg (Order kleiner als Mindestgrösse) |
+| HYPE/CHF | lang | 11.11.2026 21:01 | HYPE/CHF: Position offen, Signal bestätigt |
+| BTC/CHF | mittel | 11.11.2026 21:01 | BTC/CHF: Position gehört zum Horizont «lang» |
+| ETH/CHF | mittel | 11.11.2026 21:01 | ETH/CHF: Signal 'raus', bleibe in Cash |
+| BNB/CHF | mittel | 11.11.2026 21:01 | BNB/CHF: Signal 'raus', bleibe in Cash |
+| XRP/CHF | mittel | 11.11.2026 21:01 | XRP/CHF: Signal 'raus', bleibe in Cash |
+| SOL/CHF | mittel | 11.11.2026 21:01 | SOL/CHF: Signal 'raus', bleibe in Cash |
+| TRX/CHF | mittel | 11.11.2026 21:01 | Kein Signal |
+| ZEC/CHF | mittel | 11.11.2026 21:01 | ZEC/CHF: Signal 'raus', bleibe in Cash |
+| HYPE/CHF | mittel | 11.11.2026 21:01 | HYPE/CHF: Position gehört zum Horizont «lang» |
+| BTC/CHF | kurz | 11.11.2026 21:01 | BTC/CHF: Position gehört zum Horizont «lang» · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| ETH/CHF | kurz | 11.11.2026 21:01 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| BNB/CHF | kurz | 11.11.2026 21:01 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| XRP/CHF | kurz | 11.11.2026 21:01 | XRP/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| SOL/CHF | kurz | 11.11.2026 21:01 | SOL/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| TRX/CHF | kurz | 11.11.2026 21:01 | TRX/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| ZEC/CHF | kurz | 11.11.2026 21:01 | ZEC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| HYPE/CHF | kurz | 11.11.2026 21:01 | HYPE/CHF: Position gehört zum Horizont «lang» · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
 
 ## 2️⃣ KI-Bot (lernend, kurz bis lang)
 
@@ -135,43 +135,43 @@ Keine offene Position, alles in Cash.
 | ZEC | 🔴 raus / Cash | 🔴 raus / Cash | 🟢 investiert sein |
 | HYPE | 🔴 raus / Cash | 🔴 raus / Cash | 🟢 investiert sein |
 
-**🧠 KI-Gedächtnis:** 4'134 Kerzen Erfahrung (zeitlich gewichtete Kerzen; ältere Erfahrung zählt weniger)
+**🧠 KI-Gedächtnis:** 4'141 Kerzen Erfahrung (zeitlich gewichtete Kerzen; ältere Erfahrung zählt weniger)
 
 | Coin | Marktphase jetzt | Hier vertraut die KI am meisten |
 |---|---|---|
 | BTC | Seitwärts, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
 | ETH | Abwärtstrend, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
-| BNB | Aufwärtstrend, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
+| BNB | Seitwärts, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
 | XRP | Abwärtstrend, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
-| SOL | Seitwärts, wild | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
-| TRX | Seitwärts, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
+| SOL | Seitwärts, ruhig | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
+| TRX | Seitwärts, wild | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
 | ZEC | Abwärtstrend, wild | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
 | HYPE | Seitwärts, wild | trend (+0.000 %/Kerze), mean_reversion (+0.000 %/Kerze), breakout (+0.000 %/Kerze) |
 
 **🧪 Selbst erfundene Strategien im Einsatz:** 0 (noch keine hat die Prüfung bestanden), Details in [lernen/LABOR.md](lernen/LABOR.md)
 
-**Letzte Entscheidung:** [kurz] BTC/CHF: Signal 'raus', bleibe in Cash · [kurz] ETH/CHF: Signal 'raus', bleibe in Cash · [kurz] BNB/CHF: Signal 'raus', bleibe in Cash · [kurz] XRP/CHF: Signal 'raus', bleibe in Cash · [kurz] SOL/CHF: Signal 'raus', bleibe in Cash · [kurz] TRX/CHF: Signal 'raus', bleibe in Cash · [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash · [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash
+**Letzte Entscheidung:** [kurz] BTC/CHF: Signal 'raus', bleibe in Cash · [kurz] ETH/CHF: Signal 'raus', bleibe in Cash · [kurz] BNB/CHF: Signal 'raus', bleibe in Cash · [kurz] XRP/CHF: Signal 'raus', bleibe in Cash · [kurz] SOL/CHF: Signal 'raus', bleibe in Cash · [kurz] TRX/CHF: Signal 'raus', bleibe in Cash · [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash · [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash · [mittel] BTC/CHF: Signal 'raus', bleibe in Cash · [mittel] ETH/CHF: Signal 'raus', bleibe in Cash · [mittel] BNB/CHF: Signal 'raus', bleibe in Cash · [mittel] XRP/CHF: Signal 'raus', bleibe in Cash · [mittel] SOL/CHF: Signal 'raus', bleibe in Cash · [mittel] TRX/CHF: Signal 'raus', bleibe in Cash · [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash · [mittel] HYPE/CHF: Signal 'raus', bleibe in Cash
 
 **Gespeicherte Entscheidungen je Coin und Horizont**
 
 | Coin | Horizont | Geprüft (CH) | Begründung |
 |---|---|---|---|
-| BTC/CHF | kurz | 11.11.2026 20:03 | BTC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| ETH/CHF | kurz | 11.11.2026 20:03 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| BNB/CHF | kurz | 11.11.2026 20:03 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| XRP/CHF | kurz | 11.11.2026 20:03 | XRP/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| SOL/CHF | kurz | 11.11.2026 20:03 | SOL/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| TRX/CHF | kurz | 11.11.2026 20:03 | TRX/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| ZEC/CHF | kurz | 11.11.2026 20:03 | ZEC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| HYPE/CHF | kurz | 11.11.2026 20:03 | HYPE/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| BTC/CHF | mittel | 11.11.2026 17:03 | BTC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| ETH/CHF | mittel | 11.11.2026 17:03 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| BNB/CHF | mittel | 11.11.2026 17:03 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| XRP/CHF | mittel | 11.11.2026 17:03 | XRP/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| SOL/CHF | mittel | 11.11.2026 17:03 | SOL/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| TRX/CHF | mittel | 11.11.2026 17:03 | TRX/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| ZEC/CHF | mittel | 11.11.2026 17:03 | ZEC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
-| HYPE/CHF | mittel | 11.11.2026 17:03 | HYPE/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| BTC/CHF | kurz | 11.11.2026 21:03 | BTC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| ETH/CHF | kurz | 11.11.2026 21:03 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| BNB/CHF | kurz | 11.11.2026 21:03 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| XRP/CHF | kurz | 11.11.2026 21:03 | XRP/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| SOL/CHF | kurz | 11.11.2026 21:03 | SOL/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| TRX/CHF | kurz | 11.11.2026 21:03 | TRX/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| ZEC/CHF | kurz | 11.11.2026 21:03 | ZEC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| HYPE/CHF | kurz | 11.11.2026 21:03 | HYPE/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| BTC/CHF | mittel | 11.11.2026 21:03 | BTC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| ETH/CHF | mittel | 11.11.2026 21:03 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| BNB/CHF | mittel | 11.11.2026 21:03 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| XRP/CHF | mittel | 11.11.2026 21:03 | XRP/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| SOL/CHF | mittel | 11.11.2026 21:03 | SOL/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| TRX/CHF | mittel | 11.11.2026 21:03 | TRX/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| ZEC/CHF | mittel | 11.11.2026 21:03 | ZEC/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
+| HYPE/CHF | mittel | 11.11.2026 21:03 | HYPE/CHF: Signal 'raus', bleibe in Cash · KI: Keine simulierten Ausführungen: Filter, Kapital und Mindestorder prüfen |
 | BTC/CHF | lang | 11.11.2026 01:03 | BTC/CHF: Signal 'raus', bleibe in Cash · KI: 7/9 Strategien positiv gewichtet |
 | ETH/CHF | lang | 11.11.2026 01:03 | ETH/CHF: Signal 'raus', bleibe in Cash · KI: 2/9 Strategien positiv gewichtet |
 | BNB/CHF | lang | 11.11.2026 01:03 | BNB/CHF: Signal 'raus', bleibe in Cash · KI: 5/9 Strategien positiv gewichtet |
@@ -188,7 +188,7 @@ Die Werte betreffen isolierte Testpositionen, keine erzielte Portfoliorendite.
 | Horizont | Status | Ausgewertet | Offen | Datenlücken / ungültig |
 |---|---|---|---|---|
 | kurz | Sammelt Lernfälle | 198 | 8 | 0 |
-| mittel | Sammelt Lernfälle | 33 | 8 | 0 |
+| mittel | Sammelt Lernfälle | 36 | 8 | 0 |
 | lang | Sammelt Lernfälle | 0 | 8 | 0 |
 
 ## 3️⃣ Risiko-Bot (aggressiv, Hebel 3×)
@@ -199,9 +199,9 @@ _Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang) und Trendfolge (4h), nur in 
 
 | Coin | Gekauft am | Einstiegskurs | Kurs jetzt | Menge | Einsatz | Wert jetzt | Gewinn / Verlust | Stop-Loss |
 |---|---|---|---|---|---|---|---|---|
-| **BTC** long (lang) | 02.11.2026 21:04 | 62'905.40 | 61'889.50 | 0.000523 | 32.87 CHF | 32.34 CHF | 🔴 -0.53 CHF (-1.61 %) | 53'337.04 (-14 %) |
-| **BNB** long (lang) | 02.11.2026 21:04 | 570.38 | 570.96 | 0.041690 | 23.78 CHF | 23.80 CHF | 🟢 +0.02 CHF (+0.10 %) | 450.90 (-21 %) |
-| **HYPE** long (lang) | 02.11.2026 21:04 | 68.38 | 60.69 | 0.211733 | 14.48 CHF | 12.85 CHF | 🔴 -1.63 CHF (-11.24 %) | 44.97 (-26 %) |
+| **BTC** long (lang) | 02.11.2026 21:04 | 62'905.40 | 61'915.00 | 0.000523 | 32.87 CHF | 32.35 CHF | 🔴 -0.52 CHF (-1.57 %) | 53'337.04 (-14 %) |
+| **BNB** long (lang) | 02.11.2026 21:04 | 570.38 | 571.57 | 0.041690 | 23.78 CHF | 23.83 CHF | 🟢 +0.05 CHF (+0.21 %) | 450.90 (-21 %) |
+| **HYPE** long (lang) | 02.11.2026 21:04 | 68.38 | 60.88 | 0.211733 | 14.48 CHF | 12.89 CHF | 🔴 -1.59 CHF (-10.97 %) | 44.97 (-26 %) |
 
 **Signale jetzt**
 
@@ -222,14 +222,14 @@ _Risikofreudig mit Hebel 3×: 200-Tage-Linie (lang) und Trendfolge (4h), nur in 
 
 | Coin | Horizont | Geprüft (CH) | Begründung |
 |---|---|---|---|
-| BTC/CHF | mittel | 11.11.2026 17:04 | BTC/CHF: Position gehört zum Horizont «lang» |
-| ETH/CHF | mittel | 11.11.2026 17:04 | ETH/CHF: Signal 'raus', bleibe in Cash |
-| BNB/CHF | mittel | 11.11.2026 17:04 | BNB/CHF: Position gehört zum Horizont «lang» |
-| XRP/CHF | mittel | 11.11.2026 17:04 | XRP/CHF: Signal 'raus', bleibe in Cash |
-| SOL/CHF | mittel | 11.11.2026 17:04 | SOL/CHF: Signal 'raus', bleibe in Cash |
-| TRX/CHF | mittel | 11.11.2026 17:04 | TRX/CHF: Signal 'raus', bleibe in Cash |
-| ZEC/CHF | mittel | 11.11.2026 17:04 | ZEC/CHF: Signal 'raus', bleibe in Cash |
-| HYPE/CHF | mittel | 11.11.2026 17:04 | HYPE/CHF: Position gehört zum Horizont «lang» |
+| BTC/CHF | mittel | 11.11.2026 21:04 | BTC/CHF: Position gehört zum Horizont «lang» |
+| ETH/CHF | mittel | 11.11.2026 21:04 | ETH/CHF: Signal 'raus', bleibe in Cash |
+| BNB/CHF | mittel | 11.11.2026 21:04 | BNB/CHF: Position gehört zum Horizont «lang» |
+| XRP/CHF | mittel | 11.11.2026 21:04 | XRP/CHF: Signal 'raus', bleibe in Cash |
+| SOL/CHF | mittel | 11.11.2026 21:04 | SOL/CHF: Signal 'raus', bleibe in Cash |
+| TRX/CHF | mittel | 11.11.2026 21:04 | TRX/CHF: Signal 'raus', bleibe in Cash |
+| ZEC/CHF | mittel | 11.11.2026 21:04 | ZEC/CHF: Signal 'raus', bleibe in Cash |
+| HYPE/CHF | mittel | 11.11.2026 21:04 | HYPE/CHF: Position gehört zum Horizont «lang» |
 | BTC/CHF | lang | 11.11.2026 01:04 | BTC/CHF: Position offen, Signal bestätigt |
 | ETH/CHF | lang | 11.11.2026 01:04 | ETH/CHF: Signal 'raus', bleibe in Cash |
 | BNB/CHF | lang | 11.11.2026 01:04 | BNB/CHF: Position offen, Signal bestätigt |
