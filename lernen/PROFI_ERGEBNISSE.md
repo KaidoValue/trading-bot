@@ -1,6 +1,6 @@
 # Profi-Bot: Ergebnisse der Auswertung
 
-Aus 44 Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).
+Aus 46 Ergebnisdateien in `lernen/profi/` (`python -m tradingbot profi --zusammenfassen`). Jedes Fenster ist ein frischer Start mit dem Startkapital. Calmar = CAGR / |Max. DD|. Entschieden wird nach den vorab registrierten Regeln, nur mit normierten Gebühren und in jedem Haupt-Cache; andere Quellen zählen nur zur Information. ✓ erfüllt, ✗ nicht erfüllt oder Zahl fehlt (–).
 
 Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung Commit `dce942282a04b2eeda025a315ed361e805dce2b8`.
 
@@ -9,6 +9,7 @@ Vorab-Registrierung: [PROFI_PLAN.md](PROFI_PLAN.md), eingefrorene Fassung Commit
 | | Quellen | Börsen der Kursdateien | eingefroren | Läufe | zählt für | Commits |
 |---|---|---|---|---|---|---|
 | **Cache ee111aa363f9** | bitstamp (USD), binance (USDT), binanceus (USD), kucoin (USDT) | binanceus, bitstamp, kucoin | ja | 44 | Entscheide | 39961fe3b194, 4fe71ac40526, c011d2d4df76, cda7f449de55, e13f4f514529 |
+| **Cache 38898c7f8d13** | coinbase (USD) | coinbase | ja | 2 | nur Information | 14758ab75364 |
 
 Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (Schwäche).
 
@@ -120,6 +121,13 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 | **K1** | ab-2025Q3 (bis 2026-11-11) | 13.40 | -31.70 | 0.42 | 13 | 3.97 | 2.72 | 3.20 | 54.70 | 18.40 | 0 | – | – |
 | **K1** | ab-2025Q4 (bis 2026-11-11) | -4.40 | -28.50 | -0.15 | 11 | 3.06 | 3.32 | 3.91 | 42.20 | – | 0 | – | – |
 
+### Kennzahlen: Cache 38898c7f8d13, Gebühren normiert
+
+| | Fenster | CAGR % | Max. DD % | Calmar | Trades | Gebühren | Kosten %/Jahr | Umschlag/Jahr | Ø investiert % | Kostenanteil % | Not-Aus | Δ Calmar halten | Δ Calmar P−1 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **P−1** | ab-2023Q1 (bis 2026-11-11) | 26.90 | -39.70 | 0.68 | 8 | 28.46 | 3.47 | 4.09 | 66.80 | 16.70 | 0 | -0.21 | – |
+| **Bitcoin halten nach Kosten** | ab-2023Q1 (bis 2026-11-11) | 47.20 | -53.10 | 0.89 | 0 | 0.79 | 0.05 | 0.06 | 100 | 0.20 | 0 | – | 0.21 |
+
 ### Go-Regeln für K1
 
 | | Cache ee111aa363f9 |
@@ -139,7 +147,32 @@ Nur ein Haupt-Cache: Die Entscheide stützen sich auf eine einzige Datenquelle (
 
 Nur zur Information (dritte Quelle und Bootstrap):
 
-| | Bootstrap P(besser als halten) |
+| | Bootstrap P(besser als halten) | Warnung |
+|---|---|---|
+| **Cache ee111aa363f9** | – | – |
+| **Cache 38898c7f8d13** | – | – |
+
+### Go-Regeln für P−1
+
+| | Cache ee111aa363f9 |
 |---|---|
-| **Cache ee111aa363f9** | – |
+| **1. Calmar ≥ bester Vergleichs-Bot + 0,10** | ✗ – gegen – |
+| **2. Calmar ≥ halten und ≥ P−1 − 0,05** | ✗ – gegen halten –, P−1 − 0,05 – |
+| **3. Max. DD ≤ 0,6 × halten, auch Crash 2022** | ✗ – % gegen – %; Crash 2022 – % gegen – % |
+| **4. CAGR ≥ ⅓ von halten** | ✗ – % gegen ⅓ × – % |
+| **5. Kosten ≤ 3 %, Kostenanteil ≤ 25 %** | ✗ – %/Jahr, Kostenanteil – % |
+| **6. in ≥ 8 von 12 Fenstern besser als der beste heutige Bot** | ✗ 0 von 12 |
+| **7. bei E2-Flagge: ohne Not-Aus erfüllt 1-4** | ✓ keine E2-Flagge |
+| **Go** | ✗ |
+| **P−1 besser um mehr als 0,05** | ✗ – gegen – |
+| **P−1 erfüllt die Regeln 1 und 3-5** | ✗ 1✗ 3✗ 4✗ 5✗ |
+
+**Entscheid: No-Go**
+
+Nur zur Information (dritte Quelle und Bootstrap):
+
+| | Bootstrap P(besser als halten) | Warnung |
+|---|---|---|
+| **Cache ee111aa363f9** | – | – |
+| **Cache 38898c7f8d13** | 0.31 | – |
 
