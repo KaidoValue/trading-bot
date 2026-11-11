@@ -1,9 +1,10 @@
 # Profi-Bot «Kern zuerst»: Vorab-Registrierung
 
 - **Eingefrorene Fassung:** Commit _(noch leer: wird vor dem ersten E0-Lauf eingetragen)_
-- **Fassung mit Stufe 2 (E3/E4):** _(nur falls gebaut: Commit, ab dem E3 rechnet)_
+- **Fassung mit Stufe 2 (E3/E4):** entfällt, E3 und E4 entfallen (siehe «Zeitplan»)
 - **E6-Kandidat:** _(offen: nach E5 eintragen, mit `--config`, `--sieger` und Commit)_
-- **Massstab:** Calmar. Bestätigung durch Hiran: _(offen, vor E0)_
+- **Massstab:** Calmar. Bestätigung durch Hiran: keine, die Karte vom 4.11. blieb bis E0 unbeantwortet; wie am 5.11.
+  angekündigt gilt Calmar.
 - **Registriert:** 5.11.2026, bevor eine einzige Profi-Zahl mit echten Kursen gerechnet ist. Bis hier liefen alle
   Profi-Tests nur mit synthetischen Kursen.
 
@@ -475,16 +476,16 @@ Not-Aus-Tabelle mit E2-Flagge, E5-Kriterien, Go-Regeln mit Entscheid). Neu bauen
 
 ## Zeitplan
 
-Verschoben wegen des Nutzungslimits vom 31.10. bis 4.11.:
+Verschoben wegen der Nutzungslimits vom 31.10. bis 4.11. und vom 6. bis 11.11. (Stand 11.11.):
 
 | Was | Wann |
 |---|---|
-| Messwerkzeug und diese Vorab-Registrierung (Stufe 1a) | bis 6.11. |
-| Kern: E0, E1, E2 (GitHub und PC) | 6. bis 10.11. |
-| Wochentakt und Grösse: E3, E4 (Stufe 2), nur falls Zeit | 9. bis 12.11. |
-| Robustheit E5, danach den Kandidaten einfrieren | 12. bis 13.11. |
-| Einmal-Prüfung E6 | 14. bis 16.11. |
-| Bericht für Hiran | 17. bis 19.11. |
+| Messwerkzeug und diese Vorab-Registrierung (Stufe 1a) | fertig am 5.11. |
+| Kern: E0, E1, E2 (nur GitHub: die Karte zum PC-Lauf blieb unbeantwortet, siehe «Bei Zeitnot») | 11. bis 14.11. |
+| Wochentakt und Grösse: E3, E4 (Stufe 2) | entfallen: der Code der Stufe 2 wird bis 12.11. nicht fertig (siehe «Bei Zeitnot») |
+| Robustheit E5, danach den Kandidaten einfrieren | 14. bis 16.11. |
+| Einmal-Prüfung E6 | 16. bis 18.11. |
+| Bericht für Hiran | 18. bis 19.11. |
 | Entscheid | 20.11. |
 | Start als 5. Demo-Bot | frühestens 23.11. und nur nach Hirans Go |
 
