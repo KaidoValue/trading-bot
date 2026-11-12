@@ -25,3 +25,4 @@
 2026-11-09 21:05 UTC | RequestTimeout | Kerzen TRX/CHF 1h: kraken GET https://api.kraken.com/0/public/OHLC?pair=TRXUSD&interval=60
 2026-11-09 21:05 UTC | RequestTimeout | Kerzen ZEC/CHF 1h: kraken GET https://api.kraken.com/0/public/OHLC?pair=XZECZUSD&interval=60
 2026-11-09 21:05 UTC | RequestTimeout | Kerzen HYPE/CHF 1h: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=60
+2026-11-12 20:01 UTC | NetworkError | Minutenkerzen HYPE/CHF: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=1
