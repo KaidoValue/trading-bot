@@ -138,20 +138,20 @@
       "__dt__": "2026-11-12T15:00:00+00:00"
     },
     "stop:BTC/CHF": {
-      "__dt__": "2026-11-12T16:01:00+00:00"
+      "__dt__": "2026-11-12T16:31:00+00:00"
     },
     "stop:HYPE/CHF": {
-      "__dt__": "2026-11-12T16:01:00+00:00"
+      "__dt__": "2026-11-12T16:31:00+00:00"
     }
   },
-  "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: kein Signal | [lang] BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (Ereignis powell (fed): Federal Reserve Board issues enforcement action with former employee of United Community Bank) | [lang] XRP/CHF: Signal 'raus', bleibe in Cash | [lang] SOL/CHF: Signal 'raus', bleibe in Cash | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (Ereignis powell (fed): Federal Reserve Board issues enforcement action with former employee of United Community Bank) | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: kein Einstieg gegen den langfristigen Trend (200-Tage-Linie) | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
+  "note": "[lang] BTC/CHF: Position offen, Signal best\u00e4tigt | [lang] ETH/CHF: kein Signal | [lang] BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] XRP/CHF: Signal 'raus', bleibe in Cash | [lang] SOL/CHF: Signal 'raus', bleibe in Cash | [lang] TRX/CHF: kein Signal | [lang] ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse) | [lang] HYPE/CHF: Position offen, Signal best\u00e4tigt | [mittel] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: kein Einstieg gegen den langfristigen Trend (200-Tage-Linie) | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] BTC/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Position geh\u00f6rt zum Horizont \u00ablang\u00bb",
   "decisions": {
     "lang:BTC/CHF": {
       "symbol": "BTC/CHF",
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
@@ -165,7 +165,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
@@ -179,13 +179,13 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
       },
       "signal": 1,
-      "reason": "BNB/CHF: Einstieg pausiert wegen Nachrichtenlage (Ereignis powell (fed): Federal Reserve Board issues enforcement action with former employee of United Community Bank)",
+      "reason": "BNB/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
       "learning": null
     },
     "lang:XRP/CHF": {
@@ -193,7 +193,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
@@ -207,7 +207,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
@@ -221,7 +221,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
@@ -235,13 +235,13 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
       },
       "signal": 1,
-      "reason": "ZEC/CHF: Einstieg pausiert wegen Nachrichtenlage (Ereignis powell (fed): Federal Reserve Board issues enforcement action with former employee of United Community Bank)",
+      "reason": "ZEC/CHF: kein Einstieg (Order kleiner als Mindestgr\u00f6sse)",
       "learning": null
     },
     "lang:HYPE/CHF": {
@@ -249,7 +249,7 @@
       "horizon": "lang",
       "timeframe": "1d",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-11T00:00:00+00:00"
@@ -263,7 +263,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -277,7 +277,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -291,7 +291,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -305,7 +305,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -319,7 +319,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -333,7 +333,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -347,7 +347,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -361,7 +361,7 @@
       "horizon": "mittel",
       "timeframe": "4h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T12:00:00+00:00"
@@ -375,7 +375,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -395,7 +395,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -415,7 +415,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -435,7 +435,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -455,7 +455,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -475,7 +475,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -495,7 +495,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -515,7 +515,7 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-12T16:01:42.401397+00:00"
+        "__dt__": "2026-11-12T16:31:43.410837+00:00"
       },
       "bar": {
         "__dt__": "2026-11-12T15:00:00+00:00"
@@ -542,17 +542,10 @@
     },
     "blackout": null,
     "evidence": [],
-    "alerts": [
-      {
-        "who": "powell (fed)",
-        "title": "Federal Reserve Board issues enforcement action with former employee of United Community Bank",
-        "source": "federalreserve",
-        "published": "2026-11-12T16:00:00+00:00"
-      }
-    ]
+    "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-12T16:02:48.629331+00:00"
+    "__dt__": "2026-11-12T16:32:49.790196+00:00"
   },
   "risk": {
     "peak_equity": 100.03956552260361,
@@ -569,41 +562,41 @@
   },
   "prices": {
     "BTC/CHF": [
-      59819.7,
-      "2026-11-12T16:01:42+00:00"
+      60020.5,
+      "2026-11-12T16:31:43+00:00"
     ],
     "ETH/CHF": [
-      1677.54,
-      "2026-11-12T16:01:42+00:00"
+      1684.92,
+      "2026-11-12T16:31:43+00:00"
     ],
     "BNB/CHF": [
-      545.8656503999999,
-      "2026-11-12T16:01:42+00:00"
+      549.3181902,
+      "2026-11-12T16:31:43+00:00"
     ],
     "XRP/CHF": [
-      0.8560348122,
-      "2026-11-12T16:01:42+00:00"
+      0.8553103026,
+      "2026-11-12T16:31:43+00:00"
     ],
     "SOL/CHF": [
-      68.0327415,
-      "2026-11-12T16:01:42+00:00"
+      68.12361270000001,
+      "2026-11-12T16:31:43+00:00"
     ],
     "TRX/CHF": [
-      0.26344582854,
-      "2026-11-12T16:01:42+00:00"
+      0.26381330781,
+      "2026-11-12T16:31:43+00:00"
     ],
     "ZEC/CHF": [
-      800.7900544,
-      "2026-11-12T16:01:42+00:00"
+      799.0546239,
+      "2026-11-12T16:31:43+00:00"
     ],
     "HYPE/CHF": [
-      59.6716888,
-      "2026-11-12T16:01:42+00:00"
+      59.5653279,
+      "2026-11-12T16:31:43+00:00"
     ]
   },
   "abgleich": {
-    "kapital": 96.79,
-    "erwartet": 96.79,
+    "kapital": 96.83,
+    "erwartet": 96.83,
     "differenz": 0.0
   },
   "paper": {
@@ -614,9 +607,9 @@
     },
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-12T16:01:42.401397+00:00"
+      "__dt__": "2026-11-12T16:31:43.410837+00:00"
     },
-    "quote_usd": 1.1972176661438816,
+    "quote_usd": 1.1965014298192087,
     "volume": [
       [
         {
