@@ -3,28 +3,28 @@
   "closed": [],
   "last_bar": {
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-13T21:00:00+00:00"
+      "__dt__": "2026-11-13T22:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-13T16:00:00+00:00"
@@ -82,10 +82,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "BTC/CHF: Signal 'raus', bleibe in Cash",
@@ -97,8 +97,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 5,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -114,10 +114,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "ETH/CHF: Signal 'raus', bleibe in Cash",
@@ -129,8 +129,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 6,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -146,10 +146,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "BNB/CHF: Signal 'raus', bleibe in Cash",
@@ -161,8 +161,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 6,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -178,10 +178,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "XRP/CHF: Signal 'raus', bleibe in Cash",
@@ -193,8 +193,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 6,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -210,10 +210,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "SOL/CHF: Signal 'raus', bleibe in Cash",
@@ -225,8 +225,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 7,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -242,10 +242,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "TRX/CHF: Signal 'raus', bleibe in Cash",
@@ -257,8 +257,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 7,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -274,10 +274,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "ZEC/CHF: Signal 'raus', bleibe in Cash",
@@ -289,8 +289,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
-          "pending": 8,
+          "completed": 264,
+          "pending": 7,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -306,10 +306,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-13T22:03:00.763933+00:00"
+        "__dt__": "2026-11-13T23:03:00.260176+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-13T21:00:00+00:00"
+        "__dt__": "2026-11-13T22:00:00+00:00"
       },
       "signal": -1,
       "reason": "HYPE/CHF: Signal 'raus', bleibe in Cash",
@@ -321,7 +321,7 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 261,
+          "completed": 264,
           "pending": 8,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
@@ -849,7 +849,7 @@
   "research": {
     "kurz": {
       "status": "Sammelt Lernf\u00e4lle",
-      "completed": 261,
+      "completed": 264,
       "pending": 8,
       "invalid": 0,
       "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
@@ -880,38 +880,18 @@
   },
   "news": {
     "fear_greed": 20,
-    "news_score": -1.0,
-    "themes": {
-      "hack": [
-        "bitcoinmagazine",
-        "coindesk"
-      ]
-    },
+    "news_score": 0.0,
+    "themes": {},
     "analysis": {
       "status": "Sprachanalyse ausgeschaltet",
       "items": []
     },
     "blackout": null,
-    "evidence": [
-      {
-        "theme": "hack",
-        "source": "bitcoinmagazine",
-        "title": "DOJ Wins Court Authority to Seize $1.2 Billion of North Korea\u2019s Stolen Binance Crypto as Freezes Top $2.7 Billion",
-        "link": "https://bitcoinmagazine.com/news/doj-north-korea-binance-1-2-billion-seize",
-        "published": "2026-11-13T00:15:00+00:00"
-      },
-      {
-        "theme": "hack",
-        "source": "coindesk",
-        "title": "North Korea's Binance hack faces U.S. crackdown as DOJ targets $1.2 billion in stolen crypto",
-        "link": "https://www.coindesk.com/policy/2026/11/12/north-korea-s-binance-hack-faces-u-s-crackdown-as-doj-targets-usd1-2-billion-in-stolen-crypto",
-        "published": "2026-11-12T22:55:52+00:00"
-      }
-    ],
+    "evidence": [],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-13T22:33:32.792499+00:00"
+    "__dt__": "2026-11-13T23:04:03.100518+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -928,36 +908,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      57295.5,
-      "2026-11-13T22:33:00+00:00"
+      57165.5,
+      "2026-11-13T23:03:00+00:00"
     ],
     "ETH/CHF": [
-      1608.32,
-      "2026-11-13T22:33:00+00:00"
+      1614.34,
+      "2026-11-13T23:03:00+00:00"
     ],
     "BNB/CHF": [
-      528.9858156,
-      "2026-11-13T22:33:00+00:00"
+      527.5411158000001,
+      "2026-11-13T23:03:00+00:00"
     ],
     "XRP/CHF": [
-      0.8476923378000001,
-      "2026-11-13T22:33:00+00:00"
+      0.8431989672000001,
+      "2026-11-13T23:03:00+00:00"
     ],
     "SOL/CHF": [
-      65.835616,
-      "2026-11-13T22:33:00+00:00"
+      64.8685662,
+      "2026-11-13T23:03:00+00:00"
     ],
     "TRX/CHF": [
-      0.26196864936,
-      "2026-11-13T22:33:00+00:00"
+      0.26201760312,
+      "2026-11-13T23:03:00+00:00"
     ],
     "ZEC/CHF": [
-      775.5838640000001,
-      "2026-11-13T22:33:00+00:00"
+      776.9528994,
+      "2026-11-13T23:03:00+00:00"
     ],
     "HYPE/CHF": [
-      60.23455020000001,
-      "2026-11-13T22:33:00+00:00"
+      60.1061064,
+      "2026-11-13T23:03:00+00:00"
     ]
   },
   "abgleich": {
@@ -970,9 +950,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-13T22:33:00.797541+00:00"
+      "__dt__": "2026-11-13T23:03:00.260176+00:00"
     },
-    "quote_usd": 1.1908447852906852,
+    "quote_usd": 1.1905612305640878,
     "volume": []
   }
 }
