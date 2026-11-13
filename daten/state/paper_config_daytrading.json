@@ -880,18 +880,38 @@
   },
   "news": {
     "fear_greed": 20,
-    "news_score": 0.0,
-    "themes": {},
+    "news_score": -1.0,
+    "themes": {
+      "hack": [
+        "bitcoinmagazine",
+        "coindesk"
+      ]
+    },
     "analysis": {
       "status": "Sprachanalyse ausgeschaltet",
       "items": []
     },
     "blackout": null,
-    "evidence": [],
+    "evidence": [
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "DOJ Wins Court Authority to Seize $1.2 Billion of North Korea\u2019s Stolen Binance Crypto as Freezes Top $2.7 Billion",
+        "link": "https://bitcoinmagazine.com/news/doj-north-korea-binance-1-2-billion-seize",
+        "published": "2026-11-13T00:15:00+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "North Korea's Binance hack faces U.S. crackdown as DOJ targets $1.2 billion in stolen crypto",
+        "link": "https://www.coindesk.com/policy/2026/11/12/north-korea-s-binance-hack-faces-u-s-crackdown-as-doj-targets-usd1-2-billion-in-stolen-crypto",
+        "published": "2026-11-12T22:55:52+00:00"
+      }
+    ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-13T00:04:09.381063+00:00"
+    "__dt__": "2026-11-13T00:33:35.887068+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -908,36 +928,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      59768.0,
-      "2026-11-13T00:03:00+00:00"
+      59505.0,
+      "2026-11-13T00:33:04+00:00"
     ],
     "ETH/CHF": [
-      1687.68,
-      "2026-11-13T00:03:00+00:00"
+      1680.83,
+      "2026-11-13T00:33:04+00:00"
     ],
     "BNB/CHF": [
-      549.7672284,
-      "2026-11-13T00:03:00+00:00"
+      548.53703,
+      "2026-11-13T00:33:04+00:00"
     ],
     "XRP/CHF": [
-      0.8715111408,
-      "2026-11-13T00:03:00+00:00"
+      0.8680929095,
+      "2026-11-13T00:33:04+00:00"
     ],
     "SOL/CHF": [
-      68.3316567,
-      "2026-11-13T00:03:00+00:00"
+      68.1695775,
+      "2026-11-13T00:33:04+00:00"
     ],
     "TRX/CHF": [
-      0.26402571981,
-      "2026-11-13T00:03:00+00:00"
+      0.2637162494,
+      "2026-11-13T00:33:04+00:00"
     ],
     "ZEC/CHF": [
-      800.6849559,
-      "2026-11-13T00:03:00+00:00"
+      798.4754085,
+      "2026-11-13T00:33:04+00:00"
     ],
     "HYPE/CHF": [
-      60.83970120000001,
-      "2026-11-13T00:03:00+00:00"
+      60.846265,
+      "2026-11-13T00:33:04+00:00"
     ]
   },
   "abgleich": {
@@ -950,9 +970,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-13T00:03:00.102205+00:00"
+      "__dt__": "2026-11-13T00:33:04.213493+00:00"
     },
-    "quote_usd": 1.194614677035922,
+    "quote_usd": 1.1948145050480914,
     "volume": []
   }
 }
