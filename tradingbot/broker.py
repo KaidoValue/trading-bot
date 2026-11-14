@@ -56,6 +56,9 @@ class PaperBroker(Broker):
         self.volume = 0.0                         # Summe davon
         self.volume_scale = 1.0                   # Umsatz × Faktor für die Stufe (Simulation: wie ein Konto mit
                                                   # Startkapital, auch wenn das simulierte Konto wächst)
+        # Zähler seit Start für die Auswertung: gehandelter Wert, Gebühren, Slippage (Abstand zum Mittelkurs bzw.
+        # zum verlangten Kurs)
+        self.turnover = self.fees_paid = self.slippage_paid = 0.0
 
     def cash(self):
         return self._cash
@@ -82,9 +85,13 @@ class PaperBroker(Broker):
         self.volume_log = deque((t, float(v)) for t, v in fills)
         self.volume = sum(v for _, v in self.volume_log)
 
-    def _record(self, notional: float) -> None:
+    def _record(self, notional: float, fee: float, slippage: float) -> None:
+        """Fill verbuchen: Umsatz für die Gebührenstufe und die laufenden Zähler."""
         self.volume_log.append((self.now, notional))
         self.volume += notional
+        self.turnover += notional
+        self.fees_paid += fee
+        self.slippage_paid += slippage
 
     def _prune(self) -> None:
         """Fills, die mehr als 30 Tage vor `now` liegen, fallen aus dem Umsatz (ohne `now` bleibt alles)."""
@@ -96,19 +103,20 @@ class PaperBroker(Broker):
         if not fills:
             self.volume = 0.0
 
-    def _price(self, symbol: str, price: float, side: int, market: bool) -> float:
+    def _price(self, symbol: str, price: float, side: int, market: bool) -> tuple[float, float]:
         """Ausführungskurs: Market-Order zum Brief- (Kauf) bzw. Geldkurs (Verkauf), wenn einer bekannt ist; sonst
-        (Stop, Ziel, Teilgewinn, Geschichts-Simulation) zum verlangten Kurs plus/minus Slippage."""
+        (Stop, Ziel, Teilgewinn, Geschichts-Simulation) zum verlangten Kurs plus/minus Slippage. Dazu der Kurs ohne
+        Slippage (Mittelkurs bzw. verlangter Kurs)."""
         quote = self.quotes.get(symbol) if market else None
         if quote:
-            return quote[1] if side > 0 else quote[0]
-        return price * (1 + side * self.slippage)
+            return (quote[1] if side > 0 else quote[0]), (quote[0] + quote[1]) / 2
+        return price * (1 + side * self.slippage), price
 
     def position(self, symbol):
         return self.positions.get(symbol, 0.0)
 
     def buy(self, symbol, qty, price, market=False):
-        px, rate = self._price(symbol, price, 1, market), self.fee(symbol)
+        (px, mid), rate = self._price(symbol, price, 1, market), self.fee(symbol)
         if self.leverage <= 1 and self.position(symbol) >= 0 and qty * px * (1 + rate) > self._cash:
             qty = self._cash / (px * (1 + rate))
         if qty <= 0:
@@ -116,7 +124,7 @@ class PaperBroker(Broker):
         fee = qty * px * rate
         self._cash -= qty * px + fee
         self.positions[symbol] = self.position(symbol) + qty
-        self._record(qty * px)
+        self._record(qty * px, fee, qty * abs(px - mid))
         return Fill(symbol, "buy", qty, px, fee)
 
     def book_interest(self, amount: float) -> None:
@@ -130,21 +138,25 @@ class PaperBroker(Broker):
             qty = min(qty, self.position(symbol))
         if qty <= 0:
             return None
-        px = self._price(symbol, price, -1, market)
+        px, mid = self._price(symbol, price, -1, market)
         fee = qty * px * self.fee(symbol)
         self._cash += qty * px - fee
         self.positions[symbol] = self.position(symbol) - qty
-        self._record(qty * px)
+        self._record(qty * px, fee, qty * abs(px - mid))
         return Fill(symbol, "sell", qty, px, fee)
 
 
 def paper_broker(cfg) -> PaperBroker:
     """Demo-Konto nach der Config, überall gleich gebaut (Bot, Simulation, Übersicht, Befehle):
-    fee_model «kraken» = Kraken-Gebührenstaffel nach 30-Tage-Umsatz, «fix» = immer fee_rate."""
+    fee_model «kraken» = Kraken-Gebührenstaffel nach 30-Tage-Umsatz, «fix» = immer fee_rate. fee_factor: alle Sätze
+    × Faktor (Kostenstress)."""
     if cfg.fee_model not in ("fix", "kraken"):
         raise ValueError(f"Unbekanntes fee_model «{cfg.fee_model}» (erlaubt: fix, kraken)")
-    b = PaperBroker(cfg.starting_capital, cfg.fee_rate, cfg.slippage,
-                    KRAKEN_TIERS if cfg.fee_model == "kraken" else None)
+    f = cfg.fee_factor
+    tiers = KRAKEN_TIERS if cfg.fee_model == "kraken" else None
+    if tiers and f != 1:
+        tiers = [(volume, maker * f, taker * f) for volume, maker, taker in tiers]
+    b = PaperBroker(cfg.starting_capital, cfg.fee_rate * f, cfg.slippage, tiers)
     b.leverage = cfg.risk.leverage
     return b
 
