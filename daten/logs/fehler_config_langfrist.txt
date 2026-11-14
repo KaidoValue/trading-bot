@@ -26,3 +26,5 @@
 2026-11-09 21:05 UTC | RequestTimeout | Kerzen ZEC/CHF 1h: kraken GET https://api.kraken.com/0/public/OHLC?pair=XZECZUSD&interval=60
 2026-11-09 21:05 UTC | RequestTimeout | Kerzen HYPE/CHF 1h: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=60
 2026-11-12 20:01 UTC | NetworkError | Minutenkerzen HYPE/CHF: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=1
+2026-11-14 07:32 UTC | NetworkError | Kerzen BNB/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=USDCHF&interval=1440
+2026-11-14 07:32 UTC | RequestTimeout | Kerzen BNB/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=BNBUSD&interval=240
