@@ -1,1 +1,2 @@
-symbol,side,opened,closed,entry,exit,qty,pnl,fees,interest,reason,horizon,partial
+symbol,side,opened,closed,entry,exit,qty,pnl,fees,interest,reason,horizon,partial,fear_greed,news_score,news_themes,event,session,spread,delay_min
+BTC/CHF,long,2026-11-04 20:01:42.353980+00:00,2026-11-14 00:01:42.353100+00:00,65280.5,57405.899999999994,0.0003060921521033122,-2.7107800146312044,0.3004267536784624,0.0,Signal,lang,False,34,0.5,rally,-,New York,0.00111,1201.7
