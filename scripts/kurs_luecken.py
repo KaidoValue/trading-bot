@@ -2,8 +2,10 @@
 
 Liest alle Kursdateien «börse_COIN_tf.csv» in einem Ordner (Standard: data/historie) und meldet je Datei: erste und
 letzte Kerze, Anzahl Kerzen, fehlende Kerzen (Zeitsprünge grösser als der Kerzenabstand) und lange Strecken ohne
-Handel (Volumen 0 oder Kurs steht still). Schreibt kurs_luecken.md und kurs_luecken.json in den Ausgabeordner und
-gibt den Bericht aus. Ändert keine Kursdatei, lädt nichts nach und rechnet keine Simulation.
+Handel (Volumen 0 oder Kurs steht still). Dazu: fehlende Kerzen je Jahr, alle Lücken ab 2023, die Kerzen vor und
+nach grossen Lücken, eine Plausibilitätsprüfung der Kerzen und die Prüfsummen. Schreibt kurs_luecken.md und
+kurs_luecken.json in den Ausgabeordner und gibt den Bericht aus. Ändert keine Kursdatei, lädt nichts nach und
+rechnet keine Simulation.
 
 Aufruf: python scripts/kurs_luecken.py [--cache data/historie] [--aus ausgabe]
 """
@@ -23,6 +25,10 @@ HAUPTQUELLEN = ("bitstamp", "binance", "binanceus", "kucoin")      # wie histori
 STILL_TAGE = 3            # Strecken ohne Handel ab dieser Länge melden
 DETAIL_TAGE = 1.0         # Lücken ab dieser Dauer einzeln auflisten
 DETAIL_MAX = 25           # höchstens so viele Lücken je Datei einzeln (die längsten)
+AB_PRUEFJAHRE = pd.Timestamp("2023-01-01", tz="UTC")      # ab hier die Jahre der Einmal-Prüfung
+AB_MAX = 60               # höchstens so viele Lücken ab 2023 je Datei einzeln (nach Zeit)
+GROSS_TAGE = 30           # um Lücken ab dieser Dauer die Kerzen davor und danach zeigen
+OHLC = ("open", "high", "low", "close")
 
 
 def fingerabdruck(dateien) -> str:
@@ -57,7 +63,8 @@ def pruefe(pfad: Path) -> dict:
     abstand = zeiten.diff()
     spruenge = abstand[abstand > schritt]
     close = df["close"] if "close" in df.columns else None
-    luecken = []
+    luecken, je_jahr, ab_pruefjahre, umgebung = [], {}, [], []
+    spalten = [s for s in (*OHLC, "volume") if s in df.columns]
     for nach, d in spruenge.items():
         vor = nach - d
         eintrag = {"letzte_kerze_davor": _tag(vor), "erste_kerze_danach": _tag(nach),
@@ -67,7 +74,33 @@ def pruefe(pfad: Path) -> dict:
             eintrag |= {"kurs_davor": float(close.loc[vor]), "kurs_danach": float(close.loc[nach]),
                         "sprung_prozent": round((float(close.loc[nach]) / float(close.loc[vor]) - 1) * 100, 1)}
         luecken.append(eintrag)
+        fehlende_zeiten = pd.date_range(vor + schritt, periods=eintrag["fehlende_kerzen"], freq=schritt)
+        for jahr, anzahl in pd.Series(fehlende_zeiten.year).value_counts().items():
+            je_jahr[int(jahr)] = je_jahr.get(int(jahr), 0) + int(anzahl)
+        if nach >= AB_PRUEFJAHRE:                     # die Lücke endet in den Jahren der Einmal-Prüfung
+            ab_pruefjahre.append(eintrag)
+        if eintrag["dauer_tage"] >= GROSS_TAGE:
+            teil = pd.concat([df.loc[:vor].tail(3), df.loc[nach:].head(3)])
+            umgebung.append({"luecke": f"{_tag(vor)} bis {_tag(nach)}",
+                             "kerzen": [{"zeit": _tag(t)} | {s: float(z[s]) for s in spalten}
+                                        for t, z in teil.iterrows()]})
     luecken.sort(key=lambda e: -e["fehlende_kerzen"])
+    # Plausibilität: leere oder unmögliche Kerzen und die grössten Bewegungen (ohne Sprünge über Lücken)
+    plausibel = None
+    if set(OHLC) <= set(df.columns):
+        ohlc = df[list(OHLC)]
+        o, h, l, c = (ohlc[s] for s in OHLC)
+        aend = (c / c.shift() - 1)[(abstand == schritt) & (c.shift() > 0)].dropna()
+        spanne = (h / l - 1)[l > 0].dropna()
+        plausibel = {"ohne_wert": int(ohlc.isna().any(axis=1).sum()),
+                     "nicht_positiv": int((ohlc <= 0).any(axis=1).sum()),
+                     "hoch_unter_tief": int((h < l).sum()),
+                     "ausserhalb_der_spanne": int(((c > h) | (c < l) | (o > h) | (o < l)).sum())}
+        if len(aend):
+            plausibel |= {"groesster_anstieg": {"zeit": _tag(aend.idxmax()), "prozent": round(float(aend.max()) * 100, 1)},
+                          "groesster_rueckgang": {"zeit": _tag(aend.idxmin()), "prozent": round(float(aend.min()) * 100, 1)}}
+        if len(spanne):
+            plausibel["groesste_spanne"] = {"zeit": _tag(spanne.idxmax()), "prozent": round(float(spanne.max()) * 100, 1)}
     erwartet = int(round((df.index[-1] - df.index[0]) / schritt)) + 1
     fehlend = sum(e["fehlende_kerzen"] for e in luecken)
     # Strecken ohne Handel: Volumen 0, oder Kerze ohne Bewegung auf dem Schlusskurs der Vorkerze
@@ -92,6 +125,11 @@ def pruefe(pfad: Path) -> dict:
         "groesste_luecke": luecken[0] if luecken else None,
         "luecken": [e for e in luecken if e["dauer_tage"] >= DETAIL_TAGE][:DETAIL_MAX],
         "ohne_handel_anzahl": len(strecken), "ohne_handel": strecken[:DETAIL_MAX],
+        "fehlend_je_jahr": {str(j): je_jahr[j] for j in sorted(je_jahr)},
+        "luecken_ab_2023_anzahl": len(ab_pruefjahre),
+        "fehlend_ab_2023": sum(n for j, n in je_jahr.items() if j >= AB_PRUEFJAHRE.year),
+        "luecken_ab_2023": sorted(ab_pruefjahre, key=lambda e: e["erste_kerze_danach"])[:AB_MAX],
+        "kerzen_um_grosse_luecken": umgebung, "plausibilitaet": plausibel,
     }
 
 
@@ -141,6 +179,59 @@ def bericht(befunde: list[dict], kopf: dict) -> str:
             z += ["", f"## {b['datei']}: Strecken ohne Handel (längste zuerst, höchstens {DETAIL_MAX})", "",
                   "| von | bis | Kerzen | Tage |", "|---|---|---:|---:|"]
             z += [f"| {e['von']} | {e['bis']} | {e['kerzen']} | {e['dauer_tage']} |" for e in b["ohne_handel"]]
+    gut = [b for b in befunde if "fehler" not in b]
+    # fehlende Kerzen je Jahr
+    jahre = sorted({j for b in gut for j in b["fehlend_je_jahr"]})
+    z += ["", "## Fehlende Kerzen je Jahr", ""]
+    if jahre:
+        z += ["Nur Dateien mit fehlenden Kerzen; alle anderen sind vollständig. Leeres Feld = nichts fehlt.", "",
+              "| Datei | " + " | ".join(jahre) + " | Summe |", "|---|" + "---:|" * (len(jahre) + 1)]
+        for b in gut:
+            if b["fehlend_je_jahr"]:
+                z.append(f"| {b['datei']} | " + " | ".join(str(b["fehlend_je_jahr"].get(j, "")) for j in jahre)
+                         + f" | {b['kerzen_fehlend']} |")
+    else:
+        z.append("In keiner Datei fehlt eine Kerze.")
+    # alle Lücken ab 2023
+    z += ["", "## Lücken ab 2023 (alle, auch einzelne Kerzen)", ""]
+    ohne = [b["datei"] for b in gut if not b["luecken_ab_2023_anzahl"]]
+    z.append("Ohne jede Lücke ab 2023: " + (", ".join(ohne) if ohne else "keine Datei") + ".")
+    for b in gut:
+        if b["luecken_ab_2023_anzahl"]:
+            z += ["", f"### {b['datei']}: {b['luecken_ab_2023_anzahl']} Lücken ab 2023, zusammen "
+                      f"{b['fehlend_ab_2023']} fehlende Kerzen in den Jahren ab 2023"
+                      + (f" (gezeigt: die ersten {AB_MAX})" if b["luecken_ab_2023_anzahl"] > AB_MAX else ""), "",
+                  "| letzte Kerze davor | erste Kerze danach | fehlende Kerzen |", "|---|---|---:|"]
+            z += [f"| {e['letzte_kerze_davor']} | {e['erste_kerze_danach']} | {e['fehlende_kerzen']} |"
+                  for e in b["luecken_ab_2023"]]
+    # Kerzen um grosse Lücken
+    if any(b["kerzen_um_grosse_luecken"] for b in gut):
+        z += ["", f"## Kerzen vor und nach den grossen Lücken (ab {GROSS_TAGE} Tagen)"]
+        for b in gut:
+            for u in b["kerzen_um_grosse_luecken"]:
+                spalten = [s for s in (*OHLC, "volume") if s in u["kerzen"][0]]
+                z += ["", f"### {b['datei']}: Lücke {u['luecke']}", "", "| Zeit | " + " | ".join(spalten) + " |",
+                      "|---|" + "---:|" * len(spalten)]
+                z += [f"| {k['zeit']} | " + " | ".join(f"{k[s]:.6g}" for s in spalten) + " |" for k in u["kerzen"]]
+    # Plausibilität
+    z += ["", "## Plausibilität der Kerzen", "",
+          "Leere Felder, Preise von 0 oder darunter, Hoch unter Tief, Schluss oder Eröffnung ausserhalb von Hoch und "
+          "Tief; dazu die grössten Bewegungen von Kerze zu Kerze (ohne Sprünge über Lücken) und die grösste Spanne "
+          "zwischen Hoch und Tief in einer Kerze.", "",
+          "| Datei | leere Felder | Preis ≤ 0 | Hoch < Tief | ausserhalb Hoch/Tief | grösster Anstieg | grösster Rückgang "
+          "| grösste Spanne |", "|---|---:|---:|---:|---:|---|---|---|"]
+    for b in gut:
+        q = b["plausibilitaet"]
+        if not q:
+            z.append(f"| {b['datei']} | Spalten fehlen | | | | | | |")
+            continue
+        zeigen = lambda e: f"{e['prozent']:+.1f} % ({e['zeit'][:10] if b['kerzen_abstand'] == '1d' else e['zeit']})" if e else ""
+        z.append(f"| {b['datei']} | {q['ohne_wert']} | {q['nicht_positiv']} | {q['hoch_unter_tief']} | "
+                 f"{q['ausserhalb_der_spanne']} | {zeigen(q.get('groesster_anstieg'))} | "
+                 f"{zeigen(q.get('groesster_rueckgang'))} | {zeigen(q.get('groesste_spanne'))} |")
+    # Prüfsummen
+    z += ["", "## Prüfsummen der Kursdateien (SHA-256)", "", "| Datei | SHA-256 |", "|---|---|"]
+    z += [f"| {b['datei']} | `{b['sha256']}` |" for b in befunde if "sha256" in b]
     return "\n".join(z) + "\n"
 
 
