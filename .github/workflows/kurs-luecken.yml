@@ -1,0 +1,49 @@
+# Kurs-Cache der Profi-Prüfung auf Lücken prüfen und sichern. Liest nur: keine Simulation, kein Nachladen, kein Commit.
+# Läuft bei einem Pull Request gegen den Profi-Zweig: GitHub gibt den eingefrorenen Cache profi-2026-11-03 nur dem
+# Zweig, auf dem er entstand, und Pull Requests gegen diesen Zweig. Das Lesen zählt als Zugriff (Cache bleibt 7 Tage).
+name: Kurs-Cache prüfen
+
+on:
+  pull_request:
+    branches: ["claude/project-thread-usz8e3"]
+    paths: ["scripts/kurs_luecken.py", ".github/workflows/kurs-luecken.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kurs-luecken-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  luecken:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install "pandas==3.0.5"
+      - name: Kurse aus dem eingefrorenen Cache (nur lesen)
+        uses: actions/cache/restore@v4
+        with:
+          path: data/historie
+          key: profi-2026-11-03
+          fail-on-cache-miss: true
+      - name: Kursdateien einpacken (zuerst, damit die Sicherung nicht an der Auswertung hängt)
+        run: |
+          mkdir -p ausgabe
+          ls -laR data/historie
+          tar -czf ausgabe/kurs_cache_profi-2026-11-03.tar.gz -C data historie
+          sha256sum ausgabe/kurs_cache_profi-2026-11-03.tar.gz
+          find data/historie -type f -print0 | sort -z | xargs -0 -r sha256sum > ausgabe/sha256_kursdateien.txt
+      - name: Lücken suchen
+        run: python scripts/kurs_luecken.py --cache data/historie --aus ausgabe
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && hashFiles('ausgabe/*.tar.gz') != '' }}
+        with:
+          name: kurs-cache-profi-2026-11-03
+          path: ausgabe/
+          retention-days: 90
+          if-no-files-found: error
