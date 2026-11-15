@@ -1,6 +1,6 @@
 # Strategie-Labor
 
-Letzter Lauf: 08.11.2026 10:28 UTC · Daten: BTC/USD, 1h-Kerzen, 08.11.2024 bis 08.11.2026
+Letzter Lauf: 15.11.2026 10:59 UTC · Daten: BTC/USD, 1h-Kerzen, 15.11.2024 bis 15.11.2026
 
 Die KI erfindet aus den vorhandenen Bausteinen (Indikatoren, Kerzenmuster, Marktstruktur) neue Strategien. Standard: Suche auf den älteren 50 %; danach zwei getrennte Validierungsfenster und ein späterer Holdout. Prüfung mit Trader/PaperBroker, Gebühren, Slippage, Stops und Risikolimits. Erforderlich: mindestens 30 abgeschlossene Trades insgesamt, positive Rendite und Profit Factor >=1,2 in jedem Fenster, höchstens 15 % Drawdown und insgesamt besser als kostenbereinigtes Halten. Ein Bestehen startet nur die Paper-Probe: mindestens 14 Tage nach Fund und 20 regulär geschlossene Trades. Erst Status active darf im KI-Bot mitstimmen.
 
@@ -8,11 +8,11 @@ Die KI erfindet aus den vorhandenen Bausteinen (Indikatoren, Kerzenmuster, Markt
 
 | Regel | Training | Prüfung | Trades (Prüfung) | Bitcoin halten (Prüfung) | Ergebnis |
 |---|---|---|---|---|---|
-| Kaufen, wenn MACD-Histogramm steigt. Verkaufen, wenn Kurs unter dem unteren Bollinger-Band UND bullishes Kerzenmuster. | +4.2 % | +0.0 % | 0 | -29.7 % | durchgefallen |
-| Kaufen, wenn bearishes Kerzenmuster. Verkaufen, wenn Kurs unter dem unteren Bollinger-Band UND bullishes Kerzenmuster. | +3.0 % | +0.0 % | 0 | -29.7 % | durchgefallen |
-| Kaufen, wenn Marktstruktur aufwärts (höhere Hochs/Tiefs). Verkaufen, wenn Kurs unter dem unteren Bollinger-Band UND bullishes Kerzenmuster. | +2.0 % | +0.0 % | 0 | -29.7 % | durchgefallen |
-| Kaufen, wenn MACD-Histogramm positiv. Verkaufen, wenn Kurs unter dem unteren Bollinger-Band UND bullishes Kerzenmuster. | -0.9 % | +0.0 % | 0 | -29.7 % | durchgefallen |
-| Kaufen, wenn Kurs im oberen Teil der Range (Premium). Verkaufen, wenn Kurs unter dem unteren Bollinger-Band UND bullishes Kerzenmuster. | -3.3 % | +0.0 % | 0 | -29.7 % | durchgefallen |
+| Kaufen, wenn Kurs unter dem unteren Bollinger-Band UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | +16.1 % | +0.0 % | 0 | -35.0 % | durchgefallen |
+| Kaufen, wenn Trendwechsel nach unten (CHoCH) UND Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn Kurs unter der 200er-Linie UND Strukturbruch nach oben (BOS). | +7.0 % | +0.0 % | 0 | -35.0 % | durchgefallen |
+| Kaufen, wenn Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | -21.9 % | +0.0 % | 0 | -35.0 % | durchgefallen |
+| Kaufen, wenn Trendwechsel nach unten (CHoCH). Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | -31.3 % | +0.0 % | 0 | -35.0 % | durchgefallen |
+| Kaufen, wenn MACD-Histogramm negativ UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | -31.4 % | +0.0 % | 0 | -35.0 % | durchgefallen |
 
 ## Strategie-Bibliothek und Freigabestatus
 
