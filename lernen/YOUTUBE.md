@@ -50,6 +50,22 @@ keine Regel direkt übernommen. Die Bausteine daraus stehen aber im Strategie-La
 kombinieren kann. Besteht eine solche Kombination die Prüfung, kommt sie automatisch in den KI-Bot.
 Ausführliche Zahlen: [VERGLEICH.md](VERGLEICH.md).
 
+## Auswertung 16.11.2026 (16 neue Videos vom 10.11. bis 15.11.)
+
+7 Videos drehen sich um Krypto (Altcoins, XRP, Ondo, Bitcoin-Boden), der Rest um Aktien (vor allem Nvidia) und
+Politik. Die meisten nennen Kursziele (bis 1000 %) und Einstiegszonen aus dem bezahlten Paket. Das sind Prognosen,
+keine Regeln.
+
+- **Saisonalität** (STA, «Was der Glaube an den sicheren Bullrun …»): Bitcoin stieg früher im Oktober im Schnitt
+  um 24 %, im April um 32 %. Dieses Jahr lag fast jeder Monat gegen den Durchschnitt. Das Video sagt selbst, dass die
+  alte Regel im aktuellen Zyklus nicht funktioniert. Nicht übernommen.
+- **Ethereum stärker als Bitcoin** (STA, «Wall Streets nächster Krypto-Schritt»): Kapitalrotation von Bitcoin in
+  Altcoins. Das ist dieselbe Idee wie der Altcoin-Season-Index vom 4.11. und bleibt für den Profi-Bot vorgemerkt.
+- **Elliott-Wellen, 61,8-78,6-%-Retracement** (Phantom, «Wo ist der finale Boden?»): steckt schon in `yt_fib_welle`
+  (Walk-Forward +4,4 %, schlechter als die 200-Tage-Regel).
+
+**Ergebnis:** keine neue Strategie zum Testen. Die laufenden Bots bleiben unverändert.
+
 ## Auswertung 11.11.2026 (14 neue Videos vom 3.11. bis 9.11.)
 
 Nur 2 Videos drehen sich direkt um Krypto (HKCM über Hyperliquid/HYPE), 2 weitere um die Aktie Strategy, die
@@ -88,6 +104,22 @@ bleiben unverändert.
 
 | Datum | Kanal | Video | Krypto |
 |---|---|---|---|
+| 2026-11-15 | @phantombyhkcm | [Cryptos werden massiv abverkauft! Wo ist der finale Boden?](https://www.youtube.com/watch?v=c-Jvp18D5OQ) | ja |
+| 2026-11-15 | @hkcm | [Ondo: 980 % Kurspotenzial durch den BlackRock-Deal?! 🔥](https://www.youtube.com/watch?v=acdHqK6nE40) | ja |
+| 2026-11-13 | @hkcm | [NVIDIA: Affären-Crash oder 100 % Comeback-Rally?!](https://www.youtube.com/watch?v=HU27PSgBIO0) | nein |
+| 2026-11-13 | @hkcm | [Merkel-Berater warnt: Deutschland droht ein Vergeltungsschlag!](https://www.youtube.com/watch?v=OE4uf1uyrz4) | nein |
+| 2026-11-13 | @STA_Solutions | [Was der Glaube an den sicheren Bullrun mit deinem Geld macht](https://www.youtube.com/watch?v=_iheLbH6HPY) | ja |
+| 2026-11-12 | @phantombyhkcm | [Nach 6 Jahren als Analyst steige ich zum ersten Mal in XRP ein!](https://www.youtube.com/watch?v=m0Tmlru7Nq8) | ja |
+| 2026-11-12 | @hkcm | [Fiserv trotzt dem Börsen-Crash – schon 44 % vom Tief erholt! 🔥](https://www.youtube.com/watch?v=yEuQfvbbarE) | nein |
+| 2026-11-12 | @hkcm | [Die nächste Welle: Wie weit fallen KI-Aktien noch?](https://www.youtube.com/watch?v=bgExcPGqq_M) | nein |
+| 2026-11-12 | @STA_Solutions | [Nvidia fällt: Ist das die Kaufchance oder erst der Anfang?](https://www.youtube.com/watch?v=mZPTtSzzDeo) | am Rand |
+| 2026-11-11 | @phantombyhkcm | [Bei dieser Aktie bin ich direkt nach den Quartalszahlen eingestiegen!](https://www.youtube.com/watch?v=5_mkg-97Yo4) | nein |
+| 2026-11-11 | @hkcm | [Nasdaq und Dow Jones stürzen ab – jetzt kommt die große Rally? 🚨](https://www.youtube.com/watch?v=q3g7AkChdyk) | nein |
+| 2026-11-11 | @hkcm | [Bei diesem Altcoin sehen wir jetzt 1.000% Potential!](https://www.youtube.com/watch?v=cRpGKMTxmhU) | ja |
+| 2026-11-11 | @STA_Solutions | [Wall Streets nächster Krypto-Schritt ist größer als gedacht...](https://www.youtube.com/watch?v=bKnV8Z1u6vo) | ja |
+| 2026-11-10 | @phantombyhkcm | [Werden wir uns schon bald wünschen heute gekauft zu haben?](https://www.youtube.com/watch?v=N8BlAQF8HpA) | nein |
+| 2026-11-10 | @phantombyhkcm | [Ist der Altcoin Sektor tot oder sollte man jetzt einsteigen?](https://www.youtube.com/watch?v=6hqhwFggoRw) | ja |
+| 2026-11-10 | @hkcm | [Jensen Huangs Affäre: Ist NVIDIA jetzt gef*ckt?!](https://www.youtube.com/watch?v=N_hzdQTShg8) | nein |
 | 2026-11-09 | @hkcm | [Weltweite Angriffe auf Banksysteme! Was passiert mit unserem Geld?](https://www.youtube.com/watch?v=O-LCaAJGbss) | nein |
 | 2026-11-09 | @STA_Solutions | [Rohöl fällt! Ich hab's euch doch gesagt... (schon wieder)](https://www.youtube.com/watch?v=4wWUPQvsOCw) | am Rand |
 | 2026-11-08 | @phantombyhkcm | [Ist Strategy die größte Bitcoin-Chance unserer Zeit?](https://www.youtube.com/watch?v=81236ylQqA8) | am Rand |
