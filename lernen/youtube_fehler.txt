@@ -1,1 +1,1 @@
-2026-11-16 13:58:04,154 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: IpBlocked
+2026-11-17 14:51:27,370 WARNING Abschrift 7RqD6kgRDeE nicht abrufbar: VideoUnplayable
