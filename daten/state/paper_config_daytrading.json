@@ -880,18 +880,45 @@
   },
   "news": {
     "fear_greed": 12,
-    "news_score": 0.0,
-    "themes": {},
+    "news_score": -1.0,
+    "themes": {
+      "hack": [
+        "coindesk",
+        "cointelegraph"
+      ]
+    },
     "analysis": {
       "status": "Sprachanalyse ausgeschaltet",
       "items": []
     },
     "blackout": null,
-    "evidence": [],
+    "evidence": [
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Hackers plant crypto-stealing code on 178 major websites, including HSBC and Ledger",
+        "link": "https://www.coindesk.com/tech/2026/11/17/hackers-planted-crypto-stealing-code-on-178-organizations-sites-including-hsbc-bbc-and-ledger",
+        "published": "2026-11-17T10:22:18+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Hackers inject credit card, crypto-stealing malware into 178 major websites",
+        "link": "https://cointelegraph.com/news/hackers-inject-malware-into-178-major-websites?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-17T01:02:05+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "coindesk",
+        "title": "Lighter suspends all withdrawals after $10.4 million crypto exploit",
+        "link": "https://www.coindesk.com/tech/2026/11/16/lighter-suspends-all-withdrawals-after-usd10-4-million-crypto-exploit",
+        "published": "2026-11-16T16:41:42+00:00"
+      }
+    ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-17T10:04:00.266654+00:00"
+    "__dt__": "2026-11-17T10:33:30.392746+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -908,36 +935,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      53916.1,
-      "2026-11-17T10:02:57+00:00"
+      53841.0,
+      "2026-11-17T10:32:59+00:00"
     ],
     "ETH/CHF": [
-      1517.86,
-      "2026-11-17T10:02:57+00:00"
+      1502.88,
+      "2026-11-17T10:32:59+00:00"
     ],
     "BNB/CHF": [
-      494.7926268,
-      "2026-11-17T10:02:57+00:00"
+      493.09617469999995,
+      "2026-11-17T10:32:59+00:00"
     ],
     "XRP/CHF": [
-      0.8034698264,
-      "2026-11-17T10:02:57+00:00"
+      0.8026727594999999,
+      "2026-11-17T10:32:59+00:00"
     ],
     "SOL/CHF": [
-      60.8783294,
-      "2026-11-17T10:02:57+00:00"
+      60.7006332,
+      "2026-11-17T10:32:59+00:00"
     ],
     "TRX/CHF": [
-      0.25611753874,
-      "2026-11-17T10:02:57+00:00"
+      0.25611959405,
+      "2026-11-17T10:32:59+00:00"
     ],
     "ZEC/CHF": [
-      780.0125062,
-      "2026-11-17T10:02:57+00:00"
+      775.1829896,
+      "2026-11-17T10:32:59+00:00"
     ],
     "HYPE/CHF": [
-      57.95140599999999,
-      "2026-11-17T10:02:57+00:00"
+      57.697478600000004,
+      "2026-11-17T10:32:59+00:00"
     ]
   },
   "abgleich": {
@@ -950,9 +977,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-17T10:02:57.896499+00:00"
+      "__dt__": "2026-11-17T10:32:59.018916+00:00"
     },
-    "quote_usd": 1.1923783177926692,
+    "quote_usd": 1.1920798216648587,
     "volume": []
   }
 }
