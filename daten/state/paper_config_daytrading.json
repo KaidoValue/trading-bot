@@ -880,18 +880,38 @@
   },
   "news": {
     "fear_greed": 11,
-    "news_score": 0.0,
-    "themes": {},
+    "news_score": -1.0,
+    "themes": {
+      "hack": [
+        "bitcoinmagazine",
+        "decrypt"
+      ]
+    },
     "analysis": {
       "status": "Sprachanalyse ausgeschaltet",
       "items": []
     },
-    "blackout": "FOMC Meeting Minutes (19:00 UTC)",
-    "evidence": [],
+    "blackout": null,
+    "evidence": [
+      {
+        "theme": "hack",
+        "source": "bitcoinmagazine",
+        "title": "Scattered Spider Hacker Gets Six Years for $11.6 Million Crypto Theft",
+        "link": "https://bitcoinmagazine.com/news/scattered-spider-hacker-six-years-crypto-theft",
+        "published": "2026-11-18T19:30:00+00:00"
+      },
+      {
+        "theme": "hack",
+        "source": "decrypt",
+        "title": "Scattered Spider Hacker Sentenced to 6 Years Over $11.6M in Stolen Crypto",
+        "link": "https://decrypt.co/383522/scattered-spider-hacker-sentenced-to-6-years-over-11-6m-in-stolen-crypto",
+        "published": "2026-11-18T10:17:17+00:00"
+      }
+    ],
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-18T19:04:00.580250+00:00"
+    "__dt__": "2026-11-18T19:33:28.629888+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -908,36 +928,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      53086.9,
-      "2026-11-18T19:02:57+00:00"
+      52982.3,
+      "2026-11-18T19:32:56+00:00"
     ],
     "ETH/CHF": [
-      1484.76,
-      "2026-11-18T19:02:57+00:00"
+      1482.41,
+      "2026-11-18T19:32:56+00:00"
     ],
     "BNB/CHF": [
-      490.8023138,
-      "2026-11-18T19:02:57+00:00"
+      489.47948399999996,
+      "2026-11-18T19:32:56+00:00"
     ],
     "XRP/CHF": [
-      0.821689192,
-      "2026-11-18T19:02:57+00:00"
+      0.820452886,
+      "2026-11-18T19:32:56+00:00"
     ],
     "SOL/CHF": [
-      62.0149156,
-      "2026-11-18T19:02:57+00:00"
+      61.858503999999996,
+      "2026-11-18T19:32:56+00:00"
     ],
     "TRX/CHF": [
-      0.26030482313000003,
-      "2026-11-18T19:02:57+00:00"
+      0.2607770068,
+      "2026-11-18T19:32:56+00:00"
     ],
     "ZEC/CHF": [
-      769.0592228,
-      "2026-11-18T19:02:57+00:00"
+      768.805596,
+      "2026-11-18T19:32:56+00:00"
     ],
     "HYPE/CHF": [
-      56.69790460000001,
-      "2026-11-18T19:02:57+00:00"
+      56.782458000000005,
+      "2026-11-18T19:32:56+00:00"
     ]
   },
   "abgleich": {
@@ -950,9 +970,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-18T19:02:57.842103+00:00"
+      "__dt__": "2026-11-18T19:32:56.715550+00:00"
     },
-    "quote_usd": 1.1848762396767658,
+    "quote_usd": 1.1839924224484963,
     "volume": []
   }
 }
