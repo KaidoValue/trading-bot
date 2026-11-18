@@ -17,3 +17,4 @@
 2026-11-09 21:11 UTC | RequestTimeout | Kerzen SOL/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=SOLUSD&interval=1440
 2026-11-09 21:11 UTC | RequestTimeout | Kerzen HYPE/CHF 1d: kraken GET https://api.kraken.com/0/public/OHLC?pair=HYPEUSD&interval=1440
 2026-11-16 19:33 UTC | NetworkError | Kurs BNB/CHF: kraken GET https://api.kraken.com/0/public/Ticker?pair=BNBUSD
+2026-11-18 13:33 UTC | RequestTimeout | Kerzen BNB/CHF 4h: kraken GET https://api.kraken.com/0/public/OHLC?pair=BNBUSD&interval=240
