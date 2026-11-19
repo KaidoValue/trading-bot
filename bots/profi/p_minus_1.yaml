@@ -1,0 +1,49 @@
+# P−1, Pflicht-Gegner des Profi-Bots (NUR SIMULATION, lernen/PROFI_PLAN.md): nur Bitcoin, über der 200-Tage-Linie
+# rund 99 % investiert (Cash × 0,99 in risk.plan), darunter ganz in Cash. Kein Not-Aus und kein wirksamer Stop.
+# Schlägt der Kern P−1 nicht, wird P−1 vorgeschlagen statt des Kerns.
+
+mode: paper
+title: "P−1: Bitcoin über der 200-Tage-Linie (Profi-Vergleich)"
+description: "Nur Bitcoin: über der 200-Tage-Linie ganz investiert, darunter ganz in Cash. Ohne Hebel, ohne Short, ohne News-Pausen. Pflicht-Gegner des Profi-Bots, nur Simulation."
+exchange: kraken
+symbols: ["BTC/CHF"]
+timeframe: 1d
+history_exchange: bitstamp
+history_symbol: BTC/USD
+starting_capital: 100
+fee_rate: 0.006      # nur Labor und Einzel-Backtests; Simulation und Demo rechnen mit der Kraken-Staffel
+fee_model: kraken
+slippage: 0.0005
+poll_seconds: 300
+reevaluate: true
+allow_short: false
+short_probation: false
+adaptive_shares: false
+horizon_priority: false
+phase_gate: false
+phase_exit: false
+use_news: false
+use_events: false
+
+horizons:
+  kern:                       # wie im Kern (e1_kb3.yaml): Kauf über Linie +1 %, Verkauf unter Linie −3 %
+    timeframe: 1d
+    strategy: regime
+    strategy_params: {period: 200, band: 0.03}
+    share: 1.0
+    trend_filter: false
+
+risk:
+  risk_per_trade: 100         # Grösse nicht nach Schwankung: begrenzt nur durch Cash × 0,99
+  stop_loss_atr: 100          # praktisch kein Stop
+  take_profit_atr: 1000       # kein Ziel, Ausstieg nur über das Signal
+  max_position_pct: 1.0
+  max_invested_pct: 1.0
+  max_daily_loss_pct: 1.0
+  max_drawdown_pct: 0.99      # kein Not-Aus
+  halt_days: 0
+  max_total_risk_pct: 1000
+  max_open_positions: 1
+  loss_streak_pause: 99
+  correlation_limit: 1.01
+  leverage: 1.0

@@ -148,12 +148,13 @@ class Trader:
     def on_signal(self, symbol: str, signal: int, price: float, atr: float, equity: float, when,
                   size_factor: float = 1.0, can_open_new: bool = True, horizon: str = "",
                   trend: int | None = None, phase: str | None = None, anchor: float | None = None,
-                  extra: dict | None = None) -> None:
+                  extra: dict | None = None, max_position_pct: float | None = None) -> None:
         """+1: long gehen (Short vorher schliessen), -1: Long schliessen und, falls erlaubt, short gehen.
         Pro Coin gibt es eine Position. Hält sie ein anderer Horizont, bleibt sie unberührt.
         trend: langfristige Richtung des Coins (Trendfilter); neue Positionen nur in diese Richtung.
         phase: Marktphase des Coins (phase.py); anchor: 20er-Linie des Horizonts für den besten Einstieg.
-        extra: weitere Angaben zum Einstieg für das Trade-Protokoll (z.B. delay_min aus bot.py)."""
+        extra: weitere Angaben zum Einstieg für das Trade-Protokoll (z.B. delay_min aus bot.py).
+        max_position_pct: Deckel je Coin statt risk.max_position_pct (slot_cap)."""
         if phase:
             self.phases[symbol] = phase
         if signal == 0:
@@ -164,7 +165,7 @@ class Trader:
                 self.note = f"{symbol}: Position gehört zum Horizont «{t.horizon or '-'}»"
                 return
             if t.side == signal:                       # gleiche Richtung: längerer Horizont übernimmt
-                self._take_over(symbol, t, horizon, price, atr, equity)
+                self._take_over(symbol, t, horizon, price, atr, equity, max_position_pct)
                 return
             # Gegenrichtung: schliessen, dann neu
             equity = self._exit_equity(symbol, price, f"Vorrang {horizon}", when, equity)
@@ -216,7 +217,7 @@ class Trader:
         plan = self.risk.plan(equity, self.broker.cash(), price, atr, side=signal, size_factor=factor,
                               exposure=exposure, exposure_total=total, risk_pct=risk_pct,
                               stop_atr=h.stop_loss_atr if h else None, target_atr=h.take_profit_atr if h else None,
-                              budget_share=self.shares().get(horizon, 1.0))
+                              budget_share=self.shares().get(horizon, 1.0), max_position_pct=max_position_pct)
         if not plan:
             self.note = f"{symbol}: kein Einstieg ({self.risk.last_block})"
             return
@@ -327,7 +328,8 @@ class Trader:
         ha, hb = self.horizons.get(a), self.horizons.get(b)
         return bool(ha and hb) and MINUTES.get(ha.timeframe, 0) > MINUTES.get(hb.timeframe, 0)
 
-    def _take_over(self, symbol: str, t: OpenTrade, horizon: str, price: float, atr: float, equity: float) -> None:
+    def _take_over(self, symbol: str, t: OpenTrade, horizon: str, price: float, atr: float, equity: float,
+                   max_position_pct: float | None = None) -> None:
         """Ein längerer Horizont übernimmt eine gleichgerichtete Position eines kürzeren: ab jetzt gelten seine
         Stops und seine Grösse (höchstens die vorhandene Menge, ein Überschuss wird verkauft)."""
         h = self.horizons[horizon]
@@ -336,7 +338,7 @@ class Trader:
         cash = self.broker.cash() + (t.qty * price if t.side > 0 else 0.0)
         plan = self.risk.plan(equity, cash, price, atr, side=t.side, exposure=others, exposure_total=total,
                               risk_pct=h.risk_per_trade, stop_atr=h.stop_loss_atr, target_atr=h.take_profit_atr,
-                              budget_share=self.shares().get(horizon, 1.0))
+                              budget_share=self.shares().get(horizon, 1.0), max_position_pct=max_position_pct)
         if not plan:
             self.note = f"{symbol}: Position gehört zum Horizont «{t.horizon}» ({self.risk.last_block})"
             return

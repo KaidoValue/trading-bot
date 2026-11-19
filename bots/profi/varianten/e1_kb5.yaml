@@ -1,0 +1,5 @@
+# E1a, Herausforderer von e1_kb3 (lernen/PROFI_PLAN.md): breiterer Puffer an der 200-Tage-Linie, Kauf über Linie
+# +1,67 %, Verkauf unter Linie −5 %. Überlagerung (deep merge) auf den Amtsinhaber: nur die geänderten Schlüssel.
+horizons:
+  kern:
+    strategy_params: {band: 0.05}

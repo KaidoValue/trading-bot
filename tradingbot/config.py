@@ -15,6 +15,8 @@ class RiskConfig:
     take_profit_atr: float = 4.0        # Take-Profit = Einstieg + 4 x ATR
     max_position_pct: float = 0.25      # max. 25 % des Kapitals in einer Position
     max_invested_pct: float = 1.0       # höchstens so viel vom Kapital insgesamt investiert (alle Coins zusammen)
+    slot_cap: bool = False              # statt max_position_pct: max_invested_pct geteilt durch die Zahl der Coins
+                                        # mit mindestens 200 abgeschlossenen Tageskerzen (Profi-Bot)
     max_daily_loss_pct: float = 0.03    # Tagesverlust > 3 % -> heute nicht mehr handeln
     max_drawdown_pct: float = 0.15      # Rückgang > 15 % vom Höchststand -> Not-Aus
     halt_days: float = 0                # 0 = Not-Aus bis zum manuellen Neustart, sonst Pause in Tagen
@@ -67,6 +69,7 @@ class Config:
     starting_capital: float = 1000.0
     fee_rate: float = 0.0026            # fester Satz pro Order (fee_model «fix»), z.B. für Backtests
     fee_model: str = "fix"              # fix = immer fee_rate, kraken = Kraken-Staffel nach 30-Tage-Umsatz (broker.py)
+    fee_factor: float = 1.0             # alle Gebührensätze × Faktor (Kostenstress, z.B. 1.5 im Profi-Test E5)
     slippage: float = 0.0005
     strategy: str = "adaptive"
     allow_short: bool = False           # auch auf fallende Kurse setzen (nur Backtest/Paper)
@@ -102,8 +105,14 @@ class Config:
     @classmethod
     def load(cls, path: str | Path = "bots/config.yaml") -> "Config":
         raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) if Path(path).exists() else {}
+        return cls.from_dict(raw, Path(path).stem)
+
+    @classmethod
+    def from_dict(cls, raw: dict, name: str = "config") -> "Config":
+        """Config aus dem Inhalt einer YAML-Datei. Unbekannte Schlüssel (auch in risk und den Horizonten) brechen ab."""
+        raw = dict(raw)
         risk = RiskConfig(**(raw.pop("risk", None) or {}))
-        cfg = cls(**raw, risk=risk, name=Path(path).stem)
+        cfg = cls(**raw, risk=risk, name=name)
         cfg.api_key = os.getenv("EXCHANGE_API_KEY")
         cfg.api_secret = os.getenv("EXCHANGE_API_SECRET")
         if cfg.horizons:

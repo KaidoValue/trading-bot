@@ -1,0 +1,7 @@
+# zweiter Start: der erste Lauf brach vor dem Rechnen an einem Test ab
+schritt: E6
+config: bots/profi/p_minus_1.yaml
+quellen: coinbase
+nur_bot: p_minus_1 bitcoin_halten
+nur_fenster: ab-2023Q1
+pruefung: true

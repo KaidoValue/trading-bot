@@ -1,0 +1,4 @@
+# E5 (a), Nachbarwert des Leiter-Siegers (lernen/PROFI_PLAN.md): höchstens 90 % statt 75 % investiert (mit
+# slot_cap auch der Deckel je Coin). Überlagerung (deep merge) auf den Amtsinhaber; keine Auswahl, nur Robustheit.
+risk:
+  max_invested_pct: 0.90

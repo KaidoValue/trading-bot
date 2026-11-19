@@ -1,0 +1,4 @@
+# E5 (a), Nachbarwert, nur wenn der Not-Aus nach E2 bleibt (lernen/PROFI_PLAN.md): Not-Aus bei 40 % statt 35 %.
+# Überlagerung (deep merge) auf den Amtsinhaber; keine Auswahl, nur Robustheit.
+risk:
+  max_drawdown_pct: 0.40

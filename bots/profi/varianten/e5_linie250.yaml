@@ -1,0 +1,5 @@
+# E5 (a), Nachbarwert des Leiter-Siegers (lernen/PROFI_PLAN.md): 250-Tage-Linie statt 200. Überlagerung
+# (deep merge) auf den Amtsinhaber; keine Auswahl, nur Robustheit.
+horizons:
+  kern:
+    strategy_params: {period: 250}
