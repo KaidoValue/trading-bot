@@ -7095,6 +7095,15 @@
     "config_risiko": 0.0
    },
    "equity": 94.11042842138275
+  },
+  {
+   "t": "2026-11-19T09:05:53.929660+00:00",
+   "r": {
+    "config_langfrist": 0.0,
+    "config_daytrading": 0.0,
+    "config_risiko": 0.0
+   },
+   "equity": 94.11042842138275
   }
  ],
  "fees": 2.0327047060352395,
