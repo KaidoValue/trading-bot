@@ -3,28 +3,28 @@
   "closed": [],
   "last_bar": {
     "kurz:BTC/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:ETH/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:BNB/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:XRP/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:SOL/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:TRX/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:ZEC/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "kurz:HYPE/CHF": {
-      "__dt__": "2026-11-20T11:00:00+00:00"
+      "__dt__": "2026-11-20T12:00:00+00:00"
     },
     "mittel:BTC/CHF": {
       "__dt__": "2026-11-20T08:00:00+00:00"
@@ -75,17 +75,17 @@
       "__dt__": "2026-11-19T00:00:00+00:00"
     }
   },
-  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash | [mittel] BTC/CHF: Signal 'raus', bleibe in Cash | [mittel] ETH/CHF: Signal 'raus', bleibe in Cash | [mittel] BNB/CHF: Signal 'raus', bleibe in Cash | [mittel] XRP/CHF: Signal 'raus', bleibe in Cash | [mittel] SOL/CHF: Signal 'raus', bleibe in Cash | [mittel] TRX/CHF: Signal 'raus', bleibe in Cash | [mittel] ZEC/CHF: Signal 'raus', bleibe in Cash | [mittel] HYPE/CHF: Signal 'raus', bleibe in Cash",
+  "note": "[kurz] BTC/CHF: Signal 'raus', bleibe in Cash | [kurz] ETH/CHF: Signal 'raus', bleibe in Cash | [kurz] BNB/CHF: Signal 'raus', bleibe in Cash | [kurz] XRP/CHF: Signal 'raus', bleibe in Cash | [kurz] SOL/CHF: Signal 'raus', bleibe in Cash | [kurz] TRX/CHF: Signal 'raus', bleibe in Cash | [kurz] ZEC/CHF: Signal 'raus', bleibe in Cash | [kurz] HYPE/CHF: Signal 'raus', bleibe in Cash",
   "decisions": {
     "kurz:BTC/CHF": {
       "symbol": "BTC/CHF",
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "BTC/CHF: Signal 'raus', bleibe in Cash",
@@ -97,8 +97,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 6,
+          "completed": 467,
+          "pending": 5,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -114,10 +114,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "ETH/CHF: Signal 'raus', bleibe in Cash",
@@ -129,8 +129,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 6,
+          "completed": 467,
+          "pending": 5,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -146,10 +146,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "BNB/CHF: Signal 'raus', bleibe in Cash",
@@ -161,8 +161,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 7,
+          "completed": 467,
+          "pending": 5,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -178,10 +178,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "XRP/CHF: Signal 'raus', bleibe in Cash",
@@ -193,8 +193,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 8,
+          "completed": 467,
+          "pending": 5,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -210,10 +210,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "SOL/CHF: Signal 'raus', bleibe in Cash",
@@ -225,8 +225,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 8,
+          "completed": 467,
+          "pending": 6,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -242,10 +242,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "TRX/CHF: Signal 'raus', bleibe in Cash",
@@ -257,8 +257,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 8,
+          "completed": 467,
+          "pending": 7,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -274,10 +274,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "ZEC/CHF: Signal 'raus', bleibe in Cash",
@@ -289,8 +289,8 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
-          "pending": 8,
+          "completed": 467,
+          "pending": 7,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
           "candidate": null,
@@ -306,10 +306,10 @@
       "horizon": "kurz",
       "timeframe": "1h",
       "checked": {
-        "__dt__": "2026-11-20T12:02:57.977970+00:00"
+        "__dt__": "2026-11-20T13:02:56.799154+00:00"
       },
       "bar": {
-        "__dt__": "2026-11-20T11:00:00+00:00"
+        "__dt__": "2026-11-20T12:00:00+00:00"
       },
       "signal": -1,
       "reason": "HYPE/CHF: Signal 'raus', bleibe in Cash",
@@ -321,7 +321,7 @@
         "simulated_closed": 0,
         "research": {
           "status": "Sammelt Lernf\u00e4lle",
-          "completed": 464,
+          "completed": 467,
           "pending": 8,
           "invalid": 0,
           "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
@@ -849,7 +849,7 @@
   "research": {
     "kurz": {
       "status": "Sammelt Lernf\u00e4lle",
-      "completed": 464,
+      "completed": 467,
       "pending": 8,
       "invalid": 0,
       "journal": "daten/research/config_daytrading_kurz_35786b62a2d8dfda.json",
@@ -891,7 +891,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-20T12:33:27.603886+00:00"
+    "__dt__": "2026-11-20T13:03:59.403055+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -908,36 +908,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      51781.6,
-      "2026-11-20T12:32:55+00:00"
+      51722.0,
+      "2026-11-20T13:02:56+00:00"
     ],
     "ETH/CHF": [
-      1466.35,
-      "2026-11-20T12:32:55+00:00"
+      1463.27,
+      "2026-11-20T13:02:56+00:00"
     ],
     "BNB/CHF": [
-      477.8875055,
-      "2026-11-20T12:32:55+00:00"
+      477.157527,
+      "2026-11-20T13:02:56+00:00"
     ],
     "XRP/CHF": [
-      0.7963164143,
-      "2026-11-20T12:32:55+00:00"
+      0.7942315194,
+      "2026-11-20T13:02:56+00:00"
     ],
     "SOL/CHF": [
-      59.8737944,
-      "2026-11-20T12:32:55+00:00"
+      59.7182355,
+      "2026-11-20T13:02:56+00:00"
     ],
     "TRX/CHF": [
-      0.2575869639,
-      "2026-11-20T12:32:55+00:00"
+      0.25678925316,
+      "2026-11-20T13:02:56+00:00"
     ],
     "ZEC/CHF": [
-      683.7163018,
-      "2026-11-20T12:32:55+00:00"
+      679.5943605,
+      "2026-11-20T13:02:56+00:00"
     ],
     "HYPE/CHF": [
-      53.4082328,
-      "2026-11-20T12:32:55+00:00"
+      53.204283,
+      "2026-11-20T13:02:56+00:00"
     ]
   },
   "abgleich": {
@@ -950,9 +950,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-20T12:32:55.623400+00:00"
+      "__dt__": "2026-11-20T13:02:56.799154+00:00"
     },
-    "quote_usd": 1.18783185052324,
+    "quote_usd": 1.1897538399305183,
     "volume": []
   }
 }
