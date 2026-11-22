@@ -1,6 +1,6 @@
 # Strategie-Labor
 
-Letzter Lauf: 15.11.2026 10:59 UTC · Daten: BTC/USD, 1h-Kerzen, 15.11.2024 bis 15.11.2026
+Letzter Lauf: 22.11.2026 11:30 UTC · Daten: BTC/USD, 1h-Kerzen, 22.11.2024 bis 22.11.2026
 
 Die KI erfindet aus den vorhandenen Bausteinen (Indikatoren, Kerzenmuster, Marktstruktur) neue Strategien. Standard: Suche auf den älteren 50 %; danach zwei getrennte Validierungsfenster und ein späterer Holdout. Prüfung mit Trader/PaperBroker, Gebühren, Slippage, Stops und Risikolimits. Erforderlich: mindestens 30 abgeschlossene Trades insgesamt, positive Rendite und Profit Factor >=1,2 in jedem Fenster, höchstens 15 % Drawdown und insgesamt besser als kostenbereinigtes Halten. Ein Bestehen startet nur die Paper-Probe: mindestens 14 Tage nach Fund und 20 regulär geschlossene Trades. Erst Status active darf im KI-Bot mitstimmen.
 
@@ -8,11 +8,11 @@ Die KI erfindet aus den vorhandenen Bausteinen (Indikatoren, Kerzenmuster, Markt
 
 | Regel | Training | Prüfung | Trades (Prüfung) | Bitcoin halten (Prüfung) | Ergebnis |
 |---|---|---|---|---|---|
-| Kaufen, wenn Kurs unter dem unteren Bollinger-Band UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | +16.1 % | +0.0 % | 0 | -35.0 % | durchgefallen |
-| Kaufen, wenn Trendwechsel nach unten (CHoCH) UND Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn Kurs unter der 200er-Linie UND Strukturbruch nach oben (BOS). | +7.0 % | +0.0 % | 0 | -35.0 % | durchgefallen |
-| Kaufen, wenn Kurs unter dem unteren Bollinger-Band. Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | -21.9 % | +0.0 % | 0 | -35.0 % | durchgefallen |
-| Kaufen, wenn Trendwechsel nach unten (CHoCH). Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | -31.3 % | +0.0 % | 0 | -35.0 % | durchgefallen |
-| Kaufen, wenn MACD-Histogramm negativ UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn MACD-Histogramm negativ UND Strukturbruch nach oben (BOS). | -31.4 % | +0.0 % | 0 | -35.0 % | durchgefallen |
+| Kaufen, wenn Trendwechsel nach unten (CHoCH) UND neues 20-Kerzen-Tief. Verkaufen, wenn Rücksetzer in die Fibonacci-Zone 38,2-61,8 % nach einem Aufwärtsimpuls UND neues 20-Kerzen-Tief. | +20.3 % | +0.0 % | 0 | -31.1 % | durchgefallen |
+| Kaufen, wenn neues 20-Kerzen-Tief UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn Rücksetzer in die Fibonacci-Zone 38,2-61,8 % nach einem Aufwärtsimpuls UND Kurs über der Bollinger-Mitte. | +6.6 % | +0.0 % | 0 | -31.1 % | durchgefallen |
+| Kaufen, wenn Trendwechsel nach unten (CHoCH) UND neues 20-Kerzen-Tief. Verkaufen, wenn Rücksetzer in die Fibonacci-Zone 38,2-61,8 % nach einem Aufwärtsimpuls UND Momentum (10 Kerzen) positiv. | +1.6 % | +0.0 % | 0 | -31.1 % | durchgefallen |
+| Kaufen, wenn neues 20-Kerzen-Tief UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn Rücksetzer in die Fibonacci-Zone 38,2-61,8 % nach einem Aufwärtsimpuls UND bearishes Kerzenmuster. | -9.6 % | +0.0 % | 0 | -31.1 % | durchgefallen |
+| Kaufen, wenn neues 20-Kerzen-Tief UND Trendwechsel nach unten (CHoCH). Verkaufen, wenn Rücksetzer in die Fibonacci-Zone 38,2-61,8 % nach einem Aufwärtsimpuls. | -9.6 % | +0.0 % | 0 | -31.1 % | durchgefallen |
 
 ## Strategie-Bibliothek und Freigabestatus
 
