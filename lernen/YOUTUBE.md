@@ -50,6 +50,13 @@ keine Regel direkt übernommen. Die Bausteine daraus stehen aber im Strategie-La
 kombinieren kann. Besteht eine solche Kombination die Prüfung, kommt sie automatisch in den KI-Bot.
 Ausführliche Zahlen: [VERGLEICH.md](VERGLEICH.md).
 
+## Auswertung 23.11.2026 (3 neue Videos vom 16.11.)
+
+Keines der 3 Videos behandelt Krypto (KI-Aktien, Silber, Öl). Seit dem 16.11. kamen keine neuen Abschriften von
+Hirans PC; 13 neuere Videos warten noch darauf. Sie werden ausgewertet, sobald der PC sie geliefert hat.
+
+**Ergebnis:** keine neue Strategie zum Testen. Die laufenden Bots bleiben unverändert.
+
 ## Auswertung 16.11.2026 (16 neue Videos vom 10.11. bis 15.11.)
 
 7 Videos drehen sich um Krypto (Altcoins, XRP, Ondo, Bitcoin-Boden), der Rest um Aktien (vor allem Nvidia) und
@@ -104,6 +111,9 @@ bleiben unverändert.
 
 | Datum | Kanal | Video | Krypto |
 |---|---|---|---|
+| 2026-11-16 | @hkcm | [Silber: Kapitulation auf breiter Front!](https://www.youtube.com/watch?v=Hh2S0ISA2h8) | nein |
+| 2026-11-16 | @hkcm | [13,2 Billionen Dollar vernichtet! Jetzt kommen die KI-Kaufchancen!](https://www.youtube.com/watch?v=wBfy39rntYQ) | nein |
+| 2026-11-16 | @STA_Solutions | [Ölpreis-Panik: Warum dieser Anstieg keinen Bestand haben wird](https://www.youtube.com/watch?v=C37t93heUO4) | am Rand |
 | 2026-11-15 | @phantombyhkcm | [Cryptos werden massiv abverkauft! Wo ist der finale Boden?](https://www.youtube.com/watch?v=c-Jvp18D5OQ) | ja |
 | 2026-11-15 | @hkcm | [Ondo: 980 % Kurspotenzial durch den BlackRock-Deal?! 🔥](https://www.youtube.com/watch?v=acdHqK6nE40) | ja |
 | 2026-11-13 | @hkcm | [NVIDIA: Affären-Crash oder 100 % Comeback-Rally?!](https://www.youtube.com/watch?v=HU27PSgBIO0) | nein |
