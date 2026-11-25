@@ -888,23 +888,10 @@
     },
     "blackout": null,
     "evidence": [],
-    "alerts": [
-      {
-        "who": "federalreserve",
-        "title": "Agencies announce dollar thresholds for applicability of truth in lending and consumer leasing rules for consumer credit and lease transactions",
-        "source": "federalreserve",
-        "published": "2026-11-25T20:00:00+00:00"
-      },
-      {
-        "who": "federalreserve",
-        "title": "Agencies announce dollar thresholds for smaller loan exemption from appraisal requirements for higher-priced mortgage loans",
-        "source": "federalreserve",
-        "published": "2026-11-25T20:00:00+00:00"
-      }
-    ]
+    "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-25T20:04:01.508251+00:00"
+    "__dt__": "2026-11-25T20:33:28.385593+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -921,36 +908,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      49720.9,
-      "2026-11-25T20:02:57+00:00"
+      49720.0,
+      "2026-11-25T20:32:56+00:00"
     ],
     "ETH/CHF": [
-      1399.61,
-      "2026-11-25T20:02:57+00:00"
+      1399.18,
+      "2026-11-25T20:32:56+00:00"
     ],
     "BNB/CHF": [
-      459.22588079999997,
-      "2026-11-25T20:02:57+00:00"
+      457.63053840000003,
+      "2026-11-25T20:32:56+00:00"
     ],
     "XRP/CHF": [
-      0.781109838,
-      "2026-11-25T20:02:57+00:00"
+      0.7772104169999999,
+      "2026-11-25T20:32:56+00:00"
     ],
     "SOL/CHF": [
-      58.5697224,
-      "2026-11-25T20:02:57+00:00"
+      58.2845463,
+      "2026-11-25T20:32:56+00:00"
     ],
     "TRX/CHF": [
-      0.2522731518,
-      "2026-11-25T20:02:57+00:00"
+      0.25188550803000004,
+      "2026-11-25T20:32:56+00:00"
     ],
     "ZEC/CHF": [
-      626.5014072,
-      "2026-11-25T20:02:57+00:00"
+      625.6922112,
+      "2026-11-25T20:32:56+00:00"
     ],
     "HYPE/CHF": [
-      51.050973600000006,
-      "2026-11-25T20:02:57+00:00"
+      50.9272758,
+      "2026-11-25T20:32:56+00:00"
     ]
   },
   "abgleich": {
@@ -963,9 +950,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-25T20:02:57.486832+00:00"
+      "__dt__": "2026-11-25T20:32:56.984370+00:00"
     },
-    "quote_usd": 1.2023277064396671,
+    "quote_usd": 1.202891751771258,
     "volume": []
   }
 }
