@@ -895,6 +895,13 @@
     "evidence": [
       {
         "theme": "hack",
+        "source": "cointelegraph",
+        "title": "Japan\u2019s crypto security group taps SEAL to speed up hack response",
+        "link": "https://cointelegraph.com/news/japans-crypto-security-group-taps-seal-to-speed-up-hack-response?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+        "published": "2026-11-27T05:22:36+00:00"
+      },
+      {
+        "theme": "hack",
         "source": "decrypt",
         "title": "UK Regulator Cites Binance Hack as It Plans Tougher DeFi Rules Than US and EU: Report",
         "link": "https://decrypt.co/384027/uk-regulator-cites-binance-hack-as-it-plans-tougher-defi-rules-than-us-and-eu-report",
@@ -911,7 +918,7 @@
     "alerts": []
   },
   "updated": {
-    "__dt__": "2026-11-27T05:04:01.469902+00:00"
+    "__dt__": "2026-11-27T05:33:28.707570+00:00"
   },
   "risk": {
     "peak_equity": 100.0,
@@ -928,36 +935,36 @@
   },
   "prices": {
     "BTC/CHF": [
-      51144.2,
-      "2026-11-27T05:02:58+00:00"
+      51552.0,
+      "2026-11-27T05:32:56+00:00"
     ],
     "ETH/CHF": [
-      1447.76,
-      "2026-11-27T05:02:58+00:00"
+      1459.29,
+      "2026-11-27T05:32:56+00:00"
     ],
     "BNB/CHF": [
-      470.08761840000005,
-      "2026-11-27T05:02:58+00:00"
+      472.87730490000007,
+      "2026-11-27T05:32:56+00:00"
     ],
     "XRP/CHF": [
-      0.8006251464,
-      "2026-11-27T05:02:58+00:00"
+      0.8056530053,
+      "2026-11-27T05:32:56+00:00"
     ],
     "SOL/CHF": [
-      60.70842,
-      "2026-11-27T05:02:58+00:00"
+      61.092803200000006,
+      "2026-11-27T05:32:56+00:00"
     ],
     "TRX/CHF": [
-      0.25446132431999996,
-      "2026-11-27T05:02:58+00:00"
+      0.25450221368,
+      "2026-11-27T05:32:56+00:00"
     ],
     "ZEC/CHF": [
-      633.036528,
-      "2026-11-27T05:02:58+00:00"
+      634.8799457,
+      "2026-11-27T05:32:56+00:00"
     ],
     "HYPE/CHF": [
-      55.0256112,
-      "2026-11-27T05:02:58+00:00"
+      55.03187690000001,
+      "2026-11-27T05:32:56+00:00"
     ]
   },
   "abgleich": {
@@ -970,9 +977,9 @@
     "positions": {},
     "interest_paid": 0.0,
     "interest_at": {
-      "__dt__": "2026-11-27T05:02:58.526326+00:00"
+      "__dt__": "2026-11-27T05:32:56.847767+00:00"
     },
-    "quote_usd": 1.1983510689291534,
+    "quote_usd": 1.1994866197267569,
     "volume": []
   }
 }
